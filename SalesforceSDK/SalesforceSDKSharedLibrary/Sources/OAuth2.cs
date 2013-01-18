@@ -1,4 +1,5 @@
-﻿using Salesforce.WinSDK.Net;
+﻿using Newtonsoft.Json;
+using Salesforce.WinSDK.Net;
 using System;
 using System.Linq;
 using System.Net;
@@ -6,10 +7,30 @@ using System.Threading.Tasks;
 
 namespace Salesforce.WinSDK.Auth
 {
+    public class RefreshResponse
+    {
+        [JsonProperty(PropertyName="id")] 
+        public String Id { get; set; }
+        
+        [JsonProperty(PropertyName="instance_url")] 
+        public String InstanceUrl { get; set; }
+        
+        [JsonProperty(PropertyName = "issued_at")]
+        public String IssuedAt { get; set; }
+        
+        [JsonProperty(PropertyName = "signature")]
+        public String Signature { get; set; }
+        
+        [JsonProperty(PropertyName = "access_token")]
+        public String AccessToken { get; set; }
+    }
+
     public class OAuth2
     {
         // Refresh scope
         const String REFRESH_SCOPE = "refresh_token";
+
+        // Access token
 
         // Authorization url
         const String OAUTH_AUTH_PATH = "/services/oauth2/authorize";
@@ -53,7 +74,7 @@ namespace Salesforce.WinSDK.Auth
         }
 
 
-        public static async Task<String> refreshAuthToken(String loginServer, String clientId, String refreshToken)
+        public static async Task<RefreshResponse> refreshAuthToken(String loginServer, String clientId, String refreshToken)
         {
             // Args
             String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] {clientId, refreshToken});
@@ -65,7 +86,7 @@ namespace Salesforce.WinSDK.Auth
             HttpCall c = HttpCall.createPost(refreshUrl, argsStr);
 
             // Execute post
-            return await c.execute().ContinueWith(t => t.Result.ResponseBody);
+            return await c.execute().ContinueWith(t => JsonConvert.DeserializeObject<RefreshResponse>(t.Result.ResponseBody) );
         }
     
     }

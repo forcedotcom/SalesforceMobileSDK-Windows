@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -8,8 +9,9 @@ namespace Salesforce.WinSDK.Net
 {
     public class HttpCall
     {
-        private readonly String _url;
         private readonly String _method;
+        private readonly Dictionary<String, String> _headers;
+        private readonly String _url;
         private readonly String _requestBody;
 
         private ManualResetEvent _allDone;
@@ -50,21 +52,32 @@ namespace Salesforce.WinSDK.Net
             }
         }
 
-        private HttpCall(String url, String requestBody, String method)
+        private HttpCall(String method, Dictionary<String, String> headers, String url, String requestBody)
         {
+            _method = method;
+            _headers = headers;
             _url = url;
             _requestBody = requestBody;
-            _method = method;
         }
 
-        public static HttpCall createGet(String url) 
+        public static HttpCall createGet(Dictionary<String, String> headers, String url) 
         {
-            return new HttpCall(url, null, "GET");
+            return new HttpCall("GET", headers, url, null);
+        }
+
+        public static HttpCall createGet(String url)
+        {
+            return createGet(null, url);
+        }
+
+        public static HttpCall createPost(Dictionary<String, String> headers, String url, String requestBody)
+        {
+            return new HttpCall("POST", headers, url, requestBody);
         }
 
         public static HttpCall createPost(String url, String requestBody)
         {
-            return new HttpCall(url, requestBody, "POST");
+            return createPost(null, url, requestBody);
         }
 
         public async Task<HttpCall> execute()
@@ -81,7 +94,19 @@ namespace Salesforce.WinSDK.Net
 
             _allDone = new ManualResetEvent(false);
             _request = (HttpWebRequest)HttpWebRequest.Create(_url);
+
+            // Setting method
             _request.Method = _method;
+            _request.ContentType = "application/x-www-form-urlencoded";
+
+            // Setting header
+            if (_headers != null)
+            {
+                foreach (KeyValuePair<String, String> item in _headers)
+                {
+                    _request.Headers[item.Key] = item.Value;
+                }
+            }
 
             if (_method == "GET")
             {
