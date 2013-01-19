@@ -23,13 +23,6 @@ namespace Salesforce.WinSDK.Auth
         }
 
         [TestMethod]
-        public void testPost()
-        {
-           var y = HttpCall.createGet("http://10.0.1.14").execute().Result;
-           var x = HttpCall.createPost(new Dictionary<String, String> { { "abc", "def" } }, "http://10.0.1.14", "xyz=xyz").execute().Result;
-        }
-
-        [TestMethod]
         public void testRefreshAuthToken()
         {
             // Try describe without being authenticated, expect 401
