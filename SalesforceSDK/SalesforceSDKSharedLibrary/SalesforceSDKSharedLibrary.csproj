@@ -36,6 +36,7 @@
     <Compile Include="Sources\OAuth2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sources\HttpCall.cs" />
+    <Compile Include="Sources\RestClient.cs" />
     <Compile Include="Sources\RestRequest.cs" />
   </ItemGroup>
   <ItemGroup>
