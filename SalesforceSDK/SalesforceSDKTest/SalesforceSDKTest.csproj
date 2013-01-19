@@ -112,6 +112,7 @@
     <Compile Include="Sources\HttpCallTest.cs" />
     <Compile Include="Sources\OAuth2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sources\RestRequestTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

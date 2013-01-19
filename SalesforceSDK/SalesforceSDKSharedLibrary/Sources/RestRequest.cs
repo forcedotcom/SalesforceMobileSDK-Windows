@@ -115,7 +115,7 @@ namespace Salesforce.WinSDK.Rest
          * @param contentType           the content type.
          * @param additionalHeaders     additional HTTP headers, can be null.
          */
-        public RestRequest(Method method, String path) : this(method, path, null, ContentType.FORM_URLENCODED, null) { }
+        public RestRequest(Method method, String path) : this(method, path, null, ContentType.NONE, null) { }
         public RestRequest(Method method, String path, String requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
         public RestRequest(Method method, String path, String requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
 
@@ -242,10 +242,10 @@ namespace Salesforce.WinSDK.Rest
          * @param fieldList
          * @return a RestRequest
          */
-        public static RestRequest getRequestForRetrieve(String apiVersion, String objectType, String objectId, List<String> fieldList)
+        public static RestRequest getRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
         {
             StringBuilder path = new StringBuilder(getPath(RestAction.RETRIEVE, apiVersion, objectType, objectId));
-            if (fieldList != null && fieldList.Count > 0)
+            if (fieldList != null && fieldList.Length > 0)
             {
                 path.Append("?fields=");
                 path.Append(Uri.EscapeUriString(String.Join(",", fieldList)));
@@ -315,7 +315,7 @@ namespace Salesforce.WinSDK.Rest
             StringBuilder path = new StringBuilder(getPath(RestAction.SEARCH, apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
-            return new RestRequest(Method.GET, path.ToString(), null);
+            return new RestRequest(Method.GET, path.ToString());
         }
 
         /**
@@ -331,7 +331,7 @@ namespace Salesforce.WinSDK.Rest
             StringBuilder path = new StringBuilder(getPath(RestAction.QUERY, apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
-            return new RestRequest(Method.GET, path.ToString(), null);
+            return new RestRequest(Method.GET, path.ToString());
         }
     }
 }
