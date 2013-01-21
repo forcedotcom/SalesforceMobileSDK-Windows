@@ -80,17 +80,41 @@ namespace Salesforce.WinSDK.Net
         private HttpWebRequest _request;
         private HttpWebResponse _response;
         private String _responseBody;
+        private WebException _webException;
+
+        public Boolean Executed
+        {
+            get
+            {
+                return (_response != null || _webException != null);
+            }
+        }
+
+        public Boolean Success
+        {
+            get
+            {
+                CheckExecuted();
+
+                return (_response != null);
+            }
+        }
+
+        public WebException Error
+        {
+            get
+            {
+                return _webException;
+            }
+        }
 
         public String ResponseBody
         {
             get
             {
-                if (_response == null)
-                {
-                    throw new System.InvalidOperationException("HttpCall must be executed first");
-                }
+                CheckExecuted();
 
-                if (_responseBody == null)
+                if (_response != null && _responseBody == null)
                 {
                     using (var reader = new StreamReader(_response.GetResponseStream()))
                     {
@@ -105,12 +129,24 @@ namespace Salesforce.WinSDK.Net
         {
             get
             {
-                if (_response == null)
-                {
-                    throw new System.InvalidOperationException("HttpCall must be executed first");
-                }
+                CheckExecuted();
 
-                return _response.StatusCode;
+                if (_response != null)
+                {
+                    return _response.StatusCode;
+                }
+                else
+                {
+                    throw _webException;
+                }
+            }
+        }
+
+        private void CheckExecuted()
+        {
+            if (!Executed)
+            {
+                throw new System.InvalidOperationException("HttpCall must be executed first");
             }
         }
 
@@ -123,34 +159,34 @@ namespace Salesforce.WinSDK.Net
             _contentType = contentType;
         }
 
-        public static HttpCall createGet(Dictionary<String, String> headers, String url) 
+        public static HttpCall CreateGet(Dictionary<String, String> headers, String url) 
         {
             return new HttpCall(Method.GET, headers, url, null, ContentType.NONE);
         }
 
-        public static HttpCall createGet(String url)
+        public static HttpCall CreateGet(String url)
         {
-            return createGet(null, url);
+            return CreateGet(null, url);
         }
 
-        public static HttpCall createPost(Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
+        public static HttpCall CreatePost(Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
         {
             return new HttpCall(Method.POST, headers, url, requestBody, contentType);
         }
 
-        public static HttpCall createPost(String url, String requestBody)
+        public static HttpCall CreatePost(String url, String requestBody)
         {
-            return createPost(null, url, requestBody, ContentType.FORM_URLENCODED);
+            return CreatePost(null, url, requestBody, ContentType.FORM_URLENCODED);
         }
 
-        public async Task<HttpCall> execute()
+        public async Task<HttpCall> Execute()
         {
-            return await Task.Factory.StartNew(() => executeSync());
+            return await Task.Factory.StartNew(() => ExecuteSync());
         }
 
-        private HttpCall executeSync() 
+        private HttpCall ExecuteSync() 
         {
-            if (_allDone != null)
+            if (Executed)
             {
                 throw new System.InvalidOperationException("A HttpCall can only be executed once");
             }
@@ -214,7 +250,8 @@ namespace Salesforce.WinSDK.Net
             }
             catch (System.Net.WebException ex)
             {
-                _response = (HttpWebResponse)ex.Response;
+                _webException = ex;
+                _response = (HttpWebResponse) ex.Response;
             }
 
             // Signalling that we are done

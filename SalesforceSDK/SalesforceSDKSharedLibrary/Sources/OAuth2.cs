@@ -57,8 +57,6 @@ namespace Salesforce.WinSDK.Auth
         // Refresh scope
         const String REFRESH_SCOPE = "refresh_token";
 
-        // Access token
-
         // Authorization url
         const String OAUTH_AUTH_PATH = "/services/oauth2/authorize";
         const String OAUTH_AUTH_QUERY_STRING = "display=mobile&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
@@ -85,7 +83,7 @@ namespace Salesforce.WinSDK.Auth
          * @see <a href="https://help.salesforce.com/apex/HTViewHelpDoc?language=en&id=remoteaccess_oauth_scopes.htm">RemoteAccess OAuth Scopes</a>
          *
          */
-        public static String getAuthorizationUrl(String loginServer, String clientId, String callbackUrl, String[] scopes)
+        public static String ComputeAuthorizationUrl(String loginServer, String clientId, String callbackUrl, String[] scopes)
         {
             // Scope
             String scopeStr = String.Join(" ", scopes.Concat(new String[] {REFRESH_SCOPE}).Distinct().ToArray());
@@ -101,7 +99,7 @@ namespace Salesforce.WinSDK.Auth
         }
 
 
-        public static async Task<RefreshResponse> refreshAuthToken(String loginServer, String clientId, String refreshToken)
+        public static async Task<RefreshResponse> RefreshAuthToken(String loginServer, String clientId, String refreshToken)
         {
             // Args
             String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] {clientId, refreshToken});
@@ -110,10 +108,21 @@ namespace Salesforce.WinSDK.Auth
             String refreshUrl = loginServer + OAUTH_REFRESH_PATH;
 
             // Post
-            HttpCall c = HttpCall.createPost(refreshUrl, argsStr);
+            HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
 
             // Execute post
-            return await c.execute().ContinueWith(t => JsonConvert.DeserializeObject<RefreshResponse>(t.Result.ResponseBody) );
+            return await c.Execute().ContinueWith(t =>
+                {
+                    HttpCall call = t.Result;
+                    if (call.Success)
+                    {
+                        return JsonConvert.DeserializeObject<RefreshResponse>(call.ResponseBody);
+                    }
+                    else
+                    {
+                        throw call.Error;
+                    }
+                });
         }
     
     }

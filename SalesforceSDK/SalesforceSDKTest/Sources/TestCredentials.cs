@@ -24,50 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
-using System.IO;
-using System.Net;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Salesforce.WinSDK.Net
 {
-    [TestClass]
-    public class HttpCallTest
+    public class TestCredentials
     {
-        [TestMethod]
-        public void TestExecuted()
-        {
-            HttpCall c = HttpCall.CreateGet("http://www.google.com");
-            Assert.IsFalse(c.Executed);
-            var r = c.Execute().Result;
-            Assert.IsTrue(c.Executed);
-        }
-
-        [TestMethod]
-        public void TestExecuteGet() 
-        {
-            HttpCall c = HttpCall.CreateGet("http://www.google.com");
-            String response = c.Execute().Result.ResponseBody;
-            Assert.IsTrue(response.Contains("Google Search"), "Wrong response");
-        }
-
-        [TestMethod]
-        public void TestCallToInvalidHost()
-        {
-            HttpCall c = HttpCall.CreateGet("http://bogus");
-            c = c.Execute().Result;
-            Assert.IsNull(c.ResponseBody, "Expected null response");
-            Assert.IsNotNull(c.Error, "Expected non null error");
-            Assert.AreEqual(c.Error.Status, WebExceptionStatus.ConnectFailure, "Expected connect failure error");
-
-            try
-            {
-                HttpStatusCode code = c.StatusCode;
-            }
-            catch (WebException ex)
-            {
-                Assert.AreEqual(WebExceptionStatus.ConnectFailure, ex.Status, "Wrong exception status");
-            }
-        }
+        public const String API_VERSION = "v26.0";
+        public const String LOGIN_SERVER = "https://test.salesforce.com";
+        public const String INSTANCE_SERVER = "https://tapp0.salesforce.com";
+        public const String CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+        public const String REFRESH_TOKEN = "5Aep861_OKMvio5gy9sGt9Z9mdt62xXK.9ugif6nZJYknXeANTICBf4ityN9j6YDgHjFvbzu6FTUQ==";
     }
 }

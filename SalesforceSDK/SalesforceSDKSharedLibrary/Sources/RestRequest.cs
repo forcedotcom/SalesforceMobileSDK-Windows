@@ -53,6 +53,31 @@ namespace Salesforce.WinSDK.Rest
         SEARCH
     }
 
+    static class Extensions
+    {
+        public static String Path(this RestAction action, params String[] args)
+        {
+            String format = "";
+            switch (action)
+            {
+                case RestAction.VERSIONS: format = "/services/data/"; break;
+                case RestAction.RESOURCES: format = "/services/data/{0}/"; break;
+                case RestAction.DESCRIBE_GLOBAL: format = "/services/data/{0}/sobjects/"; break;
+                case RestAction.METADATA: format = "/services/data/{0}/sobjects/{1}/"; break;
+                case RestAction.DESCRIBE: format = "/services/data/{0}/sobjects/{1}/describe/"; break;
+                case RestAction.CREATE: format = "/services/data/{0}/sobjects/{1}"; break;
+                case RestAction.RETRIEVE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
+                case RestAction.UPSERT: format = "/services/data/{0}/sobjects/{1}/{2}/{3}"; break;
+                case RestAction.UPDATE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
+                case RestAction.DELETE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
+                case RestAction.QUERY: format = "/services/data/{0}/query"; break;
+                case RestAction.SEARCH: format = "/services/data/{0}/search"; break;
+            }
+
+            return String.Format(format, args);
+        }
+    }
+
     /**
      * RestRequest: Class to represent any REST request.
      * 
@@ -134,27 +159,6 @@ namespace Salesforce.WinSDK.Rest
             return _method + " " + _path;
         }
 
-        private static String getPath(RestAction action, params String[] args)
-        {
-            String format = "";
-            switch (action)
-            {
-                case RestAction.VERSIONS: format = "/services/data/"; break;
-                case RestAction.RESOURCES: format = "/services/data/{0}/"; break;
-                case RestAction.DESCRIBE_GLOBAL: format = "/services/data/{0}/sobjects/"; break;
-                case RestAction.METADATA: format = "/services/data/{0}/sobjects/{1}/"; break;
-                case RestAction.DESCRIBE: format = "/services/data/{0}/sobjects/{1}/describe/"; break;
-                case RestAction.CREATE: format = "/services/data/{0}/sobjects/{1}"; break;
-                case RestAction.RETRIEVE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
-                case RestAction.UPSERT: format = "/services/data/{0}/sobjects/{1}/{2}/{3}"; break;
-                case RestAction.UPDATE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
-                case RestAction.DELETE: format = "/services/data/{0}/sobjects/{1}/{2}"; break;
-                case RestAction.QUERY: format = "/services/data/{0}/query"; break;
-                case RestAction.SEARCH: format = "/services/data/{0}/search"; break;
-            }
-
-            return String.Format(format, args);
-        }
 
         /**
          * Request to get summary information about each Salesforce.com version currently available.
@@ -162,9 +166,9 @@ namespace Salesforce.WinSDK.Rest
          * 
          * @return a RestRequest
          */
-        public static RestRequest getRequestForVersions()
+        public static RestRequest GetRequestForVersions()
         {
-            return new RestRequest(Method.GET, getPath(RestAction.VERSIONS));
+            return new RestRequest(Method.GET, RestAction.VERSIONS.Path());
         }
 
         /**
@@ -174,9 +178,9 @@ namespace Salesforce.WinSDK.Rest
          * @param apiVersion
          * @return a RestRequest
          */
-        public static RestRequest getRequestForResources(String apiVersion)
+        public static RestRequest GetRequestForResources(String apiVersion)
         {
-            return new RestRequest(Method.GET, getPath(RestAction.RESOURCES, apiVersion));
+            return new RestRequest(Method.GET, RestAction.RESOURCES.Path(apiVersion));
         }
 
         /**
@@ -186,9 +190,9 @@ namespace Salesforce.WinSDK.Rest
          * @param apiVersion
          * @return a RestRequest
          */
-        public static RestRequest getRequestForDescribeGlobal(String apiVersion)
+        public static RestRequest GetRequestForDescribeGlobal(String apiVersion)
         {
-            return new RestRequest(Method.GET, getPath(RestAction.DESCRIBE_GLOBAL, apiVersion));
+            return new RestRequest(Method.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
         }
 
         /**
@@ -199,9 +203,9 @@ namespace Salesforce.WinSDK.Rest
          * @param objectType
          * @return a RestRequest
          */
-        public static RestRequest getRequestForMetadata(String apiVersion, String objectType)
+        public static RestRequest GetRequestForMetadata(String apiVersion, String objectType)
         {
-            return new RestRequest(Method.GET, getPath(RestAction.METADATA, apiVersion, objectType));
+            return new RestRequest(Method.GET, RestAction.METADATA.Path(apiVersion, objectType));
         }
 
         /**
@@ -212,9 +216,9 @@ namespace Salesforce.WinSDK.Rest
          * @param objectType
          * @return a RestRequest
          */
-        public static RestRequest getRequestForDescribe(String apiVersion, String objectType)
+        public static RestRequest GetRequestForDescribe(String apiVersion, String objectType)
         {
-            return new RestRequest(Method.GET, getPath(RestAction.DESCRIBE, apiVersion, objectType));
+            return new RestRequest(Method.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
         }
 
         /**
@@ -226,10 +230,10 @@ namespace Salesforce.WinSDK.Rest
          * @param fields
          * @return a RestRequest
          */
-        public static RestRequest getRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.POST, getPath(RestAction.CREATE, apiVersion, objectType), fieldsData, ContentType.JSON);
+            return new RestRequest(Method.POST, RestAction.CREATE.Path(apiVersion, objectType), fieldsData, ContentType.JSON);
         }
 
         /**
@@ -242,9 +246,9 @@ namespace Salesforce.WinSDK.Rest
          * @param fieldList
          * @return a RestRequest
          */
-        public static RestRequest getRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
+        public static RestRequest GetRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
         {
-            StringBuilder path = new StringBuilder(getPath(RestAction.RETRIEVE, apiVersion, objectType, objectId));
+            StringBuilder path = new StringBuilder(RestAction.RETRIEVE.Path(apiVersion, objectType, objectId));
             if (fieldList != null && fieldList.Length > 0)
             {
                 path.Append("?fields=");
@@ -264,10 +268,10 @@ namespace Salesforce.WinSDK.Rest
          * @param fields
          * @return a RestRequest
          */
-        public static RestRequest getRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.PATCH, getPath(RestAction.UPDATE, apiVersion, objectType, objectId), fieldsData, ContentType.JSON);
+            return new RestRequest(Method.PATCH, RestAction.UPDATE.Path(apiVersion, objectType, objectId), fieldsData, ContentType.JSON);
         }
 
 
@@ -282,10 +286,10 @@ namespace Salesforce.WinSDK.Rest
          * @param fields
          * @return a RestRequest
          */
-        public static RestRequest getRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.PATCH, getPath(RestAction.UPSERT, apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
+            return new RestRequest(Method.PATCH, RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
         }
 
         /**
@@ -297,9 +301,9 @@ namespace Salesforce.WinSDK.Rest
          * @param objectId
          * @return a RestRequest
          */
-        public static RestRequest getRequestForDelete(String apiVersion, String objectType, String objectId)
+        public static RestRequest GetRequestForDelete(String apiVersion, String objectType, String objectId)
         {
-            return new RestRequest(Method.DELETE, getPath(RestAction.DELETE, apiVersion, objectType, objectId));
+            return new RestRequest(Method.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
         }
 
         /**
@@ -310,9 +314,9 @@ namespace Salesforce.WinSDK.Rest
          * @param q
          * @return a RestRequest
          */
-        public static RestRequest getRequestForSearch(String apiVersion, String q)
+        public static RestRequest GetRequestForSearch(String apiVersion, String q)
         {
-            StringBuilder path = new StringBuilder(getPath(RestAction.SEARCH, apiVersion));
+            StringBuilder path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
             return new RestRequest(Method.GET, path.ToString());
@@ -326,9 +330,9 @@ namespace Salesforce.WinSDK.Rest
          * @param q
          * @return a RestRequest
          */
-        public static RestRequest getRequestForQuery(String apiVersion, String q)
+        public static RestRequest GetRequestForQuery(String apiVersion, String q)
         {
-            StringBuilder path = new StringBuilder(getPath(RestAction.QUERY, apiVersion));
+            StringBuilder path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
             return new RestRequest(Method.GET, path.ToString());

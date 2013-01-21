@@ -51,9 +51,9 @@ namespace Salesforce.WinSDK.Rest
     	private Dictionary<String, Object> TEST_FIELDS = new Dictionary<String, Object> {{"fieldX", "value with spaces"},{"name", "testAccount"}};
     	
         [TestMethod]
-        public void testGetRequestForVersions() 
+        public void TestGetRequestForVersions() 
         {
-    		RestRequest request = RestRequest.getRequestForVersions();
+    		RestRequest request = RestRequest.GetRequestForVersions();
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/", request.Path, "Wrong path");
@@ -62,9 +62,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     	
         [TestMethod]
-    	public void testGetRequestForResources() 
+    	public void TestGetRequestForResources() 
         {
-    		RestRequest request = RestRequest.getRequestForResources(TEST_API_VERSION);
+    		RestRequest request = RestRequest.GetRequestForResources(TEST_API_VERSION);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/", request.Path, "Wrong path");
@@ -74,9 +74,9 @@ namespace Salesforce.WinSDK.Rest
     
     	
         [TestMethod]
-    	public void testGetRequestForDescribeGlobal() 
+    	public void TestGetRequestForDescribeGlobal() 
         {
-    		RestRequest request = RestRequest.getRequestForDescribeGlobal(TEST_API_VERSION);
+    		RestRequest request = RestRequest.GetRequestForDescribeGlobal(TEST_API_VERSION);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/", request.Path, "Wrong path");
@@ -86,9 +86,9 @@ namespace Salesforce.WinSDK.Rest
     
     	
         [TestMethod]
-    	public void testGetRequestForMetadata() 
+    	public void TestGetRequestForMetadata() 
         {
-    		RestRequest request = RestRequest.getRequestForMetadata(TEST_API_VERSION, TEST_OBJECT_TYPE);
+    		RestRequest request = RestRequest.GetRequestForMetadata(TEST_API_VERSION, TEST_OBJECT_TYPE);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/", request.Path, "Wrong path");
@@ -97,9 +97,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     
         [TestMethod]
-        public void testGetRequestForDescribe() 
+        public void TestGetRequestForDescribe() 
         {
-    		RestRequest request = RestRequest.getRequestForDescribe(TEST_API_VERSION, TEST_OBJECT_TYPE);
+    		RestRequest request = RestRequest.GetRequestForDescribe(TEST_API_VERSION, TEST_OBJECT_TYPE);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/describe/", request.Path, "Wrong path");
@@ -109,9 +109,9 @@ namespace Salesforce.WinSDK.Rest
     
     	
         [TestMethod]
-        public void testGetRequestForCreate() 
+        public void TestGetRequestForCreate() 
         {
-    		RestRequest request = RestRequest.getRequestForCreate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_FIELDS);
+    		RestRequest request = RestRequest.GetRequestForCreate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_FIELDS);
     		Assert.AreEqual(Method.POST, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE, request.Path, "Wrong path");
@@ -120,9 +120,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     	
         [TestMethod]
-    	public void testGetRequestForRetrieve() 
+    	public void TestGetRequestForRetrieve() 
         {
-    		RestRequest request = RestRequest.getRequestForRetrieve(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS_LIST);
+    		RestRequest request = RestRequest.GetRequestForRetrieve(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS_LIST);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID + "?fields=" + TEST_FIELDS_LIST_STRING, request.Path, "Wrong path");
@@ -131,9 +131,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     
         [TestMethod]
-    	public void testGetRequestForUpdate() 
+    	public void TestGetRequestForUpdate() 
         {
-    		RestRequest request = RestRequest.getRequestForUpdate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS);
+    		RestRequest request = RestRequest.GetRequestForUpdate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS);
     		Assert.AreEqual(Method.PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID, request.Path, "Wrong path");
@@ -142,9 +142,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     	
         [TestMethod]
-    	public void testGetRequestForUpsert()
+    	public void TestGetRequestForUpsert()
         {
-    		RestRequest request = RestRequest.getRequestForUpsert(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_EXTERNAL_ID_FIELD, TEST_EXTERNAL_ID, TEST_FIELDS);
+    		RestRequest request = RestRequest.GetRequestForUpsert(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_EXTERNAL_ID_FIELD, TEST_EXTERNAL_ID, TEST_FIELDS);
     		Assert.AreEqual(Method.PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_EXTERNAL_ID_FIELD + "/" + TEST_EXTERNAL_ID, request.Path, "Wrong path");
@@ -153,9 +153,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     
         [TestMethod]
-    	public void testGetRequestForDelete() 
+    	public void TestGetRequestForDelete() 
         {
-    		RestRequest request = RestRequest.getRequestForDelete(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID);
+    		RestRequest request = RestRequest.GetRequestForDelete(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID);
     		Assert.AreEqual(Method.DELETE, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID, request.Path, "Wrong path");
@@ -163,9 +163,9 @@ namespace Salesforce.WinSDK.Rest
     		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
     	}
     	
-    	public void testGetRequestForQuery() 
+    	public void TestGetRequestForQuery() 
         {
-    		RestRequest request = RestRequest.getRequestForQuery(TEST_API_VERSION, TEST_QUERY);
+    		RestRequest request = RestRequest.GetRequestForQuery(TEST_API_VERSION, TEST_QUERY);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/query?q=" + TEST_QUERY, request.Path, "Wrong path");
     		Assert.IsNull(request.Body, "Wrong request body");
@@ -173,9 +173,9 @@ namespace Salesforce.WinSDK.Rest
     	}
     
         [TestMethod]
-    	public void testGetRequestForSeach()
+    	public void TestGetRequestForSeach()
         {
-    		RestRequest request = RestRequest.getRequestForSearch(TEST_API_VERSION, TEST_SEARCH);
+    		RestRequest request = RestRequest.GetRequestForSearch(TEST_API_VERSION, TEST_SEARCH);
     		Assert.AreEqual(Method.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/search?q=" + TEST_SEARCH, request.Path, "Wrong path");
@@ -184,7 +184,7 @@ namespace Salesforce.WinSDK.Rest
     	}
     
         [TestMethod]
-    	public void testAdditionalHeaders() 
+    	public void TestAdditionalHeaders() 
         {
     		Dictionary<String, String> headers = new Dictionary<String, String>() {{"X-Foo", "RestRequestName"}};
     		RestRequest request = new RestRequest(Method.GET, "/my/foo/", null, ContentType.NONE, headers);

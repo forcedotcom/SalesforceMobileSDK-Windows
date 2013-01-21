@@ -41,6 +41,15 @@ namespace Salesforce.WinSDK.Rest
         private String _accessToken;
         private AccessTokenProvider _accessTokenProvider;
 
+        public string AccessToken
+        {
+            get
+            {
+                return _accessToken;
+            }
+        }
+
+
         public RestClient(String instanceUrl, String accessToken, AccessTokenProvider accessTokenProvider)
         {
             _instanceUrl = instanceUrl;
@@ -48,16 +57,25 @@ namespace Salesforce.WinSDK.Rest
             _accessTokenProvider = accessTokenProvider;
         }
 
-        public HttpCall sendSync(RestRequest request, Boolean retryInvalidToken)
+        public HttpCall SendSync(RestRequest request)
+        {
+            return SendSync(request, true);
+        }
+
+        private HttpCall SendSync(RestRequest request, Boolean retryInvalidToken)
         {
             String url = _instanceUrl + request.Path;
             Dictionary<String, String> headers = new Dictionary<String, String>() {};
-            if (_accessToken != null) {
+            if (_accessToken != null) 
+            {
                 headers["Authorization"] = "Bearer " + _accessToken;
             }
-            headers.Concat(request.AdditionalHeaders);
+            if (request.AdditionalHeaders != null)
+            {
+                headers.Concat(request.AdditionalHeaders);
+            }
 
-            HttpCall call = new HttpCall(request.Method, headers, url, request.Body, request.ContentType).execute().Result;
+            HttpCall call = new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute().Result;
             if (call.StatusCode == HttpStatusCode.Unauthorized)
             {
                 if (retryInvalidToken && _accessTokenProvider != null)
@@ -66,7 +84,7 @@ namespace Salesforce.WinSDK.Rest
                     if (newAccessToken != null)
                     {
                         _accessToken = newAccessToken;
-                        call = sendSync(request, false);
+                        call = SendSync(request, false);
                     }
                 }
             }
@@ -74,5 +92,6 @@ namespace Salesforce.WinSDK.Rest
             // Done 
             return call;
         }
+
     }
 }
