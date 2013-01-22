@@ -95,8 +95,7 @@ namespace Salesforce.WinSDK.Net
             get
             {
                 CheckExecuted();
-
-                return (_response != null);
+                return _webException == null;
             }
         }
 
@@ -104,7 +103,16 @@ namespace Salesforce.WinSDK.Net
         {
             get
             {
+                CheckExecuted();
                 return _webException;
+            }
+        }
+
+        public Boolean HasResponse
+        {
+            get
+            {
+                return _response != null;
             }
         }
 
@@ -113,7 +121,6 @@ namespace Salesforce.WinSDK.Net
             get
             {
                 CheckExecuted();
-
                 if (_response != null && _responseBody == null)
                 {
                     using (var reader = new StreamReader(_response.GetResponseStream()))

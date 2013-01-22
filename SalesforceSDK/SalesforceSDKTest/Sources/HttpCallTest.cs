@@ -34,40 +34,54 @@ namespace Salesforce.WinSDK.Net
     [TestClass]
     public class HttpCallTest
     {
-        [TestMethod]
-        public void TestExecuted()
+        private static void AssertThrows<T>(Action func) where T : Exception
         {
-            HttpCall c = HttpCall.CreateGet("http://www.google.com");
-            Assert.IsFalse(c.Executed);
-            var r = c.Execute().Result;
-            Assert.IsTrue(c.Executed);
-        }
-
-        [TestMethod]
-        public void TestExecuteGet() 
-        {
-            HttpCall c = HttpCall.CreateGet("http://www.google.com");
-            String response = c.Execute().Result.ResponseBody;
-            Assert.IsTrue(response.Contains("Google Search"), "Wrong response");
-        }
-
-        [TestMethod]
-        public void TestCallToInvalidHost()
-        {
-            HttpCall c = HttpCall.CreateGet("http://bogus");
-            c = c.Execute().Result;
-            Assert.IsNull(c.ResponseBody, "Expected null response");
-            Assert.IsNotNull(c.Error, "Expected non null error");
-            Assert.AreEqual(c.Error.Status, WebExceptionStatus.ConnectFailure, "Expected connect failure error");
-
             try
             {
-                HttpStatusCode code = c.StatusCode;
+                func.Invoke();
+                Assert.Fail(String.Format("An exception of type {0} was expected", typeof(T)));
             }
-            catch (WebException ex)
+            catch (T)
             {
-                Assert.AreEqual(WebExceptionStatus.ConnectFailure, ex.Status, "Wrong exception status");
+                // good
             }
+        }
+
+        [TestMethod]
+        public void TestPropertiesWhenNotExecuted()
+        {
+            HttpCall call = HttpCall.CreateGet("http://www.google.com");
+            Assert.IsFalse(call.Executed);
+            Assert.IsFalse(call.HasResponse);
+            AssertThrows<InvalidOperationException>(() => { var x = call.Success; });
+            AssertThrows<InvalidOperationException>(() => { var x = call.Error; });
+            AssertThrows<InvalidOperationException>(() => { var x = call.ResponseBody; });
+            AssertThrows<InvalidOperationException>(() => { var x = call.StatusCode; });
+        }
+
+        [TestMethod]
+        public void TestPropertiesWhenExecuted()
+        {
+            HttpCall call = HttpCall.CreateGet("http://www.google.com").Execute().Result;
+            Assert.IsTrue(call.Executed);
+            Assert.IsTrue(call.HasResponse);
+            Assert.IsTrue(call.Success);
+            Assert.IsNull(call.Error);
+            Assert.IsTrue(call.ResponseBody.Contains("Google Search"));
+            Assert.AreEqual(HttpStatusCode.OK, call.StatusCode);
+        }
+
+        [TestMethod]
+        public void TestPropertiesWhenInvalidHost()
+        {
+            HttpCall call = HttpCall.CreateGet("http://bogus").Execute().Result;
+            Assert.IsTrue(call.Executed);
+            Assert.IsFalse(call.HasResponse);
+            Assert.IsFalse(call.Success);
+            Assert.IsNotNull(call.Error);
+            Assert.AreEqual(WebExceptionStatus.ConnectFailure, call.Error.Status);
+            Assert.IsNull(call.ResponseBody);
+            AssertThrows<InvalidOperationException>(() => { var x = call.StatusCode; });
         }
     }
 }

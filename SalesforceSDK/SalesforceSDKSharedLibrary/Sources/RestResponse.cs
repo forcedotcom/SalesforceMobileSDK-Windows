@@ -24,80 +24,82 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.WinSDK.Net;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Net;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Salesforce.WinSDK.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Salesforce.WinSDK.Rest
 {
-    public delegate Task<String> AccessTokenProvider();
-
-    public class RestClient
+    public class RestResponse
     {
-        private String _instanceUrl;
-        private String _accessToken;
-        private AccessTokenProvider _accessTokenProvider;
+        private HttpCall _call;
+        private JArray _responseArray;
+        private JObject _responseObject;
 
-        public string AccessToken
+        public RestResponse(HttpCall call)
+        {
+            _call = call;
+        }
+
+        public Boolean Success
         {
             get
             {
-                return _accessToken;
+                return _call.Success;
             }
         }
 
-
-        public RestClient(String instanceUrl, String accessToken, AccessTokenProvider accessTokenProvider)
+        public WebException Error
         {
-            _instanceUrl = instanceUrl;
-            _accessToken = accessToken;
-            _accessTokenProvider = accessTokenProvider;
+            get
+            {
+                return _call.Error;
+            }
         }
 
-        public RestResponse SendSync(RestRequest request)
+        public String AsString
         {
-            return new RestResponse(SendSync(request, true));
+            get
+            {
+                return _call.ResponseBody;
+            }
         }
 
-        private HttpCall SendSync(RestRequest request, Boolean retryInvalidToken)
+        public JArray AsJArray
         {
-            String url = _instanceUrl + request.Path;
-            Dictionary<String, String> headers = new Dictionary<String, String>() {};
-            if (_accessToken != null) 
+            get
             {
-                headers["Authorization"] = "Bearer " + _accessToken;
-            }
-            if (request.AdditionalHeaders != null)
-            {
-                headers.Concat(request.AdditionalHeaders);
-            }
-
-            HttpCall call = new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute().Result;
-
-            if (!call.HasResponse)
-            {
-                throw call.Error;
-            }
-
-            if (call.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                if (retryInvalidToken && _accessTokenProvider != null)
+                if (_responseArray == null)
                 {
-                    String newAccessToken = _accessTokenProvider().Result;
-                    if (newAccessToken != null)
-                    {
-                        _accessToken = newAccessToken;
-                        call = SendSync(request, false);
-                    }
+                    _responseArray = JArray.Parse(AsString);
                 }
+                return _responseArray;
             }
-
-            // Done
-            return call;
         }
 
+        public JObject AsJObject
+        {
+            get
+            {
+                if (_responseObject == null)
+                {
+                    _responseObject = JObject.Parse(AsString);
+                }
+                return _responseObject;
+            }
+        }
+
+        public HttpStatusCode StatusCode
+        {
+            get
+            {
+                return _call.StatusCode;
+            }
+        }
     }
 }

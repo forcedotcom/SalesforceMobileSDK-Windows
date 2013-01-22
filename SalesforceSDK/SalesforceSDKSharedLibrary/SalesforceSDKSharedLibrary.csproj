@@ -38,6 +38,7 @@
     <Compile Include="Sources\HttpCall.cs" />
     <Compile Include="Sources\RestClient.cs" />
     <Compile Include="Sources\RestRequest.cs" />
+    <Compile Include="Sources\RestResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
