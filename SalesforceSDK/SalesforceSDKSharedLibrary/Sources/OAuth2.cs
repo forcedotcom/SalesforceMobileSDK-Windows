@@ -94,23 +94,15 @@ namespace Salesforce.WinSDK.Auth
         const String OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
 
-        /**
-         * Build the URL to the authorization web page for this login server.
-         * You need not provide refresh_token, as it is provided automatically.
-         *
-         * @param loginServer
-         *            the base protocol and server to use (e.g.
-         *            https://login.salesforce.com)
-         * @param clientId
-         *            OAuth client ID
-         * @param callbackUrl
-         *            OAuth callback url
-         * @param scopes A list of OAuth scopes to request (eg {"visualforce","api"}).
-         * @return A URL to start the OAuth flow in a web browser/view.
-         *
-         * @see <a href="https://help.salesforce.com/apex/HTViewHelpDoc?language=en&id=remoteaccess_oauth_scopes.htm">RemoteAccess OAuth Scopes</a>
-         *
-         */
+        /// <summary>
+        /// Build the URL to the authorization web page for this login server.
+        /// You need not provide refresh_token, as it is provided automatically.
+        /// </summary>
+        /// <param name="loginServer">The base protocol and server to use (e.g. https://login.salesforce.com)</param>
+        /// <param name="clientId">OAuth client ID</param>
+        /// <param name="callbackUrl">OAuth callback url</param>
+        /// <param name="scopes">A list of OAuth scopes to request (eg {"visualforce","api"}).</param>
+        /// <return>A URL to start the OAuth flow in a web browser/view.</return>
         public static String ComputeAuthorizationUrl(String loginServer, String clientId, String callbackUrl, String[] scopes)
         {
             // Scope

@@ -34,9 +34,6 @@ using Salesforce.WinSDK.Net;
 
 namespace Salesforce.WinSDK.Rest
 {
-    /**
-     * Enumeration for all REST API actions.
-     */
     enum RestAction
     {
         VERSIONS,
@@ -78,26 +75,23 @@ namespace Salesforce.WinSDK.Rest
         }
     }
 
-    /**
-     * RestRequest: Class to represent any REST request.
-     * 
-     * The class offers factory methods to build RestRequest objects for all REST API actions:
-     * <ul>
-     * <li> versions</li>
-     * <li> resources</li>
-     * <li> describeGlobal</li>
-     * <li> metadata</li>
-     * <li> describe</li>
-     * <li> create</li>
-     * <li> retrieve</li>
-     * <li> update</li>
-     * <li> upsert</li>
-     * <li> delete</li>
-     * </ul>
-     * 
-     * It also has constructors to build any arbitrary request.
-     * 
-     */
+    /// <summary>
+    /// RestRequest: Class to represent any REST request.   
+    /// </summary>
+    /// <remarks>
+    /// The class offers factory methods to build RestRequest objects for all REST API actions:
+    /// - versions
+    /// - resources
+    /// - describeGlobal
+    /// - metadata
+    /// - describe
+    /// - create
+    /// - retrieve
+    /// - update
+    /// - upsert
+    /// - delete
+    /// It also has constructors to build any arbitrary request.
+    /// </remarks>
     public class RestRequest
     {
 
@@ -131,15 +125,14 @@ namespace Salesforce.WinSDK.Rest
             get { return _additionalHeaders; }
         }
 
-        /**
-         * Generic constructor for arbitrary requests.
-         * 
-         * @param method				the HTTP method for the request (GET/POST/DELETE etc)
-         * @param path					the URI path, this will automatically be resolved against the users current instance host.
-         * @param requestBody			the request body if there is one, can be null.
-         * @param contentType           the content type.
-         * @param additionalHeaders     additional HTTP headers, can be null.
-         */
+        /// <summary>
+        /// Generic constructors for arbitrary requests.   
+        /// </summary>
+        /// <param name="method">The HTTP method for the request (GET/POST/DELETE etc)</param>
+        /// <param name="path">The URI path, this will automatically be resolved against the users current instance host.</param>
+        /// <param name="requestBody">The request body if there is one, can be null.</param>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="additionalHeaders">Additional HTTP headers, can be null.</param>
         public RestRequest(Method method, String path) : this(method, path, null, ContentType.NONE, null) { }
         public RestRequest(Method method, String path, String requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
         public RestRequest(Method method, String path, String requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
@@ -160,92 +153,85 @@ namespace Salesforce.WinSDK.Rest
         }
 
 
-        /**
-         * Request to get summary information about each Salesforce.com version currently available.
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_versions.htm
-         * 
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to get summary information about each Salesforce.com version currently available.
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_versions.htm
+        /// </summary>
+        /// <return>A RestRequest</return>
+        /// 
         public static RestRequest GetRequestForVersions()
         {
             return new RestRequest(Method.GET, RestAction.VERSIONS.Path());
         }
 
-        /**
-         * Request to list available resources for the specified API version, including resource name and URI.
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_discoveryresource.htm
-         *
-         * @param apiVersion
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to list available resources for the specified API version, including resource name and URI.
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_discoveryresource.htm
+        /// <summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForResources(String apiVersion)
         {
             return new RestRequest(Method.GET, RestAction.RESOURCES.Path(apiVersion));
         }
 
-        /**
-         * Request to list the available objects and their metadata for your organization's data.
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_describeGlobal.htm
-         *
-         * @param apiVersion
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to list the available objects and their metadata for your organization's data.
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_describeGlobal.htm
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDescribeGlobal(String apiVersion)
         {
             return new RestRequest(Method.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
         }
 
-        /**
-         * Request to describe the individual metadata for the specified object.
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_basic_info.htm
-         * 
-         * @param apiVersion
-         * @param objectType
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to describe the individual metadata for the specified object.
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_basic_info.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Ojbect type</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForMetadata(String apiVersion, String objectType)
         {
             return new RestRequest(Method.GET, RestAction.METADATA.Path(apiVersion, objectType));
         }
 
-        /**
-         * Request to completely describe the individual metadata at all levels for the specified object. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_describe.htm
-         * 
-         * @param apiVersion
-         * @param objectType
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to completely describe the individual metadata at all levels for the specified object. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_describe.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Ojbect type</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDescribe(String apiVersion, String objectType)
         {
             return new RestRequest(Method.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
         }
 
-        /**
-         * Request to create a record. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
-         * 
-         * @param apiVersion
-         * @param objectType
-         * @param fields
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to create a record. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Ojbect type</param>
+        /// <param name="fields">Fields</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(Method.POST, RestAction.CREATE.Path(apiVersion, objectType), fieldsData, ContentType.JSON);
         }
 
-        /**
-         * Request to retrieve a record by object id. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
-         * 
-         * @param apiVersion
-         * @param objectType
-         * @param objectId
-         * @param fieldList
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to retrieve a record by object id. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectId">Object id</param>
+        /// <param name="fieldsList">Fields</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
         {
             StringBuilder path = new StringBuilder(RestAction.RETRIEVE.Path(apiVersion, objectType, objectId));
@@ -258,16 +244,14 @@ namespace Salesforce.WinSDK.Rest
             return new RestRequest(Method.GET, path.ToString());
         }
 
-        /**
-         * Request to update a record. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
-         *
-         * @param apiVersion 
-         * @param objectType
-         * @param objectId
-         * @param fields
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to update a record. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
+        /// <param name="apiVersion">API version e.g. v26.0</param> 
+        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectId">Object id</param>
+        /// <param name="fields">Fields</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
@@ -275,45 +259,41 @@ namespace Salesforce.WinSDK.Rest
         }
 
 
-        /**
-         * Request to upsert (update or insert) a record. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
-         *
-         * @param apiVersion
-         * @param objectType
-         * @param externalIdField
-         * @param externalId
-         * @param fields
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to upsert (update or insert) a record. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Object type</param>
+        /// <param name="externalIdField">External id field</param>
+        /// <param name="externalId">External id</param>
+        /// <param name="fields">Fields</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(Method.PATCH, RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
         }
 
-        /**
-         * Request to delete a record. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
-         * 
-         * @param apiVersion
-         * @param objectType
-         * @param objectId
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to delete a record. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectId">Object id</param>
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDelete(String apiVersion, String objectType, String objectId)
         {
             return new RestRequest(Method.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
         }
 
-        /**
-         * Request to execute the specified SOSL search. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_search.htm
-         * 
-         * @param apiVersion
-         * @param q
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to execute the specified SOSL search. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_search.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="q">Query string</param
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForSearch(String apiVersion, String q)
         {
             StringBuilder path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
@@ -322,14 +302,13 @@ namespace Salesforce.WinSDK.Rest
             return new RestRequest(Method.GET, path.ToString());
         }
 
-        /**
-         * Request to execute the specified SOQL search. 
-         * See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_query.htm
-         * 
-         * @param apiVersion
-         * @param q
-         * @return a RestRequest
-         */
+        /// <summary>
+        /// Request to execute the specified SOQL search. 
+        /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_query.htm
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <param name="q">Query string</param
+        /// <return>A RestRequest</return>
         public static RestRequest GetRequestForQuery(String apiVersion, String q)
         {
             StringBuilder path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
