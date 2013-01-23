@@ -46,6 +46,15 @@ namespace Salesforce.WinSDK.Auth
 
     public class IdentityResponse
     {
+        [JsonProperty(PropertyName = "id")]
+        public String IdentityUrl { get; set; }
+
+        [JsonProperty(PropertyName = "user_id")]
+        public String UserId { get; set; }
+
+        [JsonProperty(PropertyName = "organization_id")]
+        public String OrganizationId { get; set; }
+
         [JsonProperty(PropertyName="username")] 
         public String UserName { get; set; }
 

@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Newtonsoft.Json;
 using Salesforce.WinSDK.Net;
 using System;
 using System.Collections.Generic;
@@ -72,6 +73,42 @@ namespace Salesforce.WinSDK.Auth
 
             // Check username
             Assert.AreEqual("sdktest@cs0.com", identityResponse.UserName);
+        }
+
+        [TestMethod]
+        public void testDeserializeIdentityResponseWithoutMobilePolicy()
+        {
+            String idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
+            String userId = "00550000001fg5OAAQ";
+            String organizationId = "00D50000000IZ3ZEAW";
+            String userName = "user@example.com";
+            String partialResponseWithoutMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\"}";
+            IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithoutMobilePolicy);
+
+            Assert.AreEqual(idUrl, idResponse.IdentityUrl);
+            Assert.AreEqual(userId, idResponse.UserId);
+            Assert.AreEqual(organizationId, idResponse.OrganizationId);
+            Assert.AreEqual(userName, idResponse.UserName);
+            Assert.IsNull(idResponse.MobilePolicy);
+        }
+
+        [TestMethod]
+        public void testDeserializeIdentityResponseWithMobilePolicy()
+        {
+            String idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
+            String userId = "00550000001fg5OAAQ";
+            String organizationId = "00D50000000IZ3ZEAW";
+            String userName = "user@example.com";
+            String partialResponseWithMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\",\"mobile_policy\":{\"pin_length\":6,\"screen_lock\":1}}";
+            IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithMobilePolicy);
+
+            Assert.AreEqual(idUrl, idResponse.IdentityUrl);
+            Assert.AreEqual(userId, idResponse.UserId);
+            Assert.AreEqual(organizationId, idResponse.OrganizationId);
+            Assert.AreEqual(userName, idResponse.UserName);
+            Assert.IsNotNull(idResponse.MobilePolicy);
+            Assert.AreEqual(6, idResponse.MobilePolicy.PinLength);
+            Assert.AreEqual(1, idResponse.MobilePolicy.ScreenLockTimeout);
         }
 
         private HttpStatusCode DoDescribe(String authToken)
