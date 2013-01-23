@@ -61,6 +61,18 @@ namespace Salesforce.WinSDK.Auth
             Assert.AreEqual(HttpStatusCode.OK, DoDescribe(refreshResponse.AccessToken));
         }
 
+        [TestMethod]
+        public void testCallIdentityService()
+        {
+            // Get auth token and identity url (through refresh)
+            RefreshResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
+
+            // Call the identity service
+            IdentityResponse identityResponse = OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;
+
+            // Check username
+            Assert.AreEqual("sdktest@cs0.com", identityResponse.UserName);
+        }
 
         private HttpStatusCode DoDescribe(String authToken)
         {

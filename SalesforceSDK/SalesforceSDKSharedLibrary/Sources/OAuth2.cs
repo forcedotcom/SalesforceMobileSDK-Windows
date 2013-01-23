@@ -28,16 +28,35 @@
 using Newtonsoft.Json;
 using Salesforce.WinSDK.Net;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace Salesforce.WinSDK.Auth
 {
+    public class MobilePolicy
+    {
+        [JsonProperty(PropertyName="pin_length")]
+        public int PinLength { get; set; }
+
+        [JsonProperty(PropertyName="screen_lock")]
+        public int ScreenLockTimeout { get; set; }
+    }
+
+    public class IdentityResponse
+    {
+        [JsonProperty(PropertyName="username")] 
+        public String UserName { get; set; }
+
+        [JsonProperty(PropertyName="mobile_policy")]
+        public MobilePolicy MobilePolicy {get; set; }
+    }
+
     public class RefreshResponse
     {
         [JsonProperty(PropertyName="id")] 
-        public String Id { get; set; }
+        public String IdentityUrl { get; set; }
         
         [JsonProperty(PropertyName="instance_url")] 
         public String InstanceUrl { get; set; }
@@ -111,19 +130,20 @@ namespace Salesforce.WinSDK.Auth
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
 
             // Execute post
-            return await c.Execute().ContinueWith(t =>
-                {
-                    HttpCall call = t.Result;
-                    if (call.Success)
-                    {
-                        return JsonConvert.DeserializeObject<RefreshResponse>(call.ResponseBody);
-                    }
-                    else
-                    {
-                        throw call.Error;
-                    }
-                });
+            return await c.ExecuteAndDeserialize<RefreshResponse>();
         }
-    
+
+
+        public static async Task<IdentityResponse> CallIdentityService(String idUrl, String accessToken)
+        {
+            // Auth header
+            Dictionary<String, String> headers = new Dictionary<String, String>() {{"Authorization", "Bearer " + accessToken }};
+
+            // Get
+            HttpCall c = HttpCall.CreateGet(headers, idUrl);
+
+            // Execute get
+            return await c.ExecuteAndDeserialize<IdentityResponse>();
+        }
     }
 }

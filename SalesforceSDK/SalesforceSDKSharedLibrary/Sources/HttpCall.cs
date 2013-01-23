@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -174,6 +175,22 @@ namespace Salesforce.WinSDK.Net
         public async Task<HttpCall> Execute()
         {
             return await Task.Factory.StartNew(() => ExecuteSync());
+        }
+
+        public async Task<T> ExecuteAndDeserialize<T>()
+        {
+            return await Execute().ContinueWith(t =>
+                {
+                    HttpCall call = t.Result;
+                    if (call.Success)
+                    {
+                        return JsonConvert.DeserializeObject<T>(call.ResponseBody);
+                    }
+                    else
+                    {
+                        throw call.Error;
+                    }
+                });
         }
 
         private HttpCall ExecuteSync() 
