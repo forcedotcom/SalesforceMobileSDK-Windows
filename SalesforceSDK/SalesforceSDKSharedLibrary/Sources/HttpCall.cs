@@ -78,15 +78,15 @@ namespace Salesforce.WinSDK.Net
 
         private ManualResetEvent _allDone;
         private HttpWebRequest _request;
-        private HttpWebResponse _response;
         private String _responseBody;
+        private HttpStatusCode _statusCode;
         private WebException _webException;
 
         public Boolean Executed
         {
             get
             {
-                return (_response != null || _webException != null);
+                return (_responseBody != null || _webException != null);
             }
         }
 
@@ -112,7 +112,7 @@ namespace Salesforce.WinSDK.Net
         {
             get
             {
-                return _response != null;
+                return _responseBody != null;
             }
         }
 
@@ -121,13 +121,6 @@ namespace Salesforce.WinSDK.Net
             get
             {
                 CheckExecuted();
-                if (_response != null && _responseBody == null)
-                {
-                    using (var reader = new StreamReader(_response.GetResponseStream()))
-                    {
-                        _responseBody = reader.ReadToEnd();
-                    }
-                }
                 return _responseBody;
             }
         }
@@ -137,15 +130,7 @@ namespace Salesforce.WinSDK.Net
             get
             {
                 CheckExecuted();
-
-                if (_response != null)
-                {
-                    return _response.StatusCode;
-                }
-                else
-                {
-                    throw _webException;
-                }
+                return _statusCode;
             }
         }
 
@@ -213,12 +198,12 @@ namespace Salesforce.WinSDK.Net
                 }
             }
 
-            if (_method == Method.GET)
+            if (_method == Method.GET || _method == Method.HEAD || _method == Method.DELETE)
             {
                 // Start the asynchronous operation to get the response
                 _request.BeginGetResponse(new AsyncCallback(GetResponseCallback), null);
             }
-            else if (_method == Method.POST)
+            else if (_method == Method.POST || _method == Method.PUT || _method == Method.PATCH)
             {
                 // Setting content type
                 _request.ContentType = _contentType.MimeType();
@@ -250,16 +235,30 @@ namespace Salesforce.WinSDK.Net
 
         private void GetResponseCallback(IAsyncResult asynchronousResult)
         {
+            HttpWebResponse response;
+
             // End the operation
             try
             {
-                _response = (HttpWebResponse)_request.EndGetResponse(asynchronousResult);
+                response = (HttpWebResponse)_request.EndGetResponse(asynchronousResult);
             }
-            catch (System.Net.WebException ex)
+            catch (WebException ex)
             {
                 _webException = ex;
-                _response = (HttpWebResponse) ex.Response;
+                response = (HttpWebResponse) ex.Response;
             }
+
+            if (response != null)
+            {
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    _responseBody = reader.ReadToEnd();
+                }
+                _statusCode = response.StatusCode;
+
+                response.Dispose();
+            }
+
 
             // Signalling that we are done
             _allDone.Set();

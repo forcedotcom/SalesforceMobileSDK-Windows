@@ -32,12 +32,35 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Salesforce.WinSDK.Rest
 {
+    class IdName 
+    {
+        private readonly String _id;
+        public String Id
+        {
+            get { return _id; }
+        }
+
+        private readonly String _name;
+        public String Name
+        {
+            get { return _name; }
+        }
+
+        public IdName(String id, String name) {
+            _id = id;
+            _name = name;
+        }
+    }
+
+
     [TestClass]
     public class RestClientTest
     {
+        private const String ENTITY_NAME_PREFIX = "RestClientTest";
         private const String BAD_TOKEN = "bad-token";
 
         private RestClient _restClient;
@@ -53,6 +76,7 @@ namespace Salesforce.WinSDK.Rest
         [TestCleanup]
         public void TearDown()
         {
+            Cleanup();
         }
 
         [TestMethod]
@@ -130,6 +154,120 @@ namespace Salesforce.WinSDK.Rest
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "name", "fields", "urls", "label");
             Assert.AreEqual("Account", jsonResponse["name"], "Wrong object name");
+        }
+
+        [TestMethod]
+        public void TestCreate()
+        {
+            Dictionary<String, Object> fields = new Dictionary<String, Object>() {{"name", generateAccountName()}};
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
+            JObject jsonResponse = response.AsJObject;
+            CheckKeys(jsonResponse, "id", "errors", "success");
+            Assert.IsTrue((Boolean) jsonResponse["success"], "Create failed");
+        }
+    
+        [TestMethod]
+        public void TestRetrieve() 
+        {
+            String[] fields = new String[] { "name", "ownerId" };
+            IdName newAccountIdName = CreateAccount();
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
+            CheckResponse(response, HttpStatusCode.OK, false);
+            JObject jsonResponse = response.AsJObject;
+            CheckKeys(jsonResponse, "attributes", "Name", "OwnerId", "Id");
+            Assert.AreEqual(newAccountIdName.Name, jsonResponse["Name"], "Wrong row returned");
+        }
+    
+        [TestMethod]
+        public void TestUpdate()
+        {
+            // Create
+            IdName newAccountIdName = CreateAccount();
+    
+            // Update
+            String updatedAccountName = generateAccountName();
+            Dictionary<String, Object> fields = new Dictionary<String, Object>() {{"name", updatedAccountName}};
+
+            RestResponse updateResponse = _restClient.SendSync(RestRequest.GetRequestForUpdate(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
+            Assert.IsTrue(updateResponse.Success, "Update failed");
+    
+            // Retrieve - expect updated name
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new String[] {"name"}));
+            Assert.AreEqual(updatedAccountName, response.AsJObject["Name"], "Wrong row returned");
+        }
+    
+    
+        [TestMethod]
+        public void TestDelete() 
+        {
+            // Create
+            IdName newAccountIdName = CreateAccount();
+    
+            // Delete
+            RestResponse deleteResponse = _restClient.SendSync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, "account", newAccountIdName.Id));
+            Assert.IsTrue(deleteResponse.Success, "Delete failed");
+    
+            // Retrieve - expect 404
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new String[] {"name"}));
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "404 was expected");
+        }
+    
+    
+        [TestMethod]
+        public void TestQuery() 
+        {
+            IdName newAccountIdName = CreateAccount();
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForQuery(TestCredentials.API_VERSION, "select name from account where id = '" + newAccountIdName.Id + "'"));
+            CheckResponse(response, HttpStatusCode.OK, false);
+            JObject jsonResponse = response.AsJObject;
+            CheckKeys(jsonResponse, "done", "totalSize", "records");
+            Assert.AreEqual(1, jsonResponse["totalSize"], "Expected one row");
+            Assert.AreEqual(newAccountIdName.Name, jsonResponse["records"][0]["Name"], "Wrong row returned");
+        }
+    
+        [TestMethod]
+        public void TestSearch() 
+        {
+            IdName newAccountIdName = CreateAccount();
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + ENTITY_NAME_PREFIX + "}"));
+            CheckResponse(response, HttpStatusCode.OK, true);
+            JArray matchingRows = response.AsJArray;
+            Assert.AreEqual(1, matchingRows.Count, "Expected one row");
+            JObject matchingRow = (JObject) matchingRows[0];
+            CheckKeys(matchingRow, "attributes", "Id");
+            Assert.AreEqual(newAccountIdName.Id, matchingRow["Id"], "Wrong row returned");
+        }
+
+        private String generateAccountName()
+        {
+            return ENTITY_NAME_PREFIX + "-" + DateTime.Now.ToFileTime() + (new Random()).Next(10000, 99999);
+        }
+
+        private IdName CreateAccount() 
+        {
+            String newAccountName = generateAccountName();
+            Dictionary<String, Object> fields = new Dictionary<String, Object>() {{"name", newAccountName}};            
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
+            String newAccountId = (String) response.AsJObject["id"];
+            return new IdName(newAccountId, newAccountName);
+        }
+    
+        private void Cleanup() {
+            try {
+                RestResponse searchResponse = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + ENTITY_NAME_PREFIX + "}"));
+                JArray matchingRows = searchResponse.AsJArray;
+                for (int i=0; i<matchingRows.Count; i++) {
+                    JObject matchingRow = (JObject) matchingRows[i];
+                    String matchingRowType = (String) matchingRow["attributes"]["type"];
+                    String matchingRowId = (String) matchingRow["Id"];
+                    Debug.WriteLine("Trying to delete {0}", matchingRowId);
+                    _restClient.SendSync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, matchingRowType, matchingRowId));
+                    Debug.WriteLine("Successfully deleted {0}", matchingRowId);
+                }
+            }
+            catch {
+                // We tried our best :-(
+            }
         }
 
         private void CheckResponse(RestResponse response, HttpStatusCode expectedStatusCode, Boolean isJArray)

@@ -79,9 +79,8 @@ namespace Salesforce.WinSDK.Net
             Assert.IsFalse(call.HasResponse);
             Assert.IsFalse(call.Success);
             Assert.IsNotNull(call.Error);
-            Assert.AreEqual(WebExceptionStatus.ConnectFailure, call.Error.Status);
             Assert.IsNull(call.ResponseBody);
-            AssertThrows<InvalidOperationException>(() => { var x = call.StatusCode; });
+            Assert.AreEqual((HttpStatusCode) 0, call.StatusCode);
         }
     }
 }
