@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
   <Identity Name="9ad85cc8-d0b8-4488-9cb3-1abab8d807e0"
@@ -6,10 +6,10 @@
             Version="1.0.0.0" />
   
   <Properties>
-    <DisplayName>SalesforceSDKTest</DisplayName>
+    <DisplayName>SalesforceSDK.Core.UnitTests</DisplayName>
     <PublisherDisplayName>wmathurin</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
-    <Description>SalesforceSDKTest</Description>
+    <Description>SalesforceSDK.Core.UnitTests</Description>
   </Properties>
   
   <Prerequisites>

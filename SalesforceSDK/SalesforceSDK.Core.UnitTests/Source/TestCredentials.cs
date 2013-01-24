@@ -30,7 +30,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salesforce.WinSDK.Net
+namespace Salesforce.WinSDK
 {
     public class TestCredentials
     {
