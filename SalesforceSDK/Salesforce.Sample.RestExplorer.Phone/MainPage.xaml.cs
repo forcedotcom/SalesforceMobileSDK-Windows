@@ -13,25 +13,39 @@ namespace Salesforce.Sample.RestExplorer.Phone
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        private Button[] buttons;
+
         // Constructor
         public MainPage()
         {
             InitializeComponent();
 
+            buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
+
+            foreach (Button button in buttons)
+            {
+                button.Click += OnAnyButtonClicked;
+            }
+
             // Set the data context of the listbox control to the sample data
-            DataContext = App.ViewModel;
+            // DataContext = App.ViewModel;
 
             // Sample code to localize the ApplicationBar
             //BuildLocalizedApplicationBar();
         }
 
+        private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show(((Button)sender).Name);
+        }
+
         // Load data for the ViewModel Items
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+            //if (!App.ViewModel.IsDataLoaded)
+            //{
+            //    App.ViewModel.LoadData();
+            //}
         }
 
         // Sample code for building a localized ApplicationBar
