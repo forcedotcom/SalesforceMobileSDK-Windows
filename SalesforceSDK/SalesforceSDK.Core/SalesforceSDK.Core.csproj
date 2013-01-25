@@ -34,6 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\Adaptation\PlatformAdapter.cs" />
     <Compile Include="Source\Auth\OAuth2.cs" />
     <Compile Include="Source\Net\HttpCall.cs" />
     <Compile Include="Source\Rest\RestClient.cs" />
