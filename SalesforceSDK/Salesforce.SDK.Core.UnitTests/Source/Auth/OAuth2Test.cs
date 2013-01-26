@@ -56,7 +56,7 @@ namespace Salesforce.SDK.Auth
             Assert.AreEqual(HttpStatusCode.Unauthorized, DoDescribe(null));
 
             // Get auth token (through refresh)
-            RefreshResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
+            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
             Assert.AreEqual(HttpStatusCode.OK, DoDescribe(refreshResponse.AccessToken));
@@ -66,7 +66,7 @@ namespace Salesforce.SDK.Auth
         public void testCallIdentityService()
         {
             // Get auth token and identity url (through refresh)
-            RefreshResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
+            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
 
             // Call the identity service
             IdentityResponse identityResponse = OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;

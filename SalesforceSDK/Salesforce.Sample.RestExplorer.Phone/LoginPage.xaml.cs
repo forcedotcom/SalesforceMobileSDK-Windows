@@ -16,32 +16,20 @@ namespace Salesforce.Sample.RestExplorer.Phone
         private const String LOGIN_URL = "https://test.salesforce.com";
         private const String CALLBACK_URL = "sfdc:///axm/detect/oauth/done";
         private const String CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
-  
+
         public LoginPage()
         {
             InitializeComponent();
             wvLogin.Source = new Uri(OAuth2.ComputeAuthorizationUrl(LOGIN_URL, CLIENT_ID, CALLBACK_URL, new String[] { "api" }));
             wvLogin.Navigating += OnNavigating;
-            wvLogin.Navigated += OnNavigated;
-            wvLogin.NavigationFailed += OnError;
-        }
-
-        private void OnError(object sender, NavigationFailedEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Navigation failed to: " + e.Uri + " because of " + e.Exception);
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("Navigating to: " + e.Uri);
-        }
-
-        private void OnNavigated(object sender, NavigationEventArgs e)
-        {
-            System.Diagnostics.Debug.WriteLine("Navigated to: " + e.Uri);
-            if (e!= null && e.Content != null)
+            if (e.Uri.ToString().StartsWith(CALLBACK_URL) && e.Uri.Fragment.Length > 0)
             {
-                System.Diagnostics.Debug.WriteLine("Body: " + e.Content);
+                e.Cancel = true;
+                AuthResponse ar = OAuth2.ParseFragment(e.Uri.Fragment.Substring(1));
             }
         }
     }

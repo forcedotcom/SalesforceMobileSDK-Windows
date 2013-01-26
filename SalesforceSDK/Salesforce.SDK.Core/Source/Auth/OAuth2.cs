@@ -29,6 +29,7 @@ using Newtonsoft.Json;
 using Salesforce.SDK.Net;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace Salesforce.SDK.Auth
         public MobilePolicy MobilePolicy {get; set; }
     }
 
-    public class RefreshResponse
+    public class AuthResponse
     {
         [JsonProperty(PropertyName="id")] 
         public String IdentityUrl { get; set; }
@@ -78,7 +79,14 @@ namespace Salesforce.SDK.Auth
         
         [JsonProperty(PropertyName = "access_token")]
         public String AccessToken { get; set; }
+
+        [JsonProperty(PropertyName = "refresh_token")]
+        public String RefreshToken { get; set; }
+
+        [JsonProperty(PropertyName = "scope")]
+        public String[] Scopes { get; set; }
     }
+
 
     public class OAuth2
     {
@@ -119,7 +127,7 @@ namespace Salesforce.SDK.Auth
         }
 
 
-        public static async Task<RefreshResponse> RefreshAuthToken(String loginServer, String clientId, String refreshToken)
+        public static async Task<AuthResponse> RefreshAuthToken(String loginServer, String clientId, String refreshToken)
         {
             // Args
             String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] {clientId, refreshToken});
@@ -131,7 +139,7 @@ namespace Salesforce.SDK.Auth
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
 
             // Execute post
-            return await c.ExecuteAndDeserialize<RefreshResponse>();
+            return await c.ExecuteAndDeserialize<AuthResponse>();
         }
 
 
@@ -145,6 +153,33 @@ namespace Salesforce.SDK.Auth
 
             // Execute get
             return await c.ExecuteAndDeserialize<IdentityResponse>();
+        }
+
+
+        public static AuthResponse ParseFragment(String fragmentString)
+        {
+            AuthResponse res = new AuthResponse();
+
+            String[] parameters = fragmentString.Split('&');
+            foreach (String parameter in parameters)
+            {
+                String[] parts = parameter.Split('=');
+                String name = Uri.UnescapeDataString(parts[0]);
+                String value = parts.Length > 1 ? Uri.UnescapeDataString(parts[1]) : "";
+
+                switch (name)
+                {
+                    case "id": res.IdentityUrl = value; break;
+                    case "instance_url": res.InstanceUrl = value; break;
+                    case "access_token": res.AccessToken = value; break;
+                    case "refresh_token": res.RefreshToken = value; break;
+                    case "signature": res.Signature = value; break;
+                    case "issued_at": res.IssuedAt = value; break;
+                    case "scope": res.Scopes = value.Split('+'); break;
+                    default: Debug.WriteLine("Parameter not recognized {0}", name); break;
+                }
+            }
+            return res;
         }
     }
 }

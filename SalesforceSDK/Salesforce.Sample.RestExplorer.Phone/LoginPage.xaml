@@ -15,7 +15,7 @@
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <phone:WebBrowser Name="wvLogin"/>
+        <phone:WebBrowser Name="wvLogin" IsScriptEnabled="True"/>
     </Grid>
 
 </phone:PhoneApplicationPage>
