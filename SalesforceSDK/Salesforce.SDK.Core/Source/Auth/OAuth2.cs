@@ -36,6 +36,22 @@ using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth
 {
+    public class LoginOptions
+    {
+        public String LoginUrl    { get; private set; }
+        public String ClientId    { get; private set; }
+        public String CallbackUrl { get; private set; }
+        public String[] Scopes    { get; private set; }
+
+        public LoginOptions(String loginUrl, String clientId, String callbackUrl, String[] scopes)
+        {
+            LoginUrl = loginUrl;
+            ClientId = clientId;
+            CallbackUrl = callbackUrl;
+            Scopes = scopes;
+        }
+    }
+
     public class MobilePolicy
     {
         [JsonProperty(PropertyName="pin_length")]
@@ -106,34 +122,30 @@ namespace Salesforce.SDK.Auth
         /// Build the URL to the authorization web page for this login server.
         /// You need not provide refresh_token, as it is provided automatically.
         /// </summary>
-        /// <param name="loginServer">The base protocol and server to use (e.g. https://login.salesforce.com)</param>
-        /// <param name="clientId">OAuth client ID</param>
-        /// <param name="callbackUrl">OAuth callback url</param>
-        /// <param name="scopes">A list of OAuth scopes to request (eg {"visualforce","api"}).</param>
         /// <return>A URL to start the OAuth flow in a web browser/view.</return>
-        public static String ComputeAuthorizationUrl(String loginServer, String clientId, String callbackUrl, String[] scopes)
+        public static String ComputeAuthorizationUrl(LoginOptions loginOptions)
         {
             // Scope
-            String scopeStr = String.Join(" ", scopes.Concat(new String[] {REFRESH_SCOPE}).Distinct().ToArray());
+            String scopeStr = String.Join(" ", loginOptions.Scopes.Concat(new String[] {REFRESH_SCOPE}).Distinct().ToArray());
 
             // Args
-            String[] args = {clientId, callbackUrl, scopeStr};
+            String[] args = {loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
             String[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            String authorizationUrl = String.Format(loginServer + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
+            String authorizationUrl = String.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
 
             return authorizationUrl;
         }
 
 
-        public static async Task<AuthResponse> RefreshAuthToken(String loginServer, String clientId, String refreshToken)
+        public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, String refreshToken)
         {
             // Args
-            String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] {clientId, refreshToken});
+            String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] { loginOptions.ClientId, refreshToken });
             
             // Refresh url
-            String refreshUrl = loginServer + OAUTH_REFRESH_PATH;
+            String refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
 
             // Post
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);

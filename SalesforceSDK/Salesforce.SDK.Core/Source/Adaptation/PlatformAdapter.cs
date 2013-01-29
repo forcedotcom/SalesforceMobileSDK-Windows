@@ -77,7 +77,7 @@ namespace Salesforce.SDK.Adaptation
         private static Assembly TryLoadPlatformAssembly(Platform platform)
         {
             AssemblyName assemblyName = new AssemblyName();
-            assemblyName.Name = "SalesforceSDK." + platform.ToString();
+            assemblyName.Name = "Salesforce.SDK." + platform.ToString();
             try
             {
                 return Assembly.Load(assemblyName);

@@ -39,13 +39,14 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthorizationUrl()
         {
-            String loginServer = "https://login.salesforce.com";
+            String loginUrl = "https://login.salesforce.com";
             String clientId = "TEST_CLIENT_ID";
             String callbackUrl = "test://sfdc";
             String[] scopes = { "web", "api" };
+            LoginOptions loginOptions = new LoginOptions(loginUrl, clientId, callbackUrl, scopes);
 
             String expectedUrl = "https://login.salesforce.com/services/oauth2/authorize?display=mobile&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
-            String actualUrl = OAuth2.ComputeAuthorizationUrl(loginServer, clientId, callbackUrl, scopes);
+            String actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong authorization url");
         }
 
@@ -56,7 +57,8 @@ namespace Salesforce.SDK.Auth
             Assert.AreEqual(HttpStatusCode.Unauthorized, DoDescribe(null));
 
             // Get auth token (through refresh)
-            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
+            LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
+            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
             Assert.AreEqual(HttpStatusCode.OK, DoDescribe(refreshResponse.AccessToken));
@@ -66,7 +68,8 @@ namespace Salesforce.SDK.Auth
         public void testCallIdentityService()
         {
             // Get auth token and identity url (through refresh)
-            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result;
+            LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
+            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Call the identity service
             IdentityResponse identityResponse = OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;

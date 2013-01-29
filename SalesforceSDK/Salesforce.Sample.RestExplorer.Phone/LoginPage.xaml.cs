@@ -1,35 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
+﻿using Microsoft.Phone.Controls;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Rest;
+using System;
+using System.Collections.Generic;
+using System.Windows.Navigation;
 
-namespace Salesforce.Sample.RestExplorer.Phone
+namespace Salesforce.SDK.Auth
 {
     public partial class LoginPage : PhoneApplicationPage
     {
-        private const String LOGIN_URL = "https://test.salesforce.com";
-        private const String CALLBACK_URL = "sfdc:///axm/detect/oauth/done";
-        private const String CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+        private LoginOptions _loginOptions;
 
         public LoginPage()
         {
             InitializeComponent();
-            wvLogin.Source = new Uri(OAuth2.ComputeAuthorizationUrl(LOGIN_URL, CLIENT_ID, CALLBACK_URL, new String[] { "api" }));
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            IDictionary<String,String> qs = NavigationContext.QueryString;
+            _loginOptions = new LoginOptions(qs[AuthHelper.LOGIN_SERVER], qs[AuthHelper.CLIENT_ID], qs[AuthHelper.CALLBACK_URL], qs[AuthHelper.SCOPES].Split(' '));
+            wvLogin.Source = new Uri(OAuth2.ComputeAuthorizationUrl(_loginOptions));
             wvLogin.Navigating += OnNavigating;
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
-            if (e.Uri.ToString().StartsWith(CALLBACK_URL) && e.Uri.Fragment.Length > 0)
+            if (e.Uri.ToString().StartsWith(_loginOptions.CallbackUrl) && e.Uri.Fragment.Length > 0)
             {
                 e.Cancel = true;
-                AuthResponse ar = OAuth2.ParseFragment(e.Uri.Fragment.Substring(1));
+                AuthResponse authResponse = OAuth2.ParseFragment(e.Uri.Fragment.Substring(1));
+                PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(_loginOptions, authResponse);
             }
         }
     }

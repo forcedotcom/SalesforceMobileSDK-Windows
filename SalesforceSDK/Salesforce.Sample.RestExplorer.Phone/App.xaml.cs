@@ -7,6 +7,8 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Salesforce.Sample.RestExplorer.Phone.Resources;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
@@ -35,6 +37,26 @@ namespace Salesforce.Sample.RestExplorer.Phone
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
+
+
+        private const String LOGIN_URL = "https://test.salesforce.com";
+        private const String CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+        private const String CALLBACK_URL = "sfdc:///axm/detect/oauth/done";
+        private String[] SCOPES = new String[] { "api" };
+
+        private LoginOptions _loginOptions;
+        public LoginOptions LoginOptions
+        {
+            get
+            {
+                if (_loginOptions == null)
+                {
+                    _loginOptions = new LoginOptions(LOGIN_URL, CLIENT_ID, CALLBACK_URL, SCOPES);
+                }
+                return _loginOptions;
+            }
+
+        }
 
         /// <summary>
         /// Constructor for the Application object.

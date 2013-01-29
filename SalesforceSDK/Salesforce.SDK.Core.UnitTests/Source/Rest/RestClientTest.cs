@@ -69,7 +69,8 @@ namespace Salesforce.SDK.Rest
         [TestInitialize]
         public void SetUp()
         {
-            _accessToken = OAuth2.RefreshAuthToken(TestCredentials.LOGIN_SERVER, TestCredentials.CLIENT_ID, TestCredentials.REFRESH_TOKEN).Result.AccessToken;
+            LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
+            _accessToken = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result.AccessToken;
             _restClient = new RestClient(TestCredentials.INSTANCE_SERVER, _accessToken, null);
         }
 
