@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Rest
 {
+    public delegate void AsyncRequestCallback(RestResponse response);
     public delegate Task<String> AccessTokenProvider();
 
     public class RestClient
@@ -55,6 +56,16 @@ namespace Salesforce.SDK.Rest
             _instanceUrl = instanceUrl;
             _accessToken = accessToken;
             _accessTokenProvider = accessTokenProvider;
+        }
+
+        public void SendAsync(RestRequest request, AsyncRequestCallback callback)
+        {
+            SendAsync(request).ContinueWith((t) => callback(t.Result));
+        }
+
+        public async Task<RestResponse> SendAsync(RestRequest request)
+        {
+            return await Task.Factory.StartNew(() => SendSync(request));
         }
 
         public RestResponse SendSync(RestRequest request)

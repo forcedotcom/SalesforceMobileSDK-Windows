@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
+﻿using Microsoft.Phone.Controls;
 using Salesforce.SDK.Rest;
+using System.Windows;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
@@ -27,7 +20,9 @@ namespace Salesforce.Sample.RestExplorer.Phone
             RestClient rc = cm.GetRestClient();
             if (rc != null)
             {
-                tbResult.Text = rc.SendSync(RestRequest.GetRequestForDescribe("v26.0", tbObjectType.Text)).AsString;
+                RestRequest request = RestRequest.GetRequestForDescribe("v26.0", tbObjectType.Text);
+                AsyncRequestCallback callback = (response) => { tbResult.Text = response.AsString; };
+                rc.SendAsync(request, (response) => Dispatcher.BeginInvoke(() => { callback(response); }));
             }
         }
     }

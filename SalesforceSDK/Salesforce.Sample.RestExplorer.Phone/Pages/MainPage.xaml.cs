@@ -29,7 +29,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         {
             if (sender == btnDescribe)
             {
-                NavigationService.Navigate(new Uri("/DescribePage.xaml", UriKind.Relative));
+                NavigationService.Navigate(new Uri("/Pages/DescribePage.xaml", UriKind.Relative));
             }
             else 
             {

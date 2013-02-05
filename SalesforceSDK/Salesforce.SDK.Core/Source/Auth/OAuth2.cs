@@ -100,7 +100,14 @@ namespace Salesforce.SDK.Auth
         public String RefreshToken { get; set; }
 
         [JsonProperty(PropertyName = "scope")]
-        public String[] Scopes { get; set; }
+        public String ScopesStr {
+            set
+            {
+                Scopes = value.Split(' ');
+            }
+        }
+
+        public String[] Scopes;
     }
 
 

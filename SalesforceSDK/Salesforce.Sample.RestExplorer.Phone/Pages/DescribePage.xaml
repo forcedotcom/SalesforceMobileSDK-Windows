@@ -26,7 +26,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Name="tbObjectType" Grid.Row="0" Grid.Column="0"/>
             <Button Name="btnDescribe" Grid.Row="1" Grid.Column="0">Describe</Button>
-            <TextBox Name ="tbResult" Grid.Row="2" Grid.Column="0"/>
+            <TextBox Name ="tbResult"  Grid.Row="2" Grid.Column="0"/>
         </Grid>
     </Grid>
 
