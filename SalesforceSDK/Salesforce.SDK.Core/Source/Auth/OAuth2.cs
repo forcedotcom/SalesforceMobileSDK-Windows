@@ -111,7 +111,7 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const String OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const String OAUTH_AUTH_QUERY_STRING = "display=mobile&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const String OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Refresh url
         const String OAUTH_REFRESH_PATH = "/services/oauth2/token";

@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
   
-  <Identity Name="275d8ec7-5a29-4eaf-b4f5-4c30a8ec24a0"
+  <Identity Name="e8bda6f1-2538-437a-8ff6-2374d0643cc1"
             Publisher="CN=wmathurin"
             Version="1.0.0.0" />
   
   <Properties>
-    <DisplayName>Salesforce.SDK.Core.UnitTests</DisplayName>
+    <DisplayName>Salesforce.SDK.Store.Test</DisplayName>
     <PublisherDisplayName>wmathurin</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
-    <Description>Salesforce.SDK.Core.UnitTests</Description>
+    <Description>Salesforce.SDK.Store.Test</Description>
   </Properties>
   
   <Prerequisites>
