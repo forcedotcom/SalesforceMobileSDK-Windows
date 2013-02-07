@@ -93,8 +93,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\DescribePage.xaml.cs">
-      <DependentUpon>DescribePage.xaml</DependentUpon>
+    <Compile Include="Pages\RestActionPage.xaml.cs">
+      <DependentUpon>RestActionPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="Pages\MainPage.xaml.cs">
@@ -115,9 +115,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
-    <Page Include="Pages\DescribePage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Pages\RestActionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\LoginPage.xaml">
       <SubType>Designer</SubType>

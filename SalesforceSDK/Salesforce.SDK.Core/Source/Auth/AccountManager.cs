@@ -44,6 +44,11 @@ namespace Salesforce.SDK.Source.Auth
 
     public class AccountManager
     {
+        public static void Logout()
+        {
+            PlatformAdapter.Resolve<IAuthHelper>().Logout();
+        }
+
         public static Account GetAccount()
         {
             return PlatformAdapter.Resolve<IAuthHelper>().RetrievePersistedCredentials();

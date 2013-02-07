@@ -17,5 +17,7 @@ namespace Salesforce.SDK.Auth
         void PersistCredentials(Account account);
 
         Account RetrievePersistedCredentials();
+
+        void Logout();
     }
 }

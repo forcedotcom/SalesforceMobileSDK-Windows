@@ -34,7 +34,7 @@ using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
-    enum RestAction
+    public enum RestAction
     {
         VERSIONS,
         RESOURCES,

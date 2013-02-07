@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{b5b7777c-b9ce-43f0-8cc9-bcba44379598}" Title="Salesforce.Sample.RestExplorer.Phone" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Salesforce.Sample.RestExplorer.Phone author" Description="Sample description" Publisher="Salesforce.Sample.RestExplorer.Phone" PublisherID="{c0be935e-1a47-479e-b897-b4c2119704e4}">
+  <App xmlns="" ProductID="{b5b7777c-b9ce-43f0-8cc9-bcba44379598}" Title="Rest API Explorer" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Salesforce.Sample.RestExplorer.Phone author" Description="Sample description" Publisher="Salesforce.Sample.RestExplorer.Phone" PublisherID="{c0be935e-1a47-479e-b897-b4c2119704e4}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />

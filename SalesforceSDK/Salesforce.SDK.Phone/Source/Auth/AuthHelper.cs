@@ -30,7 +30,7 @@ namespace Salesforce.SDK.Auth
             String scopes = Uri.EscapeUriString(String.Join(" ", loginOptions.Scopes));
             String queryString = String.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
 
-            ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/LoginPage.xaml" + queryString, UriKind.Relative));
+            ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + queryString, UriKind.Relative));
         }
 
         public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
@@ -63,6 +63,15 @@ namespace Salesforce.SDK.Auth
                 return Account.fromJson(accountJson);
             }
             return null;
+        }
+
+        public void Logout()
+        {
+            IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
+            if (settings.Contains(ACCOUNT_SETTING))
+            {
+                settings.Remove(ACCOUNT_SETTING);
+            }
         }
 
     }

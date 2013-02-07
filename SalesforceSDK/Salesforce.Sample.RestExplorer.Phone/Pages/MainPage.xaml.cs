@@ -1,6 +1,6 @@
 ﻿using Microsoft.Phone.Controls;
-using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Source.Auth;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,25 +27,39 @@ namespace Salesforce.Sample.RestExplorer.Phone
 
         private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
         {
-            if (sender == btnDescribe)
+            RestAction restAction = RestAction.RESOURCES;
+            
+            switch (((Button)sender).Name)
             {
-                NavigationService.Navigate(new Uri("/Pages/DescribePage.xaml", UriKind.Relative));
+                case "btnLogout": OnLogout(); return;
+                case "btnManual": MessageBox.Show("Not implemented yet"); return;
+
+                case "btnCreate": restAction = RestAction.CREATE; break;
+                case "btnDelete": restAction = RestAction.DELETE; break;
+                case "btnDescribe": restAction = RestAction.DESCRIBE; break;
+                case "btnDescribeGlobal": restAction = RestAction.DESCRIBE_GLOBAL; break;
+                case "btnMetadata": restAction = RestAction.METADATA; break;
+                case "btnQuery": restAction = RestAction.QUERY; break;
+                case "btnResources": restAction = RestAction.RESOURCES; break;
+                case "btnRetrieve": restAction = RestAction.RETRIEVE; break;
+                case "btnSearch": restAction = RestAction.SEARCH; break;
+                case "btnUpdate": restAction = RestAction.UPDATE; break;
+                case "btnUpsert": restAction = RestAction.UPSERT; break;
+                case "btnVersions": restAction = RestAction.VERSIONS; break;
             }
-            else 
-            {
-                MessageBox.Show(((Button)sender).Name);
-            }
+            NavigationService.Navigate(new Uri("/Pages/RestActionPage.xaml?rest_action=" + restAction, UriKind.Relative));
         }
 
-        // Load data for the ViewModel Items
+        protected void OnLogout()
+        {
+            AccountManager.Logout();
+            OnNavigatedTo(null);
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            //ClientManager cm = new ClientManager(((App)Application.Current).LoginOptions);
-            //RestClient rc = cm.GetRestClient();
-            //if (rc != null)
-            //{
-            //    System.Diagnostics.Debug.WriteLine("Logged in!");
-            //}
+            ClientManager cm = new ClientManager(((App)Application.Current).LoginOptions);
+            RestClient rc = cm.GetRestClient();
         }
     }
 }
