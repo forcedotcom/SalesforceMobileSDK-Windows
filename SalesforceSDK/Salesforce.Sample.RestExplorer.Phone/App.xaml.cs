@@ -40,7 +40,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
 
 
         private const String LOGIN_URL = "https://test.salesforce.com";
-        private const String CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+        private const String CLIENT_ID = "3MVG92.uWdyphVj51aXI_W16JGEwzme6Hj3YodbDRU0FHC86IddELDABTLsS5HGHNzNN_vQTA_XDuL.QtdF7G";
         private const String CALLBACK_URL = "sfdc:///axm/detect/oauth/done";
         private String[] SCOPES = new String[] { "api" };
 
