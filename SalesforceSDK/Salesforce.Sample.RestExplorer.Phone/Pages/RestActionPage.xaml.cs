@@ -1,4 +1,7 @@
 ﻿using Microsoft.Phone.Controls;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
@@ -59,7 +62,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
                     Show(tbApiVersion);
                     Show(tbObjectType);
                     Show(tbObjectId);
-                    Show(tbFields);
+                    Show(tbFieldList);
                     break;
                 case RestAction.UPSERT:
                     Show(tbApiVersion);
@@ -87,18 +90,23 @@ namespace Salesforce.Sample.RestExplorer.Phone
                     Show(tbApiVersion);
                     Show(tbSosl);
                     break;
+                case RestAction.MANUAL:
+                    Show(tbRequestPath);
+                    Show(tbRequestBody);
+                    Show(svMethods);
+                    break;
             }
         }
 
-        private void Show(params TextBox[] tbs)
+        private void Show(params Control[] controls)
         {
-            foreach (TextBox tb in tbs)
+            foreach (Control control in controls)
             {
-                tb.Visibility = Visibility.Visible;
+                control.Visibility = Visibility.Visible;
             }
         }
 
-        private void OnActionClicked(object sender, RoutedEventArgs e)
+        private void OnActionClicked(Object sender, RoutedEventArgs e)
         {
             ClientManager cm = new ClientManager(((App)Application.Current).LoginOptions);
             RestClient rc = cm.GetRestClient();
@@ -156,27 +164,54 @@ namespace Salesforce.Sample.RestExplorer.Phone
                 case RestAction.DESCRIBE:
                     return RestRequest.GetRequestForDescribe(tbApiVersion.Text, tbObjectType.Text);
                 case RestAction.CREATE:
-                    return RestRequest.GetRequestForCreate(tbApiVersion.Text, tbObjectType.Text, ParseFieldMap(tbFields));
+                    return RestRequest.GetRequestForCreate(tbApiVersion.Text, tbObjectType.Text, ParseFieldsValue());
                 case RestAction.RETRIEVE:
-                    return RestRequest.GetRequestForRetrieve(tbApiVersion.Text, tbObjectType.Text, tbObjectId.Text, tbFields.Text.Split(','));
+                    return RestRequest.GetRequestForRetrieve(tbApiVersion.Text, tbObjectType.Text, tbObjectId.Text, ParseFieldListValue());
                 case RestAction.UPSERT:
-                    return RestRequest.GetRequestForUpsert(tbApiVersion.Text, tbObjectType.Text, tbExternalIdField.Text, tbExternalId.Text, ParseFieldMap(tbFields));
+                    return RestRequest.GetRequestForUpsert(tbApiVersion.Text, tbObjectType.Text, tbExternalIdField.Text, tbExternalId.Text, ParseFieldsValue());
                 case RestAction.UPDATE:
-                    return RestRequest.GetRequestForUpdate(tbApiVersion.Text, tbObjectType.Text, tbObjectId.Text, ParseFieldMap(tbFields));
+                    return RestRequest.GetRequestForUpdate(tbApiVersion.Text, tbObjectType.Text, tbObjectId.Text, ParseFieldsValue());
                 case RestAction.DELETE:
                     return RestRequest.GetRequestForDelete(tbApiVersion.Text, tbObjectType.Text, tbObjectId.Text);
                 case RestAction.QUERY:
                     return RestRequest.GetRequestForQuery(tbApiVersion.Text, tbSoql.Text);
                 case RestAction.SEARCH:
-                    return RestRequest.GetRequestForQuery(tbApiVersion.Text, tbSosl.Text);
+                    return RestRequest.GetRequestForSearch(tbApiVersion.Text, tbSosl.Text);
+                case RestAction.MANUAL:
+                    return BuildManualRestReuqest();
+                default:
+                    throw new InvalidOperationException();
             }
-
-            return null;
         }
 
-        private Dictionary<string, object> ParseFieldMap(TextBox tb)
+        private RestRequest BuildManualRestReuqest()
         {
-            return null;
+            RestMethod method = RestMethod.GET;
+            foreach (var child in spMethods.Children)
+            {
+                if (child.GetType() == typeof(RadioButton) && ((RadioButton)child).IsChecked == true)
+                {
+                    method = (RestMethod)Enum.Parse(typeof(RestMethod), ((RadioButton)child).Tag.ToString(), true);
+                    break;
+                }
+            }
+            return new RestRequest(method, tbRequestPath.Text, tbRequestBody.Text, ContentType.JSON);
+        }
+
+        private string[] ParseFieldListValue()
+        {
+            return tbFieldList.Text.Split(',');
+        }
+
+        private Dictionary<String, Object> ParseFieldsValue()
+        {
+            Dictionary<String, Object> result = new Dictionary<String, Object>();
+            JObject fieldMap = JObject.Parse(tbFields.Text);
+            foreach (var item in fieldMap)
+            {
+                result.Add(item.Key, item.Value);
+            }
+            return result;
         }
 
     }

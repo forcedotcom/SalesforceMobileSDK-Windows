@@ -47,7 +47,9 @@ namespace Salesforce.SDK.Rest
         UPDATE,
         DELETE,
         QUERY,
-        SEARCH
+        SEARCH,
+        // Other
+        MANUAL
     }
 
     static class Extensions
@@ -95,8 +97,8 @@ namespace Salesforce.SDK.Rest
     public class RestRequest
     {
 
-        private readonly Method _method;
-        public Method Method
+        private readonly RestMethod _method;
+        public RestMethod Method
         {
             get { return _method; }
         }
@@ -133,11 +135,11 @@ namespace Salesforce.SDK.Rest
         /// <param name="requestBody">The request body if there is one, can be null.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="additionalHeaders">Additional HTTP headers, can be null.</param>
-        public RestRequest(Method method, String path) : this(method, path, null, ContentType.NONE, null) { }
-        public RestRequest(Method method, String path, String requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
-        public RestRequest(Method method, String path, String requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
+        public RestRequest(RestMethod method, String path) : this(method, path, null, ContentType.NONE, null) { }
+        public RestRequest(RestMethod method, String path, String requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
+        public RestRequest(RestMethod method, String path, String requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
 
-        public RestRequest(Method method, String path, String requestBody, ContentType contentType, Dictionary<String, String> additionalHeaders)
+        public RestRequest(RestMethod method, String path, String requestBody, ContentType contentType, Dictionary<String, String> additionalHeaders)
         {
             _method = method;
             _path = path;
@@ -161,7 +163,7 @@ namespace Salesforce.SDK.Rest
         /// 
         public static RestRequest GetRequestForVersions()
         {
-            return new RestRequest(Method.GET, RestAction.VERSIONS.Path());
+            return new RestRequest(RestMethod.GET, RestAction.VERSIONS.Path());
         }
 
         /// <summary>
@@ -172,7 +174,7 @@ namespace Salesforce.SDK.Rest
         /// <return>A RestRequest</return>
         public static RestRequest GetRequestForResources(String apiVersion)
         {
-            return new RestRequest(Method.GET, RestAction.RESOURCES.Path(apiVersion));
+            return new RestRequest(RestMethod.GET, RestAction.RESOURCES.Path(apiVersion));
         }
 
         /// <summary>
@@ -182,7 +184,7 @@ namespace Salesforce.SDK.Rest
         /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDescribeGlobal(String apiVersion)
         {
-            return new RestRequest(Method.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
+            return new RestRequest(RestMethod.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
         }
 
         /// <summary>
@@ -194,7 +196,7 @@ namespace Salesforce.SDK.Rest
         /// <return>A RestRequest</return>
         public static RestRequest GetRequestForMetadata(String apiVersion, String objectType)
         {
-            return new RestRequest(Method.GET, RestAction.METADATA.Path(apiVersion, objectType));
+            return new RestRequest(RestMethod.GET, RestAction.METADATA.Path(apiVersion, objectType));
         }
 
         /// <summary>
@@ -206,7 +208,7 @@ namespace Salesforce.SDK.Rest
         /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDescribe(String apiVersion, String objectType)
         {
-            return new RestRequest(Method.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
+            return new RestRequest(RestMethod.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
         }
 
         /// <summary>
@@ -220,7 +222,7 @@ namespace Salesforce.SDK.Rest
         public static RestRequest GetRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.POST, RestAction.CREATE.Path(apiVersion, objectType), fieldsData, ContentType.JSON);
+            return new RestRequest(RestMethod.POST, RestAction.CREATE.Path(apiVersion, objectType), fieldsData, ContentType.JSON);
         }
 
         /// <summary>
@@ -241,7 +243,7 @@ namespace Salesforce.SDK.Rest
                 path.Append(Uri.EscapeUriString(String.Join(",", fieldList)));
             }
 
-            return new RestRequest(Method.GET, path.ToString());
+            return new RestRequest(RestMethod.GET, path.ToString());
         }
 
         /// <summary>
@@ -255,7 +257,7 @@ namespace Salesforce.SDK.Rest
         public static RestRequest GetRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.PATCH, RestAction.UPDATE.Path(apiVersion, objectType, objectId), fieldsData, ContentType.JSON);
+            return new RestRequest(RestMethod.PATCH, RestAction.UPDATE.Path(apiVersion, objectType, objectId), fieldsData, ContentType.JSON);
         }
 
 
@@ -271,7 +273,7 @@ namespace Salesforce.SDK.Rest
         public static RestRequest GetRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(Method.PATCH, RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
+            return new RestRequest(RestMethod.PATCH, RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
         }
 
         /// <summary>
@@ -284,7 +286,7 @@ namespace Salesforce.SDK.Rest
         /// <return>A RestRequest</return>
         public static RestRequest GetRequestForDelete(String apiVersion, String objectType, String objectId)
         {
-            return new RestRequest(Method.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
+            return new RestRequest(RestMethod.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
         }
 
         /// <summary>
@@ -299,7 +301,7 @@ namespace Salesforce.SDK.Rest
             StringBuilder path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
-            return new RestRequest(Method.GET, path.ToString());
+            return new RestRequest(RestMethod.GET, path.ToString());
         }
 
         /// <summary>
@@ -314,7 +316,7 @@ namespace Salesforce.SDK.Rest
             StringBuilder path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
-            return new RestRequest(Method.GET, path.ToString());
+            return new RestRequest(RestMethod.GET, path.ToString());
         }
     }
 }

@@ -32,8 +32,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
             switch (((Button)sender).Name)
             {
                 case "btnLogout": OnLogout(); return;
-                case "btnManual": MessageBox.Show("Not implemented yet"); return;
-
+                case "btnManual": restAction = RestAction.MANUAL; break;
                 case "btnCreate": restAction = RestAction.CREATE; break;
                 case "btnDelete": restAction = RestAction.DELETE; break;
                 case "btnDescribe": restAction = RestAction.DESCRIBE; break;

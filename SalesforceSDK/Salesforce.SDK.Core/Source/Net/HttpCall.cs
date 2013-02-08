@@ -38,7 +38,7 @@ namespace Salesforce.SDK.Net
     /**
 	 * Enumeration for all HTTP methods.
 	 */
-    public enum Method
+    public enum RestMethod
     {
         GET, POST, PUT, DELETE, HEAD, PATCH
     }
@@ -71,7 +71,7 @@ namespace Salesforce.SDK.Net
 
     public class HttpCall
     {
-        private readonly Method _method;
+        private readonly RestMethod _method;
         private readonly Dictionary<String, String> _headers;
         private readonly String _url;
         private readonly String _requestBody;
@@ -143,7 +143,7 @@ namespace Salesforce.SDK.Net
             }
         }
 
-        public HttpCall(Method method, Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
+        public HttpCall(RestMethod method, Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
         {
             _method = method;
             _headers = headers;
@@ -154,7 +154,7 @@ namespace Salesforce.SDK.Net
 
         public static HttpCall CreateGet(Dictionary<String, String> headers, String url) 
         {
-            return new HttpCall(Method.GET, headers, url, null, ContentType.NONE);
+            return new HttpCall(RestMethod.GET, headers, url, null, ContentType.NONE);
         }
 
         public static HttpCall CreateGet(String url)
@@ -164,7 +164,7 @@ namespace Salesforce.SDK.Net
 
         public static HttpCall CreatePost(Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
         {
-            return new HttpCall(Method.POST, headers, url, requestBody, contentType);
+            return new HttpCall(RestMethod.POST, headers, url, requestBody, contentType);
         }
 
         public static HttpCall CreatePost(String url, String requestBody)
@@ -215,12 +215,12 @@ namespace Salesforce.SDK.Net
                 }
             }
 
-            if (_method == Method.GET || _method == Method.HEAD || _method == Method.DELETE)
+            if (_method == RestMethod.GET || _method == RestMethod.HEAD || _method == RestMethod.DELETE)
             {
                 // Start the asynchronous operation to get the response
                 _request.BeginGetResponse(new AsyncCallback(GetResponseCallback), null);
             }
-            else if (_method == Method.POST || _method == Method.PUT || _method == Method.PATCH)
+            else if (_method == RestMethod.POST || _method == RestMethod.PUT || _method == RestMethod.PATCH)
             {
                 // Setting content type
                 _request.ContentType = _contentType.MimeType();

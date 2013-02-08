@@ -25,14 +25,28 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Visible" Name="tbApiVersion" Text="v26.0"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbApiVersion" Text="v26.0"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectType" Text="Account"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectId" Text="id"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalIdField" Text="externalIdField"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalId" Text="externalId"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields" Text="fields"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFieldList" Text="Id,Name"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields" Text="{}{&quot;Name&quot;: &quot;acme&quot;}"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSoql" Text="SELECT Name FROM Account"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl" Text="FIND {acme*}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestPath" Text="/services/data/v26.0/chatter/feeds/news/me"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestBody" Text="body"/>
+                <ScrollViewer Visibility="Collapsed" Name="svMethods" HorizontalScrollBarVisibility="Visible">
+                    <StackPanel Orientation="Horizontal" Name="spMethods">
+                        <RadioButton Name="rbGet" Tag="GET" Content="Get" GroupName="grpMethod" IsChecked="True"/>
+                        <RadioButton Name="rbPost" Tag="POST" Content="Post" GroupName="grpMethod" />
+                        <RadioButton Name="rbPut" Tag="PUT" Content="Put" GroupName="grpMethod" />
+                        <RadioButton Name="rbDelete" Tag="DELETE" Content="Delete" GroupName="grpMethod" />
+                        <RadioButton Name="rbHead" Tag="HEAD" Content="Head" GroupName="grpMethod" />
+                        <RadioButton Name="rbPatch" Tag="PATCH" Content="Patch" GroupName="grpMethod" />
+                    </StackPanel>
+                </ScrollViewer>
+
             </StackPanel>
             <Button Name="btnAction" Grid.Row="1" Grid.Column="0">Go</Button>
             <phone:WebBrowser Name="wbResult" Grid.Row="2" Grid.Column="0" IsScriptEnabled="True"/>
