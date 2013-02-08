@@ -44,21 +44,21 @@ namespace Salesforce.SDK.Source.Auth
 
     public class AccountManager
     {
-        public static void Logout()
+        public static void DeleteAccount()
         {
-            PlatformAdapter.Resolve<IAuthHelper>().Logout();
+            PlatformAdapter.Resolve<IAuthStorageHelper>().DeletePersistedCredentials();
         }
 
         public static Account GetAccount()
         {
-            return PlatformAdapter.Resolve<IAuthHelper>().RetrievePersistedCredentials();
+            return PlatformAdapter.Resolve<IAuthStorageHelper>().RetrievePersistedCredentials();
         }
 
         public static void CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
             Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.AccessToken, authResponse.RefreshToken);
-            PlatformAdapter.Resolve<IAuthHelper>().PersistCredentials(account);
+            PlatformAdapter.Resolve<IAuthStorageHelper>().PersistCredentials(account);
         }
     }
 }

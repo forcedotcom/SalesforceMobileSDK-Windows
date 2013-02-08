@@ -124,6 +124,9 @@ namespace Salesforce.SDK.Auth
         const String OAUTH_REFRESH_PATH = "/services/oauth2/token";
         const String OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
+        // Revoke url
+        const String OAUTH_REVOKE_PATH = "/services/oauth2/refresh";
+        const String OAUTH_REVOKE_QUERY_STRING = "token={0}";
 
         /// <summary>
         /// Build the URL to the authorization web page for this login server.
@@ -159,6 +162,21 @@ namespace Salesforce.SDK.Auth
 
             // Execute post
             return await c.ExecuteAndDeserialize<AuthResponse>();
+        }
+
+        public static async Task<HttpStatusCode> RevokeAuthToken(LoginOptions loginOptions, String refreshToken)
+        {
+            // Args
+            String argsStr = String.Format(OAUTH_REVOKE_QUERY_STRING, new String[] { refreshToken });
+
+            // Refresh url
+            String revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
+
+            // Post
+            HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
+
+            // Execute post
+            return await c.Execute().ContinueWith(t => t.Result.StatusCode);
         }
 
 

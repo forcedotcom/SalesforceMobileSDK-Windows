@@ -164,9 +164,7 @@
       <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ViewModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
       <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>

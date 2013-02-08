@@ -10,6 +10,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        private ClientManager _clientManager;
         private Button[] _buttons;
 
         // Constructor
@@ -17,6 +18,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         {
             InitializeComponent();
 
+            _clientManager = new ClientManager(((App)Application.Current).LoginOptions);
             _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
             foreach (Button button in _buttons)
@@ -51,14 +53,13 @@ namespace Salesforce.Sample.RestExplorer.Phone
 
         protected void OnLogout()
         {
-            AccountManager.Logout();
+            _clientManager.Logout();
             OnNavigatedTo(null);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ClientManager cm = new ClientManager(((App)Application.Current).LoginOptions);
-            RestClient rc = cm.GetRestClient();
+            _clientManager.GetRestClient();
         }
     }
 }

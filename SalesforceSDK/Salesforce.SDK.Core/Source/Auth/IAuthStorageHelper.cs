@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth
 {
-    public interface IAuthHelper
+    public interface IAuthStorageHelper
     {
-        void StartLoginFlow(LoginOptions loginOptions);
+        void PersistCredentials(Account account);
 
-        void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse);
+        Account RetrievePersistedCredentials();
+
+        void DeletePersistedCredentials();
     }
 }

@@ -14,6 +14,16 @@ namespace Salesforce.SDK.Rest
             _loginOptions = loginOptions;
         }
 
+        public async void Logout()
+        {
+            Account account = AccountManager.GetAccount();
+            if (account != null)
+            {
+                AccountManager.DeleteAccount();
+                await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+            }
+        }
+
         public RestClient GetRestClient()
         {
             Account account = AccountManager.GetAccount();
@@ -34,7 +44,5 @@ namespace Salesforce.SDK.Rest
                 return null;
             }
         }
-
-
     }
 }
