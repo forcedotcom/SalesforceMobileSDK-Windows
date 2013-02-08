@@ -2,8 +2,10 @@
 using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Navigation;
 
 namespace Salesforce.Sample.RestExplorer.Phone
@@ -15,6 +17,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         public RestActionPage()
         {
             InitializeComponent();
+            ShowResults(null);
             btnAction.Click += OnActionClicked;
         }
 
@@ -102,9 +105,40 @@ namespace Salesforce.Sample.RestExplorer.Phone
             if (rc != null)
             {
                 RestRequest request = BuildRestRequest();
-                AsyncRequestCallback callback = (response) => { tbResult.Text = response.AsString; };
-                rc.SendAsync(request, (response) => Dispatcher.BeginInvoke(() => { callback(response); }));
+                rc.SendAsync(request, (response) => Dispatcher.BeginInvoke(() => { ShowResponse(response); }));
             }
+        }
+
+        private void ShowResponse(RestResponse response)
+        {
+            ShowResults(new String[] { "<b>StatusCode:</b>" + response.StatusCode, "<b>Body:</b>\n" + response.PrettyBody });
+        }
+
+        private void ShowResults(String[] blocks)
+        {
+            String htmlHead = @"
+            <head>
+                <meta name=""viewport"" content=""width=device-width, initial-scale=1.0, maximum-scale=1.0; user-scalable=no"" />
+                <style>
+                    body { background-color: black; color: white; }
+                    pre {border: 1px solid white; padding: 5px; word-wrap: break-word;}
+                </style>
+            </head>
+            ";
+
+            StringBuilder sb = new StringBuilder(htmlHead);
+
+            sb.Append("<body>");
+
+            if (blocks != null)
+            {
+                foreach (String block in blocks)
+                {
+                    sb.Append("<pre>").Append(block).Append("</pre>");
+                }
+            }
+            sb.Append("</body>");
+            wbResult.NavigateToString(sb.ToString());
         }
 
         private RestRequest BuildRestRequest()

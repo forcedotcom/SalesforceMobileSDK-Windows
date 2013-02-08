@@ -8,6 +8,10 @@
     <!--Application Resources-->
     <Application.Resources>
         <local:LocalizedStrings xmlns:local="clr-namespace:Salesforce.Sample.RestExplorer.Phone" x:Key="LocalizedStrings"/>
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Green" />
+        </Style>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>
@@ -16,5 +20,6 @@
             Launching="Application_Launching" Closing="Application_Closing"
             Activated="Application_Activated" Deactivated="Application_Deactivated"/>
     </Application.ApplicationLifetimeObjects>
+
 
 </Application>

@@ -101,5 +101,32 @@ namespace Salesforce.SDK.Rest
                 return _call.StatusCode;
             }
         }
+
+        private String _prettyBody;
+        public String PrettyBody
+        {
+            get
+            {
+                if (_prettyBody == null)
+                {
+                    try
+                    {
+                        _prettyBody = JsonConvert.SerializeObject(AsJObject, Formatting.Indented);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            _prettyBody = JsonConvert.SerializeObject(AsJArray, Formatting.Indented);
+                        }
+                        catch
+                        {
+                            _prettyBody = AsString;
+                        }
+                    }
+                }
+                return _prettyBody;
+            }
+        }
     }
 }

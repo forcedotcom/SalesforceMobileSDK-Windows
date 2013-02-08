@@ -25,17 +25,17 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBox Visibility="Collapsed" Name="tbApiVersion" Text="v26.0"/>
-                <TextBox Visibility="Collapsed" Name="tbObjectType" Text="Account"/>
-                <TextBox Visibility="Collapsed" Name="tbObjectId" Text="id"/>
-                <TextBox Visibility="Collapsed" Name="tbExternalIdField" Text="externalIdField"/>
-                <TextBox Visibility="Collapsed" Name="tbExternalId" Text="externalId"/>
-                <TextBox Visibility="Collapsed" Name="tbFields" Text="fields"/>
-                <TextBox Visibility="Collapsed" Name="tbSoql" Text="SELECT Name FROM Account"/>
-                <TextBox Visibility="Collapsed" Name="tbSosl" Text="FIND {acme*}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Visible" Name="tbApiVersion" Text="v26.0"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectType" Text="Account"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectId" Text="id"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalIdField" Text="externalIdField"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalId" Text="externalId"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields" Text="fields"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSoql" Text="SELECT Name FROM Account"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl" Text="FIND {acme*}"/>
             </StackPanel>
             <Button Name="btnAction" Grid.Row="1" Grid.Column="0">Go</Button>
-            <TextBox Name="tbResult" Grid.Row="2" Grid.Column="0" IsReadOnly="True" TextWrapping="Wrap"/>
+            <phone:WebBrowser Name="wbResult" Grid.Row="2" Grid.Column="0" IsScriptEnabled="True"/>
         </Grid>
     </Grid>
 
