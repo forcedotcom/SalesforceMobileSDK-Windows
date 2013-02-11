@@ -10,15 +10,15 @@ namespace Salesforce.Sample.RestExplorer.Phone
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        private ClientManager _clientManager;
-        private Button[] _buttons;
+        ClientManager _clientManager;
+        Button[] _buttons;
 
         // Constructor
         public MainPage()
         {
             InitializeComponent();
 
-            _clientManager = new ClientManager(((App)Application.Current).LoginOptions);
+            _clientManager = new ClientManager(Config.LoginOptions);
             _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
             foreach (Button button in _buttons)

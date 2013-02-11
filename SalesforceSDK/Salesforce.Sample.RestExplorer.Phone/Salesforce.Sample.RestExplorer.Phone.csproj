@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Config.cs" />
     <Compile Include="Pages\RestActionPage.xaml.cs">
       <DependentUpon>RestActionPage.xaml</DependentUpon>
     </Compile>

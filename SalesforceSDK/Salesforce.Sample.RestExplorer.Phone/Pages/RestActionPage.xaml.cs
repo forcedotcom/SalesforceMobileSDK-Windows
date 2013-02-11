@@ -108,7 +108,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
 
         private void OnActionClicked(Object sender, RoutedEventArgs e)
         {
-            ClientManager cm = new ClientManager(((App)Application.Current).LoginOptions);
+            ClientManager cm = new ClientManager(Config.LoginOptions);
             RestClient rc = cm.GetRestClient();
             if (rc != null)
             {

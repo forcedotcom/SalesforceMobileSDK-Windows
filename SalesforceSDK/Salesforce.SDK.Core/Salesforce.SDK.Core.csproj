@@ -44,6 +44,8 @@
     <Compile Include="Source\Rest\RestClient.cs" />
     <Compile Include="Source\Rest\RestRequest.cs" />
     <Compile Include="Source\Rest\RestResponse.cs" />
+    <Compile Include="Source\Util\EventsListenerQueue.cs" />
+    <Compile Include="Source\Util\EventsObservable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
