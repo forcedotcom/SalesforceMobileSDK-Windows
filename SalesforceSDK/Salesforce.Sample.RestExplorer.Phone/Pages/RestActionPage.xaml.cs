@@ -44,10 +44,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
                 tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
                 tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})
             {
-                if (names.Contains(tb.Name))
-                {
-                    tb.Visibility = Visibility.Visible;
-                }
+                tb.Visibility = names.Contains(tb.Name) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

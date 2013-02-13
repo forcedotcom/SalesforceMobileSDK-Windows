@@ -39,6 +39,7 @@ namespace Salesforce.Sample.RestExplorer.Store
             }
 
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            SwitchToRestAction(RestAction.VERSIONS);
         }
 
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -72,7 +73,12 @@ namespace Salesforce.Sample.RestExplorer.Store
                 case "btnUpsert": restAction = RestAction.UPSERT; break;
                 case "btnVersions": restAction = RestAction.VERSIONS; break;
             }
+            SwitchToRestAction(restAction);
+        }
 
+        private void SwitchToRestAction(RestAction restAction)
+        {
+            ShowResponse(null);
             String restActionStr = restAction.ToString();
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
@@ -81,10 +87,7 @@ namespace Salesforce.Sample.RestExplorer.Store
                 tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
                 tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})
             {
-                if (names.Contains(tb.Name))
-                {
-                    tb.Visibility = Visibility.Visible;
-                }
+                tb.Visibility = names.Contains(tb.Name) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
