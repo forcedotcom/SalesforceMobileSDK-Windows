@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salesforce.Sample.RestExplorer.Phone
+namespace Salesforce.Sample.RestExplorer.Shared
 {
     public class Config
     {

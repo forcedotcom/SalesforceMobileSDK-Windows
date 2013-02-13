@@ -37,17 +37,7 @@
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl" Text="{Binding [Sosl]}"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestPath" Text="{Binding [RequestPath]}"/>
                 <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestBody" Text="{Binding [RequestBody]}"/>
-                <ScrollViewer Visibility="Collapsed" Name="svMethods" HorizontalScrollBarVisibility="Visible">
-                    <StackPanel Orientation="Horizontal" Name="spMethods">
-                        <RadioButton Name="rbGet" Tag="GET" Content="Get" GroupName="grpMethod" IsChecked="True"/>
-                        <RadioButton Name="rbPost" Tag="POST" Content="Post" GroupName="grpMethod" />
-                        <RadioButton Name="rbPut" Tag="PUT" Content="Put" GroupName="grpMethod" />
-                        <RadioButton Name="rbDelete" Tag="DELETE" Content="Delete" GroupName="grpMethod" />
-                        <RadioButton Name="rbHead" Tag="HEAD" Content="Head" GroupName="grpMethod" />
-                        <RadioButton Name="rbPatch" Tag="PATCH" Content="Patch" GroupName="grpMethod" />
-                    </StackPanel>
-                </ScrollViewer>
-
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestMethod" Text="{Binding [RequestMethod]}" Margin="-2,0,2,0"/>
             </StackPanel>
             <Button Name="btnAction" Grid.Row="1" Grid.Column="0" Command="{Binding SendRequest}">Send Request</Button>
             <phone:WebBrowser Name="wbResult" Grid.Row="2" Grid.Column="0"/>

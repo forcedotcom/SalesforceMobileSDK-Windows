@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json.Linq;
-using Salesforce.Sample.RestExplorer.Phone;
+using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Salesforce.Sample.RestExplorer.ViewModels
@@ -15,8 +12,9 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
     public class RestActionViewModel : INotifyPropertyChanged
     {
         // Bound properties
-        public const String SELECTED_REST_ACTION = "SelectedRestAction";
         public const String RETURNED_REST_RESPONSE = "ReturnedRestResponse";
+        // Bound indexed properties
+        public const String SELECTED_REST_ACTION = "SelectedRestAction";
         public const String API_VERSION = "ApiVersion";
         public const String OBJECT_TYPE = "ObjectType";
         public const String OBJECT_ID = "ObjectId";
@@ -28,20 +26,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         public const String SOSL = "Sosl";
         public const String REQUEST_PATH = "RequestPath";
         public const String REQUEST_BODY = "RequestBody";
-
-        private RestAction _restAction;
-        public RestAction SelectedRestAction
-        {
-            get
-            {
-                return _restAction;
-            }
-
-            set
-            {
-                _restAction = value;
-            }
-        }
+        public const String REQUEST_METHOD = "RequestMethod";
 
         private SendRequestCommand _sendRequestCommand;
         public SendRequestCommand SendRequest
@@ -55,7 +40,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
                 return _sendRequestCommand;
             }
         }
-        
+
         private Dictionary<String, String> _properties;
         public String this[String name]
         {
@@ -94,7 +79,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(p));
-            }        
+            }
         }
 
         public RestActionViewModel()
@@ -111,7 +96,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
                 {SOQL, "SELECT Id,Name FROM Account"},
                 {SOSL, "FIND {acme*}"},
                 {REQUEST_PATH, "/services/data/v26.0/chatter/feeds/news/me"},
-                {REQUEST_BODY, "Body"}
+                {REQUEST_BODY, "Body"},
+                {REQUEST_METHOD, "GET"},
             };
         }
     }
@@ -119,7 +105,6 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
     public class SendRequestCommand : ICommand
     {
         private RestActionViewModel _vm;
-
         public SendRequestCommand(RestActionViewModel vm)
         {
             _vm = vm;
@@ -145,7 +130,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
 
         private RestRequest BuildRestRequest()
         {
-            switch (_vm.SelectedRestAction)
+            RestAction restAction = (RestAction)Enum.Parse(typeof(RestAction), _vm[RestActionViewModel.SELECTED_REST_ACTION]);
+            switch (restAction)
             {
                 case RestAction.VERSIONS:
                     return RestRequest.GetRequestForVersions();
@@ -180,18 +166,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
 
         private RestRequest BuildManualRestReuqest()
         {
-            /*
-            RestMethod method = RestMethod.GET;
-            foreach (var child in spMethods.Children)
-            {
-                if (child.GetType() == typeof(RadioButton) && ((RadioButton)child).IsChecked == true)
-                {
-                    method = (RestMethod)Enum.Parse(typeof(RestMethod), ((RadioButton)child).Tag.ToString(), true);
-                }
-            }
-            return new RestRequest(method, tbRequestPath.Text, tbRequestBody.Text, ContentType.JSON);
-             */
-            return null;
+            RestMethod restMethod = (RestMethod)Enum.Parse(typeof(RestMethod), _vm[RestActionViewModel.REQUEST_METHOD], true);
+            return new RestRequest(restMethod, _vm[RestActionViewModel.REQUEST_PATH], _vm[RestActionViewModel.REQUEST_BODY], ContentType.JSON);
         }
 
         private string[] ParseFieldListValue()
