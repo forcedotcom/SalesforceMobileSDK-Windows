@@ -35,17 +35,17 @@ using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Net
 {
-    /**
-	 * Enumeration for all HTTP methods.
-	 */
+    /// <summary>
+    /// Enumeration used to represent the method of a HTTP request
+    /// </summary>
     public enum RestMethod
     {
         GET, POST, PUT, DELETE, HEAD, PATCH
     }
 
-    /**
-     * Enumeration for content types
-     */
+    /// <summary>
+    /// Enumeration used to represent the content type of a HTTP request
+    /// </summary>
     public enum ContentType
     {
         FORM_URLENCODED,
@@ -53,6 +53,9 @@ namespace Salesforce.SDK.Net
         NONE
     }
 
+    /// <summary>
+    /// Extension for ContentType enum (to get the mime type of a given content type)
+    /// </summary>
     public static class Extensions
     {
         public static String MimeType(this ContentType contentType)
@@ -68,7 +71,10 @@ namespace Salesforce.SDK.Net
         }
     }
 
-
+    /// <summary>
+    /// A portable class to send HTTP requests
+    /// HttpCall objects can only be used once
+    /// </summary>
     public class HttpCall
     {
         private readonly RestMethod _method;
@@ -83,6 +89,9 @@ namespace Salesforce.SDK.Net
         private HttpStatusCode _statusCode;
         private WebException _webException;
 
+        /// <summary>
+        /// True if HTTP request has been executed
+        /// </summary>
         public Boolean Executed
         {
             get
@@ -91,6 +100,9 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// True if HTTP request was successfully executed
+        /// </summary>
         public Boolean Success
         {
             get
@@ -100,6 +112,9 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// Error that was raised if HTTP request did not execute successfully
+        /// </summary>
         public WebException Error
         {
             get
@@ -109,6 +124,9 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// True if the HTTP response returned by the server had a body
+        /// </summary>
         public Boolean HasResponse
         {
             get
@@ -117,6 +135,9 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// Body of the HTTP response returned by the server
+        /// </summary>
         public String ResponseBody
         {
             get
@@ -126,6 +147,9 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// HTTP status code fo the response returned by the server
+        /// </summary>
         public HttpStatusCode StatusCode
         {
             get
@@ -143,6 +167,14 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// Constructor for HttpCall
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="headers"></param>
+        /// <param name="url"></param>
+        /// <param name="requestBody"></param>
+        /// <param name="contentType"></param>
         public HttpCall(RestMethod method, Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
         {
             _method = method;
@@ -152,31 +184,65 @@ namespace Salesforce.SDK.Net
             _contentType = contentType;
         }
 
+        /// <summary>
+        /// Factory method to build a HttpCall objet for a GET request with additional HTTP request headers
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public static HttpCall CreateGet(Dictionary<String, String> headers, String url) 
         {
             return new HttpCall(RestMethod.GET, headers, url, null, ContentType.NONE);
         }
 
+        /// <summary>
+        /// Factory method to build a HttpCall object for a GET request
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
         public static HttpCall CreateGet(String url)
         {
             return CreateGet(null, url);
         }
 
+        /// <summary>
+        /// Factory method to build a HttpCall object for a POST request with a specific content type
+        /// </summary>
+        /// <param name="headers"></param>
+        /// <param name="url"></param>
+        /// <param name="requestBody"></param>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
         public static HttpCall CreatePost(Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
         {
             return new HttpCall(RestMethod.POST, headers, url, requestBody, contentType);
         }
 
+        /// <summary>
+        /// Factory method to build a HttpCall object for a POST request with form url encoded arguments
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="requestBody"></param>
+        /// <returns></returns>
         public static HttpCall CreatePost(String url, String requestBody)
         {
             return CreatePost(null, url, requestBody, ContentType.FORM_URLENCODED);
         }
 
+        /// <summary>
+        /// Async method to execute the HTTP request
+        /// </summary>
+        /// <returns></returns>
         public async Task<HttpCall> Execute()
         {
             return await Task.Factory.StartNew(() => ExecuteSync());
         }
 
+        /// <summary>
+        /// Async method to execute the HTTP request which expects the HTTP response body to be a Json object that can be deserizalized as an instance of type T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public async Task<T> ExecuteAndDeserialize<T>()
         {
             return await Execute().ContinueWith(t =>
