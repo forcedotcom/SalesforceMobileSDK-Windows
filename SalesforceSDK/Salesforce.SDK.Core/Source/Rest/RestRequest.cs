@@ -159,7 +159,7 @@ namespace Salesforce.SDK.Rest
         /// Request to get summary information about each Salesforce.com version currently available.
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_versions.htm
         /// </summary>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         /// 
         public static RestRequest GetRequestForVersions()
         {
@@ -171,7 +171,7 @@ namespace Salesforce.SDK.Rest
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_discoveryresource.htm
         /// <summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForResources(String apiVersion)
         {
             return new RestRequest(RestMethod.GET, RestAction.RESOURCES.Path(apiVersion));
@@ -181,7 +181,7 @@ namespace Salesforce.SDK.Rest
         /// Request to list the available objects and their metadata for your organization's data.
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_describeGlobal.htm
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDescribeGlobal(String apiVersion)
         {
             return new RestRequest(RestMethod.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
@@ -193,7 +193,7 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForMetadata(String apiVersion, String objectType)
         {
             return new RestRequest(RestMethod.GET, RestAction.METADATA.Path(apiVersion, objectType));
@@ -205,7 +205,7 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDescribe(String apiVersion, String objectType)
         {
             return new RestRequest(RestMethod.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
@@ -218,7 +218,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
         /// <param name="fields">Fields</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
@@ -233,7 +233,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="objectType">Ojbect type</param>
         /// <param name="objectId">Object id</param>
         /// <param name="fieldsList">Fields</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
         {
             StringBuilder path = new StringBuilder(RestAction.RETRIEVE.Path(apiVersion, objectType, objectId));
@@ -253,7 +253,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="objectType">Ojbect type</param>
         /// <param name="objectId">Object id</param>
         /// <param name="fields">Fields</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
@@ -269,7 +269,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="externalIdField">External id field</param>
         /// <param name="externalId">External id</param>
         /// <param name="fields">Fields</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
         {
             String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
@@ -283,7 +283,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
         /// <param name="objectId">Object id</param>
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDelete(String apiVersion, String objectType, String objectId)
         {
             return new RestRequest(RestMethod.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
@@ -295,7 +295,7 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="q">Query string</param
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForSearch(String apiVersion, String q)
         {
             StringBuilder path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
@@ -310,7 +310,7 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="q">Query string</param
-        /// <return>A RestRequest</return>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForQuery(String apiVersion, String q)
         {
             StringBuilder path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
