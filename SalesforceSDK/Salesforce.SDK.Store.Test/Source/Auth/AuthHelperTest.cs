@@ -24,22 +24,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Auth;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Newtonsoft.Json;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Salesforce.SDK.Auth
 {
-    public interface IAuthStorageHelper
+    [TestClass]
+    public class AuthHelperTest
     {
-        void PersistCredentials(Account account);
-
-        Account RetrievePersistedCredentials();
-
-        void DeletePersistedCredentials();
+        [TestMethod]
+        public void TestGetAuthHelper()
+        {
+            IAuthHelper authHelper = PlatformAdapter.Resolve<IAuthHelper>();
+            Assert.IsNotNull(authHelper);
+        }
     }
 }

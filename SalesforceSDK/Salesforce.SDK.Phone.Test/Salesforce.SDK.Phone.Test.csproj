@@ -70,6 +70,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Salesforce.SDK.Store.Test\Source\Auth\AuthHelperTest.cs">
+      <Link>Source\Auth\AuthHelperTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Salesforce.SDK.Store.Test\Source\Auth\AuthStorageHelperTest.cs">
+      <Link>Source\Auth\AuthStorageHelperTest.cs</Link>
+    </Compile>
     <Compile Include="..\Salesforce.SDK.Store.Test\Source\Auth\OAuth2Test.cs">
       <Link>Source\Auth\OAuth2Test.cs</Link>
     </Compile>

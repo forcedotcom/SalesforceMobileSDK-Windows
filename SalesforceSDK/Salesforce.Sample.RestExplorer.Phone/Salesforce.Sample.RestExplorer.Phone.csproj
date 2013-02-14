@@ -92,10 +92,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\Salesforce.Sample.RestExplorer.Store\Shared\Config.cs">
+      <Link>Shared\Config.cs</Link>
+    </Compile>
+    <Compile Include="..\Salesforce.Sample.RestExplorer.Store\Shared\RestActionViewHelper.cs">
+      <Link>Shared\RestActionViewHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Salesforce.Sample.RestExplorer.Store\ViewModels\RestActionViewModel.cs">
+      <Link>ViewModels\RestActionViewModel.cs</Link>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Shared\Config.cs" />
     <Compile Include="Pages\RestActionPage.xaml.cs">
       <DependentUpon>RestActionPage.xaml</DependentUpon>
     </Compile>
@@ -106,14 +114,12 @@
     <Compile Include="Pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Shared\RestActionViewHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\RestActionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

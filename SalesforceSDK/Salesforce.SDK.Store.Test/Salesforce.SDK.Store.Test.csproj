@@ -109,6 +109,8 @@
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\Auth\AuthHelperTest.cs" />
+    <Compile Include="Source\Auth\AuthStorageHelperTest.cs" />
     <Compile Include="Source\Auth\OAuth2Test.cs" />
     <Compile Include="Source\Net\HttpCallTest.cs" />
     <Compile Include="Source\Rest\RestClientTest.cs" />
