@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -21,6 +22,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
             InitializeComponent();
             ShowResponse(null);
             _viewModel = DataContext as RestActionViewModel;
+            _viewModel.SyncContext = SynchronizationContext.Current;
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
 
@@ -29,7 +31,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
             if (e.PropertyName == RestActionViewModel.RETURNED_REST_RESPONSE)
             {
                 // Data binding would be more elegant
-                Dispatcher.BeginInvoke(() => { ShowResponse(_viewModel.ReturnedRestResponse); });
+                ShowResponse(_viewModel.ReturnedRestResponse);
             }
         }
 

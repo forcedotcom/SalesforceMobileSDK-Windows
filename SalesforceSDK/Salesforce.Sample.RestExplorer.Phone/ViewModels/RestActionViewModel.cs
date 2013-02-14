@@ -5,6 +5,7 @@ using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Input;
 
 namespace Salesforce.Sample.RestExplorer.ViewModels
@@ -27,6 +28,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         public const String REQUEST_PATH = "RequestPath";
         public const String REQUEST_BODY = "RequestBody";
         public const String REQUEST_METHOD = "RequestMethod";
+
+        public SynchronizationContext SyncContext;
 
         private SendRequestCommand _sendRequestCommand;
         public SendRequestCommand SendRequest
@@ -78,7 +81,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             var handler = PropertyChanged;
             if (handler != null)
             {
-                handler(this, new PropertyChangedEventArgs(p));
+                SyncContext.Post((state) => { handler(this, state as PropertyChangedEventArgs); }, new PropertyChangedEventArgs(p)); 
             }
         }
 

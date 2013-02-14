@@ -4,17 +4,9 @@ using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core;
+using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Salesforce.Sample.RestExplorer.Store
@@ -30,6 +22,9 @@ namespace Salesforce.Sample.RestExplorer.Store
         {
             InitializeComponent();
             _viewModel = DataContext as RestActionViewModel;
+            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            _viewModel.SyncContext = SynchronizationContext.Current;
+
             _clientManager = new ClientManager(Config.LoginOptions);
             _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
@@ -38,7 +33,6 @@ namespace Salesforce.Sample.RestExplorer.Store
                 button.Click += OnAnyButtonClicked;
             }
 
-            _viewModel.PropertyChanged += OnViewModelPropertyChanged;
             SwitchToRestAction(RestAction.VERSIONS);
         }
 
@@ -47,7 +41,7 @@ namespace Salesforce.Sample.RestExplorer.Store
             if (e.PropertyName == RestActionViewModel.RETURNED_REST_RESPONSE)
             {
                 // Data binding would be more elegant
-                Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => { ShowResponse(_viewModel.ReturnedRestResponse); });
+                ShowResponse(_viewModel.ReturnedRestResponse);
             }
         }
 
