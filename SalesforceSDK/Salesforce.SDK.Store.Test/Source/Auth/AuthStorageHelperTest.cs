@@ -25,13 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Net;
 using Salesforce.SDK.Source.Auth;
-using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace Salesforce.SDK.Auth
 {
@@ -48,7 +43,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestPersistRetrieveDeleteCredentials()
         {
-            Account account = new Account("loginUrl", "clientId", "callbackUrl", new String[] { "scopeA", "scopeB" }, "instanceUrl", "accessToken", "refreshToken");
+            Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "accessToken", "refreshToken");
             IAuthStorageHelper authStorageHelper = PlatformAdapter.Resolve<IAuthStorageHelper>();
             CheckAccount(null);
             authStorageHelper.PersistCredentials(account);

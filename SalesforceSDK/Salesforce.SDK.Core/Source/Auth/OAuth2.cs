@@ -37,14 +37,14 @@ using System.Threading.Tasks;
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Object representing conncted application oauth configuration (login host, client id, callback url, oauth scopes)
+    /// object representing conncted application oauth configuration (login host, client id, callback url, oauth scopes)
     /// </summary>
     public class LoginOptions
     {
-        public String LoginUrl    { get; private set; }
-        public String ClientId    { get; private set; }
-        public String CallbackUrl { get; private set; }
-        public String[] Scopes    { get; private set; }
+        public string LoginUrl    { get; private set; }
+        public string ClientId    { get; private set; }
+        public string CallbackUrl { get; private set; }
+        public string[] Scopes    { get; private set; }
 
         /// <summary>
         /// Constructor for LoginOptions
@@ -53,7 +53,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="clientId"></param>
         /// <param name="callbackUrl"></param>
         /// <param name="scopes"></param>
-        public LoginOptions(String loginUrl, String clientId, String callbackUrl, String[] scopes)
+        public LoginOptions(string loginUrl, string clientId, string callbackUrl, string[] scopes)
         {
             LoginUrl = loginUrl;
             ClientId = clientId;
@@ -63,7 +63,7 @@ namespace Salesforce.SDK.Auth
     }
 
     /// <summary>
-    /// Object representing the connected application mobile policy set by administrator
+    /// object representing the connected application mobile policy set by administrator
     /// </summary>
     public class MobilePolicy
     {
@@ -81,7 +81,7 @@ namespace Salesforce.SDK.Auth
     }
 
     /// <summary>
-    /// Object representing response from identity service
+    /// object representing response from identity service
     /// </summary>
     public class IdentityResponse
     {
@@ -89,25 +89,25 @@ namespace Salesforce.SDK.Auth
         /// URL for identity service
         /// </summary>
         [JsonProperty(PropertyName = "id")]
-        public String IdentityUrl { get; set; }
+        public string IdentityUrl { get; set; }
 
         /// <summary>
         /// Salesforce user id of authenticated user
         /// </summary>
         [JsonProperty(PropertyName = "user_id")]
-        public String UserId { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// Salesforce organization id of authenticated user
         /// </summary>
         [JsonProperty(PropertyName = "organization_id")]
-        public String OrganizationId { get; set; }
+        public string OrganizationId { get; set; }
 
         /// <summary>
         /// Salesforce username of authenticated user
         /// </summary>
         [JsonProperty(PropertyName="username")] 
-        public String UserName { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Mobile policy for connected application set by administrator
@@ -117,7 +117,7 @@ namespace Salesforce.SDK.Auth
     }
 
     /// <summary>
-    /// Object representing response from oauth service (during initial login flow or subsequent refresh flows)
+    /// object representing response from oauth service (during initial login flow or subsequent refresh flows)
     /// </summary>
     public class AuthResponse
     {
@@ -125,46 +125,46 @@ namespace Salesforce.SDK.Auth
         /// URL for identity service
         /// </summary>
         [JsonProperty(PropertyName="id")] 
-        public String IdentityUrl { get; set; }
+        public string IdentityUrl { get; set; }
         
         /// <summary>
         /// Instance URL
         /// </summary>
         [JsonProperty(PropertyName="instance_url")] 
-        public String InstanceUrl { get; set; }
+        public string InstanceUrl { get; set; }
         
         /// <summary>
         /// Date and time the oauth tokens were issued at
         /// </summary>
         [JsonProperty(PropertyName = "issued_at")]
-        public String IssuedAt { get; set; }
+        public string IssuedAt { get; set; }
         
         /// <summary>
         /// Access token
         /// </summary>
         [JsonProperty(PropertyName = "access_token")]
-        public String AccessToken { get; set; }
+        public string AccessToken { get; set; }
 
         /// <summary>
         /// Refresh token
         /// </summary>
         [JsonProperty(PropertyName = "refresh_token")]
-        public String RefreshToken { get; set; }
+        public string RefreshToken { get; set; }
 
         /// <summary>
         /// Auth scopes in a space delimited string
         /// </summary>
         [JsonProperty(PropertyName = "scope")]
-        public String ScopesStr {
+        public string ScopesStr {
             set
             {
                 Scopes = value.Split(' ');
             }
         }
         /// <summary>
-        /// Auth scopes as a String array
+        /// Auth scopes as a string array
         /// </summary>
-        public String[] Scopes;
+        public string[] Scopes;
     }
 
     /// <summary>
@@ -173,19 +173,19 @@ namespace Salesforce.SDK.Auth
     public class OAuth2
     {
         // Refresh scope
-        const String REFRESH_SCOPE = "refresh_token";
+        const string REFRESH_SCOPE = "refresh_token";
 
         // Authorization url
-        const String OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const String OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
+        const string OAUTH_AUTH_QUERY_string = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Refresh url
-        const String OAUTH_REFRESH_PATH = "/services/oauth2/token";
-        const String OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
+        const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
+        const string OAUTH_REFRESH_QUERY_string = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
-        const String OAUTH_REVOKE_PATH = "/services/oauth2/refresh";
-        const String OAUTH_REVOKE_QUERY_STRING = "token={0}";
+        const string OAUTH_REVOKE_PATH = "/services/oauth2/refresh";
+        const string OAUTH_REVOKE_QUERY_string = "token={0}";
 
 
         /// <summary>
@@ -194,17 +194,17 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <returns>A URL to start the OAuth flow in a web browser/view.</returns>
-        public static String ComputeAuthorizationUrl(LoginOptions loginOptions)
+        public static string ComputeAuthorizationUrl(LoginOptions loginOptions)
         {
             // Scope
-            String scopeStr = String.Join(" ", loginOptions.Scopes.Concat(new String[] {REFRESH_SCOPE}).Distinct().ToArray());
+            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] {REFRESH_SCOPE}).Distinct().ToArray());
 
             // Args
-            String[] args = {loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
-            String[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
+            string[] args = {loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
+            string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            String authorizationUrl = String.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
+            string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_string, urlEncodedArgs);
 
             return authorizationUrl;
         }
@@ -215,13 +215,13 @@ namespace Salesforce.SDK.Auth
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
         /// <returns></returns>
-        public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, String refreshToken)
+        public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            String argsStr = String.Format(OAUTH_REFRESH_QUERY_STRING, new String[] { loginOptions.ClientId, refreshToken });
+            string argsStr = string.Format(OAUTH_REFRESH_QUERY_string, new string[] { loginOptions.ClientId, refreshToken });
             
             // Refresh url
-            String refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
+            string refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
 
             // Post
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
@@ -236,13 +236,13 @@ namespace Salesforce.SDK.Auth
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
         /// <returns></returns>
-        public static async Task<HttpStatusCode> RevokeAuthToken(LoginOptions loginOptions, String refreshToken)
+        public static async Task<HttpStatusCode> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            String argsStr = String.Format(OAUTH_REVOKE_QUERY_STRING, new String[] { refreshToken });
+            string argsStr = string.Format(OAUTH_REVOKE_QUERY_string, new string[] { refreshToken });
 
             // Refresh url
-            String revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
+            string revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
 
             // Post
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
@@ -257,10 +257,10 @@ namespace Salesforce.SDK.Auth
         /// <param name="idUrl"></param>
         /// <param name="accessToken"></param>
         /// <returns></returns>
-        public static async Task<IdentityResponse> CallIdentityService(String idUrl, String accessToken)
+        public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
             // Auth header
-            Dictionary<String, String> headers = new Dictionary<String, String>() {{"Authorization", "Bearer " + accessToken }};
+            Dictionary<string, string> headers = new Dictionary<string, string>() {{"Authorization", "Bearer " + accessToken }};
 
             // Get
             HttpCall c = HttpCall.CreateGet(headers, idUrl);
@@ -272,18 +272,18 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Extract the authentication data from the fragment portion of a URL
         /// </summary>
-        /// <param name="fragmentString"></param>
+        /// <param name="fragmentstring"></param>
         /// <returns></returns>
-        public static AuthResponse ParseFragment(String fragmentString)
+        public static AuthResponse ParseFragment(string fragmentstring)
         {
             AuthResponse res = new AuthResponse();
 
-            String[] parameters = fragmentString.Split('&');
-            foreach (String parameter in parameters)
+            string[] parameters = fragmentstring.Split('&');
+            foreach (string parameter in parameters)
             {
-                String[] parts = parameter.Split('=');
-                String name = Uri.UnescapeDataString(parts[0]);
-                String value = parts.Length > 1 ? Uri.UnescapeDataString(parts[1]) : "";
+                string[] parts = parameter.Split('=');
+                string name = Uri.UnescapeDataString(parts[0]);
+                string value = parts.Length > 1 ? Uri.UnescapeDataString(parts[1]) : "";
 
                 switch (name)
                 {

@@ -26,7 +26,6 @@
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using System;
-using System.IO;
 using System.Net;
 
 namespace Salesforce.SDK.Net
@@ -39,7 +38,7 @@ namespace Salesforce.SDK.Net
             try
             {
                 func.Invoke();
-                Assert.Fail(String.Format("An exception of type {0} was expected", typeof(T)));
+                Assert.Fail(string.Format("An exception of type {0} was expected", typeof(T)));
             }
             catch (T)
             {

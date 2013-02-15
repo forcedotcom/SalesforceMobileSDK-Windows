@@ -28,10 +28,8 @@ using Microsoft.Phone.Controls;
 using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.Sample.RestExplorer.ViewModels;
 using Salesforce.SDK.Rest;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,10 +62,10 @@ namespace Salesforce.Sample.RestExplorer.Phone
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            String restActionStr = NavigationContext.QueryString["rest_action"];
+            string restActionStr = NavigationContext.QueryString["rest_action"];
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
-            HashSet<String> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
+            HashSet<string> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
             foreach (TextBox tb in new TextBox[] {tbApiVersion, tbObjectType, 
                 tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
                 tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})

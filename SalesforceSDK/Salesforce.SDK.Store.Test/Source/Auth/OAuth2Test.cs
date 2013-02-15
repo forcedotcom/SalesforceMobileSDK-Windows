@@ -27,7 +27,6 @@
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
-using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -39,14 +38,14 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthorizationUrl()
         {
-            String loginUrl = "https://login.salesforce.com";
-            String clientId = "TEST_CLIENT_ID";
-            String callbackUrl = "test://sfdc";
-            String[] scopes = { "web", "api" };
+            string loginUrl = "https://login.salesforce.com";
+            string clientId = "TEST_CLIENT_ID";
+            string callbackUrl = "test://sfdc";
+            string[] scopes = { "web", "api" };
             LoginOptions loginOptions = new LoginOptions(loginUrl, clientId, callbackUrl, scopes);
 
-            String expectedUrl = "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
-            String actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
+            string expectedUrl = "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
+            string actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong authorization url");
         }
 
@@ -81,11 +80,11 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void testDeserializeIdentityResponseWithoutMobilePolicy()
         {
-            String idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
-            String userId = "00550000001fg5OAAQ";
-            String organizationId = "00D50000000IZ3ZEAW";
-            String userName = "user@example.com";
-            String partialResponseWithoutMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\"}";
+            string idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
+            string userId = "00550000001fg5OAAQ";
+            string organizationId = "00D50000000IZ3ZEAW";
+            string userName = "user@example.com";
+            string partialResponseWithoutMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\"}";
             IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithoutMobilePolicy);
 
             Assert.AreEqual(idUrl, idResponse.IdentityUrl);
@@ -98,11 +97,11 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void testDeserializeIdentityResponseWithMobilePolicy()
         {
-            String idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
-            String userId = "00550000001fg5OAAQ";
-            String organizationId = "00D50000000IZ3ZEAW";
-            String userName = "user@example.com";
-            String partialResponseWithMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\",\"mobile_policy\":{\"pin_length\":6,\"screen_lock\":1}}";
+            string idUrl = "https://login.salesforce.com/id/00D50000000IZ3ZEAW/00550000001fg5OAAQ";
+            string userId = "00550000001fg5OAAQ";
+            string organizationId = "00D50000000IZ3ZEAW";
+            string userName = "user@example.com";
+            string partialResponseWithMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\",\"mobile_policy\":{\"pin_length\":6,\"screen_lock\":1}}";
             IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithMobilePolicy);
 
             Assert.AreEqual(idUrl, idResponse.IdentityUrl);
@@ -114,10 +113,10 @@ namespace Salesforce.SDK.Auth
             Assert.AreEqual(1, idResponse.MobilePolicy.ScreenLockTimeout);
         }
 
-        private HttpStatusCode DoDescribe(String authToken)
+        private HttpStatusCode DoDescribe(string authToken)
         {
-            String describeAccountPath = "/services/data/v26.0/sobjects/Account/describe";
-            Dictionary<String, String> headers = (authToken == null ? null : new Dictionary<string, string> { { "Authorization", "Bearer " + authToken }});
+            string describeAccountPath = "/services/data/v26.0/sobjects/Account/describe";
+            Dictionary<string, string> headers = (authToken == null ? null : new Dictionary<string, string> { { "Authorization", "Bearer " + authToken }});
             return HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute().Result.StatusCode;
         }
     

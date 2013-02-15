@@ -25,13 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net;
 using Newtonsoft.Json;
-using Salesforce.SDK.Net;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Net;
+using System;
+using System.Net;
 
 namespace Salesforce.SDK.Rest
 {
@@ -62,7 +60,7 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-        public String AsString
+        public string Asstring
         {
             get
             {
@@ -76,7 +74,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (_responseArray == null)
                 {
-                    _responseArray = JArray.Parse(AsString);
+                    _responseArray = JArray.Parse(Asstring);
                 }
                 return _responseArray;
             }
@@ -88,7 +86,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (_responseObject == null)
                 {
-                    _responseObject = JObject.Parse(AsString);
+                    _responseObject = JObject.Parse(Asstring);
                 }
                 return _responseObject;
             }
@@ -102,8 +100,8 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-        private String _prettyBody;
-        public String PrettyBody
+        private string _prettyBody;
+        public string PrettyBody
         {
             get
             {
@@ -121,7 +119,7 @@ namespace Salesforce.SDK.Rest
                         }
                         catch
                         {
-                            _prettyBody = AsString;
+                            _prettyBody = Asstring;
                         }
                     }
                 }

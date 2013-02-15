@@ -99,10 +99,10 @@ namespace Salesforce.Sample.RestExplorer.Store
         private void SwitchToRestAction(RestAction restAction)
         {
             ShowResponse(null);
-            String restActionStr = restAction.ToString();
+            string restActionStr = restAction.ToString();
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
-            HashSet<String> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
+            HashSet<string> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
             foreach (TextBox tb in new TextBox[] {tbApiVersion, tbObjectType, 
                 tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
                 tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})

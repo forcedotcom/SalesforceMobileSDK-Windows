@@ -25,27 +25,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Salesforce.SDK.Source.Auth;
-using System;
 using Windows.Storage;
 
 namespace Salesforce.SDK.Auth
 {
     public class AuthStorageHelper : IAuthStorageHelper
     {
-        private const String ACCOUNT_SETTING = "account";
+        private const string ACCOUNT_SETTING = "account";
 
         public void PersistCredentials(Account account)
         {
             // XXX We should use password vault instead
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
-            String accountJson = Account.ToJson(account);
+            string accountJson = Account.ToJson(account);
             settings.Values[ACCOUNT_SETTING] = accountJson;
         }
 
         public Account RetrievePersistedCredentials()
         {
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
-            String accountJson = settings.Values[ACCOUNT_SETTING] as String;
+            string accountJson = settings.Values[ACCOUNT_SETTING] as string;
             return accountJson == null ? null : Account.fromJson(accountJson);
         }
 

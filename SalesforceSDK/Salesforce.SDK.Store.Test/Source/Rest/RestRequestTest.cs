@@ -26,29 +26,27 @@
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Salesforce.SDK.Net;
-using System;
 using System.Collections.Generic;
-using System.Net;
 
 namespace Salesforce.SDK.Rest
 {
     [TestClass]
     public class RestRequestTest
     {
-    	private const String TEST_API_VERSION = "v99.0";
-    	private const String TEST_OBJECT_TYPE = "testObjectType";
-    	private const String TEST_OBJECT_ID = "testObjectId";
-    	private const String TEST_EXTERNAL_ID_FIELD = "testExternalIdField";
-    	private const String TEST_EXTERNAL_ID = "testExternalId";
-    	private const String TEST_QUERY = "testQuery";
-    	private const String TEST_SEARCH = "testSearch";
-    	private const String TEST_FIELDS_STRING = "{\"fieldX\":\"value with spaces\",\"name\":\"testAccount\"}";
-    	private const String TEST_FIELDS_LIST_STRING = "name,fieldX";
-        private const String FORM_URLENCODED = "application/x-www-form-urlencoded";
-        private const String APPLICATION_JSON = "application/json"; 
+    	private const string TEST_API_VERSION = "v99.0";
+    	private const string TEST_OBJECT_TYPE = "testObjectType";
+    	private const string TEST_OBJECT_ID = "testObjectId";
+    	private const string TEST_EXTERNAL_ID_FIELD = "testExternalIdField";
+    	private const string TEST_EXTERNAL_ID = "testExternalId";
+    	private const string TEST_QUERY = "testQuery";
+    	private const string TEST_SEARCH = "testSearch";
+    	private const string TEST_FIELDS_string = "{\"fieldX\":\"value with spaces\",\"name\":\"testAccount\"}";
+    	private const string TEST_FIELDS_LIST_string = "name,fieldX";
+        private const string FORM_URLENCODED = "application/x-www-form-urlencoded";
+        private const string APPLICATION_JSON = "application/json"; 
 
-        private String[] TEST_FIELDS_LIST = new String[]{"name", "fieldX"};    	
-    	private Dictionary<String, Object> TEST_FIELDS = new Dictionary<String, Object> {{"fieldX", "value with spaces"},{"name", "testAccount"}};
+        private string[] TEST_FIELDS_LIST = new string[]{"name", "fieldX"};    	
+    	private Dictionary<string, object> TEST_FIELDS = new Dictionary<string, object> {{"fieldX", "value with spaces"},{"name", "testAccount"}};
     	
         [TestMethod]
         public void TestGetRequestForVersions() 
@@ -115,7 +113,7 @@ namespace Salesforce.SDK.Rest
     		Assert.AreEqual(RestMethod.POST, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_STRING, request.Body, "Wrong request body");
+    		Assert.AreEqual(TEST_FIELDS_string, request.Body, "Wrong request body");
     		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
     	}
     	
@@ -125,7 +123,7 @@ namespace Salesforce.SDK.Rest
     		RestRequest request = RestRequest.GetRequestForRetrieve(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS_LIST);
     		Assert.AreEqual(RestMethod.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID + "?fields=" + TEST_FIELDS_LIST_STRING, request.Path, "Wrong path");
+    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID + "?fields=" + TEST_FIELDS_LIST_string, request.Path, "Wrong path");
     		Assert.IsNull(request.Body, "Wrong request body");
     		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
     	}
@@ -137,7 +135,7 @@ namespace Salesforce.SDK.Rest
     		Assert.AreEqual(RestMethod.PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_STRING, request.Body, "Wrong request body");
+    		Assert.AreEqual(TEST_FIELDS_string, request.Body, "Wrong request body");
     		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
     	}
     	
@@ -148,7 +146,7 @@ namespace Salesforce.SDK.Rest
     		Assert.AreEqual(RestMethod.PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.JSON, request.ContentType, "Wrong content type");
     		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_EXTERNAL_ID_FIELD + "/" + TEST_EXTERNAL_ID, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_STRING, request.Body, "Wrong request body");
+    		Assert.AreEqual(TEST_FIELDS_string, request.Body, "Wrong request body");
     		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
     	}
     
@@ -186,7 +184,7 @@ namespace Salesforce.SDK.Rest
         [TestMethod]
     	public void TestAdditionalHeaders() 
         {
-    		Dictionary<String, String> headers = new Dictionary<String, String>() {{"X-Foo", "RestRequestName"}};
+    		Dictionary<string, string> headers = new Dictionary<string, string>() {{"X-Foo", "RestRequestName"}};
     		RestRequest request = new RestRequest(RestMethod.GET, "/my/foo/", null, ContentType.NONE, headers);
     		Assert.AreEqual(RestMethod.GET, request.Method, "Wrong method");
             Assert.AreEqual(ContentType.NONE, request.ContentType, "Wrong content type");

@@ -34,12 +34,12 @@ using System.Threading.Tasks;
 namespace Salesforce.SDK.Rest
 {
     public delegate void AsyncRequestCallback(RestResponse response);
-    public delegate Task<String> AccessTokenProvider();
+    public delegate Task<string> AccessTokenProvider();
 
     public class RestClient
     {
-        private String _instanceUrl;
-        private String _accessToken;
+        private string _instanceUrl;
+        private string _accessToken;
         private AccessTokenProvider _accessTokenProvider;
 
         public string AccessToken
@@ -51,7 +51,7 @@ namespace Salesforce.SDK.Rest
         }
 
 
-        public RestClient(String instanceUrl, String accessToken, AccessTokenProvider accessTokenProvider)
+        public RestClient(string instanceUrl, string accessToken, AccessTokenProvider accessTokenProvider)
         {
             _instanceUrl = instanceUrl;
             _accessToken = accessToken;
@@ -75,8 +75,8 @@ namespace Salesforce.SDK.Rest
 
         private HttpCall SendSync(RestRequest request, Boolean retryInvalidToken)
         {
-            String url = _instanceUrl + request.Path;
-            Dictionary<String, String> headers = new Dictionary<String, String>() {};
+            string url = _instanceUrl + request.Path;
+            Dictionary<string, string> headers = new Dictionary<string, string>() {};
             if (_accessToken != null) 
             {
                 headers["Authorization"] = "Bearer " + _accessToken;
@@ -97,7 +97,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (retryInvalidToken && _accessTokenProvider != null)
                 {
-                    String newAccessToken = _accessTokenProvider().Result;
+                    string newAccessToken = _accessTokenProvider().Result;
                     if (newAccessToken != null)
                     {
                         _accessToken = newAccessToken;

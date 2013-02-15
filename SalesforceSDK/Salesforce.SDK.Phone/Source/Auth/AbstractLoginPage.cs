@@ -42,7 +42,7 @@ namespace Salesforce.SDK.Auth
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            IDictionary<String, String> qs = NavigationContext.QueryString;
+            IDictionary<string, string> qs = NavigationContext.QueryString;
             _loginOptions = new LoginOptions(qs[AuthHelper.LOGIN_SERVER], qs[AuthHelper.CLIENT_ID], qs[AuthHelper.CALLBACK_URL], qs[AuthHelper.SCOPES].Split(' '));
             Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(_loginOptions));
             removeCookies(loginUri);

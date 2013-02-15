@@ -39,21 +39,21 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
     public class RestActionViewModel : INotifyPropertyChanged
     {
         // Bound properties
-        public const String RETURNED_REST_RESPONSE = "ReturnedRestResponse";
+        public const string RETURNED_REST_RESPONSE = "ReturnedRestResponse";
         // Bound indexed properties
-        public const String SELECTED_REST_ACTION = "SelectedRestAction";
-        public const String API_VERSION = "ApiVersion";
-        public const String OBJECT_TYPE = "ObjectType";
-        public const String OBJECT_ID = "ObjectId";
-        public const String EXTERNAL_ID_FIELD = "ExternalIdField";
-        public const String EXTERNAL_ID = "ExternalId";
-        public const String FIELD_LIST = "FieldList";
-        public const String FIELDS = "Fields";
-        public const String SOQL = "Soql";
-        public const String SOSL = "Sosl";
-        public const String REQUEST_PATH = "RequestPath";
-        public const String REQUEST_BODY = "RequestBody";
-        public const String REQUEST_METHOD = "RequestMethod";
+        public const string SELECTED_REST_ACTION = "SelectedRestAction";
+        public const string API_VERSION = "ApiVersion";
+        public const string OBJECT_TYPE = "ObjectType";
+        public const string OBJECT_ID = "ObjectId";
+        public const string EXTERNAL_ID_FIELD = "ExternalIdField";
+        public const string EXTERNAL_ID = "ExternalId";
+        public const string FIELD_LIST = "FieldList";
+        public const string FIELDS = "Fields";
+        public const string SOQL = "Soql";
+        public const string SOSL = "Sosl";
+        public const string REQUEST_PATH = "RequestPath";
+        public const string REQUEST_BODY = "RequestBody";
+        public const string REQUEST_METHOD = "RequestMethod";
 
         public SynchronizationContext SyncContext;
 
@@ -70,8 +70,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             }
         }
 
-        private Dictionary<String, String> _properties;
-        public String this[String name]
+        private Dictionary<string, string> _properties;
+        public string this[string name]
         {
             get
             {
@@ -141,12 +141,12 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
 
         public event EventHandler CanExecuteChanged;
 
-        public bool CanExecute(Object parameter)
+        public bool CanExecute(object parameter)
         {
             return true; // server-side validation only
         }
 
-        public void Execute(Object parameter)
+        public void Execute(object parameter)
         {
             ClientManager cm = new ClientManager(Config.LoginOptions);
             RestClient rc = cm.GetRestClient();
@@ -204,9 +204,9 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             return _vm[RestActionViewModel.FIELD_LIST].Split(',');
         }
 
-        private Dictionary<String, Object> ParseFieldsValue()
+        private Dictionary<string, object> ParseFieldsValue()
         {
-            Dictionary<String, Object> result = new Dictionary<String, Object>();
+            Dictionary<string, object> result = new Dictionary<string, object>();
             JObject fieldMap = JObject.Parse(_vm[RestActionViewModel.FIELDS]);
             foreach (var item in fieldMap)
             {

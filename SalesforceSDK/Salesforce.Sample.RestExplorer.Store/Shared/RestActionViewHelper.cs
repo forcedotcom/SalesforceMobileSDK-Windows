@@ -33,9 +33,9 @@ namespace Salesforce.Sample.RestExplorer.Shared
 {
     public class RestActionViewHelper
     {
-        public static HashSet<String> GetNamesOfControlsToShow(String restActionStr)
+        public static HashSet<string> GetNamesOfControlsToShow(string restActionStr)
         {
-            HashSet<String> names = new HashSet<String>();
+            HashSet<string> names = new HashSet<string>();
             RestAction restAction = (RestAction)Enum.Parse(typeof(RestAction), restActionStr);
             switch (restAction)
             {
@@ -101,13 +101,13 @@ namespace Salesforce.Sample.RestExplorer.Shared
             return names;
         }
 
-        public static String BuildHtml(RestResponse response)
+        public static string BuildHtml(RestResponse response)
         {
-            String[] blocks = (response == null
+            string[] blocks = (response == null
                 ? null
-                : new String[] { "<b>Status Code:</b>" + response.StatusCode, "<b>Body:</b>\n" + response.PrettyBody });
+                : new string[] { "<b>Status Code:</b>" + response.StatusCode, "<b>Body:</b>\n" + response.PrettyBody });
 
-            String htmlHead = @"
+            string htmlHead = @"
             <head>
                 <meta name=""viewport"" content=""width=device-width, initial-scale=1.0, maximum-scale=1.0; user-scalable=no"" />
                 <style>
@@ -123,7 +123,7 @@ namespace Salesforce.Sample.RestExplorer.Shared
 
             if (blocks != null)
             {
-                foreach (String block in blocks)
+                foreach (string block in blocks)
                 {
                     sb.Append("<pre>").Append(block).Append("</pre>");
                 }

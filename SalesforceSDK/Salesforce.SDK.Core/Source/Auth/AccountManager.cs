@@ -27,26 +27,34 @@
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Source.Auth
 {
-
+    /// <summary>
+    /// object representing an authenticated user credentials
+    /// </summary>
     public class Account
     {
-        public String LoginUrl     { get; private set; }
-        public String ClientId     { get; private set; }
-        public String CallbackUrl  { get; private set; }
-        public String[] Scopes     { get; private set; }
-        public String InstanceUrl  { get; private set; }
-        public String AccessToken  { get; set; }
-        public String RefreshToken { get; private set; }
+        public string LoginUrl     { get; private set; }
+        public string ClientId     { get; private set; }
+        public string CallbackUrl  { get; private set; }
+        public string[] Scopes     { get; private set; }
+        public string InstanceUrl  { get; private set; }
+        public string AccessToken  { get; set; }
+        public string RefreshToken { get; private set; }
 
-        public Account(String loginUrl, String clientId, String callbackUrl, String[] scopes, String instanceUrl, String accessToken, String refreshToken)
+        /// <summary>
+        /// Constructor for Account
+        /// NB: the Account is not stored anywhere until we call PersistCredentials on the IAuthStorageHelper
+        /// </summary>
+        /// <param name="loginUrl"></param>
+        /// <param name="clientId"></param>
+        /// <param name="callbackUrl"></param>
+        /// <param name="scopes"></param>
+        /// <param name="instanceUrl"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="refreshToken"></param>
+        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl, string accessToken, string refreshToken)
         {
             LoginUrl = loginUrl;
             ClientId = clientId;
@@ -57,12 +65,22 @@ namespace Salesforce.SDK.Source.Auth
             RefreshToken = refreshToken;
         }
 
-        public static String ToJson(Account account)
+        /// <summary>
+        /// Serialize Account object as a JSON string
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public static string ToJson(Account account)
         {
             return JsonConvert.SerializeObject(account);
         }
 
-        public static Account fromJson(String accountJson)
+        /// <summary>
+        /// Deserialize Account from a JSON string
+        /// </summary>
+        /// <param name="accountJson"></param>
+        /// <returns></returns>
+        public static Account fromJson(string accountJson)
         {
             return JsonConvert.DeserializeObject<Account>(accountJson);
         }

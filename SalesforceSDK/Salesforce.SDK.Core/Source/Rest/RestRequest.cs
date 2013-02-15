@@ -25,12 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Newtonsoft.Json;
+using Salesforce.SDK.Net;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Net;
-using Newtonsoft.Json;
-using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
@@ -54,9 +53,9 @@ namespace Salesforce.SDK.Rest
 
     static class Extensions
     {
-        public static String Path(this RestAction action, params String[] args)
+        public static string Path(this RestAction action, params string[] args)
         {
-            String format = "";
+            string format = "";
             switch (action)
             {
                 case RestAction.VERSIONS: format = "/services/data/"; break;
@@ -73,7 +72,7 @@ namespace Salesforce.SDK.Rest
                 case RestAction.SEARCH: format = "/services/data/{0}/search"; break;
             }
 
-            return String.Format(format, args);
+            return string.Format(format, args);
         }
     }
 
@@ -103,14 +102,14 @@ namespace Salesforce.SDK.Rest
             get { return _method; }
         }
 
-        private readonly String _path;
-        public String Path
+        private readonly string _path;
+        public string Path
         {
             get { return _path; }
         }
 
-        private readonly String _requestBody;
-        public String Body
+        private readonly string _requestBody;
+        public string Body
         {
             get { return _requestBody; }
         }
@@ -121,8 +120,8 @@ namespace Salesforce.SDK.Rest
             get { return _contentType; }
         }
 
-        private readonly Dictionary<String, String> _additionalHeaders;
-        public Dictionary<String, String> AdditionalHeaders
+        private readonly Dictionary<string, string> _additionalHeaders;
+        public Dictionary<string, string> AdditionalHeaders
         {
             get { return _additionalHeaders; }
         }
@@ -135,11 +134,11 @@ namespace Salesforce.SDK.Rest
         /// <param name="requestBody">The request body if there is one, can be null.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="additionalHeaders">Additional HTTP headers, can be null.</param>
-        public RestRequest(RestMethod method, String path) : this(method, path, null, ContentType.NONE, null) { }
-        public RestRequest(RestMethod method, String path, String requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
-        public RestRequest(RestMethod method, String path, String requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
+        public RestRequest(RestMethod method, string path) : this(method, path, null, ContentType.NONE, null) { }
+        public RestRequest(RestMethod method, string path, string requestBody) : this(method, path, requestBody, ContentType.FORM_URLENCODED, null) { }
+        public RestRequest(RestMethod method, string path, string requestBody, ContentType contentType) : this(method, path, requestBody, contentType, null) { }
 
-        public RestRequest(RestMethod method, String path, String requestBody, ContentType contentType, Dictionary<String, String> additionalHeaders)
+        public RestRequest(RestMethod method, string path, string requestBody, ContentType contentType, Dictionary<string, string> additionalHeaders)
         {
             _method = method;
             _path = path;
@@ -149,7 +148,7 @@ namespace Salesforce.SDK.Rest
         }
 
 
-        public override String ToString()
+        public override string ToString()
         {
             return _method + " " + _path;
         }
@@ -172,7 +171,7 @@ namespace Salesforce.SDK.Rest
         /// <summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForResources(String apiVersion)
+        public static RestRequest GetRequestForResources(string apiVersion)
         {
             return new RestRequest(RestMethod.GET, RestAction.RESOURCES.Path(apiVersion));
         }
@@ -182,7 +181,7 @@ namespace Salesforce.SDK.Rest
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_describeGlobal.htm
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForDescribeGlobal(String apiVersion)
+        public static RestRequest GetRequestForDescribeGlobal(string apiVersion)
         {
             return new RestRequest(RestMethod.GET, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
         }
@@ -194,7 +193,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForMetadata(String apiVersion, String objectType)
+        public static RestRequest GetRequestForMetadata(string apiVersion, string objectType)
         {
             return new RestRequest(RestMethod.GET, RestAction.METADATA.Path(apiVersion, objectType));
         }
@@ -206,7 +205,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForDescribe(String apiVersion, String objectType)
+        public static RestRequest GetRequestForDescribe(string apiVersion, string objectType)
         {
             return new RestRequest(RestMethod.GET, RestAction.DESCRIBE.Path(apiVersion, objectType));
         }
@@ -219,9 +218,9 @@ namespace Salesforce.SDK.Rest
         /// <param name="objectType">Ojbect type</param>
         /// <param name="fields">Fields</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForCreate(String apiVersion, String objectType, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForCreate(string apiVersion, string objectType, Dictionary<string, object> fields)
         {
-            String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
+            string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(RestMethod.POST, RestAction.CREATE.Path(apiVersion, objectType), fieldsData, ContentType.JSON);
         }
 
@@ -231,16 +230,16 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
-        /// <param name="objectId">Object id</param>
+        /// <param name="objectId">object id</param>
         /// <param name="fieldsList">Fields</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForRetrieve(String apiVersion, String objectType, String objectId, String[] fieldList)
+        public static RestRequest GetRequestForRetrieve(string apiVersion, string objectType, string objectId, string[] fieldList)
         {
             StringBuilder path = new StringBuilder(RestAction.RETRIEVE.Path(apiVersion, objectType, objectId));
             if (fieldList != null && fieldList.Length > 0)
             {
                 path.Append("?fields=");
-                path.Append(Uri.EscapeUriString(String.Join(",", fieldList)));
+                path.Append(Uri.EscapeUriString(string.Join(",", fieldList)));
             }
 
             return new RestRequest(RestMethod.GET, path.ToString());
@@ -251,12 +250,12 @@ namespace Salesforce.SDK.Rest
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         /// <param name="apiVersion">API version e.g. v26.0</param> 
         /// <param name="objectType">Ojbect type</param>
-        /// <param name="objectId">Object id</param>
+        /// <param name="objectId">object id</param>
         /// <param name="fields">Fields</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForUpdate(String apiVersion, String objectType, String objectId, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForUpdate(string apiVersion, string objectType, string objectId, Dictionary<string, object> fields)
         {
-            String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
+            string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(RestMethod.PATCH, RestAction.UPDATE.Path(apiVersion, objectType, objectId), fieldsData, ContentType.JSON);
         }
 
@@ -265,14 +264,14 @@ namespace Salesforce.SDK.Rest
         /// Request to upsert (update or insert) a record. 
         /// See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Object type</param>
+        /// <param name="objectType">object type</param>
         /// <param name="externalIdField">External id field</param>
         /// <param name="externalId">External id</param>
         /// <param name="fields">Fields</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForUpsert(String apiVersion, String objectType, String externalIdField, String externalId, Dictionary<String, Object> fields)
+        public static RestRequest GetRequestForUpsert(string apiVersion, string objectType, string externalIdField, string externalId, Dictionary<string, object> fields)
         {
-            String fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
+            string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(RestMethod.PATCH, RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData, ContentType.JSON);
         }
 
@@ -282,9 +281,9 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="objectType">Ojbect type</param>
-        /// <param name="objectId">Object id</param>
+        /// <param name="objectId">object id</param>
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForDelete(String apiVersion, String objectType, String objectId)
+        public static RestRequest GetRequestForDelete(string apiVersion, string objectType, string objectId)
         {
             return new RestRequest(RestMethod.DELETE, RestAction.DELETE.Path(apiVersion, objectType, objectId));
         }
@@ -296,7 +295,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="q">Query string</param
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForSearch(String apiVersion, String q)
+        public static RestRequest GetRequestForSearch(string apiVersion, string q)
         {
             StringBuilder path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
             path.Append("?q=");
@@ -311,7 +310,7 @@ namespace Salesforce.SDK.Rest
         /// <param name="apiVersion">API version e.g. v26.0</param>
         /// <param name="q">Query string</param
         /// <returns>A RestRequest</returns>
-        public static RestRequest GetRequestForQuery(String apiVersion, String q)
+        public static RestRequest GetRequestForQuery(string apiVersion, string q)
         {
             StringBuilder path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
             path.Append("?q=");

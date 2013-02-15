@@ -25,12 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Net;
-using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace Salesforce.SDK.Auth
 {

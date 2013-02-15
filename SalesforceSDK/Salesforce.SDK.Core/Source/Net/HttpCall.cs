@@ -58,7 +58,7 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public static class Extensions
     {
-        public static String MimeType(this ContentType contentType)
+        public static string MimeType(this ContentType contentType)
         {
             switch (contentType)
             {
@@ -78,14 +78,14 @@ namespace Salesforce.SDK.Net
     public class HttpCall
     {
         private readonly RestMethod _method;
-        private readonly Dictionary<String, String> _headers;
-        private readonly String _url;
-        private readonly String _requestBody;
+        private readonly Dictionary<string, string> _headers;
+        private readonly string _url;
+        private readonly string _requestBody;
         private readonly ContentType _contentType;
 
         private ManualResetEvent _allDone;
         private HttpWebRequest _request;
-        private String _responseBody;
+        private string _responseBody;
         private HttpStatusCode _statusCode;
         private WebException _webException;
 
@@ -138,7 +138,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         /// Body of the HTTP response returned by the server
         /// </summary>
-        public String ResponseBody
+        public string ResponseBody
         {
             get
             {
@@ -175,7 +175,7 @@ namespace Salesforce.SDK.Net
         /// <param name="url"></param>
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
-        public HttpCall(RestMethod method, Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
+        public HttpCall(RestMethod method, Dictionary<string, string> headers, string url, string requestBody, ContentType contentType)
         {
             _method = method;
             _headers = headers;
@@ -190,7 +190,7 @@ namespace Salesforce.SDK.Net
         /// <param name="headers"></param>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static HttpCall CreateGet(Dictionary<String, String> headers, String url) 
+        public static HttpCall CreateGet(Dictionary<string, string> headers, string url) 
         {
             return new HttpCall(RestMethod.GET, headers, url, null, ContentType.NONE);
         }
@@ -200,7 +200,7 @@ namespace Salesforce.SDK.Net
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static HttpCall CreateGet(String url)
+        public static HttpCall CreateGet(string url)
         {
             return CreateGet(null, url);
         }
@@ -213,7 +213,7 @@ namespace Salesforce.SDK.Net
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public static HttpCall CreatePost(Dictionary<String, String> headers, String url, String requestBody, ContentType contentType)
+        public static HttpCall CreatePost(Dictionary<string, string> headers, string url, string requestBody, ContentType contentType)
         {
             return new HttpCall(RestMethod.POST, headers, url, requestBody, contentType);
         }
@@ -224,7 +224,7 @@ namespace Salesforce.SDK.Net
         /// <param name="url"></param>
         /// <param name="requestBody"></param>
         /// <returns></returns>
-        public static HttpCall CreatePost(String url, String requestBody)
+        public static HttpCall CreatePost(string url, string requestBody)
         {
             return CreatePost(null, url, requestBody, ContentType.FORM_URLENCODED);
         }
@@ -275,7 +275,7 @@ namespace Salesforce.SDK.Net
             // Setting header
             if (_headers != null)
             {
-                foreach (KeyValuePair<String, String> item in _headers)
+                foreach (KeyValuePair<string, string> item in _headers)
                 {
                     _request.Headers[item.Key] = item.Value;
                 }

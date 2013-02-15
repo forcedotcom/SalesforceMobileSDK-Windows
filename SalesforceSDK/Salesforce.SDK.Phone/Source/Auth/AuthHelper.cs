@@ -33,22 +33,22 @@ namespace Salesforce.SDK.Auth
 {
     public class AuthHelper : IAuthHelper
     {
-        private const String ACCOUNT_SETTING = "account";
+        private const string ACCOUNT_SETTING = "account";
 
-        public const String LOGIN_SERVER = "loginServer";
-        public const String CLIENT_ID = "clientId";
-        public const String CALLBACK_URL = "callbackUrl";
-        public const String SCOPES = "scopes";
+        public const string LOGIN_SERVER = "loginServer";
+        public const string CLIENT_ID = "clientId";
+        public const string CALLBACK_URL = "callbackUrl";
+        public const string SCOPES = "scopes";
 
         public void StartLoginFlow(LoginOptions loginOptions)
         {
-            String loginUrl = Uri.EscapeUriString(loginOptions.LoginUrl);
-            String clientId = Uri.EscapeUriString(loginOptions.ClientId);
-            String callbackUrl = Uri.EscapeUriString(loginOptions.CallbackUrl);
-            String scopes = Uri.EscapeUriString(String.Join(" ", loginOptions.Scopes));
-            String queryString = String.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
+            string loginUrl = Uri.EscapeUriString(loginOptions.LoginUrl);
+            string clientId = Uri.EscapeUriString(loginOptions.ClientId);
+            string callbackUrl = Uri.EscapeUriString(loginOptions.CallbackUrl);
+            string scopes = Uri.EscapeUriString(string.Join(" ", loginOptions.Scopes));
+            string QueryString = string.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
 
-            ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + queryString, UriKind.Relative));
+            ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + QueryString, UriKind.Relative));
         }
 
         public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
