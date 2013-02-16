@@ -75,11 +75,8 @@ namespace Salesforce.SDK.Net
         {
             HttpCall call = HttpCall.CreateGet("http://bogus").Execute().Result;
             Assert.IsTrue(call.Executed);
-            Assert.IsFalse(call.HasResponse);
             Assert.IsFalse(call.Success);
             Assert.IsNotNull(call.Error);
-            Assert.IsNull(call.ResponseBody);
-            Assert.AreEqual((HttpStatusCode) 0, call.StatusCode);
         }
     }
 }

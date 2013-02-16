@@ -229,7 +229,7 @@ namespace Salesforce.SDK.Rest
         public void TestSearch() 
         {
             IdName newAccountIdName = CreateAccount();
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + ENTITY_NAME_PREFIX + "}"));
+            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + newAccountIdName.Name + "}"));
             CheckResponse(response, HttpStatusCode.OK, true);
             JArray matchingRows = response.AsJArray;
             Assert.AreEqual(1, matchingRows.Count, "Expected one row");
@@ -240,7 +240,7 @@ namespace Salesforce.SDK.Rest
 
         private string generateAccountName()
         {
-            return ENTITY_NAME_PREFIX + "-" + DateTime.Now.ToFileTime() + (new Random()).Next(10000, 99999);
+            return ENTITY_NAME_PREFIX + (new Random()).Next(10000, 99999);
         }
 
         private IdName CreateAccount() 
