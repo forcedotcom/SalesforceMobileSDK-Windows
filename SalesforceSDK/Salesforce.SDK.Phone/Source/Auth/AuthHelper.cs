@@ -31,6 +31,9 @@ using System.Windows;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Phone specific implementation if IAuthHelper
+    /// </summary>
     public class AuthHelper : IAuthHelper
     {
         private const string ACCOUNT_SETTING = "account";
@@ -40,6 +43,10 @@ namespace Salesforce.SDK.Auth
         public const string CALLBACK_URL = "callbackUrl";
         public const string SCOPES = "scopes";
 
+        /// <summary>
+        /// Navigate to the /Pages/LoginPage.xaml and load login page in the webview
+        /// </summary>
+        /// <param name="loginOptions"></param>
         public void StartLoginFlow(LoginOptions loginOptions)
         {
             string loginUrl = Uri.EscapeUriString(loginOptions.LoginUrl);
@@ -48,9 +55,15 @@ namespace Salesforce.SDK.Auth
             string scopes = Uri.EscapeUriString(string.Join(" ", loginOptions.Scopes));
             string QueryString = string.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
 
+            // TODO move LoginPage.xaml to Salesforce.SDK.Phone assembly
             ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + QueryString, UriKind.Relative));
         }
 
+        /// <summary>
+        /// Persist oauth credentials via the AccountManager and navigate back to previous screen
+        /// </summary>
+        /// <param name="loginOptions"></param>
+        /// <param name="authResponse"></param>
         public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
             AccountManager.CreateNewAccount(loginOptions, authResponse);

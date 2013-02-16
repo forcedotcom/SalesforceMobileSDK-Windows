@@ -28,12 +28,26 @@ using Salesforce.SDK.Source.Auth;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Interface for auth storage related operations that are implemented in the platform specific assemblies
+    /// </summary>
     public interface IAuthStorageHelper
     {
+        /// <summary>
+        /// Persist account
+        /// </summary>
+        /// <param name="account"></param>
         void PersistCredentials(Account account);
 
+        /// <summary>
+        /// Retrieve persisted account
+        /// </summary>
+        /// <returns></returns>
         Account RetrievePersistedCredentials();
 
+        /// <summary>
+        /// Delete persisted account
+        /// </summary>
         void DeletePersistedCredentials();
     }
 }

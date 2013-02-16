@@ -30,15 +30,27 @@ using Salesforce.SDK.Source.Auth;
 
 namespace Salesforce.SDK.Rest
 {
+    /// <summary>
+    /// Factory class for RestClient
+    /// Credentials are stored via the AccountManager
+    /// When no account is found, it kicks off the login flow and creates a new Account
+    /// </summary>
     public class ClientManager
     {
         private LoginOptions _loginOptions;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="loginOptions"></param>
         public ClientManager(LoginOptions loginOptions)
         {
             _loginOptions = loginOptions;
         }
 
+        /// <summary>
+        /// Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke the user auth tokens
+        /// </summary>
         public async void Logout()
         {
             Account account = AccountManager.GetAccount();
@@ -49,6 +61,10 @@ namespace Salesforce.SDK.Rest
             }
         }
 
+        /// <summary>
+        /// Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
+        /// </summary>
+        /// <returns></returns>
         public RestClient GetRestClient()
         {
             Account account = AccountManager.GetAccount();

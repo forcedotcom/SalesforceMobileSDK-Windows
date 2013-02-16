@@ -29,12 +29,20 @@ using System.IO.IsolatedStorage;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Phone specific implementation if IAuthStorageHelper
+    /// </summary>
     public class AuthStorageHelper : IAuthStorageHelper
     {
         private const string ACCOUNT_SETTING = "account";
 
+        /// <summary>
+        /// Persist account
+        /// </summary>
+        /// <param name="account"></param>
         public void PersistCredentials(Account account)
         {
+            // TODO store encrypted credentials
             IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
             string accountJson = Account.ToJson(account);
             if (settings.Contains(ACCOUNT_SETTING))
@@ -48,6 +56,10 @@ namespace Salesforce.SDK.Auth
             settings.Save();
         }
 
+        /// <summary>
+        /// Retrieve persisted account
+        /// </summary>
+        /// <returns></returns>
         public Account RetrievePersistedCredentials()
         {
             IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
@@ -59,6 +71,9 @@ namespace Salesforce.SDK.Auth
             return null;
         }
 
+        /// <summary>
+        /// Delete persisted account
+        /// </summary>
         public void DeletePersistedCredentials()
         {
             IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;

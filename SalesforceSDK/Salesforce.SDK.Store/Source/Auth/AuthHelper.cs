@@ -31,8 +31,16 @@ using Windows.Security.Authentication.Web;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Store specific implementation if IAuthHelper
+    /// </summary>
     public class AuthHelper : IAuthHelper
     {
+        /// <summary>
+        /// Bring up the WebAuthenticationBroker
+        /// </summary>
+        /// <param name="loginOptions"></param>
+        /// <param name="clientLoginPage"></param>
         public void StartLoginFlow(LoginOptions loginOptions)
         {
             DoAuthFlow(loginOptions);
@@ -52,6 +60,11 @@ namespace Salesforce.SDK.Auth
             }
         }
 
+        /// <summary>
+        /// Persist oauth credentials via the AccountManager
+        /// </summary>
+        /// <param name="loginOptions"></param>
+        /// <param name="authResponse"></param>
         public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
             AccountManager.CreateNewAccount(loginOptions, authResponse);

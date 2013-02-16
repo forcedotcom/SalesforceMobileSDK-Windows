@@ -33,8 +33,15 @@ using System.Windows.Navigation;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Abstract super class for Windows Phone login page
+    /// </summary>
     public class AbstractLoginPage : PhoneApplicationPage
     {
+        /// <summary>
+        /// Concrete login page class should override this method to return actual webview where login flow will take place
+        /// </summary>
+        /// <returns></returns>
         public virtual WebBrowser WebViewControl() { return null; }
 
         private LoginOptions _loginOptions;

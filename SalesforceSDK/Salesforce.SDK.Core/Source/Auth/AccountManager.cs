@@ -86,18 +86,33 @@ namespace Salesforce.SDK.Source.Auth
         }
     }
 
+    /// <summary>
+    /// Class providing (static) methods for creating/deleting or retrieving an Account
+    /// </summary>
     public class AccountManager
     {
+        /// <summary>
+        /// Delete Account for currently authenticated user
+        /// </summary>
         public static void DeleteAccount()
         {
             PlatformAdapter.Resolve<IAuthStorageHelper>().DeletePersistedCredentials();
         }
 
+        /// <summary>
+        /// Return Account for currently authenticated user
+        /// </summary>
+        /// <returns></returns>
         public static Account GetAccount()
         {
             return PlatformAdapter.Resolve<IAuthStorageHelper>().RetrievePersistedCredentials();
         }
 
+        /// <summary>
+        /// Create and persist Account for newly authenticated user
+        /// </summary>
+        /// <param name="loginOptions"></param>
+        /// <param name="authResponse"></param>
         public static void CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
             Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,

@@ -29,18 +29,29 @@ using Windows.Storage;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Store specific implementation if IAuthStorageHelper
+    /// </summary>    /// </summary>
     public class AuthStorageHelper : IAuthStorageHelper
     {
         private const string ACCOUNT_SETTING = "account";
 
+        /// <summary>
+        /// Persist account
+        /// </summary>
+        /// <param name="account"></param>
         public void PersistCredentials(Account account)
         {
-            // XXX We should use password vault instead
+            // TODO use PasswordVault
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
             string accountJson = Account.ToJson(account);
             settings.Values[ACCOUNT_SETTING] = accountJson;
         }
 
+        /// <summary>
+        /// Retrieve persisted account
+        /// </summary>
+        /// <returns></returns>
         public Account RetrievePersistedCredentials()
         {
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
@@ -48,6 +59,9 @@ namespace Salesforce.SDK.Auth
             return accountJson == null ? null : Account.fromJson(accountJson);
         }
 
+        /// <summary>
+        /// Delete persisted account
+        /// </summary>
         public void DeletePersistedCredentials()
         {
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
