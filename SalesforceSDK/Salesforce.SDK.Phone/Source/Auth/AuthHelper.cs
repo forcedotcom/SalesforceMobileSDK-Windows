@@ -25,7 +25,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.Phone.Controls;
-using Salesforce.SDK.Source.Auth;
 using System;
 using System.Windows;
 

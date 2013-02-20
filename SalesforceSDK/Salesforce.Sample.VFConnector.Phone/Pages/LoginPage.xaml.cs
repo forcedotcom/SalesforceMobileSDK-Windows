@@ -28,11 +28,11 @@ using Microsoft.Phone.Controls;
 
 namespace Salesforce.SDK.Auth
 {
-    public partial class LoginPage : AbstractLoginPage
+    public partial class LoginPage : PhoneLoginPage
     {
         public override WebBrowser WebViewControl() { return wbLogin; }
         
-        public LoginPage()
+        public LoginPage() : base()
         {
             InitializeComponent();
         }

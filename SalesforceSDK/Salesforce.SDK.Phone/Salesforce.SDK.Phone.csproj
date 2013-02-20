@@ -86,14 +86,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Auth\AuthHelper.cs" />
     <Compile Include="Source\Auth\AuthStorageHelper.cs" />
-    <Compile Include="Source\Auth\AbstractLoginPage.cs" />
-    <Compile Include="Source\Config\ConfigHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
-      <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>
-      <Name>Salesforce.SDK.Core</Name>
-    </ProjectReference>
+    <Compile Include="Source\Auth\PhoneLoginPage.cs" />
+    <Compile Include="Source\Hybrid\PhoneHybridMainPage.cs" />
+    <Compile Include="Source\Hybrid\ConfigHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -103,6 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
+      <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>
+      <Name>Salesforce.SDK.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />

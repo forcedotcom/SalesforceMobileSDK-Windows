@@ -1,4 +1,4 @@
-﻿<my:AbstractLoginPage
+﻿<my:PhoneLoginPage
     x:Class="Salesforce.SDK.Auth.LoginPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -20,4 +20,4 @@
         <phone:WebBrowser Name="wbLogin" IsScriptEnabled="True"/>
     </Grid>
 
-</my:AbstractLoginPage>
+</my:PhoneLoginPage>

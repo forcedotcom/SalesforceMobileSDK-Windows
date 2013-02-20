@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Resources;
 
-namespace Salesforce.SDK.Source.Config
+namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
     /// Phone specific implementation if IConfigHelper

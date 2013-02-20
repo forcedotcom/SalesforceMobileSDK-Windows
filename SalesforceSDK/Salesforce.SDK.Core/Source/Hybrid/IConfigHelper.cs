@@ -1,5 +1,5 @@
 ﻿
-namespace Salesforce.SDK.Source.Config
+namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
     /// Interface for config related operations that are implemented in the platform specific assemblies

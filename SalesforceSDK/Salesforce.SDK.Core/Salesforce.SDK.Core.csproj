@@ -39,8 +39,8 @@
     <Compile Include="Source\Auth\IAuthStorageHelper.cs" />
     <Compile Include="Source\Auth\IAuthHelper.cs" />
     <Compile Include="Source\Auth\OAuth2.cs" />
-    <Compile Include="Source\Config\BootConfig.cs" />
-    <Compile Include="Source\Config\IConfigHelper.cs" />
+    <Compile Include="Source\Hybrid\BootConfig.cs" />
+    <Compile Include="Source\Hybrid\IConfigHelper.cs" />
     <Compile Include="Source\Net\HttpCall.cs" />
     <Compile Include="Source\Rest\ClientManager.cs" />
     <Compile Include="Source\Rest\RestClient.cs" />

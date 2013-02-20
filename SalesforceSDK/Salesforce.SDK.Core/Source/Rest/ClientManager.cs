@@ -26,7 +26,6 @@
  */
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Auth;
 
 namespace Salesforce.SDK.Rest
 {

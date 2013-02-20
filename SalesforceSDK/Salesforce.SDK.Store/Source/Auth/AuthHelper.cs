@@ -25,7 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Source.Auth;
+using Salesforce.SDK.Auth;
 using System;
 using Windows.Security.Authentication.Web;
 

@@ -25,13 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.Phone.Controls;
+using Salesforce.SDK.Auth;
 
-namespace Salesforce.SDK.Auth
+namespace Salesforce.Sample.RestExplorer.Phone
 {
     /// <summary>
     /// Login page
     /// </summary>
-    public partial class LoginPage : AbstractLoginPage
+    public partial class LoginPage : PhoneLoginPage
     {
         /// <summary>
         /// Returns the WebBrowser control where the login flow will take place
@@ -42,7 +43,7 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Constructor
         /// </summary>
-        public LoginPage()
+        public LoginPage() : base()
         {
             InitializeComponent();
         }

@@ -179,6 +179,10 @@ namespace Salesforce.SDK.Auth
         const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
         const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
+        // Front door url
+        const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";
+        const string FRONT_DOOR_QUERY_STRING = "display=touch&sid={0}&retURL={1}";
+
         // Refresh url
         const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
         const string OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
@@ -207,6 +211,25 @@ namespace Salesforce.SDK.Auth
             string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
 
             return authorizationUrl;
+        }
+
+        /// <summary>
+        /// Build the front-doored URL for a given URL
+        /// </summary>
+        /// <param name="instanceUrl"></param>
+        /// <param name="accessToken"></param>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string ComputeFrontDoorUrl(string instanceUrl, string accessToken, string url)
+        {
+            // Args
+            string[] args = { accessToken, url };
+            string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
+
+            // Authorization url
+            string frontDoorUrl = string.Format(instanceUrl + FRONT_DOOR_PATH + "?" + FRONT_DOOR_QUERY_STRING, urlEncodedArgs);
+
+            return frontDoorUrl;
         }
 
         /// <summary>

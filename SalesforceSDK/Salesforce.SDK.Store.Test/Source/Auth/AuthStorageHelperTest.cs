@@ -26,7 +26,7 @@
  */
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Source.Auth;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.Auth
 {

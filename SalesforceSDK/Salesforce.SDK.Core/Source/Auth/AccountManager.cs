@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 
-namespace Salesforce.SDK.Source.Auth
+namespace Salesforce.SDK.Auth
 {
     /// <summary>
     /// object representing an authenticated user credentials

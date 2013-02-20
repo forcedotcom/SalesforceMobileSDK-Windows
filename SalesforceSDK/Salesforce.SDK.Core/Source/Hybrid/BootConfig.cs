@@ -28,7 +28,7 @@ using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using System;
 
-namespace Salesforce.SDK.Source.Config
+namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
     /// Object representing application configuration (read from www/bootconfig.json)

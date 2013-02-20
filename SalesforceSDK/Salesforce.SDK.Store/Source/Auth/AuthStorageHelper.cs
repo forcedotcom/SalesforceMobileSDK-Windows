@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Source.Auth;
+using Salesforce.SDK.Auth;
 using Windows.Storage;
 
 namespace Salesforce.SDK.Auth
