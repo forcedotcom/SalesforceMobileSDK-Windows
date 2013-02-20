@@ -163,7 +163,7 @@ namespace Salesforce.SDK.Rest
             RestResponse response = _restClient.SendSync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "id", "errors", "success");
-            Assert.IsTrue((Boolean) jsonResponse["success"], "Create failed");
+            Assert.IsTrue((bool) jsonResponse["success"], "Create failed");
         }
     
         [TestMethod]
@@ -270,7 +270,7 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-        private void CheckResponse(RestResponse response, HttpStatusCode expectedStatusCode, Boolean isJArray)
+        private void CheckResponse(RestResponse response, HttpStatusCode expectedStatusCode, bool isJArray)
         {
             Assert.AreEqual(expectedStatusCode, response.StatusCode);
             try

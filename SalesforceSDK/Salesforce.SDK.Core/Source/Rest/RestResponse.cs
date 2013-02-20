@@ -44,7 +44,7 @@ namespace Salesforce.SDK.Rest
             _call = call;
         }
 
-        public Boolean Success
+        public bool Success
         {
             get
             {

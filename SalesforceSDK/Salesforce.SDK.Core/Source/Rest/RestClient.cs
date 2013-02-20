@@ -38,10 +38,19 @@ namespace Salesforce.SDK.Rest
 
     public class RestClient
     {
-        private string _instanceUrl;
-        private string _accessToken;
         private AccessTokenProvider _accessTokenProvider;
 
+        private string _instanceUrl;
+        public string InstanceUrl
+        {
+            get
+            {
+                return _instanceUrl;
+            }
+        }
+
+
+        private string _accessToken;
         public string AccessToken
         {
             get
@@ -73,7 +82,7 @@ namespace Salesforce.SDK.Rest
             return new RestResponse(SendSync(request, true));
         }
 
-        private HttpCall SendSync(RestRequest request, Boolean retryInvalidToken)
+        private HttpCall SendSync(RestRequest request, bool retryInvalidToken)
         {
             string url = _instanceUrl + request.Path;
             Dictionary<string, string> headers = new Dictionary<string, string>() {};

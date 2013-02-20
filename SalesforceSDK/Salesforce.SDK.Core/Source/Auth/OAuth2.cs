@@ -177,15 +177,15 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_string = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Refresh url
         const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
-        const string OAUTH_REFRESH_QUERY_string = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
+        const string OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
         const string OAUTH_REVOKE_PATH = "/services/oauth2/refresh";
-        const string OAUTH_REVOKE_QUERY_string = "token={0}";
+        const string OAUTH_REVOKE_QUERY_STRING = "token={0}";
 
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Salesforce.SDK.Auth
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_string, urlEncodedArgs);
+            string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
 
             return authorizationUrl;
         }
@@ -218,7 +218,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REFRESH_QUERY_string, new string[] { loginOptions.ClientId, refreshToken });
+            string argsStr = string.Format(OAUTH_REFRESH_QUERY_STRING, new string[] { loginOptions.ClientId, refreshToken });
             
             // Refresh url
             string refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
@@ -239,7 +239,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<HttpStatusCode> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REVOKE_QUERY_string, new string[] { refreshToken });
+            string argsStr = string.Format(OAUTH_REVOKE_QUERY_STRING, new string[] { refreshToken });
 
             // Refresh url
             string revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;

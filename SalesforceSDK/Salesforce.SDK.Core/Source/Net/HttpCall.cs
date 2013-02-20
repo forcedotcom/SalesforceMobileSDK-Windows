@@ -92,7 +92,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         /// True if HTTP request has been executed
         /// </summary>
-        public Boolean Executed
+        public bool Executed
         {
             get
             {
@@ -103,7 +103,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         /// True if HTTP request was successfully executed
         /// </summary>
-        public Boolean Success
+        public bool Success
         {
             get
             {
@@ -127,7 +127,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         /// True if the HTTP response returned by the server had a body
         /// </summary>
-        public Boolean HasResponse
+        public bool HasResponse
         {
             get
             {
