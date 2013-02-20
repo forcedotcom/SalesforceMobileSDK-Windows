@@ -34,12 +34,17 @@ using System.Windows.Navigation;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
+    /// <summary>
+    /// Starting page of the Rest Explorer Phone application
+    /// </summary>
     public partial class MainPage : PhoneApplicationPage
     {
         ClientManager _clientManager;
         Button[] _buttons;
 
-        // Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainPage()
         {
             InitializeComponent();
@@ -53,6 +58,11 @@ namespace Salesforce.Sample.RestExplorer.Phone
             }
         }
 
+        /// <summary>
+        /// When one of the button is clicked, we go to the RestActionPage with the Rest action name as a parameter in the URI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
         {
             RestAction restAction = RestAction.VERSIONS;
@@ -77,12 +87,20 @@ namespace Salesforce.Sample.RestExplorer.Phone
             NavigationService.Navigate(new Uri("/Pages/RestActionPage.xaml?rest_action=" + restAction, UriKind.Relative));
         }
 
+        /// <summary>
+        /// Handler for logout
+        /// </summary>
         protected void OnLogout()
         {
             _clientManager.Logout();
             OnNavigatedTo(null);
         }
 
+        /// <summary>
+        /// When navigated to, we try to get a RestClient
+        /// If we are not already authenticated, this will kick off the login flow
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             _clientManager.GetRestClient();

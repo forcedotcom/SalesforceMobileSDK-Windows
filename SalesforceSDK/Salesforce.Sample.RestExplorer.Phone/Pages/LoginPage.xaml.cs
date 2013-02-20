@@ -28,10 +28,20 @@ using Microsoft.Phone.Controls;
 
 namespace Salesforce.SDK.Auth
 {
+    /// <summary>
+    /// Login page
+    /// </summary>
     public partial class LoginPage : AbstractLoginPage
     {
+        /// <summary>
+        /// Returns the WebBrowser control where the login flow will take place
+        /// </summary>
+        /// <returns></returns>
         public override WebBrowser WebViewControl() { return wbLogin; }
         
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public LoginPage()
         {
             InitializeComponent();

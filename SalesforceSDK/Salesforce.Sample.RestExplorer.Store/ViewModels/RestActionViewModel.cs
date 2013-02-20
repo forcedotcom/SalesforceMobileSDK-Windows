@@ -36,6 +36,9 @@ using System.Windows.Input;
 
 namespace Salesforce.Sample.RestExplorer.ViewModels
 {
+    /// <summary>
+    /// View-model for Rest Explorer (phone and store) 
+    /// </summary>
     public class RestActionViewModel : INotifyPropertyChanged
     {
         // Bound properties
@@ -71,6 +74,11 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         }
 
         private Dictionary<string, string> _properties;
+        /// <summary>
+        /// Most properties are indexed to minimize the amount of boilerplate code
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public string this[string name]
         {
             get
@@ -86,6 +94,9 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         }
 
         private RestResponse _returnedRestResponse;
+        /// <summary>
+        /// Property holding the RestResponse returned by the server
+        /// </summary>
         public RestResponse ReturnedRestResponse
         {
             get
@@ -111,6 +122,9 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             }
         }
 
+        /// <summary>
+        /// Consturctor
+        /// </summary>
         public RestActionViewModel()
         {
             _properties = new Dictionary<string, string>()
@@ -131,9 +145,17 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         }
     }
 
+    /// <summary>
+    /// Command for this view-model
+    /// </summary>
     public class SendRequestCommand : ICommand
     {
         private RestActionViewModel _vm;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="vm"></param>
         public SendRequestCommand(RestActionViewModel vm)
         {
             _vm = vm;
@@ -141,11 +163,21 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
 
         public event EventHandler CanExecuteChanged;
 
+        /// <summary>
+        /// Always return true, we don't do any client-side validation in this application
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
         public bool CanExecute(object parameter)
         {
             return true; // server-side validation only
         }
 
+        /// <summary>
+        /// Execute the command: send the request to the server 
+        /// and sets the ReturnedRestResponse property of the view-model upon receiving the response back from the server
+        /// </summary>
+        /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
             ClientManager cm = new ClientManager(Config.LoginOptions);

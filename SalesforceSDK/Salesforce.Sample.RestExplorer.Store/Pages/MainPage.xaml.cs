@@ -27,7 +27,6 @@
 using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.Sample.RestExplorer.ViewModels;
 using Salesforce.SDK.Rest;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -37,13 +36,18 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Salesforce.Sample.RestExplorer.Store
 {
+    /// <summary>
+    /// Only page of the Rest Explorer Store application
+    /// </summary>
     public sealed partial class MainPage : Page
     {
         RestActionViewModel _viewModel;
         ClientManager _clientManager;
         Button[] _buttons;
 
-        // Constructor
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainPage()
         {
             InitializeComponent();
@@ -62,6 +66,11 @@ namespace Salesforce.Sample.RestExplorer.Store
             SwitchToRestAction(RestAction.VERSIONS);
         }
 
+        /// <summary>
+        /// Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webview control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == RestActionViewModel.RETURNED_REST_RESPONSE)
@@ -72,6 +81,11 @@ namespace Salesforce.Sample.RestExplorer.Store
         }
 
 
+        /// <summary>
+        /// When one of the button is clicked, we go hide/show the adequate input controls in the right pane
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
         {
             RestAction restAction = RestAction.VERSIONS;
@@ -96,6 +110,10 @@ namespace Salesforce.Sample.RestExplorer.Store
             SwitchToRestAction(restAction);
         }
 
+        /// <summary>
+        /// Helper method called when user select a Rest action
+        /// </summary>
+        /// <param name="restAction"></param>
         private void SwitchToRestAction(RestAction restAction)
         {
             ShowResponse(null);
@@ -111,17 +129,29 @@ namespace Salesforce.Sample.RestExplorer.Store
             }
         }
 
+        /// <summary>
+        /// Helper for logout
+        /// </summary>
         private void OnLogout()
         {
             _clientManager.Logout();
             OnNavigatedTo(null);
         }
 
+        /// <summary>
+        /// When navigated to, we try to get a RestClient
+        /// If we are not already authenticated, this will kick off the login flow
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             _clientManager.GetRestClient();
         }
 
+        /// <summary>
+        /// Helper method to show a RestResponse (formatted) in the result webview control
+        /// </summary>
+        /// <param name="response"></param>
         private void ShowResponse(RestResponse response)
         {
             wbResult.NavigateToString(RestActionViewHelper.BuildHtml(response));

@@ -31,8 +31,16 @@ using System.Text;
 
 namespace Salesforce.Sample.RestExplorer.Shared
 {
+    /// <summary>
+    /// Helper class for Rest Explorer main page (phone and store) 
+    /// </summary>
     public class RestActionViewHelper
     {
+        /// <summary>
+        /// Returns controls to show by name (since control actual types are different on phone and store)
+        /// </summary>
+        /// <param name="restActionStr"></param>
+        /// <returns></returns>
         public static HashSet<string> GetNamesOfControlsToShow(string restActionStr)
         {
             HashSet<string> names = new HashSet<string>();
@@ -101,6 +109,11 @@ namespace Salesforce.Sample.RestExplorer.Shared
             return names;
         }
 
+        /// <summary>
+        /// Build HTML from a RestResponse
+        /// </summary>
+        /// <param name="response"></param>
+        /// <returns></returns>
         public static string BuildHtml(RestResponse response)
         {
             string[] blocks = (response == null

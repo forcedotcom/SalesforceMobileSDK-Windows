@@ -37,10 +37,16 @@ using System.Windows.Navigation;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
+    /// <summary>
+    /// Page used to make REST calls and display their results
+    /// </summary>
     public partial class RestActionPage : PhoneApplicationPage
     {
         private RestActionViewModel _viewModel;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public RestActionPage()
         {
             InitializeComponent();
@@ -50,6 +56,11 @@ namespace Salesforce.Sample.RestExplorer.Phone
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
 
+        /// <summary>
+        /// Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webbrowser control
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == RestActionViewModel.RETURNED_REST_RESPONSE)
@@ -59,6 +70,11 @@ namespace Salesforce.Sample.RestExplorer.Phone
             }
         }
 
+        /// <summary>
+        /// When page is navigated to, we first parse the rest action name out of the URI
+        /// Then we hide/show the input controls that should be visible for that action
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -74,6 +90,10 @@ namespace Salesforce.Sample.RestExplorer.Phone
             }
         }
 
+        /// <summary>
+        /// Helper method to show a RestResponse (formatted) in the result webbrowser control
+        /// </summary>
+        /// <param name="response"></param>
         private void ShowResponse(RestResponse response)
         {
             wbResult.NavigateToString(RestActionViewHelper.BuildHtml(response));
