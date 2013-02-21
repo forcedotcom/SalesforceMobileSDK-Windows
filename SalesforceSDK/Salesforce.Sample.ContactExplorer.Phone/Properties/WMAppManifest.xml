@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{fd218f92-2a86-4b21-820b-5118d07d786f}" Title="Salesforce.Sample.ContactExplorer.Phone" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Salesforce.Sample.ContactExplorer.Phone author" Description="Sample description" Publisher="Salesforce.Sample.ContactExplorer.Phone" PublisherID="{c6b145f8-f5ef-4a51-98f2-3c9a027f550c}">
+  <App xmlns="" ProductID="{fd218f92-2a86-4b21-820b-5118d07d786f}" Title="Contact Explorer" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Salesforce.Sample.ContactExplorer.Phone author" Description="Sample description" Publisher="Salesforce.Sample.ContactExplorer.Phone" PublisherID="{c6b145f8-f5ef-4a51-98f2-3c9a027f550c}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
