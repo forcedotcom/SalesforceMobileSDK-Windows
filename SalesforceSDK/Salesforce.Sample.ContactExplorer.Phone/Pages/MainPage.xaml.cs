@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Linq;
-using System.Windows.Navigation;
 using Salesforce.SDK.Hybrid;
+using System;
 
-namespace Salesforce.Sample.VFConnector.Phone
+namespace Salesforce.Sample.ContactExplorer.Phone
 {
     public partial class MainPage : PhoneHybridMainPage
     {

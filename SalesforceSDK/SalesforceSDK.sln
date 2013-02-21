@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.VFConnect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Core", "Salesforce.SDK.Core\Salesforce.SDK.Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.ContactExplorer.Phone", "Salesforce.Sample.ContactExplorer.Phone\Salesforce.Sample.ContactExplorer.Phone.csproj", "{FD218F92-2A86-4B21-820B-5118D07D786F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -237,6 +239,32 @@ Global
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|x64.ActiveCfg = Release|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|ARM.ActiveCfg = Debug|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|ARM.Build.0 = Debug|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|ARM.Deploy.0 = Debug|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|Mixed Platforms.Deploy.0 = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|x86.ActiveCfg = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|x86.Build.0 = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Debug|x86.Deploy.0 = Debug|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|ARM.ActiveCfg = Release|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|ARM.Build.0 = Release|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|ARM.Deploy.0 = Release|ARM
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Mixed Platforms.Build.0 = Release|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|Mixed Platforms.Deploy.0 = Release|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|x86.ActiveCfg = Release|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|x86.Build.0 = Release|x86
+		{FD218F92-2A86-4B21-820B-5118D07D786F}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

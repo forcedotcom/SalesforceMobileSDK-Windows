@@ -24,28 +24,15 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Linq;
-using System.Windows.Navigation;
-using Salesforce.SDK.Hybrid;
+using Microsoft.Phone.Controls;
 
-namespace Salesforce.Sample.VFConnector.Phone
+namespace Salesforce.SDK.Auth
 {
-    public partial class MainPage : PhoneHybridMainPage
+    public partial class LoginPage : PhoneLoginPage
     {
-        /// <summary>
-        /// Loads uri in cordova view
-        /// </summary>
-        /// <param name="uri"></param>
-        protected override void LoadUri(Uri uri)
-        {
-            PGView.StartPageUri = uri;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public MainPage() : base()
+        public override WebBrowser WebViewControl() { return wbLogin; }
+        
+        public LoginPage() : base()
         {
             InitializeComponent();
         }
