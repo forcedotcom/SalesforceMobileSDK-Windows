@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Microsoft.Phone.Controls;
+using Microsoft.Phone.Net.NetworkInformation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using System;
@@ -35,6 +36,10 @@ namespace Salesforce.SDK.Hybrid
     /// <summary>
     /// Super class for Windows Phone hybrid application main page
     /// Note: some methods have empty implementations so it can't be used directly
+    /// 
+    /// TODO: some of the code below should move to the portable library (Salesforce.SDK.Core)
+    /// TODO: set user agent
+    /// TODO: configure HTML5 cache support
     /// </summary>
     public class PhoneHybridMainPage : PhoneApplicationPage
     {
@@ -42,6 +47,7 @@ namespace Salesforce.SDK.Hybrid
         private LoginOptions _loginOptions;
         private ClientManager _clientManager;
         private RestClient _client;
+        private bool _webAppLoaded;
 
         /// <summary>
         /// Concrete hybrid main page page class should override this method to load uri in web view
@@ -62,20 +68,115 @@ namespace Salesforce.SDK.Hybrid
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            _client = _clientManager.GetRestClient();
-            if (_client != null)
+            _client = _clientManager.PeekRestClient();
+
+            // Not logged in
+            if (_client == null)
             {
-                Uri startPageUri = null;
-                if (_bootConfig.IsLocal)
+                OnResumeNotLoggedIn();
+            }
+            // Logged in
+            else
+            {
+                // Web app never loaded
+                if (!_webAppLoaded)
                 {
-                    startPageUri = new Uri("www/" + _bootConfig.StartPage, UriKind.Relative);
+                    OnResumeLoggedInNotLoaded();
                 }
+                // Web app already loaded
                 else
                 {
-                    startPageUri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
+                    // Nothing to do
                 }
-                LoadUri(startPageUri);
             }
+        }
+
+        /// <summary>
+        /// Called when bringing up page and user is not authenticated
+        /// </summary>
+        protected void OnResumeNotLoggedIn()
+        {
+            // Need to be authenticated
+            if (_bootConfig.ShouldAuthenticate)
+            {
+                // Online
+                if (NetworkInterface.GetIsNetworkAvailable())
+                {
+                    _client = _clientManager.GetRestClient();
+                    // After login, we will end up in OnResumeLoggedInNotLoaded
+                }
+                // Offline
+                else
+                {
+                    LoadErrorPage();
+                }
+            }
+
+            // Does not need to be authenticated
+            else
+            {
+                // Local
+                if (_bootConfig.IsLocal)
+                {
+                    LoadLocalStartPage();
+                }
+                // Remote
+                else
+                {
+                    LoadErrorPage();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Called when bringing up page and user is authenticated but web view has not been loaded yet
+        /// </summary>
+        protected void OnResumeLoggedInNotLoaded()
+        {
+            // Local
+            if (_bootConfig.IsLocal)
+            {
+                LoadLocalStartPage();
+            }
+            // Remote
+            else
+            {
+                // Online
+                if (NetworkInterface.GetIsNetworkAvailable())
+                {
+                    LoadRemoteStartPage();
+                }
+                // Offline
+                else
+                {
+                    // Has cached version
+                    if (false /* FIXME */)
+                    {
+                    }
+                    // No cached version
+                    else
+                    {
+                        LoadErrorPage();
+                    }
+                }
+            }
+        }
+
+        protected void LoadErrorPage()
+        {
+            LoadUri(new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative));
+        }
+
+        protected void LoadRemoteStartPage()
+        {
+            LoadUri(new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute));
+            _webAppLoaded = true;
+        }
+
+        protected void LoadLocalStartPage()
+        {
+            LoadUri(new Uri("www/" + _bootConfig.StartPage, UriKind.Relative));
+            _webAppLoaded = true;
         }
     }
 

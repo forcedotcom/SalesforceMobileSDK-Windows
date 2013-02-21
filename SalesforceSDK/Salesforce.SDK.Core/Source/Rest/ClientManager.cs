@@ -61,10 +61,10 @@ namespace Salesforce.SDK.Rest
         }
 
         /// <summary>
-        /// Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
+        /// Returns a RestClient if user is already authenticated or null
         /// </summary>
         /// <returns></returns>
-        public RestClient GetRestClient()
+        public RestClient PeekRestClient()
         {
             Account account = AccountManager.GetAccount();
             if (account != null)
@@ -80,9 +80,22 @@ namespace Salesforce.SDK.Rest
             }
             else
             {
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow(_loginOptions);
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
+        /// </summary>
+        /// <returns></returns>
+        public RestClient GetRestClient()
+        {
+            RestClient restClient = PeekRestClient();
+            if (restClient == null)
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow(_loginOptions);
+            }
+            return restClient;
         }
     }
 }
