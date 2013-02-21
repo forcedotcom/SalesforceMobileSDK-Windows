@@ -36,7 +36,7 @@ namespace Salesforce.SDK.Auth
     public class OAuth2Test
     {
         [TestMethod]
-        public void TestGetAuthorizationUrl()
+        public void TestComputeAuthorizationUrl()
         {
             string loginUrl = "https://login.salesforce.com";
             string clientId = "TEST_CLIENT_ID";
@@ -48,6 +48,19 @@ namespace Salesforce.SDK.Auth
             string actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong authorization url");
         }
+
+        [TestMethod]
+        public void TestComputeFrontDoorUrl()
+        {
+            string instanceUrl = "https://fake.instance";
+            string accessToken = "FAKE_ACCESS_TOKEN";
+            string url = "https://target.url";
+
+            string expectedUrl = "https://fake.instance/secur/frontdoor.jsp?display=touch&sid=FAKE_ACCESS_TOKEN&retURL=https://target.url";
+            string actualUrl = OAuth2.ComputeFrontDoorUrl(instanceUrl, accessToken, url);
+            Assert.AreEqual(expectedUrl, actualUrl, "Wrong front door url");
+        }
+
 
         [TestMethod]
         public void TestRefreshAuthToken()
