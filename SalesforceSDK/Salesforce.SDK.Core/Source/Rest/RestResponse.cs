@@ -60,7 +60,7 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-        public string Asstring
+        public string AsString
         {
             get
             {
@@ -74,7 +74,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (_responseArray == null)
                 {
-                    _responseArray = JArray.Parse(Asstring);
+                    _responseArray = JArray.Parse(AsString);
                 }
                 return _responseArray;
             }
@@ -86,7 +86,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (_responseObject == null)
                 {
-                    _responseObject = JObject.Parse(Asstring);
+                    _responseObject = JObject.Parse(AsString);
                 }
                 return _responseObject;
             }
@@ -119,7 +119,7 @@ namespace Salesforce.SDK.Rest
                         }
                         catch
                         {
-                            _prettyBody = Asstring;
+                            _prettyBody = AsString;
                         }
                     }
                 }

@@ -59,7 +59,6 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-
         public RestClient(string instanceUrl, string accessToken, AccessTokenProvider accessTokenProvider)
         {
             _instanceUrl = instanceUrl;

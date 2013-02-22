@@ -129,6 +129,9 @@
     <Content Include="..\..\external\cordova-wp8\templates\full\www\cordova-2.4.0.js">
       <Link>www\cordova-2.4.0.js</Link>
     </Content>
+    <Content Include="..\..\external\shared\forcetk.js">
+      <Link>www\forcetk.js</Link>
+    </Content>
     <Content Include="..\..\external\shared\jquery\jquery-1.8.3.min.js">
       <Link>www\jquery\jquery-1.8.3.min.js</Link>
     </Content>
