@@ -150,6 +150,7 @@
     <Content Include="..\..\external\shared\PhoneGap\util\SFHybridApp.js">
       <Link>www\SFHybridApp.js</Link>
     </Content>
+    <Content Include="CordovaSourceDictionary.xml" />
     <Content Include="www\bootconfig.json" />
   </ItemGroup>
   <ItemGroup>
