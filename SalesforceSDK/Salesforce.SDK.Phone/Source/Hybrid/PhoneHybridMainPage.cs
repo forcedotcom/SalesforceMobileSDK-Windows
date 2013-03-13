@@ -309,6 +309,7 @@ namespace Salesforce.SDK.Hybrid
         public JSONCredentials(Account account, RestClient client)
         {
             AccessToken = client.AccessToken;
+            LoginUrl = account.LoginUrl;
             InstanceUrl = account.InstanceUrl;
             LoginUrl = account.LoginUrl;
             ClientId = account.ClientId;
