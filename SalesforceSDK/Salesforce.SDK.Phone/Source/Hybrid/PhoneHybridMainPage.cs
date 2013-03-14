@@ -47,7 +47,6 @@ namespace Salesforce.SDK.Hybrid
     /// TODO: set user agent
     /// TODO: configure HTML5 cache support
     /// TODO: capture app home url
-    /// TODO: intercept redirect to login and do a refresh token when that happens
     /// TODO: change this to a UserControl?
     /// </summary>
     public class PhoneHybridMainPage : PhoneApplicationPage
