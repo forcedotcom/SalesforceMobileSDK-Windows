@@ -30,7 +30,9 @@ using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using System;
+using System.Threading;
 using System.Windows.Navigation;
+using WPCordovaClassLib;
 
 namespace Salesforce.SDK.Hybrid
 {
@@ -50,6 +52,7 @@ namespace Salesforce.SDK.Hybrid
         private const string API_VERSION = "v26.0";
         private static PhoneHybridMainPage _instance;
 
+        private SynchronizationContext _syncContext;
         private BootConfig _bootConfig;
         private LoginOptions _loginOptions;
         private ClientManager _clientManager;
@@ -57,10 +60,10 @@ namespace Salesforce.SDK.Hybrid
         private bool _webAppLoaded;
 
         /// <summary>
-        /// Concrete hybrid main page page class should override this method to load uri in web view
+        /// Concrete hybrid main page page class should override this method and return the cordova view
         /// </summary>
-        /// <param name="uri"></param>
-        protected virtual void LoadUri(Uri uri) { }
+        /// <returns></returns>
+        protected virtual CordovaView GetCordovaView() { return null; }
 
         /// <summary>
         /// Constructor
@@ -68,6 +71,7 @@ namespace Salesforce.SDK.Hybrid
         public PhoneHybridMainPage()
         {
             _instance = this;
+            _syncContext = SynchronizationContext.Current;
             _bootConfig = BootConfig.GetBootConfig();
             _loginOptions = new LoginOptions("https://test.salesforce.com" /* FIXME once we have a server picker */,
                 _bootConfig.ClientId, _bootConfig.CallbackURL, _bootConfig.Scopes);
@@ -184,7 +188,8 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadErrorPage()
         {
-            LoadUri(new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative));
+            Uri uri = new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative);
+            LoadUri(uri);
         }
 
         /// <summary>
@@ -192,7 +197,8 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadRemoteStartPage()
         {
-            LoadUri(new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute));
+            Uri uri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
+            LoadUri(uri);
             _webAppLoaded = true;
         }
 
@@ -201,8 +207,21 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadLocalStartPage()
         {
-            LoadUri(new Uri("www/" + _bootConfig.StartPage, UriKind.Relative));
+            Uri uri = new Uri("www/" + _bootConfig.StartPage, UriKind.Relative);
+            LoadUri(uri);
             _webAppLoaded = true;
+        }
+
+        private void LoadUri(Uri uri)
+        {
+            GetCordovaView().StartPageUri = uri;
+            /*
+            _syncContext.Post((state) =>
+                {
+                    GetCordovaView().StartPageUri = uri;
+                },
+                uri);
+             */
         }
 
         /// <summary>
@@ -218,29 +237,36 @@ namespace Salesforce.SDK.Hybrid
             }
             else
             {
-                /*
-                 * Do a cheap REST call to refresh the access token if needed.
-                 * If the login took place a while back (e.g. the already logged
-                 * in application was restarted), then the returned session ID
-                 * (access token) might be stale. This is not an issue if one
-                 * uses exclusively RestClient for calling the server because
-                 * it takes care of refreshing the access token when needed,
-                 * but a stale session ID will cause the WebView to redirect
-                 * to the web login.
-                 */
-                _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
-                    {
-                        if (!response.Success)
-                        {
-                            plugin.OnAuthenticateError(response.Error.Message);
-                        }
-                        else 
-                        {
-                            // TODO set sid cookies
-                            plugin.OnAuthenticateSuccess(GetJSONCredentials());
-                        }
-                    });
+                RefreshSession(plugin);
             }
+        }
+
+        private void RefreshSession(SalesforceOAuthPlugin plugin)
+        {
+            /*
+             * Do a cheap REST call to refresh the access token if needed.
+             * If the login took place a while back (e.g. the already logged
+             * in application was restarted), then the returned session ID
+             * (access token) might be stale. This is not an issue if one
+             * uses exclusively RestClient for calling the server because
+             * it takes care of refreshing the access token when needed,
+             * but a stale session ID will cause the WebView to redirect
+             * to the web login.
+             */
+            _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
+            {
+                if (plugin != null)
+                {
+                    if (!response.Success)
+                    {
+                        plugin.OnAuthenticateError(response.Error.Message);
+                    }
+                    else
+                    {
+                        plugin.OnAuthenticateSuccess(GetJSONCredentials());
+                    }
+                }
+            });
         }
 
         /// <summary>
@@ -257,7 +283,15 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         public void LogoutCurrentUser()
         {
-            _clientManager.Logout();
+            // FIXME Authenticate calls ClientManager.GetRestClient which might start the login flow
+            //       Starting the login flow causes navigation to the login page and must be done from the UI thread
+            //       Should ClientManager operates with a SynchronizationContext?
+            _syncContext.Post((state) =>
+                {
+                    _clientManager.Logout();            
+                    Authenticate(null);
+                },
+                null);
         }
 
         /// <summary>
@@ -311,7 +345,6 @@ namespace Salesforce.SDK.Hybrid
             AccessToken = client.AccessToken;
             LoginUrl = account.LoginUrl;
             InstanceUrl = account.InstanceUrl;
-            LoginUrl = account.LoginUrl;
             ClientId = account.ClientId;
             RefreshToken = account.RefreshToken;
             UserAgent = "SalesforceMobileSDK/2.0 windows phone"; // FIXME
