@@ -29,7 +29,10 @@ using Microsoft.Phone.Net.NetworkInformation;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Source.Util;
 using System;
+using System.Diagnostics;
+using System.Net;
 using System.Threading;
 using System.Windows.Navigation;
 using WPCordovaClassLib;
@@ -123,12 +126,14 @@ namespace Salesforce.SDK.Hybrid
                 // Online
                 if (NetworkInterface.GetIsNetworkAvailable())
                 {
+                    Log("Starting authentication flow");
                     _client = _clientManager.GetRestClient();
                     // After login, we will end up in OnResumeLoggedInNotLoaded
                 }
                 // Offline
                 else
                 {
+                    Log("Error:Can't start application that requires authentication while offline");
                     LoadErrorPage();
                 }
             }
@@ -139,12 +144,14 @@ namespace Salesforce.SDK.Hybrid
                 // Local
                 if (_bootConfig.IsLocal)
                 {
+                    Log("Success:Loading local application - no authentication required");
                     LoadLocalStartPage();
                 }
                 // Remote
                 else
                 {
-                    LoadErrorPage();
+                    Log("Success:Loading remote application - no authentication required");
+                    LoadRemoteStartPage();
                 }
             }
         }
@@ -157,6 +164,7 @@ namespace Salesforce.SDK.Hybrid
             // Local
             if (_bootConfig.IsLocal)
             {
+                Log("Success:Loading local application");
                 LoadLocalStartPage();
             }
             // Remote
@@ -165,6 +173,7 @@ namespace Salesforce.SDK.Hybrid
                 // Online
                 if (NetworkInterface.GetIsNetworkAvailable())
                 {
+                    Log("Success:Loading remote application");
                     LoadRemoteStartPage();
                 }
                 // Offline
@@ -173,10 +182,12 @@ namespace Salesforce.SDK.Hybrid
                     // Has cached version
                     if (false /* FIXME */)
                     {
+                        Log("Success:Loading cached version of remote application because offline");
                     }
                     // No cached version
                     else
                     {
+                        Log("Error:Can't load remote application offline without cached version");
                         LoadErrorPage();
                     }
                 }
@@ -199,7 +210,6 @@ namespace Salesforce.SDK.Hybrid
         {
             Uri uri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
             LoadUri(uri);
-            _webAppLoaded = true;
         }
 
         /// <summary>
@@ -209,19 +219,51 @@ namespace Salesforce.SDK.Hybrid
         {
             Uri uri = new Uri("www/" + _bootConfig.StartPage, UriKind.Relative);
             LoadUri(uri);
-            _webAppLoaded = true;
         }
 
         private void LoadUri(Uri uri)
         {
-            GetCordovaView().StartPageUri = uri;
-            /*
-            _syncContext.Post((state) =>
+            GetCordovaView().Browser.Navigating += OnBrowserNavigating;
+            GetCordovaView().StartPageUri = uri; // that's only works before the view is loaded
+            _webAppLoaded = true;
+        }
+
+        private void OnBrowserNavigating(object sender, NavigatingEventArgs e)
+        {
+            string startURL = IsLoginRedirect(e.Uri);
+            if (startURL != null)
+            {
+                e.Cancel = true;
+                // Cheap REST call to refresh session
+                _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
+                    {
+                        Uri frontDoorStartURL = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, startURL));
+                        _syncContext.Post((state) => { GetCordovaView().Browser.Navigate(state as Uri); }, frontDoorStartURL);
+                    }
+                );
+            }
+        }
+
+        /// <summary>
+        ///  Login redirect are of the form https://host/?ec=30x&startURL=xyz
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns>null if this is not a login redirect and return the the value for startURL if this is a login redirect</returns>
+        private string IsLoginRedirect(Uri uri)
+        {
+            if (uri != null
+                && uri.IsAbsoluteUri
+                && uri.AbsolutePath != null && uri.AbsolutePath == "/"
+                && uri.Query != null) 
+            {
+                QueryString qs = new QueryString(uri);
+                if ((qs["ec"] == "301" || qs["ec"] == "302") && qs["startURL"] != null)
                 {
-                    GetCordovaView().StartPageUri = uri;
-                },
-                uri);
-             */
+                    return qs["startURL"];
+                }
+            }
+            
+            return null;
         }
 
         /// <summary>
@@ -243,16 +285,7 @@ namespace Salesforce.SDK.Hybrid
 
         private void RefreshSession(SalesforceOAuthPlugin plugin)
         {
-            /*
-             * Do a cheap REST call to refresh the access token if needed.
-             * If the login took place a while back (e.g. the already logged
-             * in application was restarted), then the returned session ID
-             * (access token) might be stale. This is not an issue if one
-             * uses exclusively RestClient for calling the server because
-             * it takes care of refreshing the access token when needed,
-             * but a stale session ID will cause the WebView to redirect
-             * to the web login.
-             */
+            // Cheap REST call to refresh session
             _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
             {
                 if (plugin != null)
@@ -306,6 +339,12 @@ namespace Salesforce.SDK.Hybrid
         {
             return null; // TODO provide actual implementation
         }
+
+        private void Log(string p)
+        {
+            Debug.WriteLine("PhoneHybridMainPage:" + p);
+        }
+
     }
 
     /// <summary>
