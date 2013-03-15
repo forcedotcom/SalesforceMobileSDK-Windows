@@ -222,8 +222,19 @@ namespace Salesforce.SDK.Hybrid
 
         private void LoadUri(Uri uri)
         {
-            GetCordovaView().Browser.Navigating += OnBrowserNavigating;
-            GetCordovaView().StartPageUri = uri; // that's only works before the view is loaded
+            WebBrowser browser = GetCordovaView().Browser;
+            browser.Navigating += OnBrowserNavigating;
+            if (GetCordovaView().StartPageUri == uri)
+            {
+                // Already there - maybe back in after a log out
+                // Manually reloading page
+                browser.Navigate(uri);
+            }
+            else
+            {
+                // That only works before the view is loaded
+                GetCordovaView().StartPageUri = uri;
+            }
             _webAppLoaded = true;
         }
 
@@ -315,8 +326,9 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         public async void LogoutCurrentUser()
         {
+            _webAppLoaded = false;
             await _clientManager.Logout();
-            Authenticate(null);
+            _syncContext.Post((state) => { Authenticate(null); }, null); // XXX Authenticate might call Navigate so it must be done on the UI thread
         }
 
         /// <summary>

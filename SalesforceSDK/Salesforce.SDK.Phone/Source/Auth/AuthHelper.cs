@@ -52,7 +52,8 @@ namespace Salesforce.SDK.Auth
             string clientId = Uri.EscapeUriString(loginOptions.ClientId);
             string callbackUrl = Uri.EscapeUriString(loginOptions.CallbackUrl);
             string scopes = Uri.EscapeUriString(string.Join(" ", loginOptions.Scopes));
-            string QueryString = string.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
+            string QueryString = string.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", 
+                LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
 
             // TODO move LoginPage.xaml to Salesforce.SDK.Phone assembly
             ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + QueryString, UriKind.Relative));
