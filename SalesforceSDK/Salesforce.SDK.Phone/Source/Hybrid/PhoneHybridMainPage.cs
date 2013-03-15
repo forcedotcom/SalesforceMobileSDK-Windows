@@ -313,17 +313,10 @@ namespace Salesforce.SDK.Hybrid
         /// <summary>
         /// Logout current user
         /// </summary>
-        public void LogoutCurrentUser()
+        public async void LogoutCurrentUser()
         {
-            // FIXME Authenticate calls ClientManager.GetRestClient which might start the login flow
-            //       Starting the login flow causes navigation to the login page and must be done from the UI thread
-            //       Should ClientManager operates with a SynchronizationContext?
-            _syncContext.Post((state) =>
-                {
-                    _clientManager.Logout();            
-                    Authenticate(null);
-                },
-                null);
+            await _clientManager.Logout();
+            Authenticate(null);
         }
 
         /// <summary>

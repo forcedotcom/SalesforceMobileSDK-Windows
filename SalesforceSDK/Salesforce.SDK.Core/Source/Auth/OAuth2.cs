@@ -188,7 +188,7 @@ namespace Salesforce.SDK.Auth
         const string OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
-        const string OAUTH_REVOKE_PATH = "/services/oauth2/refresh";
+        const string OAUTH_REVOKE_PATH = "/services/oauth2/revoke";
         const string OAUTH_REVOKE_QUERY_STRING = "token={0}";
 
 
@@ -258,20 +258,20 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
-        /// <returns></returns>
-        public static async Task<HttpStatusCode> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
+        /// <returns>true if successful</returns>
+        public static async Task<bool> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
             string argsStr = string.Format(OAUTH_REVOKE_QUERY_STRING, new string[] { refreshToken });
 
-            // Refresh url
+            // Revoke url
             string revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
 
             // Post
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
             // Execute post
-            return await c.Execute().ContinueWith(t => t.Result.StatusCode);
+            return await c.Execute().ContinueWith(t => t.Result.StatusCode == HttpStatusCode.OK);
         }
 
         /// <summary>

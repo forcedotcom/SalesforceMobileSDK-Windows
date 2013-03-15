@@ -90,9 +90,9 @@ namespace Salesforce.Sample.RestExplorer.Phone
         /// <summary>
         /// Handler for logout
         /// </summary>
-        protected void OnLogout()
+        protected async void OnLogout()
         {
-            _clientManager.Logout();
+            await _clientManager.Logout();
             OnNavigatedTo(null);
         }
 

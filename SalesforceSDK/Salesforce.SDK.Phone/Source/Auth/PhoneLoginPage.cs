@@ -28,7 +28,6 @@ using Microsoft.Phone.Controls;
 using Salesforce.SDK.Adaptation;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Windows.Navigation;
 
 namespace Salesforce.SDK.Auth
@@ -54,22 +53,9 @@ namespace Salesforce.SDK.Auth
             IDictionary<string, string> qs = NavigationContext.QueryString;
             _loginOptions = new LoginOptions(qs[AuthHelper.LOGIN_SERVER], qs[AuthHelper.CLIENT_ID], qs[AuthHelper.CALLBACK_URL], qs[AuthHelper.SCOPES].Split(' '));
             Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(_loginOptions));
-            removeCookies(loginUri);
-            WebViewControl().Source = loginUri;
-            WebViewControl().Navigating += OnNavigating;
-        }
-
-        private void removeCookies(Uri uri)
-        {
-            // XXX that doesn't seem to work
-            HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(uri);
-            CookieContainer cookieContainer = new CookieContainer();
-            webRequest.CookieContainer = cookieContainer;
-            foreach (Cookie cookie in cookieContainer.GetCookies(uri))
-            {
-                cookie.Discard = true;
-                cookie.Expired = true;
-            }
+            WebBrowser wv = WebViewControl();
+            wv.Navigating += OnNavigating;
+            wv.Source = loginUri;
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)

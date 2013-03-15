@@ -132,9 +132,9 @@ namespace Salesforce.Sample.RestExplorer.Store
         /// <summary>
         /// Helper for logout
         /// </summary>
-        private void OnLogout()
+        private async void OnLogout()
         {
-            _clientManager.Logout();
+            await _clientManager.Logout();
             OnNavigatedTo(null);
         }
 

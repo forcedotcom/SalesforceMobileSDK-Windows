@@ -26,6 +26,8 @@
  */
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Rest
 {
@@ -50,13 +52,18 @@ namespace Salesforce.SDK.Rest
         /// <summary>
         /// Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke the user auth tokens
         /// </summary>
-        public async void Logout()
+        /// <returns>true if server logout was successful</returns>
+        public async Task<bool> Logout()
         {
             Account account = AccountManager.GetAccount();
             if (account != null)
             {
                 AccountManager.DeleteAccount();
-                await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+                return await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+            }
+            else
+            {
+                return await Task.Factory.StartNew(() => true);
             }
         }
 
