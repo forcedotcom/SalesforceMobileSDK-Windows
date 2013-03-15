@@ -36,6 +36,7 @@ namespace Salesforce.SDK.Auth
     /// Super class for Windows Phone login page
     /// Note: some methods have empty implementations so it can't be used directly
     /// TODO: change this to a UserControl?
+    /// FIXME: logout following login goes to approve/deny even though token is revoked
     /// </summary>
     public class PhoneLoginPage : PhoneApplicationPage
     {

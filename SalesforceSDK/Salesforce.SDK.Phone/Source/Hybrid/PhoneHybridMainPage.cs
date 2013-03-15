@@ -48,6 +48,7 @@ namespace Salesforce.SDK.Hybrid
     /// TODO: configure HTML5 cache support
     /// TODO: capture app home url
     /// TODO: change this to a UserControl?
+    /// FIXME: resuming app causes a reload of web view (so web state is reset)
     /// </summary>
     public class PhoneHybridMainPage : PhoneApplicationPage
     {
