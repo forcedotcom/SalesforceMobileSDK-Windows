@@ -47,6 +47,7 @@ namespace Salesforce.SDK.Hybrid
     /// TODO: set user agent
     /// TODO: configure HTML5 cache support
     /// TODO: capture app home url
+    /// TODO: authenticate should also refresh VF cookies by hitting the "ping" page in a hidden WebBrowser
     /// TODO: change this to a UserControl?
     /// FIXME: resuming app causes a reload of web view (so web state is reset)
     /// </summary>
