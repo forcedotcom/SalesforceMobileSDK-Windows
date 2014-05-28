@@ -26,7 +26,10 @@
  */
 using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.Sample.RestExplorer.ViewModels;
+using Salesforce.SDK.App;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Native;
+using Salesforce.SDK.Source.Settings;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -39,10 +42,9 @@ namespace Salesforce.Sample.RestExplorer.Store
     /// <summary>
     /// Only page of the Rest Explorer Store application
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : NativeMainPage
     {
         RestActionViewModel _viewModel;
-        ClientManager _clientManager;
         Button[] _buttons;
 
         /// <summary>
@@ -54,8 +56,6 @@ namespace Salesforce.Sample.RestExplorer.Store
             _viewModel = DataContext as RestActionViewModel;
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
             _viewModel.SyncContext = SynchronizationContext.Current;
-
-            _clientManager = new ClientManager(Config.LoginOptions);
             _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
             foreach (Button button in _buttons)
@@ -127,25 +127,6 @@ namespace Salesforce.Sample.RestExplorer.Store
             {
                 tb.Visibility = names.Contains(tb.Name) ? Visibility.Visible : Visibility.Collapsed;
             }
-        }
-
-        /// <summary>
-        /// Helper for logout
-        /// </summary>
-        private async void OnLogout()
-        {
-            await _clientManager.Logout();
-            OnNavigatedTo(null);
-        }
-
-        /// <summary>
-        /// When navigated to, we try to get a RestClient
-        /// If we are not already authenticated, this will kick off the login flow
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            _clientManager.GetRestClient();
         }
 
         /// <summary>

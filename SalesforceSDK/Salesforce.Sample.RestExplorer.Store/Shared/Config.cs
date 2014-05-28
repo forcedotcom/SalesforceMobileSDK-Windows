@@ -25,28 +25,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.RestExplorer.Shared
 {
-    public class Config
+    public class Config : SalesforceConfig
     {
-        private const string LOGIN_URL = "https://test.salesforce.com";
-        private const string CLIENT_ID = "3MVG92.uWdyphVj51aXI_W16JGEwzme6Hj3YodbDRU0FHC86IddELDABTLsS5HGHNzNN_vQTA_XDuL.QtdF7G";
-        private const string CALLBACK_URL = "sfdc:///axm/detect/oauth/done";
-        private static string[] SCOPES = new string[] { "api" };
-
-        private static LoginOptions _loginOptions;
-        public static LoginOptions LoginOptions
+        public override string ClientId
         {
             get
             {
-                if (_loginOptions == null)
-                {
-                    _loginOptions = new LoginOptions(LOGIN_URL, CLIENT_ID, CALLBACK_URL, SCOPES);
-                }
-                return _loginOptions;
+                return "3MVG92.uWdyphVj51aXI_W16JGEwzme6Hj3YodbDRU0FHC86IddELDABTLsS5HGHNzNN_vQTA_XDuL.QtdF7G";
             }
+        }
+        public override string CallbackUrl
+        {
+            get
+            {
+                return "sfdc:///axm/detect/oauth/done";
+            }
+        }
 
+        public override string[] Scopes
+        {
+            get
+            {
+                return new string[] { "api" };
+            }
+        }
+
+        public Config() : base()
+        {
+            for (int i = 0; i < ServerList.Length; i++)
+            {
+                if ("Sandbox".Equals(ServerList[i].ServerName, System.StringComparison.CurrentCultureIgnoreCase))
+                {
+                    SelectedServer = i;
+                    break;
+                }
+            }
+            SalesforceConfig.LoginOptions = new LoginOptions(Server.ServerHost, ClientId, CallbackUrl, Scopes);
         }
     }
 }

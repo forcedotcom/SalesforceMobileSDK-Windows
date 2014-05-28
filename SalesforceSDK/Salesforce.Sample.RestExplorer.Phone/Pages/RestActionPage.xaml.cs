@@ -24,23 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.Phone.Controls;
-using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.Sample.RestExplorer.ViewModels;
 using Salesforce.SDK.Rest;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Navigation;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Source.Utilities;
+using Salesforce.Sample.RestExplorer.Shared;
+using Windows.UI.Xaml;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
     /// <summary>
     /// Page used to make REST calls and display their results
     /// </summary>
-    public partial class RestActionPage : PhoneApplicationPage
+    public partial class RestActionPage : Page
     {
         private RestActionViewModel _viewModel;
 
@@ -78,7 +80,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            string restActionStr = NavigationContext.QueryString["rest_action"];
+            string restActionStr = e.Parameter.ToString();
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
             HashSet<string> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);

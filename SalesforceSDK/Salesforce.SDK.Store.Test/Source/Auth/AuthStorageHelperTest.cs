@@ -36,7 +36,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthStorageHelper()
         {
-            IAuthStorageHelper authStorageHelper = PlatformAdapter.Resolve<IAuthStorageHelper>();
+            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
             Assert.IsNotNull(authStorageHelper);
         }
 
@@ -44,7 +44,7 @@ namespace Salesforce.SDK.Auth
         public void TestPersistRetrieveDeleteCredentials()
         {
             Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "accessToken", "refreshToken");
-            IAuthStorageHelper authStorageHelper = PlatformAdapter.Resolve<IAuthStorageHelper>();
+            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
             CheckAccount(null);
             authStorageHelper.PersistCredentials(account);
             CheckAccount(account);
@@ -54,7 +54,7 @@ namespace Salesforce.SDK.Auth
 
         private void CheckAccount(Account expectedAccount)
         {
-            IAuthStorageHelper authStorageHelper = PlatformAdapter.Resolve<IAuthStorageHelper>();
+            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
             Account account = authStorageHelper.RetrievePersistedCredentials();
             if (expectedAccount == null)
             {

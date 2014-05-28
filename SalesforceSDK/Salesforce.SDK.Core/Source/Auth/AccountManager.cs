@@ -27,76 +27,37 @@
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Auth
 {
-    /// <summary>
-    /// object representing an authenticated user credentials
-    /// </summary>
-    public class Account
-    {
-        public string LoginUrl     { get; private set; }
-        public string ClientId     { get; private set; }
-        public string CallbackUrl  { get; private set; }
-        public string[] Scopes     { get; private set; }
-        public string InstanceUrl  { get; private set; }
-        public string AccessToken  { get; set; }
-        public string RefreshToken { get; private set; }
-
-        /// <summary>
-        /// Constructor for Account
-        /// NB: the Account is not stored anywhere until we call PersistCredentials on the IAuthStorageHelper
-        /// </summary>
-        /// <param name="loginUrl"></param>
-        /// <param name="clientId"></param>
-        /// <param name="callbackUrl"></param>
-        /// <param name="scopes"></param>
-        /// <param name="instanceUrl"></param>
-        /// <param name="accessToken"></param>
-        /// <param name="refreshToken"></param>
-        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl, string accessToken, string refreshToken)
-        {
-            LoginUrl = loginUrl;
-            ClientId = clientId;
-            CallbackUrl = callbackUrl;
-            Scopes = scopes;
-            InstanceUrl = instanceUrl;
-            AccessToken = accessToken;
-            RefreshToken = refreshToken;
-        }
-
-        /// <summary>
-        /// Serialize Account object as a JSON string
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        public static string ToJson(Account account)
-        {
-            return JsonConvert.SerializeObject(account);
-        }
-
-        /// <summary>
-        /// Deserialize Account from a JSON string
-        /// </summary>
-        /// <param name="accountJson"></param>
-        /// <returns></returns>
-        public static Account fromJson(string accountJson)
-        {
-            return JsonConvert.DeserializeObject<Account>(accountJson);
-        }
-    }
-
     /// <summary>
     /// Class providing (static) methods for creating/deleting or retrieving an Account
     /// </summary>
     public class AccountManager
     {
+        private AuthStorageHelper InternalAuthStorage { get; set; }
+        private static AccountManager instance = new AccountManager();
+
+        private AccountManager()
+        {
+            InternalAuthStorage = new AuthStorageHelper();
+        }
+
+        public static AuthStorageHelper AuthStorage
+        {
+            get
+            {
+                return instance.InternalAuthStorage;
+            }
+        }
+
         /// <summary>
         /// Delete Account for currently authenticated user
         /// </summary>
         public static void DeleteAccount()
         {
-            PlatformAdapter.Resolve<IAuthStorageHelper>().DeletePersistedCredentials();
+            AuthStorage.DeletePersistedCredentials();
         }
 
         /// <summary>
@@ -105,7 +66,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static Account GetAccount()
         {
-            return PlatformAdapter.Resolve<IAuthStorageHelper>().RetrievePersistedCredentials();
+            return AuthStorage.RetrievePersistedCredentials();
         }
 
         /// <summary>
@@ -117,7 +78,7 @@ namespace Salesforce.SDK.Auth
         {
             Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.AccessToken, authResponse.RefreshToken);
-            PlatformAdapter.Resolve<IAuthStorageHelper>().PersistCredentials(account);
+           AuthStorage.PersistCredentials(account);
         }
     }
 }

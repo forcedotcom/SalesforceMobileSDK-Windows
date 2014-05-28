@@ -152,14 +152,13 @@
       <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>
       <Name>Salesforce.SDK.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Salesforce.SDK.Phone\Salesforce.SDK.Phone.csproj">
-      <Project>{B03AB845-4CFC-44F7-87BE-9760E3CB14B5}</Project>
-      <Name>Salesforce.SDK.Phone</Name>
-    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\sl4-windowsphone71\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />

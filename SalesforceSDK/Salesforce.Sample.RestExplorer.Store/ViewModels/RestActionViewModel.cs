@@ -26,8 +26,10 @@
  */
 using Newtonsoft.Json.Linq;
 using Salesforce.Sample.RestExplorer.Shared;
+using Salesforce.SDK.App;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -180,8 +182,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         /// <param name="parameter"></param>
         public void Execute(object parameter)
         {
-            ClientManager cm = new ClientManager(Config.LoginOptions);
-            RestClient rc = cm.GetRestClient();
+            RestClient rc = SalesforceApplication.GlobalClientManager.GetRestClient();
             if (rc != null)
             {
                 RestRequest request = BuildRestRequest();

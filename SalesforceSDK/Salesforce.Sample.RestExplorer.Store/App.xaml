@@ -1,7 +1,8 @@
-﻿<Application
+﻿<auth:SalesforceApplication
     x:Class="Salesforce.Sample.RestExplorer.Store.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:auth="using:Salesforce.SDK.App"
     xmlns:local="using:Salesforce.Sample.RestExplorer.Store">
 
     <Application.Resources>
@@ -16,4 +17,4 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-</Application>
+</auth:SalesforceApplication>

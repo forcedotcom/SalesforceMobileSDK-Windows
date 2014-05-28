@@ -156,17 +156,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\external\cordova-wp8\framework\WPCordovaClassLib.csproj">
-      <Project>{FC6A1A70-892D-46AD-9E4A-9793F72AF780}</Project>
-      <Name>WPCordovaClassLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
       <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>
       <Name>Salesforce.SDK.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Salesforce.SDK.Phone\Salesforce.SDK.Phone.csproj">
-      <Project>{B03AB845-4CFC-44F7-87BE-9760E3CB14B5}</Project>
-      <Name>Salesforce.SDK.Phone</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />

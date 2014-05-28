@@ -33,6 +33,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Salesforce.SDK.Auth
 {
@@ -41,10 +43,10 @@ namespace Salesforce.SDK.Auth
     /// </summary>
     public class LoginOptions
     {
-        public string LoginUrl    { get; private set; }
-        public string ClientId    { get; private set; }
+        public string LoginUrl { get; private set; }
+        public string ClientId { get; private set; }
         public string CallbackUrl { get; private set; }
-        public string[] Scopes    { get; private set; }
+        public string[] Scopes { get; private set; }
 
         /// <summary>
         /// Constructor for LoginOptions
@@ -70,13 +72,13 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Pin length required
         /// </summary>
-        [JsonProperty(PropertyName="pin_length")]
+        [JsonProperty(PropertyName = "pin_length")]
         public int PinLength { get; set; }
 
         /// <summary>
         /// Inactivite time after which the user should be prompted to enter her pin
         /// </summary>
-        [JsonProperty(PropertyName="screen_lock")]
+        [JsonProperty(PropertyName = "screen_lock")]
         public int ScreenLockTimeout { get; set; }
     }
 
@@ -106,14 +108,14 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Salesforce username of authenticated user
         /// </summary>
-        [JsonProperty(PropertyName="username")] 
+        [JsonProperty(PropertyName = "username")]
         public string UserName { get; set; }
 
         /// <summary>
         /// Mobile policy for connected application set by administrator
         /// </summary>
-        [JsonProperty(PropertyName="mobile_policy")]
-        public MobilePolicy MobilePolicy {get; set; }
+        [JsonProperty(PropertyName = "mobile_policy")]
+        public MobilePolicy MobilePolicy { get; set; }
     }
 
     /// <summary>
@@ -124,21 +126,21 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// URL for identity service
         /// </summary>
-        [JsonProperty(PropertyName="id")] 
+        [JsonProperty(PropertyName = "id")]
         public string IdentityUrl { get; set; }
-        
+
         /// <summary>
         /// Instance URL
         /// </summary>
-        [JsonProperty(PropertyName="instance_url")] 
+        [JsonProperty(PropertyName = "instance_url")]
         public string InstanceUrl { get; set; }
-        
+
         /// <summary>
         /// Date and time the oauth tokens were issued at
         /// </summary>
         [JsonProperty(PropertyName = "issued_at")]
         public string IssuedAt { get; set; }
-        
+
         /// <summary>
         /// Access token
         /// </summary>
@@ -155,7 +157,8 @@ namespace Salesforce.SDK.Auth
         /// Auth scopes in a space delimited string
         /// </summary>
         [JsonProperty(PropertyName = "scope")]
-        public string ScopesStr {
+        public string ScopesStr
+        {
             set
             {
                 Scopes = value.Split(' ');
@@ -201,10 +204,10 @@ namespace Salesforce.SDK.Auth
         public static string ComputeAuthorizationUrl(LoginOptions loginOptions)
         {
             // Scope
-            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] {REFRESH_SCOPE}).Distinct().ToArray());
+            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { REFRESH_SCOPE }).Distinct().ToArray());
 
             // Args
-            string[] args = {loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
+            string[] args = { loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
@@ -242,7 +245,7 @@ namespace Salesforce.SDK.Auth
         {
             // Args
             string argsStr = string.Format(OAUTH_REFRESH_QUERY_STRING, new string[] { loginOptions.ClientId, refreshToken });
-            
+
             // Refresh url
             string refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
 
@@ -274,6 +277,26 @@ namespace Salesforce.SDK.Auth
             return await c.Execute().ContinueWith(t => t.Result.StatusCode == HttpStatusCode.OK);
         }
 
+        public async static void ClearCookies(LoginOptions loginOptions)
+        {
+            Frame frame = Window.Current.Content as Frame;
+            if (frame != null)
+            {
+                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    Uri loginUri = new Uri(ComputeAuthorizationUrl(loginOptions));
+                    WebView web = new WebView();
+                    Windows.Web.Http.Filters.HttpBaseProtocolFilter myFilter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
+                    var cookieManager = myFilter.CookieManager;
+                    Windows.Web.Http.HttpCookieCollection cookies = cookieManager.GetCookies(new Uri(loginUri.Scheme + "://" + loginUri.Host));
+                    foreach (Windows.Web.Http.HttpCookie cookie in cookies)
+                    {
+                        cookieManager.DeleteCookie(cookie);
+                    }
+                });
+            }
+        }
+
         /// <summary>
         /// Async method to call the identity service (to get the mobile policy among other pieces of information)
         /// </summary>
@@ -283,7 +306,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
             // Auth header
-            Dictionary<string, string> headers = new Dictionary<string, string>() {{"Authorization", "Bearer " + accessToken }};
+            Dictionary<string, string> headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
 
             // Get
             HttpCall c = HttpCall.CreateGet(headers, idUrl);

@@ -1,4 +1,6 @@
-﻿/*
+﻿using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Pages;
+/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -24,39 +26,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.Phone.Controls;
 using System;
 using System.Windows;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
     /// Phone specific implementation if IAuthHelper
     /// </summary>
-    public class AuthHelper : IAuthHelper
+    public sealed class AuthHelper : IAuthHelper
     {
-        private const string ACCOUNT_SETTING = "account";
-
-        public const string LOGIN_SERVER = "loginServer";
-        public const string CLIENT_ID = "clientId";
-        public const string CALLBACK_URL = "callbackUrl";
-        public const string SCOPES = "scopes";
-
         /// <summary>
         /// Navigate to the /Pages/LoginPage.xaml and load login page in the webview
         /// </summary>
         /// <param name="loginOptions"></param>
-        public void StartLoginFlow(LoginOptions loginOptions)
+        public async void StartLoginFlow(LoginOptions loginOptions)
         {
-            string loginUrl = Uri.EscapeUriString(loginOptions.LoginUrl);
-            string clientId = Uri.EscapeUriString(loginOptions.ClientId);
-            string callbackUrl = Uri.EscapeUriString(loginOptions.CallbackUrl);
-            string scopes = Uri.EscapeUriString(string.Join(" ", loginOptions.Scopes));
-            string QueryString = string.Format("?{0}={1}&{2}={3}&{4}={5}&{6}={7}", 
-                LOGIN_SERVER, loginUrl, CLIENT_ID, clientId, CALLBACK_URL, callbackUrl, SCOPES, scopes);
+            Frame frame = Window.Current.Content as Frame;
+            if (frame != null)
+            {
+                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    frame.Navigate(typeof(SalesforceLoginPage), loginOptions);
+                });
 
-            // TODO move LoginPage.xaml to Salesforce.SDK.Phone assembly
-            ((PhoneApplicationFrame) Application.Current.RootVisual).Navigate(new Uri("/Pages/LoginPage.xaml" + QueryString, UriKind.Relative));
+            }
         }
 
         /// <summary>
@@ -67,7 +63,9 @@ namespace Salesforce.SDK.Auth
         public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
             AccountManager.CreateNewAccount(loginOptions, authResponse);
-            ((PhoneApplicationFrame) Application.Current.RootVisual).GoBack();
+            Frame frame = Window.Current.Content as Frame;
+            frame.Navigate(SalesforceApplication.RootApplicationPage);
+            SalesforcePhoneApplication.ContinuationManager.MarkAsStale();
         }
     }
 }

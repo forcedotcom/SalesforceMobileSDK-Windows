@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Salesforce.Sample.RestExplorer.Shared;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Security;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,7 +25,7 @@ namespace Salesforce.Sample.RestExplorer.Store
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App : SalesforceApplication
     {
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -85,6 +89,22 @@ namespace Salesforce.Sample.RestExplorer.Store
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void InitializeConfig()
+        {
+            new Config();
+            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
+            {
+                Password = "mypassword",
+                Salt = "mysalt"
+            };
+            Encryptor.init(settings);
+        }
+
+        protected override Type SetRootApplicationPage()
+        {
+            return typeof(MainPage);
         }
     }
 }

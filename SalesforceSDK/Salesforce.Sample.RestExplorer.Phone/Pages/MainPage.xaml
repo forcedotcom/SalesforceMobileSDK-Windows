@@ -1,22 +1,15 @@
-﻿<phone:PhoneApplicationPage
+﻿<Page
     x:Class="Salesforce.Sample.RestExplorer.Phone.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
-    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:local="using:Salesforce.Sample.RestExplorer.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
-
-    <!--LayoutRoot is the root grid where all page content is placed-->
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <StackPanel>
-            <Button Name="btnLogout">Logout</Button>
+        <StackPanel Width="Auto" Height="Auto">
+            <Button Width="Auto" Name="btnLogout" VerticalAlignment="Center" HorizontalAlignment="Stretch">Logout</Button>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -26,24 +19,23 @@
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0">
-                    <Button Name="btnVersions">Versions</Button>
-                    <Button Name="btnResources">Resources</Button>
-                    <Button Name="btnDescribeGlobal">Describe Global</Button>
-                    <Button Name="btnMetadata">Metadata</Button>
-                    <Button Name="btnDescribe">Describe</Button>
-                    <Button Name="btnManual">Manual</Button>
+                    <Button Name="btnVersions"  HorizontalAlignment="Center">Versions</Button>
+                    <Button Name="btnResources" HorizontalAlignment="Center">Resources</Button>
+                    <Button Name="btnDescribeGlobal" HorizontalAlignment="Center">Describe Global</Button>
+                    <Button Name="btnMetadata" HorizontalAlignment="Center">Metadata</Button>
+                    <Button Name="btnDescribe" HorizontalAlignment="Center">Describe</Button>
+                    <Button Name="btnManual" HorizontalAlignment="Center">Manual</Button>
                 </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="1">
-                    <Button Name="btnCreate">Create</Button>
-                    <Button Name="btnRetrieve">Retrieve</Button>
-                    <Button Name="btnUpdate">Update</Button>
-                    <Button Name="btnUpsert">Upsert</Button>
-                    <Button Name="btnDelete">Delete</Button>
-                    <Button Name="btnQuery">Query</Button>
-                    <Button Name="btnSearch">Search</Button>
+                    <Button Name="btnCreate" HorizontalAlignment="Center">Create</Button>
+                    <Button Name="btnRetrieve" HorizontalAlignment="Center">Retrieve</Button>
+                    <Button Name="btnUpdate" HorizontalAlignment="Center">Update</Button>
+                    <Button Name="btnUpsert" HorizontalAlignment="Center">Upsert</Button>
+                    <Button Name="btnDelete" HorizontalAlignment="Center">Delete</Button>
+                    <Button Name="btnQuery" HorizontalAlignment="Center">Query</Button>
+                    <Button Name="btnSearch" HorizontalAlignment="Center">Search</Button>
                 </StackPanel>
             </Grid>
         </StackPanel>
     </Grid>
-
-</phone:PhoneApplicationPage>
+</Page>

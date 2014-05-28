@@ -59,10 +59,17 @@ namespace Salesforce.SDK.Rest
             if (account != null)
             {
                 AccountManager.DeleteAccount();
-                return await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+                OAuth2.ClearCookies(_loginOptions);
+                bool loggedOut = await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+                if (loggedOut)
+                {
+                    GetRestClient();
+                }
+                return loggedOut;
             }
             else
             {
+                GetRestClient();
                 return await Task.Factory.StartNew(() => true);
             }
         }
