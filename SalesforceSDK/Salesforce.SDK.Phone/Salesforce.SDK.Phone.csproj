@@ -80,7 +80,7 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <Page Include="Source\Pages\SalesforceLoginPage.xaml">
+    <Page Include="Source\Pages\AccountPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -90,8 +90,8 @@
     <Compile Include="Source\App\ContinuationManagerImpl.cs" />
     <Compile Include="Source\App\SalesforcePhoneApplication.cs" />
     <Compile Include="Source\Auth\AuthHelper.cs" />
-    <Compile Include="Source\Pages\SalesforceLoginPage.xaml.cs">
-      <DependentUpon>SalesforceLoginPage.xaml</DependentUpon>
+    <Compile Include="Source\Pages\AccountPage.xaml.cs">
+      <DependentUpon>AccountPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

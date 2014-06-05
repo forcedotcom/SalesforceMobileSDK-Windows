@@ -36,6 +36,7 @@ using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Source.Utilities;
 using Salesforce.Sample.RestExplorer.Shared;
 using Windows.UI.Xaml;
+using Windows.Phone.UI.Input;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
@@ -56,6 +57,18 @@ namespace Salesforce.Sample.RestExplorer.Phone
             _viewModel = DataContext as RestActionViewModel;
             _viewModel.SyncContext = SynchronizationContext.Current;
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
+            HardwareButtons.BackPressed += HardwareButtons_BackPressed;
+        }
+
+        void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame != null && rootFrame.CanGoBack)
+            {
+                rootFrame.GoBack();
+                e.Handled = true;
+            }
+
         }
 
         /// <summary>

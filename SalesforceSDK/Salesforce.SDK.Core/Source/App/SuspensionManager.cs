@@ -20,7 +20,7 @@ namespace Salesforce.SDK.App
     /// carry across sessions, but that should be discarded when an application crashes or is 
     /// upgraded. 
     /// </summary> 
-    internal sealed class SuspensionManager
+    public sealed class SuspensionManager
     {
         private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();
         private static List<Type> _knownTypes = new List<Type>();

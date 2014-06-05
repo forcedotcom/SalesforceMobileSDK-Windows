@@ -36,7 +36,7 @@ namespace Salesforce.SDK.Auth
         /// Kicks off ogin flow
         /// </summary>
         /// <param name="loginOptions"></param>
-        void StartLoginFlow(LoginOptions loginOptions);
+        void StartLoginFlow();
 
         /// <summary>
         /// Called once the login flow has completed, creates the account

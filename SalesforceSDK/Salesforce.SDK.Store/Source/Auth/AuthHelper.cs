@@ -25,9 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Pages;
 using System;
 using Windows.Security.Authentication.Web;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+
 
 namespace Salesforce.SDK.Auth
 {
@@ -41,23 +46,16 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="clientLoginPage"></param>
-        public void StartLoginFlow(LoginOptions loginOptions)
+        public async void StartLoginFlow()
         {
-            OAuth2.ClearCookies(loginOptions);
-            DoAuthFlow(loginOptions);
-        }
-
-        private async void DoAuthFlow(LoginOptions loginOptions)
-        {
-            Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
-            Uri callbackUri = new Uri(loginOptions.CallbackUrl);
-
-            WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
-            if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
+            Frame frame = Window.Current.Content as Frame;
+            if (frame != null)
             {
-                Uri responseUri = new Uri(webAuthenticationResult.ResponseData.ToString());
-                AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
-                PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
+                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    frame.Navigate(typeof(AccountPage));
+                });
+
             }
         }
 
@@ -66,9 +64,13 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
-        public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
+        public async void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            AccountManager.CreateNewAccount(loginOptions, authResponse);
+            if (await AccountManager.CreateNewAccount(loginOptions, authResponse))
+            {
+                Frame frame = Window.Current.Content as Frame;
+                frame.Navigate(SalesforceApplication.RootApplicationPage);
+            }
         }
     }
 }

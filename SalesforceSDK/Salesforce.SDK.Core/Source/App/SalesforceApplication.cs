@@ -19,11 +19,12 @@ namespace Salesforce.SDK.App
 
         public static ClientManager GlobalClientManager { get; private set; }
         public static Type RootApplicationPage { get; private set; }
+        public static SalesforceConfig ServerConfiguration { get; private set; }
 
         public SalesforceApplication() : base()
         {
             Suspending += OnSuspending;
-            CreateClientManager();
+            CreateClientManager(false);
             RootApplicationPage = SetRootApplicationPage();
         }
 
@@ -42,12 +43,16 @@ namespace Salesforce.SDK.App
         ///         Encryptor.init(settings);
         ///     }
         /// </summary>
-        protected abstract void InitializeConfig();
+        ///
+        protected abstract SalesforceConfig InitializeConfig();
+
         protected abstract Type SetRootApplicationPage();
 
         protected virtual async void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
+            var deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
+            deferral.Complete();
         }
 
         protected async override void OnActivated(IActivatedEventArgs args)
@@ -75,12 +80,17 @@ namespace Salesforce.SDK.App
             }
         }
 
-        protected void CreateClientManager()
+        public static void ResetClientManager()
         {
-            if (GlobalClientManager == null)
+            GlobalClientManager = new ClientManager();
+        }
+
+        protected void CreateClientManager(bool reset)
+        {
+            if (GlobalClientManager == null || reset)
             {
-                InitializeConfig();
-                GlobalClientManager = new ClientManager(SalesforceConfig.LoginOptions);
+                ServerConfiguration = InitializeConfig();
+                GlobalClientManager = new ClientManager();
             }
 
             GlobalClientManager.GetRestClient();

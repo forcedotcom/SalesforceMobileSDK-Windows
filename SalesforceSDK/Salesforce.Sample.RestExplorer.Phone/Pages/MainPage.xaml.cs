@@ -1,5 +1,6 @@
 ﻿using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Settings;
@@ -25,7 +26,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public partial class MainPage : Page
     {
         Button[] _buttons;
 
@@ -34,7 +35,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
             this.InitializeComponent();
 
             this.NavigationCacheMode = NavigationCacheMode.Required;
-            _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
+            _buttons = new Button[] { btnSwitch, btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
             foreach (Button button in _buttons)
             {
@@ -54,6 +55,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
             switch (((Button)sender).Name)
             {
                 case "btnLogout": OnLogout(); return;
+                case "btnSwitch": OnSwitch(); return;
                 case "btnManual": restAction = RestAction.MANUAL; break;
                 case "btnCreate": restAction = RestAction.CREATE; break;
                 case "btnDelete": restAction = RestAction.DELETE; break;
@@ -74,9 +76,14 @@ namespace Salesforce.Sample.RestExplorer.Phone
         /// <summary>
         /// Handler for logout
         /// </summary>
-        protected async void OnLogout()
+        private async void OnLogout()
         {
             await SalesforceApplication.GlobalClientManager.Logout();
+        }
+
+        private void OnSwitch()
+        {
+            AccountManager.SwitchAccount();
         }
 
         /// <summary>

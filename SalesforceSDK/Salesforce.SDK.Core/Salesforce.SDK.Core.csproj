@@ -60,6 +60,7 @@
     <Compile Include="Source\Settings\SalesforceConfig.cs" />
     <Compile Include="Source\Settings\ServerSetting.cs" />
     <Compile Include="Source\Utilities\ExtensionMethods.cs" />
+    <Compile Include="Strings\LocalizedStrings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -68,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <PRIResource Include="Strings\en\resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\servers.xml" />
@@ -76,7 +78,6 @@
     <TargetPlatform Include="Windows, Version=8.1" />
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

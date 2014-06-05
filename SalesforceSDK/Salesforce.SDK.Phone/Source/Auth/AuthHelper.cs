@@ -42,14 +42,14 @@ namespace Salesforce.SDK.Auth
         /// Navigate to the /Pages/LoginPage.xaml and load login page in the webview
         /// </summary>
         /// <param name="loginOptions"></param>
-        public async void StartLoginFlow(LoginOptions loginOptions)
+        public async void StartLoginFlow()
         {
             Frame frame = Window.Current.Content as Frame;
             if (frame != null)
             {
                 await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    frame.Navigate(typeof(SalesforceLoginPage), loginOptions);
+                    frame.Navigate(typeof(AccountPage));
                 });
 
             }
@@ -60,9 +60,9 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
-        public void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
+        public async void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            AccountManager.CreateNewAccount(loginOptions, authResponse);
+            await AccountManager.CreateNewAccount(loginOptions, authResponse);
             Frame frame = Window.Current.Content as Frame;
             frame.Navigate(SalesforceApplication.RootApplicationPage);
             SalesforcePhoneApplication.ContinuationManager.MarkAsStale();

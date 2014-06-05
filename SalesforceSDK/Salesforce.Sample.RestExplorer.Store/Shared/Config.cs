@@ -54,17 +54,5 @@ namespace Salesforce.Sample.RestExplorer.Shared
             }
         }
 
-        public Config() : base()
-        {
-            for (int i = 0; i < ServerList.Length; i++)
-            {
-                if ("Sandbox".Equals(ServerList[i].ServerName, System.StringComparison.CurrentCultureIgnoreCase))
-                {
-                    SelectedServer = i;
-                    break;
-                }
-            }
-            SalesforceConfig.LoginOptions = new LoginOptions(Server.ServerHost, ClientId, CallbackUrl, Scopes);
-        }
     }
 }

@@ -38,9 +38,6 @@ public class ContinuationManagerImpl
         if (args == null)
             throw new ArgumentNullException("args");
 
-        if (this.args != null && !handled)
-            throw new InvalidOperationException("Can't set args more than once");
-
         this.args = args;
         this.handled = false;
         this.id = Guid.NewGuid();

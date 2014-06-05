@@ -19,6 +19,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0">
             <Button Name="btnLogout" Width="300">Logout</Button>
+            <Button Name="btnSwitch" Width="300">Switch User</Button>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />

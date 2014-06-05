@@ -288,7 +288,7 @@ namespace Salesforce.SDK.Auth
                     WebView web = new WebView();
                     Windows.Web.Http.Filters.HttpBaseProtocolFilter myFilter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
                     var cookieManager = myFilter.CookieManager;
-                    Windows.Web.Http.HttpCookieCollection cookies = cookieManager.GetCookies(new Uri(loginUri.Scheme + "://" + loginUri.Host));
+                    Windows.Web.Http.HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
                     foreach (Windows.Web.Http.HttpCookie cookie in cookies)
                     {
                         cookieManager.DeleteCookie(cookie);

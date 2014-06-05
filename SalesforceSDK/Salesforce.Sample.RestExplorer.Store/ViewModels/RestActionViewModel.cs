@@ -131,7 +131,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         {
             _properties = new Dictionary<string, string>()
             {
-                {API_VERSION, "v26.0"},
+                {API_VERSION, "v30.0"},
                 {OBJECT_TYPE, "Account"},
                 {OBJECT_ID, "Id"},
                 {EXTERNAL_ID_FIELD, "ExternalIdField"},
@@ -140,7 +140,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
                 {FIELDS, "{\"Name\":\"acme\"}"},
                 {SOQL, "SELECT Id,Name FROM Account"},
                 {SOSL, "FIND {acme*}"},
-                {REQUEST_PATH, "/services/data/v26.0/chatter/feeds/news/me"},
+                {REQUEST_PATH, "/services/data/v30.0/chatter/feeds/news/me"},
                 {REQUEST_BODY, "Body"},
                 {REQUEST_METHOD, "GET"},
             };

@@ -2,6 +2,7 @@
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -91,15 +92,18 @@ namespace Salesforce.Sample.RestExplorer.Store
             deferral.Complete();
         }
 
-        protected override void InitializeConfig()
+        protected override SalesforceConfig InitializeConfig()
         {
-            new Config();
             EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
             {
                 Password = "mypassword",
                 Salt = "mysalt"
             };
             Encryptor.init(settings);
+            Config config = SalesforceConfig.RetrieveConfig<Config>();
+            if (config == null)
+                config = new Config();
+            return config;
         }
 
         protected override Type SetRootApplicationPage()

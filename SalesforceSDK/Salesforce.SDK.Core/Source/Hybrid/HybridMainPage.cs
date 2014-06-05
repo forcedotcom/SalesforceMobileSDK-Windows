@@ -55,7 +55,7 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class HybridMainPage : Page, ISalesforcePage
     {
-        private const string API_VERSION = "v26.0";
+        private const string API_VERSION = "v30.0";
         private static HybridMainPage _instance;
 
         private SynchronizationContext _syncContext;

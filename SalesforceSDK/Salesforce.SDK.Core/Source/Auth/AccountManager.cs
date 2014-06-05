@@ -28,6 +28,11 @@ using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
+using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Rest;
 
 namespace Salesforce.SDK.Auth
 {
@@ -44,7 +49,7 @@ namespace Salesforce.SDK.Auth
             InternalAuthStorage = new AuthStorageHelper();
         }
 
-        public static AuthStorageHelper AuthStorage
+        internal static AuthStorageHelper AuthStorage
         {
             get
             {
@@ -57,16 +62,35 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         public static void DeleteAccount()
         {
-            AuthStorage.DeletePersistedCredentials();
+            Account account = GetAccount();
+            AuthStorage.DeletePersistedCredentials(account.UserId);
         }
 
+        public static Dictionary<string, Account> GetAccounts()
+        {
+            return AuthStorage.RetrievePersistedCredentials();
+        }
         /// <summary>
         /// Return Account for currently authenticated user
         /// </summary>
         /// <returns></returns>
         public static Account GetAccount()
         {
-            return AuthStorage.RetrievePersistedCredentials();
+            return AuthStorage.RetrieveCurrentAccount();
+        }
+
+        public static bool SwitchToAccount(Account account)
+        {
+            if (account != null && account.UserId != null)
+            {
+                AuthStorage.PersistCredentials(account);
+            }
+            return false;
+        }
+
+        public static void SwitchAccount()
+        {
+            PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
         }
 
         /// <summary>
@@ -74,11 +98,22 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
-        public static void CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
+        public async static Task<bool> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
             Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,
-                authResponse.InstanceUrl, authResponse.AccessToken, authResponse.RefreshToken);
-           AuthStorage.PersistCredentials(account);
+                authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
+            var cm = new ClientManager();
+            var client = cm.PeekRestClient();
+            IdentityResponse identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+
+            if (identity != null)
+            {
+                account.UserId = identity.UserId;
+                account.UserName = identity.UserName;
+                AuthStorage.PersistCredentials(account);
+                return true;
+            }
+            return false;
         }
     }
 }

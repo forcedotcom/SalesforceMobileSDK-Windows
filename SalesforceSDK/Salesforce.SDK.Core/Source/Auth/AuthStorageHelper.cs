@@ -1,4 +1,6 @@
-﻿/*
+﻿using Newtonsoft.Json;
+using Salesforce.SDK.App;
+/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -26,6 +28,9 @@
  */
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Source.Settings;
+using System;
+using System.Collections.Generic;
 using Windows.Storage;
 
 namespace Salesforce.SDK.Auth
@@ -33,37 +38,85 @@ namespace Salesforce.SDK.Auth
     /// <summary>
     /// Store specific implementation if IAuthStorageHelper
     /// </summary>    /// </summary>
-    public class AuthStorageHelper
+    internal class AuthStorageHelper
     {
-        private const string ACCOUNT_SETTING = "account";
+        private const string ACCOUNT_SETTING = "accounts";
+        private const string CURRENT_ACCOUNT = "currentAccount";
 
         /// <summary>
-        /// Persist account
+        /// Persist account, and sets account as the current account.
         /// </summary>
         /// <param name="account"></param>
-        public void PersistCredentials(Account account)
+        internal void PersistCredentials(Account account)
         {
             // TODO use PasswordVault
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
-            string accountJson = Account.ToJson(account);
+            Dictionary<string, Account> accounts = RetrievePersistedCredentials();
+            if (accounts.ContainsKey(account.UserId))
+            {
+                accounts[account.UserId] = account;
+            } else
+            {
+                accounts.Add(account.UserId, account);
+            }
+            String accountJson = JsonConvert.SerializeObject(accounts);
             settings.Values[ACCOUNT_SETTING] = Encryptor.Encrypt(accountJson);
+            settings.Values[CURRENT_ACCOUNT] = Encryptor.Encrypt(account.UserId);
+            LoginOptions options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl, account.Scopes);
+            SalesforceConfig.LoginOptions = options;
+        }
+
+        internal Account RetrieveCurrentAccount()
+        {
+            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            String key = settings.Values[CURRENT_ACCOUNT] as string;
+            if (String.IsNullOrWhiteSpace(key))
+                return null;
+            return RetrievePersistedCredential(Encryptor.Decrypt(key));
+        }
+
+        /// <summary>
+        /// Retrieve an account based on the id of the user.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        internal Account RetrievePersistedCredential(String id)
+        {
+            Dictionary<string, Account> accounts = RetrievePersistedCredentials();
+            if (accounts.ContainsKey(id))
+                return accounts[id];
+            return null;
         }
 
         /// <summary>
         /// Retrieve persisted account
         /// </summary>
         /// <returns></returns>
-        public Account RetrievePersistedCredentials()
+        internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
             string accountJson = settings.Values[ACCOUNT_SETTING] as string;
-            return accountJson == null ? null : Account.fromJson(Encryptor.Decrypt(accountJson));
+            if (String.IsNullOrWhiteSpace(accountJson))
+                return new Dictionary<string, Account>();
+            return JsonConvert.DeserializeObject<Dictionary<string, Account>>(Encryptor.Decrypt(accountJson));
         }
 
         /// <summary>
-        /// Delete persisted account
+        /// Delete a persisted account credential based on the user id.
         /// </summary>
-        public void DeletePersistedCredentials()
+        /// <param name="id"></param>
+        internal void DeletePersistedCredentials(String id)
+        {
+            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            Dictionary<string, Account> accounts = RetrievePersistedCredentials();
+            accounts.Remove(id);
+            String accountJson = JsonConvert.SerializeObject(accounts);
+            settings.Values[ACCOUNT_SETTING] = Encryptor.Encrypt(accountJson);
+        }
+        /// <summary>
+        /// Delete all persisted accounts
+        /// </summary>
+        internal void DeletePersistedCredentials()
         {
             ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
             settings.Values.Remove(ACCOUNT_SETTING);

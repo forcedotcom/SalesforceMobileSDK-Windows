@@ -39,12 +39,18 @@ namespace Salesforce.SDK.Auth
     public class Account
     {
         public string LoginUrl { get; private set; }
+        [JsonProperty]
+        public string UserId { get; internal set; }
+        [JsonProperty]
+        public string UserName { get; internal set; }
         public string ClientId { get; private set; }
         public string CallbackUrl { get; private set; }
         public string[] Scopes { get; private set; }
         public string InstanceUrl { get; private set; }
+        public string IdentityUrl { get; private set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; private set; }
+
 
         /// <summary>
         /// Constructor for Account
@@ -57,13 +63,14 @@ namespace Salesforce.SDK.Auth
         /// <param name="instanceUrl"></param>
         /// <param name="accessToken"></param>
         /// <param name="refreshToken"></param>
-        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl, string accessToken, string refreshToken)
+        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl, string identityUrl, string accessToken, string refreshToken)
         {
             LoginUrl = loginUrl;
             ClientId = clientId;
             CallbackUrl = callbackUrl;
             Scopes = scopes;
             InstanceUrl = instanceUrl;
+            IdentityUrl = identityUrl;
             AccessToken = accessToken;
             RefreshToken = refreshToken;
         }
@@ -83,9 +90,19 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="accountJson"></param>
         /// <returns></returns>
-        public static Account fromJson(string accountJson)
+        public static Account FromJson(string accountJson)
         {
             return JsonConvert.DeserializeObject<Account>(accountJson);
+        }
+
+        public override string ToString()
+        {
+            return UserName;
+        }
+
+        public LoginOptions GetLoginOptions()
+        {
+            return new LoginOptions(LoginUrl, ClientId, CallbackUrl, Scopes);
         }
     }
 }

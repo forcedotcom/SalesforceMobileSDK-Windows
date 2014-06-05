@@ -10,6 +10,7 @@
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <StackPanel Width="Auto" Height="Auto">
             <Button Width="Auto" Name="btnLogout" VerticalAlignment="Center" HorizontalAlignment="Stretch">Logout</Button>
+            <Button Width="Auto" Name="btnSwitch" VerticalAlignment="Center" HorizontalAlignment="Stretch">Switch Account</Button>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />

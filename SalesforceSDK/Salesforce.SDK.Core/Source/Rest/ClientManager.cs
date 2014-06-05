@@ -26,6 +26,7 @@
  */
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Settings;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -38,16 +39,6 @@ namespace Salesforce.SDK.Rest
     /// </summary>
     public class ClientManager
     {
-        private LoginOptions _loginOptions;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="loginOptions"></param>
-        public ClientManager(LoginOptions loginOptions)
-        {
-            _loginOptions = loginOptions;
-        }
 
         /// <summary>
         /// Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke the user auth tokens
@@ -58,9 +49,10 @@ namespace Salesforce.SDK.Rest
             Account account = AccountManager.GetAccount();
             if (account != null)
             {
+                LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
-                OAuth2.ClearCookies(_loginOptions);
-                bool loggedOut = await OAuth2.RevokeAuthToken(_loginOptions, account.RefreshToken);
+                OAuth2.ClearCookies(options);
+                bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
                 if (loggedOut)
                 {
                     GetRestClient();
@@ -84,7 +76,7 @@ namespace Salesforce.SDK.Rest
             if (account != null)
             {
                 return new RestClient(account.InstanceUrl, account.AccessToken,
-                                        () => OAuth2.RefreshAuthToken(_loginOptions, account.RefreshToken).ContinueWith(
+                                        () => OAuth2.RefreshAuthToken(account.GetLoginOptions(), account.RefreshToken).ContinueWith(
                                             authResponse =>
                                             {
                                                 account.AccessToken = authResponse.Result.AccessToken;
@@ -107,7 +99,7 @@ namespace Salesforce.SDK.Rest
             RestClient restClient = PeekRestClient();
             if (restClient == null)
             {
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow(_loginOptions);
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
             return restClient;
         }

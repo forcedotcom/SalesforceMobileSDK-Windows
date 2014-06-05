@@ -36,6 +36,7 @@ using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.Sample.RestExplorer.Store
 {
@@ -56,7 +57,7 @@ namespace Salesforce.Sample.RestExplorer.Store
             _viewModel = DataContext as RestActionViewModel;
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
             _viewModel.SyncContext = SynchronizationContext.Current;
-            _buttons = new Button[] { btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
+            _buttons = new Button[] { btnSwitch, btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
 
             foreach (Button button in _buttons)
             {
@@ -93,6 +94,7 @@ namespace Salesforce.Sample.RestExplorer.Store
             switch (((Button)sender).Name)
             {
                 case "btnLogout": OnLogout(); return;
+                case "btnSwitch": OnSwitch(); return;
                 case "btnManual": restAction = RestAction.MANUAL; break;
                 case "btnCreate": restAction = RestAction.CREATE; break;
                 case "btnDelete": restAction = RestAction.DELETE; break;
@@ -108,6 +110,11 @@ namespace Salesforce.Sample.RestExplorer.Store
                 case "btnVersions": restAction = RestAction.VERSIONS; break;
             }
             SwitchToRestAction(restAction);
+        }
+
+        private void OnSwitch()
+        {
+            AccountManager.SwitchAccount();
         }
 
         /// <summary>
