@@ -1,4 +1,31 @@
-﻿using Newtonsoft.Json;
+﻿/*
+ * Copyright (c) 2014, salesforce.com, inc.
+ * All rights reserved.
+ * Redistribution and use of this software in source and binary forms, with or
+ * without modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * - Neither the name of salesforce.com, inc. nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission of salesforce.com, inc.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
 using Salesforce.SDK.Source.Security;
@@ -24,7 +51,14 @@ namespace Salesforce.SDK.Source.Settings
         /// <summary>
         /// Path to the server.xml that comes with the SDK.
         /// </summary>
-        private readonly string ServerFilePath = "Salesforce.SDK.Resources.servers.xml";
+        public virtual string ServerFilePath
+        {
+            get
+            {
+                return "Salesforce.SDK.Resources.servers.xml";
+            }
+        }
+
         /// <summary>
         /// Settings key for config.
         /// </summary>
@@ -36,6 +70,7 @@ namespace Salesforce.SDK.Source.Settings
         /// Property that provides a list of all the servers currently in use by the app - built in and added by user.
         /// </summary>
         public ObservableCollection<ServerSetting> ServerList { set; get; }
+        public bool AllowNewConnections { get; set; }
         /// <summary>
         /// Property that provides the currently selected server, name and host.
         /// </summary>
@@ -46,6 +81,7 @@ namespace Salesforce.SDK.Source.Settings
                 return ServerList[SelectedServer];
             }
         }
+
         #endregion
 
         #region Static fields
@@ -76,7 +112,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public SalesforceConfig()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             string configJson = settings.Values[CONFIG_SETTINGS] as string;
             if (String.IsNullOrWhiteSpace(configJson))
             {
@@ -87,7 +123,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public void SaveConfig()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             SalesforceConfig.LoginOptions = new LoginOptions(Server.ServerHost, ClientId, CallbackUrl, Scopes);
             String configJson = JsonConvert.SerializeObject(this);
             settings.Values[CONFIG_SETTINGS] = Encryptor.Encrypt(configJson);
@@ -118,10 +154,23 @@ namespace Salesforce.SDK.Source.Settings
             }
         }
 
-        protected virtual void SetupServers()
+        /// <summary>
+        /// Read the config file and load up the server information.  Uses the xml path from ServerFilePath, please see Salesforce.SDK.Resources.servers.xml for the default values to be used.
+        /// The account dialog is affected by what is set in the serves.xml file.  The attribute allowNewConnections on the servers node will dictate if the "add connection" button is visible or not
+        /// in the account creation UI.  If there is only a single server, and new connections is disabled, add account will immediately go to oauth.
+        /// </summary>
+        protected void SetupServers()
         {
             String xml = ConfigHelper.ReadConfigFromResource(ServerFilePath);
             XDocument servers = XDocument.Parse(xml);
+            var connectionCheck = servers.Element("servers").Attribute("allowNewConnections");
+            try
+            {
+                AllowNewConnections = connectionCheck == null || (bool)connectionCheck;
+            } catch (FormatException)
+            {
+                AllowNewConnections = true;
+            }
             var data = from query in servers.Descendants("server")
                        select new ServerSetting
                        {
@@ -134,7 +183,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public static T RetrieveConfig<T>() where T : SalesforceConfig
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             string configJson = settings.Values[CONFIG_SETTINGS] as string;
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;

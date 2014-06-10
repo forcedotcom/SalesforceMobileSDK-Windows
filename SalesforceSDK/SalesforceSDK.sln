@@ -9,11 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Phone.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.RestExplorer.Store", "Salesforce.Sample.RestExplorer.Store\Salesforce.Sample.RestExplorer.Store.csproj", "{A60A0A18-A146-4777-84A1-63B839F84371}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.VFConnector.Phone", "Salesforce.Sample.VFConnector.Phone\Salesforce.Sample.VFConnector.Phone.csproj", "{77037E06-F984-43C0-BD96-5F8D043C9753}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Core", "Salesforce.SDK.Core\Salesforce.SDK.Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.ContactExplorer.Phone", "Salesforce.Sample.ContactExplorer.Phone\Salesforce.Sample.ContactExplorer.Phone.csproj", "{FD218F92-2A86-4B21-820B-5118D07D786F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.RestExplorer.Phone", "Salesforce.Sample.RestExplorer.Phone\Salesforce.Sample.RestExplorer.Phone.csproj", "{D6D66DE5-899D-4B9D-9A96-FD9028D1017E}"
 EndProject
@@ -21,9 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Phone", "Sal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Store", "Salesforce.SDK.Store\Salesforce.SDK.Store.csproj", "{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.One.App", "Salesforce.One.App\Salesforce.One.App.csproj", "{10D39840-9FFA-49DC-ABD3-670EDA5882FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce1.App", "Salesforce1.App\Salesforce1.App.csproj", "{10D39840-9FFA-49DC-ABD3-670EDA5882FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.One.Phone", "Salesforce.One.Phone\Salesforce.One.Phone.csproj", "{C35854F4-8693-426A-B5E0-4A2772F24721}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce1.Phone", "Salesforce1.Phone\Salesforce1.Phone.csproj", "{C35854F4-8693-426A-B5E0-4A2772F24721}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -45,6 +45,13 @@
         <Flyout x:Name="AddServerFlyout">
             <StackPanel>
                 <StackPanel>
+                    <TextBlock x:Name="addServerFlyoutLabel"
+                               DataContext="new_connection"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Grid.Row="1"
+                               Margin="5 0 5 15"
+                               Style="{StaticResource SubheaderTextBlockStyle}"
+                               TextAlignment="Center"/>
                     <TextBox x:Name="hostName"
                              DataContext="name"
                              Text="{Binding Converter={StaticResource Localize}}"

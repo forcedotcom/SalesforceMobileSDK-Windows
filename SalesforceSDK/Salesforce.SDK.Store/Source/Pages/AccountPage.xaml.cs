@@ -102,6 +102,7 @@ namespace Salesforce.SDK.Source.Pages
             accountsList.SelectionChanged += accountsList_SelectionChanged;
             hostName.PlaceholderText = LocalizedStrings.GetString("name");
             hostAddress.PlaceholderText = LocalizedStrings.GetString("address");
+            addConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed);
         }
 
         void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -131,7 +132,15 @@ namespace Salesforce.SDK.Source.Pages
 
         void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
-            ServerFlyout.ShowAt(applicationTitle);
+            if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
+            {
+                addAccount_Click(sender, e);
+            }
+            else
+            {
+                ServerFlyout.Placement = FlyoutPlacementMode.Bottom;
+                ServerFlyout.ShowAt(applicationTitle);
+            }
         }
 
 

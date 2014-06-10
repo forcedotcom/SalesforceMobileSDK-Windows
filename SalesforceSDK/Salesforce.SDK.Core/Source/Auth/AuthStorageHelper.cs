@@ -50,7 +50,7 @@ namespace Salesforce.SDK.Auth
         internal void PersistCredentials(Account account)
         {
             // TODO use PasswordVault
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             Dictionary<string, Account> accounts = RetrievePersistedCredentials();
             if (accounts.ContainsKey(account.UserId))
             {
@@ -68,7 +68,7 @@ namespace Salesforce.SDK.Auth
 
         internal Account RetrieveCurrentAccount()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String key = settings.Values[CURRENT_ACCOUNT] as string;
             if (String.IsNullOrWhiteSpace(key))
                 return null;
@@ -94,7 +94,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             string accountJson = settings.Values[ACCOUNT_SETTING] as string;
             if (String.IsNullOrWhiteSpace(accountJson))
                 return new Dictionary<string, Account>();
@@ -107,7 +107,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(String id)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             Dictionary<string, Account> accounts = RetrievePersistedCredentials();
             accounts.Remove(id);
             String accountJson = JsonConvert.SerializeObject(accounts);
@@ -118,7 +118,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         internal void DeletePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.RoamingSettings;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             settings.Values.Remove(ACCOUNT_SETTING);
         }
     }
