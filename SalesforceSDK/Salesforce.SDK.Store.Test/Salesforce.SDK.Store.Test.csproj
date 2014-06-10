@@ -148,6 +148,10 @@
       <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
       <Name>Salesforce.SDK.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Salesforce.SDK.Store\Salesforce.SDK.Store.csproj">
+      <Project>{a107bcc2-ec81-4a4f-8ea2-aa742afe0f01}</Project>
+      <Name>Salesforce.SDK.Store</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

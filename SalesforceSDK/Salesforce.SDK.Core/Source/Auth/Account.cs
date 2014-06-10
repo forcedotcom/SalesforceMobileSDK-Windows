@@ -39,10 +39,8 @@ namespace Salesforce.SDK.Auth
     public class Account
     {
         public string LoginUrl { get; private set; }
-        [JsonProperty]
-        public string UserId { get; internal set; }
-        [JsonProperty]
-        public string UserName { get; internal set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
         public string ClientId { get; private set; }
         public string CallbackUrl { get; private set; }
         public string[] Scopes { get; private set; }

@@ -27,12 +27,28 @@
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Source.Settings;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 
 namespace Salesforce.SDK.Auth
 {
     [TestClass]
     public class AuthStorageHelperTest
     {
+        [TestInitialize]
+        public void Setup()
+        {
+             EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
+            {
+                Password = "mypassword",
+                Salt = "mysalt"
+            };
+            Encryptor.init(settings);
+        }
+
         [TestMethod]
         public void TestGetAuthStorageHelper()
         {
@@ -44,24 +60,33 @@ namespace Salesforce.SDK.Auth
         public void TestPersistRetrieveDeleteCredentials()
         {
             Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "identityUrl", "accessToken", "refreshToken");
+            account.UserId = "userId";
+            account.UserName = "userName";
             AuthStorageHelper authStorageHelper = new AuthStorageHelper();
-            CheckAccount(null);
-            authStorageHelper.PersistCredentials(account);
-            CheckAccount(account);
-            authStorageHelper.DeletePersistedCredentials();
-            CheckAccount(null);
+            CheckAccount(account, false);
+            TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
+            MethodInfo persist = auth.GetDeclaredMethod("PersistCredentials");
+            MethodInfo delete = auth.GetDeclaredMethods("DeletePersistedCredentials").First(method => method.GetParameters().Count() == 1);
+            persist.Invoke(authStorageHelper, new object[] { account });
+            CheckAccount(account, true);
+            delete.Invoke(authStorageHelper, new object[] { account.UserId });
+            CheckAccount(account, false);
         }
 
-        private void CheckAccount(Account expectedAccount)
+        private void CheckAccount(Account expectedAccount, bool exists)
         {
             AuthStorageHelper authStorageHelper = new AuthStorageHelper();
-            Account account = authStorageHelper.RetrievePersistedCredentials();
-            if (expectedAccount == null)
+            TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
+            MethodInfo retrieve = auth.GetDeclaredMethod("RetrievePersistedCredentials");
+            var accounts = (Dictionary<string, Account>) retrieve.Invoke(authStorageHelper, null);
+            if (!exists)
             {
-                Assert.IsNull(account, "No account should have been found");
+                Assert.IsFalse(accounts.ContainsKey(expectedAccount.UserId), "Account " + expectedAccount.UserId + " should not have been found");
             }
             else
             {
+                Assert.IsTrue(accounts.ContainsKey(expectedAccount.UserId),  "Account " + expectedAccount.UserId + " should exist");
+                Account account = accounts[expectedAccount.UserId];
                 Assert.AreEqual(expectedAccount.LoginUrl, account.LoginUrl);
                 Assert.AreEqual(expectedAccount.ClientId, account.ClientId);
                 Assert.AreEqual(expectedAccount.CallbackUrl, account.CallbackUrl);

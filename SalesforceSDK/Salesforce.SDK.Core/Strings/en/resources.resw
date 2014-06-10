@@ -145,7 +145,7 @@
     <value>Name</value>
   </data>
   <data name="no_accounts" xml:space="preserve">
-    <value>You currently aren't connected, please add an account.</value>
+    <value>Sorry, no accounts found. To start, please add an account.</value>
   </data>
   <data name="ok" xml:space="preserve">
     <value>Ok</value>
