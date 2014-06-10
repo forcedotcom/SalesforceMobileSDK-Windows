@@ -35,7 +35,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthHelper()
         {
-            IAuthHelper authHelper = PlatformAdapter.Resolve<IAuthHelper>(true);
+            IAuthHelper authHelper = PlatformAdapter.Resolve<IAuthHelper>();
             Assert.IsNotNull(authHelper);
         }
     }

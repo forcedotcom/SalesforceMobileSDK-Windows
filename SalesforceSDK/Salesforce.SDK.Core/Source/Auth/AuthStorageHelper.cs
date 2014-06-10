@@ -38,7 +38,7 @@ namespace Salesforce.SDK.Auth
     /// <summary>
     /// Store specific implementation if IAuthStorageHelper
     /// </summary>    /// </summary>
-    internal class AuthStorageHelper
+    public sealed class AuthStorageHelper
     {
         private const string ACCOUNT_SETTING = "accounts";
         private const string CURRENT_ACCOUNT = "currentAccount";

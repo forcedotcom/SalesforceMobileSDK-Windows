@@ -43,7 +43,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestPersistRetrieveDeleteCredentials()
         {
-            Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "accessToken", "refreshToken");
+            Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "identityUrl", "accessToken", "refreshToken");
             AuthStorageHelper authStorageHelper = new AuthStorageHelper();
             CheckAccount(null);
             authStorageHelper.PersistCredentials(account);
