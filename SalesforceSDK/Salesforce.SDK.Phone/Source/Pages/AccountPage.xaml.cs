@@ -71,14 +71,6 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        public ServerSetting SelectedServer
-        {
-            get
-            {
-                return SalesforceApplication.ServerConfiguration.Server;
-            }
-        }
-
         private bool AddServerFlyoutShowing;
 
         public AccountPage()
@@ -96,7 +88,6 @@ namespace Salesforce.SDK.Source.Pages
                 listTitle.Text = loader.GetString("select_account");
             }
             listboxServers.ItemsSource = Servers;
-            listboxServers.SelectedItem = SelectedServer;
             accountsList.ItemsSource = Accounts;
             ServerFlyout.Opening += ServerFlyout_Opening;
             ServerFlyout.Closed += ServerFlyout_Closed;
@@ -180,7 +171,6 @@ namespace Salesforce.SDK.Source.Pages
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
         {
-            SalesforceApplication.ServerConfiguration.SetSelectedServer(listboxServers.SelectedIndex);
             SalesforceApplication.ResetClientManager();
             ServerSetting server = listboxServers.SelectedItem as ServerSetting;
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace Salesforce.SDK.Source.Settings
         public static readonly string HTTPS_SCHEME = "https://";
         private string serverName;
 
+        [JsonProperty]
         public string ServerName
         {
             set
@@ -22,7 +24,9 @@ namespace Salesforce.SDK.Source.Settings
                 return serverName;
             }
         }
+
         private string serverHost;
+        [JsonProperty]
         public string ServerHost
         {
             set

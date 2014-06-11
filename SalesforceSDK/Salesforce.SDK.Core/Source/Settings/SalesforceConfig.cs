@@ -49,6 +49,13 @@ namespace Salesforce.SDK.Source.Settings
 
         #region Private fields
         /// <summary>
+        /// Settings key for config.
+        /// </summary>
+        private const string CONFIG_SETTINGS = "salesforceConfig";
+        #endregion
+
+        #region Public properties & fields
+        /// <summary>
         /// Path to the server.xml that comes with the SDK.
         /// </summary>
         public virtual string ServerFilePath
@@ -60,27 +67,10 @@ namespace Salesforce.SDK.Source.Settings
         }
 
         /// <summary>
-        /// Settings key for config.
-        /// </summary>
-        private const string CONFIG_SETTINGS = "salesforceConfig";
-        #endregion
-
-        #region Public properties & fields
-        /// <summary>
         /// Property that provides a list of all the servers currently in use by the app - built in and added by user.
         /// </summary>
         public ObservableCollection<ServerSetting> ServerList { set; get; }
         public bool AllowNewConnections { get; set; }
-        /// <summary>
-        /// Property that provides the currently selected server, name and host.
-        /// </summary>
-        public ServerSetting Server
-        {
-            get
-            {
-                return ServerList[SelectedServer];
-            }
-        }
 
         #endregion
 
@@ -91,10 +81,7 @@ namespace Salesforce.SDK.Source.Settings
         public static LoginOptions LoginOptions { set; get; }
         #endregion
 
-        #region Protected
-        // The currently selected server.
-        protected int SelectedServer;
-        #endregion
+        #region Abstract properties
         /// <summary>
         /// Implement this to define your client ID for oauth.  This should match your application settings generated in Salesforce.
         /// </summary>
@@ -107,7 +94,7 @@ namespace Salesforce.SDK.Source.Settings
         /// Implement to define the scopes your app will use such as web or api. 
         /// </summary>
         public abstract string[] Scopes { get; }
-
+        #endregion
 
 
         public SalesforceConfig()
@@ -124,18 +111,8 @@ namespace Salesforce.SDK.Source.Settings
         public void SaveConfig()
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            SalesforceConfig.LoginOptions = new LoginOptions(Server.ServerHost, ClientId, CallbackUrl, Scopes);
             String configJson = JsonConvert.SerializeObject(this);
             settings.Values[CONFIG_SETTINGS] = Encryptor.Encrypt(configJson);
-        }
-
-        public void SetSelectedServer(int index)
-        {
-            if (index >= 0 && index < ServerList.Count)
-            {
-                SelectedServer = index;
-                SaveConfig();
-            }
         }
 
         public void AddServer(ServerSetting server)
@@ -178,7 +155,6 @@ namespace Salesforce.SDK.Source.Settings
                            ServerHost = (string)query.Attribute("url")
                        };
             ServerList = new ObservableCollection<ServerSetting>(data);
-            SelectedServer = 0;
         }
 
         public static T RetrieveConfig<T>() where T : SalesforceConfig
