@@ -11,7 +11,7 @@ namespace Salesforce.One.App.settings
     {
         public override string ClientId
         {
-            get { return "SfdcMobileChatterAndroid"; }
+            get { return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x"; }
         }
 
         public override string CallbackUrl

@@ -31,11 +31,14 @@ namespace Salesforce.Sample.RestExplorer.Shared
 {
     public class Config : SalesforceConfig
     {
+        /// <summary>
+        /// In using this sample you should create a connected app, and replace the ClientId with an id from the generated app.
+        /// </summary>
         public override string ClientId
         {
             get
             {
-                return "3MVG92.uWdyphVj51aXI_W16JGEwzme6Hj3YodbDRU0FHC86IddELDABTLsS5HGHNzNN_vQTA_XDuL.QtdF7G";
+                return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x";
             }
         }
         public override string CallbackUrl

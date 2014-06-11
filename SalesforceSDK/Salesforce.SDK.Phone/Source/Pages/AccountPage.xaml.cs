@@ -174,8 +174,8 @@ namespace Salesforce.SDK.Source.Pages
             SalesforceApplication.ResetClientManager();
             ServerSetting server = listboxServers.SelectedItem as ServerSetting;
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
-            LoginOptions options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
-            StartLoginFlow(options);
+            SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
+            StartLoginFlow(SalesforceConfig.LoginOptions);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
