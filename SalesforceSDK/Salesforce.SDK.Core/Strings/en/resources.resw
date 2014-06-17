@@ -159,4 +159,49 @@
   <data name="logout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="logout_prompt" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>no</value>
+  </data>
+  <data name="passcode_confirm" xml:space="preserve">
+    <value>Confirm your mobile passcode for Salesforce</value>
+  </data>
+  <data name="passcode_create_security" xml:space="preserve">
+    <value>For increased security, please create a passcode that you will use to access Salesforce when the session has timed out due to inactivity.</value>
+  </data>
+  <data name="passcode_create_title" xml:space="preserve">
+    <value>Create Salesforce passcode</value>
+  </data>
+  <data name="passcode_enter_code_desc" xml:space="preserve">
+    <value>Enter your mobile passcode for Salesforce</value>
+  </data>
+  <data name="passcode_enter_code_title" xml:space="preserve">
+    <value>Enter Salesforce Passcode</value>
+  </data>
+  <data name="passcode_final_attempt" xml:space="preserve">
+    <value>Final passcode attempt</value>
+  </data>
+  <data name="passcode_forgot_passcode" xml:space="preserve">
+    <value>Forgot Passcode?</value>
+  </data>
+  <data name="passcode_incorrect" xml:space="preserve">
+    <value>The passcode you entered is incorrect. Please try again. You have {0} attempts remaining.</value>
+  </data>
+  <data name="passcode_length" xml:space="preserve">
+    <value>The passcode must be at least {0} characters long.</value>
+  </data>
+  <data name="passcode_reenter" xml:space="preserve">
+    <value>Re-enter your Saleforce passcode</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>yes</value>
+  </data>
+  <data name="passcode" xml:space="preserve">
+    <value>Passcode</value>
+  </data>
+  <data name="passcode_must_match" xml:space="preserve">
+    <value>The passcodes you enter must match.</value>
+  </data>
 </root>

@@ -98,13 +98,18 @@ namespace Salesforce.SDK.Source.Pages
             addConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed);
         }
 
-        void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AccountManager.SwitchToAccount(accountsList.SelectedItem as Account);
+            await AccountManager.SwitchToAccount(accountsList.SelectedItem as Account);
             SalesforceApplication.ResetClientManager();
             if (SalesforceApplication.GlobalClientManager.PeekRestClient() != null)
             {
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
+                Account account = AccountManager.GetAccount();
+                if (account.Policy != null)
+                {
+                    PincodeManager.LaunchPincodeScreen();
+                }
             }
         }
 

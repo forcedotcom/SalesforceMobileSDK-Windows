@@ -11,7 +11,7 @@ namespace Salesforce.One.App.settings
     {
         public override string ClientId
         {
-            get { return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x"; }
+            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
         }
 
         public override string CallbackUrl

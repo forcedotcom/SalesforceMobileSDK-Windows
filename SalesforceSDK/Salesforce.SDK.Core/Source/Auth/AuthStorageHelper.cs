@@ -55,7 +55,8 @@ namespace Salesforce.SDK.Auth
             if (accounts.ContainsKey(account.UserId))
             {
                 accounts[account.UserId] = account;
-            } else
+            }
+            else
             {
                 accounts.Add(account.UserId, account);
             }
@@ -120,6 +121,42 @@ namespace Salesforce.SDK.Auth
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             settings.Values.Remove(ACCOUNT_SETTING);
+        }
+
+        internal void PersistData(string key, string data, bool replace)
+        {
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.ContainsKey(key))
+            {
+                if (replace)
+                {
+                    settings.Values[key] = Encryptor.Encrypt(data);
+                }
+            }
+            else
+            {
+                settings.Values.Add(key, Encryptor.Encrypt(data));
+            }
+        }
+
+        internal string RetrieveData(string key)
+        {
+            string data = null;
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.ContainsKey(key))
+            {
+                data = Encryptor.Decrypt(settings.Values[key] as string);
+            }
+            return data;
+        }
+
+        internal void DeleteData(string key)
+        {
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+            if (settings.Values.ContainsKey(key))
+            {
+                settings.Values.Remove(key);
+            }
         }
     }
 }

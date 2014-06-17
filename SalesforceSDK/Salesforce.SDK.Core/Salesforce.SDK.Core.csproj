@@ -43,6 +43,11 @@
     <Compile Include="Source\Auth\AuthStorageHelper.cs" />
     <Compile Include="Source\Auth\IAuthHelper.cs" />
     <Compile Include="Source\Auth\OAuth2.cs" />
+    <Compile Include="Source\Auth\PincodeDialog.xaml.cs">
+      <DependentUpon>PincodeDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Source\Auth\PincodeManager.cs" />
+    <Compile Include="Source\Auth\PincodeOptions.cs" />
     <Compile Include="Source\Hybrid\BootConfig.cs" />
     <Compile Include="Source\Hybrid\ConfigHelper.cs" />
     <Compile Include="Source\Hybrid\HybridMainPage.cs" />
@@ -79,6 +84,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Source\Auth\PincodeDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -79,11 +79,19 @@ namespace Salesforce.SDK.Auth
             return AuthStorage.RetrieveCurrentAccount();
         }
 
-        public static bool SwitchToAccount(Account account)
+        public static async Task<bool> SwitchToAccount(Account account)
         {
             if (account != null && account.UserId != null)
             {
-                AuthStorage.PersistCredentials(account);
+                IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, account.AccessToken);
+                if (identity != null)
+                {
+                    account.UserId = identity.UserId;
+                    account.UserName = identity.UserName;
+                    account.Policy = identity.MobilePolicy;
+                    AuthStorage.PersistCredentials(account);
+                }
+                return true;
             }
             return false;
         }
@@ -98,7 +106,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
-        public async static Task<bool> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
+        public async static Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
             Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
@@ -110,10 +118,10 @@ namespace Salesforce.SDK.Auth
             {
                 account.UserId = identity.UserId;
                 account.UserName = identity.UserName;
+                account.Policy = identity.MobilePolicy;
                 AuthStorage.PersistCredentials(account);
-                return true;
             }
-            return false;
+            return account;
         }
     }
 }

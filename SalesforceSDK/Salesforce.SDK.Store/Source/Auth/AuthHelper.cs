@@ -66,9 +66,14 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public async void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            if (await AccountManager.CreateNewAccount(loginOptions, authResponse))
+            Frame frame = Window.Current.Content as Frame;
+            Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
+            if (account.Policy != null)
             {
-                Frame frame = Window.Current.Content as Frame;
+                PincodeManager.LaunchPincodeScreen();
+            }
+            else
+            {
                 frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
         }

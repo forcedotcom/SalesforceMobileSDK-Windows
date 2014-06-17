@@ -40,9 +40,12 @@ namespace Salesforce1.Pages
             RestClient client = SalesforceApplication.GlobalClientManager.GetRestClient();
             if (client != null)
             {
-                Account account = AccountManager.GetAccount();
-                String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.LoginUrl + "/one/one.app");
-                oneView.Navigate(new Uri(startPage));
+                if (!oneView.CanGoBack)
+                {
+                    Account account = AccountManager.GetAccount();
+                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.LoginUrl + "/one/one.app");
+                    oneView.Navigate(new Uri(startPage));
+                }
             }
         }
 

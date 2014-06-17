@@ -180,7 +180,7 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OAUTH_AUTH_QUERY_STRING = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
         const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";

@@ -23,6 +23,10 @@ namespace Salesforce.SDK.Source.Security
 
         public static string Encrypt(string text)
         {
+            if (String.IsNullOrWhiteSpace(text))
+            {
+                return null;
+            }
             IBuffer keyMaterial;
             IBuffer iv;
             Settings.GenerateKey(out keyMaterial, out iv);
@@ -42,6 +46,10 @@ namespace Salesforce.SDK.Source.Security
 
         public static string Decrypt(string text)
         {
+            if (String.IsNullOrWhiteSpace(text))
+            {
+                return null;
+            }
             IBuffer keyMaterial;
             IBuffer iv;
             Settings.GenerateKey(out keyMaterial, out iv);
