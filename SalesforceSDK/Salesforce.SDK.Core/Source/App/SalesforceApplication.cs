@@ -31,6 +31,7 @@ using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
@@ -62,11 +63,16 @@ namespace Salesforce.SDK.App
         /// </summary>
         public static SalesforceConfig ServerConfiguration { get; private set; }
 
+        private static DispatcherTimer TokenRefresher = new DispatcherTimer();
+
         public SalesforceApplication() : base()
         {
             Suspending += OnSuspending;
             CreateClientManager(false);
             RootApplicationPage = SetRootApplicationPage();
+            TokenRefresher = new DispatcherTimer();
+            TokenRefresher.Interval = TimeSpan.FromMinutes(3);
+            TokenRefresher.Tick += RefreshToken;
         }
 
         /// <summary>
@@ -140,9 +146,12 @@ namespace Salesforce.SDK.App
             if (args.Visible)
             {
                 PincodeManager.TriggerBackgroundedPinTimer();
+                RefreshToken(null, null);
+                TokenRefresher.Start();
             } else
             {
                 PincodeManager.SavePinTimer();
+                TokenRefresher.Stop();
             }
         }
 
@@ -168,6 +177,23 @@ namespace Salesforce.SDK.App
             }
 
             GlobalClientManager.GetRestClient();
+        }
+
+        private async void RefreshToken(object sender, object e)
+        {
+            try
+            {
+                Account account = AccountManager.GetAccount();
+                RestClient client = GlobalClientManager.PeekRestClient();
+                if (client != null && account != null)
+                {
+                    await OAuth2.CallIdentityService(account.IdentityUrl, client);
+                    OAuth2.RefreshCookies();
+                }
+            } catch (WebException)
+            {
+                // todo: add logging here
+            }
         }
     }
 }

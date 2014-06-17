@@ -80,6 +80,8 @@ namespace Salesforce.SDK.Rest
                                             authResponse =>
                                             {
                                                 account.AccessToken = authResponse.Result.AccessToken;
+                                                AuthStorageHelper auth = new AuthStorageHelper();
+                                                auth.PersistCredentials(account);
                                                 return account.AccessToken;
                                             })
                                        );

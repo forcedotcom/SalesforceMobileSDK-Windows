@@ -278,6 +278,17 @@ namespace Salesforce.SDK.Auth
             return await c.Execute().ContinueWith(t => t.Result.StatusCode == HttpStatusCode.OK);
         }
 
+        public static void RefreshCookies()
+        {
+            Account account = AccountManager.GetAccount();
+            Uri baseUri = new Uri(account.LoginUrl);
+            Windows.Web.Http.Filters.HttpBaseProtocolFilter filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
+            Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("cookieName", baseUri.Host, "/");
+            cookie.Value = account.AccessToken;
+            filter.CookieManager.SetCookie(cookie, false);
+            Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, baseUri);
+        }
+
         public async static void ClearCookies(LoginOptions loginOptions)
         {
             Frame frame = Window.Current.Content as Frame;

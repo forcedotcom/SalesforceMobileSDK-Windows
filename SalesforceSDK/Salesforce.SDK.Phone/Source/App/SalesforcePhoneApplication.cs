@@ -33,7 +33,7 @@ namespace Salesforce.SDK.App
                 return;
             }
 
-            if (frame.CanGoBack)
+            if (frame.CanGoBack && !frame.SourcePageType.Equals(typeof(PincodeDialog)))
             {
                 frame.GoBack();
                 e.Handled = true;
