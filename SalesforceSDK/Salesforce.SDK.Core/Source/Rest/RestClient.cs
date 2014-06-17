@@ -101,7 +101,7 @@ namespace Salesforce.SDK.Rest
                 throw call.Error;
             }
 
-            if (call.StatusCode == HttpStatusCode.Unauthorized)
+            if (call.StatusCode == HttpStatusCode.Unauthorized || call.StatusCode == HttpStatusCode.Forbidden)
             {
                 if (retryInvalidToken && _accessTokenProvider != null)
                 {

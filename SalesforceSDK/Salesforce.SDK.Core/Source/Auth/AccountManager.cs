@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.Auth
 {
@@ -83,15 +84,19 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
-                IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, account.AccessToken);
-                if (identity != null)
+                RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
+                if (client != null)
                 {
-                    account.UserId = identity.UserId;
-                    account.UserName = identity.UserName;
-                    account.Policy = identity.MobilePolicy;
-                    AuthStorage.PersistCredentials(account);
+                    IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
+                    if (identity != null)
+                    {
+                        account.UserId = identity.UserId;
+                        account.UserName = identity.UserName;
+                        account.Policy = identity.MobilePolicy;
+                        AuthStorage.PersistCredentials(account);
+                    }
+                    return true;
                 }
-                return true;
             }
             return false;
         }

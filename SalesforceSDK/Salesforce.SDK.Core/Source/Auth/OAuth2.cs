@@ -27,6 +27,7 @@
 
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
+using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -180,7 +181,7 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_STRING = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
         const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";
@@ -313,6 +314,17 @@ namespace Salesforce.SDK.Auth
 
             // Execute get
             return await c.ExecuteAndDeserialize<IdentityResponse>();
+        }
+
+        public static async Task<IdentityResponse> CallIdentityService(string idUrl, RestClient client)
+        {
+            RestRequest request = new RestRequest(RestMethod.GET, new Uri(idUrl).AbsolutePath);
+            RestResponse response = await client.SendAsync(request);
+            if (response.Success)
+            {
+                return JsonConvert.DeserializeObject<IdentityResponse>(response.AsString);
+            }
+            throw response.Error;
         }
 
         /// <summary>
