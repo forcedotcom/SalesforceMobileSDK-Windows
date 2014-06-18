@@ -1,4 +1,5 @@
-﻿using Salesforce.SDK.App;
+﻿using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
 using Salesforce.SDK.Strings;
 using System;
 using System.Collections.Generic;
@@ -152,7 +153,11 @@ namespace Salesforce.SDK.Auth
                 return;
             e.Handled = true;
             Account account = AccountManager.GetAccount();
-            if (PincodeManager.ValidatePincode(Passcode.Password, account.PincodeHash))
+            if (account == null)
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+            } 
+            else if (PincodeManager.ValidatePincode(Passcode.Password, account.PincodeHash))
             {
                 if (Frame.CanGoBack)
                 {

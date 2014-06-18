@@ -11,6 +11,10 @@ using Windows.System.Profile;
 
 namespace Salesforce.SDK.Source.Security
 {
+    /// <summary>
+    /// This class is a sample encryption key generator. It is highly recommended that you roll your own and provide it's configuration in your Application class
+    /// extending SalesforceApplication or SaleforcePhoneApplication. 
+    /// </summary>
     public sealed class HmacSHA256KeyGenerator : IKeyGenerator
     {
         public void GenerateKey(string password, string salt, out Windows.Storage.Streams.IBuffer keyMaterial, out Windows.Storage.Streams.IBuffer iv)
@@ -31,16 +35,18 @@ namespace Salesforce.SDK.Source.Security
             iv = WindowsRuntimeBuffer.Create(keyMaterialBytes, keySize, ivSize, ivSize);
         }
 
-        private static string GetHardwareId()
+        /// <summary>
+        /// It is recommended you generate a way that is unique for the app/device. In this example we used the network adapter ID and FullName of the type of this class.
+        /// </summary>
+        /// <returns></returns>
+        private static string GetDeviceUniqueId()
         {
-            var token = HardwareIdentification.GetPackageSpecificToken(null);
-            var hardwareId = token.Id;
-            var dataReader = Windows.Storage.Streams.DataReader.FromBuffer(hardwareId);
-
-            byte[] bytes = new byte[hardwareId.Length];
-            dataReader.ReadBytes(bytes);
-
-            return BitConverter.ToString(bytes);
+            var networkProfiles = Windows.Networking.Connectivity.NetworkInformation.GetConnectionProfiles();
+            var adapter = networkProfiles[0].NetworkAdapter;
+            HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm("MD5");
+            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(adapter.NetworkAdapterId.ToString() + typeof(HmacSHA256KeyGenerator).FullName, BinaryStringEncoding.Utf8);
+            IBuffer hashed = alg.HashData(buff);
+            return CryptographicBuffer.EncodeToHexString(hashed);
         }
 
         /// <summary>
@@ -49,7 +55,7 @@ namespace Salesforce.SDK.Source.Security
         /// <returns></returns>
         private static IBuffer GetNonce()
         {
-            return CryptographicBuffer.ConvertStringToBinary(GetHardwareId(), BinaryStringEncoding.Utf8);
+            return CryptographicBuffer.ConvertStringToBinary(GetDeviceUniqueId(), BinaryStringEncoding.Utf8);
         }
     }
 }
