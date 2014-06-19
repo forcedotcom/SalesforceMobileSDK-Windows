@@ -76,14 +76,14 @@ namespace Salesforce.SDK.Rest
             if (account != null)
             {
                 return new RestClient(account.InstanceUrl, account.AccessToken,
-                                        () => OAuth2.RefreshAuthToken(account.GetLoginOptions(), account.RefreshToken).ContinueWith(
-                                            authResponse =>
-                                            {
-                                                account.AccessToken = authResponse.Result.AccessToken;
-                                                AuthStorageHelper auth = new AuthStorageHelper();
-                                                auth.PersistCredentials(account);
-                                                return account.AccessToken;
-                                            })
+                                        async () =>
+                                        {
+                                            AuthResponse authResponse = await OAuth2.RefreshAuthToken(account.GetLoginOptions(), account.RefreshToken);
+                                            account.AccessToken = authResponse.AccessToken;
+                                            AuthStorageHelper auth = new AuthStorageHelper();
+                                            auth.PersistCredentials(account);
+                                            return account.AccessToken;
+                                        }
                                        );
             }
             else

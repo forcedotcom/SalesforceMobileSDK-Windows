@@ -243,7 +243,7 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public async Task<T> ExecuteAndDeserialize<T>()
         {
-            HttpCall call = await Execute();
+            HttpCall call = await Execute().ConfigureAwait(false);
             if (call.Success)
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);

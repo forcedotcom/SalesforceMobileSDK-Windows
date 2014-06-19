@@ -68,7 +68,7 @@ namespace Salesforce.SDK.Rest
 
         public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
         {
-            RestResponse result = await SendAsync(request);
+            RestResponse result = await SendAsync(request).ConfigureAwait(false);
             if (callback != null)
             {
                 callback(result);
@@ -90,7 +90,7 @@ namespace Salesforce.SDK.Rest
                 headers.Headers.Concat(request.AdditionalHeaders);
             }
 
-            HttpCall call = await new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute();
+            HttpCall call = await new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute().ConfigureAwait(false);
 
             if (!call.HasResponse)
             {

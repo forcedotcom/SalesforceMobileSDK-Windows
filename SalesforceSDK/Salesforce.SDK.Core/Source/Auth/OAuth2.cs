@@ -189,7 +189,7 @@ namespace Salesforce.SDK.Auth
 
         // Refresh url
         const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
-        const string OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
+        const string OAUTH_REFRESH_QUERY_STRING = "?grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
         const string OAUTH_REVOKE_PATH = "/services/oauth2/revoke";
@@ -275,7 +275,7 @@ namespace Salesforce.SDK.Auth
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
             // Execute post
-            HttpCall result = await c.Execute();
+            HttpCall result = await c.Execute().ConfigureAwait(false);
             return result.StatusCode == HttpStatusCode.Ok;
         }
 

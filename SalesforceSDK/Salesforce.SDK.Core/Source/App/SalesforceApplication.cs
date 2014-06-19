@@ -146,7 +146,6 @@ namespace Salesforce.SDK.App
             if (args.Visible)
             {
                 PincodeManager.TriggerBackgroundedPinTimer();
-               // RefreshToken(null, null);
                 TokenRefresher.Start();
             } else
             {
