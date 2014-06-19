@@ -28,7 +28,8 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
 using System.Collections.Generic;
-using System.Net;
+using System.Threading.Tasks;
+using Windows.Web.Http;
 
 namespace Salesforce.SDK.Auth
 {
@@ -73,7 +74,7 @@ namespace Salesforce.SDK.Auth
             AuthResponse refreshResponse = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
-            Assert.AreEqual(HttpStatusCode.OK, DoDescribe(refreshResponse.AccessToken));
+            Assert.AreEqual(HttpStatusCode.Ok, DoDescribe(refreshResponse.AccessToken));
         }
 
         [TestMethod]
@@ -126,11 +127,12 @@ namespace Salesforce.SDK.Auth
             Assert.AreEqual(1, idResponse.MobilePolicy.ScreenLockTimeout);
         }
 
-        private HttpStatusCode DoDescribe(string authToken)
+        private async Task<HttpStatusCode> DoDescribe(string authToken)
         {
             string describeAccountPath = "/services/data/v26.0/sobjects/Account/describe";
-            Dictionary<string, string> headers = (authToken == null ? null : new Dictionary<string, string> { { "Authorization", "Bearer " + authToken }});
-            return HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute().Result.StatusCode;
+            HttpCallHeaders headers = new HttpCallHeaders(authToken, new Dictionary<string, string>());
+            HttpCall result = await HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute();
+            return result.StatusCode;
         }
     
     }

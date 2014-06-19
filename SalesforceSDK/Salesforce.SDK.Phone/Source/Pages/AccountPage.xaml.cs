@@ -176,8 +176,12 @@ namespace Salesforce.SDK.Source.Pages
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
         {
-            SalesforceApplication.ResetClientManager();
             ServerSetting server = listboxServers.SelectedItem as ServerSetting;
+            if (server == null)
+            {
+                return;
+            }
+            SalesforceApplication.ResetClientManager();
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
             SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
             StartLoginFlow(SalesforceConfig.LoginOptions);

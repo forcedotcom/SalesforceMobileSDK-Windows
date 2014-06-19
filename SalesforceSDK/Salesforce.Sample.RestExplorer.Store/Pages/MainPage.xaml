@@ -57,18 +57,18 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbApiVersion" Text="{Binding [ApiVersion]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectType" Text="{Binding [ObjectType]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectId" Text="{Binding [ObjectId]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalIdField" Text="{Binding [ExternalIdField]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalId" Text="{Binding [ExternalId]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFieldList" Text="{Binding [FieldList]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields" Text="{Binding [Fields]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSoql" Text="{Binding [Soql]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl" Text="{Binding [Sosl]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestPath" Text="{Binding [RequestPath]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestBody" Text="{Binding [RequestBody]}"/>
-                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestMethod" Text="{Binding [RequestMethod]}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbApiVersion" Text="{Binding [ApiVersion], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectType" Text="{Binding [ObjectType], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectId" Text="{Binding [ObjectId], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalIdField" Text="{Binding [ExternalIdField], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalId" Text="{Binding [ExternalId], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFieldList" Text="{Binding [FieldList], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields" Text="{Binding [Fields], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSoql" Text="{Binding [Soql], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl" Text="{Binding [Sosl], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestPath" Text="{Binding [RequestPath], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestBody" Text="{Binding [RequestBody], Mode=TwoWay}"/>
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestMethod" Text="{Binding [RequestMethod], Mode=TwoWay}"/>
             </StackPanel>
             <Button Name="btnAction" Grid.Row="1" Grid.Column="0" Command="{Binding SendRequest}">Send Request</Button>
             <WebView Name="wbResult" Grid.Row="2" Grid.Column="0"/>

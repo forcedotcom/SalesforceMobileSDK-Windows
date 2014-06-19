@@ -32,10 +32,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Web.Http;
 
 namespace Salesforce.SDK.Auth
 {
@@ -181,7 +181,7 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OAUTH_AUTH_QUERY_STRING = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
         const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";
@@ -275,18 +275,23 @@ namespace Salesforce.SDK.Auth
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
             // Execute post
-            return await c.Execute().ContinueWith(t => t.Result.StatusCode == HttpStatusCode.OK);
+            HttpCall result = await c.Execute();
+            return result.StatusCode == HttpStatusCode.Ok;
         }
 
         public static void RefreshCookies()
         {
             Account account = AccountManager.GetAccount();
-            Uri baseUri = new Uri(account.LoginUrl);
+            Uri loginUri = new Uri(account.LoginUrl);
+            Uri instanceUri = new Uri(account.InstanceUrl);
             Windows.Web.Http.Filters.HttpBaseProtocolFilter filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
-            Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("cookieName", baseUri.Host, "/");
+            Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("salesforce", loginUri.Host, "/");
+            Windows.Web.Http.HttpCookie instance = new Windows.Web.Http.HttpCookie("salesforceInstance", instanceUri.Host, "/");
             cookie.Value = account.AccessToken;
+            instance.Value = account.AccessToken;
             filter.CookieManager.SetCookie(cookie, false);
-            Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, baseUri);
+            filter.CookieManager.SetCookie(instance, false);
+            Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, instanceUri);
         }
 
         public async static void ClearCookies(LoginOptions loginOptions)
@@ -318,8 +323,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
             // Auth header
-            Dictionary<string, string> headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
-
+            HttpCallHeaders headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
             // Get
             HttpCall c = HttpCall.CreateGet(headers, idUrl);
 
@@ -329,7 +333,7 @@ namespace Salesforce.SDK.Auth
 
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, RestClient client)
         {
-            RestRequest request = new RestRequest(RestMethod.GET, new Uri(idUrl).AbsolutePath);
+            RestRequest request = new RestRequest(HttpMethod.Get, new Uri(idUrl).AbsolutePath);
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
