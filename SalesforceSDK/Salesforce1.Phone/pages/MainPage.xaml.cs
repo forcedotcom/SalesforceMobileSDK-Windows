@@ -35,14 +35,14 @@ namespace Salesforce1.Pages
         /// If we are not already authenticated, this will kick off the login flow
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            RestClient client = SalesforceApplication.GlobalClientManager.GetRestClient();
-            if (client != null)
+            Account account = AccountManager.GetAccount();
+            if (account != null)
             {
                 if (!oneView.CanGoBack)
                 {
-                    Account account = AccountManager.GetAccount();
+                    account = await OAuth2.RefreshAuthToken(account);
                     String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.InstanceUrl + "/one/one.app");
                     oneView.Navigate(new Uri(startPage));
                 }

@@ -237,12 +237,13 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Async method to get a new auth token by doing a refresh flow
+        /// Async method to make the request for a new auth token.  Method returns an AuthResponse with the data returned back from
+        /// Salesforce.
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
         /// <returns></returns>
-        public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, string refreshToken)
+        public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
             // Args
             string argsStr = string.Format(OauthRefreshQueryString, new string[] { loginOptions.ClientId, refreshToken });
@@ -257,6 +258,24 @@ namespace Salesforce.SDK.Auth
             return await c.ExecuteAndDeserialize<AuthResponse>();
         }
 
+        /// <summary>
+        /// Async method for refreshing the token, persisting the data in the encrypted settings and returning the updated account
+        /// with the new access token.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public static async Task<Account> RefreshAuthToken(Account account)
+        {
+            if (account != null)
+            {
+                AuthStorageHelper auth = new AuthStorageHelper();
+                AuthResponse response = await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
+                account.AccessToken = response.AccessToken;
+                auth.PersistCredentials(account);
+            }
+            return account;
+           
+        }
         /// <summary>
         /// Async method to revoke the user's refresh token (i.e. do a server-side logout for the authenticated user)
         /// </summary>
