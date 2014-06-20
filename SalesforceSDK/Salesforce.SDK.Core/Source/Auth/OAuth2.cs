@@ -268,10 +268,17 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null)
             {
-                AuthStorageHelper auth = new AuthStorageHelper();
-                AuthResponse response = await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                account.AccessToken = response.AccessToken;
-                auth.PersistCredentials(account);
+                try
+                {
+                    AuthStorageHelper auth = new AuthStorageHelper();
+                    AuthResponse response = await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
+                    account.AccessToken = response.AccessToken;
+                    auth.PersistCredentials(account);
+                }
+                catch (Exception)
+                {
+                    Debug.WriteLine("Error refreshing token");
+                }
             }
             return account;
            

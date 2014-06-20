@@ -145,16 +145,6 @@ namespace Salesforce.SDK.App
         {
             if (args.Visible)
             {
-                if (GlobalClientManager != null)
-                {
-                    RestClient client = GlobalClientManager.PeekRestClient();
-                    if (client != null)
-                    {
-                        OAuth2.RefreshCookies();
-                    }
-                }
-
-
                 PincodeManager.TriggerBackgroundedPinTimer();
                 TokenRefresher.Start();
             } else
@@ -192,13 +182,8 @@ namespace Salesforce.SDK.App
         {
             try
             {
-                Account account = AccountManager.GetAccount();
-                RestClient client = GlobalClientManager.PeekRestClient();
-                if (client != null && account != null)
-                {
-                    await OAuth2.CallIdentityService(account.IdentityUrl, client);
-                    OAuth2.RefreshCookies();
-                }
+                await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
+                OAuth2.RefreshCookies();
             } catch (WebException)
             {
                 // todo: add logging here
