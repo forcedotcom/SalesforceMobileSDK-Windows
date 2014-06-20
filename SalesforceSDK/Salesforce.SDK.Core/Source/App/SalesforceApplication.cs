@@ -145,6 +145,16 @@ namespace Salesforce.SDK.App
         {
             if (args.Visible)
             {
+                if (GlobalClientManager != null)
+                {
+                    RestClient client = GlobalClientManager.PeekRestClient();
+                    if (client != null)
+                    {
+                        OAuth2.RefreshCookies();
+                    }
+                }
+
+
                 PincodeManager.TriggerBackgroundedPinTimer();
                 TokenRefresher.Start();
             } else

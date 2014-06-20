@@ -282,16 +282,19 @@ namespace Salesforce.SDK.Auth
         public static void RefreshCookies()
         {
             Account account = AccountManager.GetAccount();
-            Uri loginUri = new Uri(account.LoginUrl);
-            Uri instanceUri = new Uri(account.InstanceUrl);
-            Windows.Web.Http.Filters.HttpBaseProtocolFilter filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
-            Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("salesforce", loginUri.Host, "/");
-            Windows.Web.Http.HttpCookie instance = new Windows.Web.Http.HttpCookie("salesforceInstance", instanceUri.Host, "/");
-            cookie.Value = account.AccessToken;
-            instance.Value = account.AccessToken;
-            filter.CookieManager.SetCookie(cookie, false);
-            filter.CookieManager.SetCookie(instance, false);
-            Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, instanceUri);
+            if (account != null)
+            {
+                Uri loginUri = new Uri(account.LoginUrl);
+                Uri instanceUri = new Uri(account.InstanceUrl);
+                Windows.Web.Http.Filters.HttpBaseProtocolFilter filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
+                Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("salesforce", loginUri.Host, "/");
+                Windows.Web.Http.HttpCookie instance = new Windows.Web.Http.HttpCookie("salesforceInstance", instanceUri.Host, "/");
+                cookie.Value = account.AccessToken;
+                instance.Value = account.AccessToken;
+                filter.CookieManager.SetCookie(cookie, false);
+                filter.CookieManager.SetCookie(instance, false);
+                Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, instanceUri);
+            }
         }
 
         public async static void ClearCookies(LoginOptions loginOptions)

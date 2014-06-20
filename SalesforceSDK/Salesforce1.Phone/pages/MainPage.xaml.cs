@@ -43,7 +43,7 @@ namespace Salesforce1.Pages
                 if (!oneView.CanGoBack)
                 {
                     Account account = AccountManager.GetAccount();
-                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.LoginUrl + "/one/one.app");
+                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.InstanceUrl + "/one/one.app");
                     oneView.Navigate(new Uri(startPage));
                 }
             }
