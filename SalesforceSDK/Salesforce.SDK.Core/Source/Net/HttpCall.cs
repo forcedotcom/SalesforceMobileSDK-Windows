@@ -40,11 +40,11 @@ namespace Salesforce.SDK.Net
     /// <summary>
     /// Enumeration used to represent the content type of a HTTP request
     /// </summary>
-    public enum ContentType
+    public enum ContentTypeValues
     {
-        FORM_URLENCODED,
-        JSON,
-        NONE
+        FormUrlEncoded,
+        Json,
+        None
     }
     public class HttpCallHeaders
     {
@@ -66,13 +66,13 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public static class Extensions
     {
-        public static string MimeType(this ContentType contentType)
+        public static string MimeType(this ContentTypeValues contentType)
         {
             switch (contentType)
             {
-                case ContentType.JSON: return "application/json";
-                case ContentType.FORM_URLENCODED: return "application/x-www-form-urlencoded";
-                case ContentType.NONE: 
+                case ContentTypeValues.Json: return "application/json";
+                case ContentTypeValues.FormUrlEncoded: return "application/x-www-form-urlencoded";
+                case ContentTypeValues.None: 
                 default:
                     return null;
             }
@@ -85,15 +85,15 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public class HttpCall
     {
-        private readonly HttpMethod _method;
-        private readonly HttpCallHeaders _headers;
-        private readonly string _url;
-        private readonly string _requestBody;
-        private readonly ContentType _contentType;
-        private string _responseBody;
-        private HttpClient _webClient;
-        private Exception _webException;
-        private HttpStatusCode _statusCode;
+        private readonly HttpMethod Method;
+        private readonly HttpCallHeaders Headers;
+        private readonly string Url;
+        private readonly string RequestBody;
+        private readonly ContentTypeValues ContentType;
+        private string ResponseBodyText;
+        private HttpClient WebClient;
+        private Exception HttpCallErrorException;
+        private HttpStatusCode StatusCodeValue;
 
         /// <summary>
         /// True if HTTP request has been executed
@@ -102,7 +102,7 @@ namespace Salesforce.SDK.Net
         {
             get
             {
-                return (_responseBody != null || _webException != null);
+                return (ResponseBodyText != null || HttpCallErrorException != null);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _webException == null;
+                return HttpCallErrorException == null;
             }
         }
 
@@ -126,7 +126,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _webException;
+                return HttpCallErrorException;
             }
         }
 
@@ -137,7 +137,7 @@ namespace Salesforce.SDK.Net
         {
             get
             {
-                return _responseBody != null;
+                return ResponseBodyText != null;
             }
         }
 
@@ -149,7 +149,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _responseBody;
+                return ResponseBodyText;
             }
         }
 
@@ -161,7 +161,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _statusCode;
+                return StatusCodeValue;
             }
         }
 
@@ -181,14 +181,14 @@ namespace Salesforce.SDK.Net
         /// <param name="url"></param>
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
-        public HttpCall(HttpMethod method, HttpCallHeaders headers, string url, string requestBody, ContentType contentType)
+        public HttpCall(HttpMethod method, HttpCallHeaders headers, string url, string requestBody, ContentTypeValues contentType)
         {
-            _webClient = new HttpClient();
-            _method = method;
-            _headers = headers;
-            _url = url;
-            _requestBody = requestBody;
-            _contentType = contentType;
+            WebClient = new HttpClient();
+            Method = method;
+            Headers = headers;
+            Url = url;
+            RequestBody = requestBody;
+            ContentType = contentType;
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public static HttpCall CreateGet(HttpCallHeaders headers, string url) 
         {
-            return new HttpCall(HttpMethod.Get, headers, url, null, ContentType.NONE);
+            return new HttpCall(HttpMethod.Get, headers, url, null, ContentTypeValues.None);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Salesforce.SDK.Net
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public static HttpCall CreatePost(HttpCallHeaders headers, string url, string requestBody, ContentType contentType)
+        public static HttpCall CreatePost(HttpCallHeaders headers, string url, string requestBody, ContentTypeValues contentType)
         {
             return new HttpCall(HttpMethod.Post, headers, url, requestBody, contentType);
         }
@@ -233,7 +233,7 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public static HttpCall CreatePost(string url, string requestBody)
         {
-            return CreatePost(null, url, requestBody, ContentType.FORM_URLENCODED);
+            return CreatePost(null, url, requestBody, ContentTypeValues.FormUrlEncoded);
         }
 
         /// <summary>
@@ -254,42 +254,46 @@ namespace Salesforce.SDK.Net
             }
         }
 
+        /// <summary>
+        /// Executes the HttpCall. This will generate the headers, create the request and populate the HttpCall properties with relevant data.
+        /// The HttpCall may only be called once; further attempts to execute the same call will throw an InvalidOperationException. 
+        /// </summary>
+        /// <returns>HttpCall with populated data</returns>
         public async Task<HttpCall> Execute() 
         {
             if (Executed)
             {
                 throw new System.InvalidOperationException("A HttpCall can only be executed once");
             }
-            HttpRequestMessage req = new HttpRequestMessage(_method, new Uri(_url));
+            HttpRequestMessage req = new HttpRequestMessage(Method, new Uri(Url));
             // Setting header
-            if (_headers != null)
+            if (Headers != null)
             {
                 var headers = req.Headers;
-                foreach (KeyValuePair<string, string> item in _headers.Headers)
+                if (Headers.Authorization != null)
+                {
+                    headers.Authorization = Headers.Authorization;
+                }
+                foreach (KeyValuePair<string, string> item in Headers.Headers)
                 {
                     headers[item.Key] = item.Value;
                 }
-                if (_headers.Authorization != null)
-                {
-                    headers.Authorization = _headers.Authorization;
-                }
             }
 
-            if (!String.IsNullOrWhiteSpace(_requestBody) &&
-                (_method == HttpMethod.Post || _method == HttpMethod.Put || _method == HttpMethod.Patch))
+            if (!String.IsNullOrWhiteSpace(RequestBody))
             {
-                switch (_contentType)
+                switch (ContentType)
                 {
-                    case ContentType.FORM_URLENCODED:
-                        req.Content = new HttpFormUrlEncodedContent(_requestBody.ParseQueryString());
+                    case ContentTypeValues.FormUrlEncoded:
+                        req.Content = new HttpFormUrlEncodedContent(RequestBody.ParseQueryString());
                         break;
                     default:
-                            req.Content = new HttpStringContent(_requestBody);
-                            req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(_contentType.MimeType());
+                        req.Content = new HttpStringContent(RequestBody);
+                            req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(ContentType.MimeType());
                         break;
                 }
             }
-            HttpResponseMessage message = await _webClient.SendRequestAsync(req);
+            HttpResponseMessage message = await WebClient.SendRequestAsync(req);
             HandleMessageResponse(message);
             return this;
         }
@@ -303,14 +307,14 @@ namespace Salesforce.SDK.Net
             }
             catch (Exception ex)
             {
-                _webException = ex;
+                HttpCallErrorException = ex;
                // response = (HttpWebResponse) ex.Response;
             }
 
             if (response != null)
             {
-                _responseBody = await response.Content.ReadAsStringAsync();
-                _statusCode = response.StatusCode;
+                ResponseBodyText = await response.Content.ReadAsStringAsync();
+                StatusCodeValue = response.StatusCode;
                 response.Dispose();
             }
         }

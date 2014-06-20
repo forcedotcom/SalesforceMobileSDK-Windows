@@ -90,7 +90,7 @@ namespace Salesforce.SDK.Rest
                 headers.Headers.Concat(request.AdditionalHeaders);
             }
 
-            HttpCall call = await new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute().ConfigureAwait(false);
+            HttpCall call = await new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute().ConfigureAwait(false);
 
             if (!call.HasResponse)
             {

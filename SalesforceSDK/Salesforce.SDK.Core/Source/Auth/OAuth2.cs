@@ -177,23 +177,23 @@ namespace Salesforce.SDK.Auth
     public class OAuth2
     {
         // Refresh scope
-        const string REFRESH_SCOPE = "refresh_token";
+        const string RefreshScope = "refresh_token";
 
         // Authorization url
-        const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_STRING = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OauthAuthenticationPath = "/services/oauth2/authorize";
+        const string OauthAuthenticationQueryString = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
-        const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";
-        const string FRONT_DOOR_QUERY_STRING = "display=touch&sid={0}&retURL={1}";
+        const string FrontDoorPath = "/secur/frontdoor.jsp";
+        const string FrontDoorQueryString = "display=touch&sid={0}&retURL={1}";
 
         // Refresh url
-        const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
-        const string OAUTH_REFRESH_QUERY_STRING = "?grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
+        const string OauthRefreshPath = "/services/oauth2/token";
+        const string OauthRefreshQueryString = "?grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
-        const string OAUTH_REVOKE_PATH = "/services/oauth2/revoke";
-        const string OAUTH_REVOKE_QUERY_STRING = "token={0}";
+        const string OauthRevokePath = "/services/oauth2/revoke";
+        const string OauthRevokeQueryString = "token={0}";
 
 
         /// <summary>
@@ -205,14 +205,14 @@ namespace Salesforce.SDK.Auth
         public static string ComputeAuthorizationUrl(LoginOptions loginOptions)
         {
             // Scope
-            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { REFRESH_SCOPE }).Distinct().ToArray());
+            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { RefreshScope }).Distinct().ToArray());
 
             // Args
             string[] args = { loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
+            string authorizationUrl = string.Format(loginOptions.LoginUrl + OauthAuthenticationPath + "?" + OauthAuthenticationQueryString, urlEncodedArgs);
 
             return authorizationUrl;
         }
@@ -231,7 +231,7 @@ namespace Salesforce.SDK.Auth
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            string frontDoorUrl = string.Format(instanceUrl + FRONT_DOOR_PATH + "?" + FRONT_DOOR_QUERY_STRING, urlEncodedArgs);
+            string frontDoorUrl = string.Format(instanceUrl + FrontDoorPath + "?" + FrontDoorQueryString, urlEncodedArgs);
 
             return frontDoorUrl;
         }
@@ -245,10 +245,10 @@ namespace Salesforce.SDK.Auth
         public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REFRESH_QUERY_STRING, new string[] { loginOptions.ClientId, refreshToken });
+            string argsStr = string.Format(OauthRefreshQueryString, new string[] { loginOptions.ClientId, refreshToken });
 
             // Refresh url
-            string refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
+            string refreshUrl = loginOptions.LoginUrl + OauthRefreshPath;
 
             // Post
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
@@ -266,10 +266,10 @@ namespace Salesforce.SDK.Auth
         public static async Task<bool> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REVOKE_QUERY_STRING, new string[] { refreshToken });
+            string argsStr = string.Format(OauthRevokeQueryString, new string[] { refreshToken });
 
             // Revoke url
-            string revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
+            string revokeUrl = loginOptions.LoginUrl + OauthRevokePath;
 
             // Post
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);

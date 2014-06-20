@@ -231,7 +231,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         private RestRequest BuildManualRestReuqest()
         {
             HttpMethod restMethod = (HttpMethod)Enum.Parse(typeof(HttpMethod), _vm[RestActionViewModel.REQUEST_METHOD], true);
-            return new RestRequest(restMethod, _vm[RestActionViewModel.REQUEST_PATH], _vm[RestActionViewModel.REQUEST_BODY], ContentType.JSON);
+            return new RestRequest(restMethod, _vm[RestActionViewModel.REQUEST_PATH], _vm[RestActionViewModel.REQUEST_BODY], ContentTypeValues.Json);
         }
 
         private string[] ParseFieldListValue()
