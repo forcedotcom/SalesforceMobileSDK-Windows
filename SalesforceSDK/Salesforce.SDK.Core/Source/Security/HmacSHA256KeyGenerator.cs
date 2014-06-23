@@ -34,6 +34,7 @@ using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.System.Profile;
+using Windows.ApplicationModel;
 
 namespace Salesforce.SDK.Source.Security
 {
@@ -62,17 +63,46 @@ namespace Salesforce.SDK.Source.Security
         }
 
         /// <summary>
-        /// It is recommended you generate a way that is unique for the app/device. In this example we used the network adapter ID and FullName of the type of this class.
+        /// It is recommended you generate a way that is unique for the app/device. In this example we normalize the hardware ID for things that rarely change and add a few strings related to the app.
+        /// See http://code.msdn.microsoft.com/windowsapps/How-to-use-ASHWID-to-3742c83e for examples on ASHWID use.
         /// </summary>
         /// <returns></returns>
         private static string GetDeviceUniqueId()
         {
-            var networkProfiles = Windows.Networking.Connectivity.NetworkInformation.GetConnectionProfiles();
-            var adapter = networkProfiles[0].NetworkAdapter;
+            var id = HardwareIdentification.GetPackageSpecificToken(null);
+            string normalized = NormalizeHardwareId(id.Id.ToArray());
             HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm("MD5");
-            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(adapter.NetworkAdapterId.ToString() + typeof(HmacSHA256KeyGenerator).FullName, BinaryStringEncoding.Utf8);
+            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(normalized + typeof(HmacSHA256KeyGenerator).FullName, BinaryStringEncoding.Utf8);
             IBuffer hashed = alg.HashData(buff);
             return CryptographicBuffer.EncodeToHexString(hashed);
+        }
+
+        /// <summary>
+        /// Simplified version of going through the hardware string. There are many different hardware items that can be looked at, and a good number of them can change when things are plugged in or
+        /// turned on or off.  In this we went for a few items that should stay relatively the same.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private static string NormalizeHardwareId(Byte[] id)
+        {
+            var hardwareIdString = BitConverter.ToString(id).Replace("-", "");
+            StringBuilder normalized = new StringBuilder();
+            for (var i = 0; i < hardwareIdString.Length / 8; i++)
+            {
+                switch (hardwareIdString.Substring(i * 8, 4))
+                {
+                    case "0100": // Processor 
+                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        break;
+                    case "0500": // Audio Adapter 
+                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        break;
+                    case "0900": // System BIOS 
+                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        break;
+                }
+            }
+            return normalized.ToString();
         }
 
         /// <summary>
