@@ -84,9 +84,11 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
+                AuthStorage.PersistCredentials(account);
                 RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
+                    OAuth2.ClearCookies(account.GetLoginOptions());
                     IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
                     if (identity != null)
                     {
@@ -95,6 +97,7 @@ namespace Salesforce.SDK.Auth
                         account.Policy = identity.MobilePolicy;
                         AuthStorage.PersistCredentials(account);
                     }
+                    OAuth2.RefreshCookies();
                     return true;
                 }
             }

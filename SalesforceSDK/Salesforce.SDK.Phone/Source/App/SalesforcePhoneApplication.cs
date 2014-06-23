@@ -33,7 +33,12 @@ namespace Salesforce.SDK.App
                 return;
             }
 
-            if (frame.CanGoBack)
+            if (frame.SourcePageType.Equals(typeof(PincodeDialog)))
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                e.Handled = true;
+            }
+            else if (frame.CanGoBack)
             {
                 frame.GoBack();
                 e.Handled = true;

@@ -28,7 +28,7 @@ using Salesforce.SDK.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using Windows.Web.Http;
 using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Rest
@@ -66,35 +66,31 @@ namespace Salesforce.SDK.Rest
             _accessTokenProvider = accessTokenProvider;
         }
 
-        public void SendAsync(RestRequest request, AsyncRequestCallback callback)
+        public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
         {
-            SendAsync(request).ContinueWith((t) => callback(t.Result));
+            RestResponse result = await SendAsync(request).ConfigureAwait(false);
+            if (callback != null)
+            {
+                callback(result);
+            }
         }
 
         public async Task<RestResponse> SendAsync(RestRequest request)
         {
-            return await Task.Factory.StartNew(() => SendSync(request));
+            HttpCall result = await Send(request, true);
+            return new RestResponse(result);
         }
 
-        public RestResponse SendSync(RestRequest request)
-        {
-            return new RestResponse(SendSync(request, true));
-        }
-
-        private HttpCall SendSync(RestRequest request, bool retryInvalidToken)
+        private async Task<HttpCall> Send(RestRequest request, bool retryInvalidToken)
         {
             string url = _instanceUrl + request.Path;
-            Dictionary<string, string> headers = new Dictionary<string, string>() {};
-            if (_accessToken != null) 
-            {
-                headers["Authorization"] = "Bearer " + _accessToken;
-            }
+            HttpCallHeaders headers = new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
             if (request.AdditionalHeaders != null)
             {
-                headers.Concat(request.AdditionalHeaders);
+                headers.Headers.Concat(request.AdditionalHeaders);
             }
 
-            HttpCall call = new HttpCall(request.Method, headers, url, request.Body, request.ContentType).Execute().Result;
+            HttpCall call = await new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute().ConfigureAwait(false);
 
             if (!call.HasResponse)
             {
@@ -109,7 +105,7 @@ namespace Salesforce.SDK.Rest
                     if (newAccessToken != null)
                     {
                         _accessToken = newAccessToken;
-                        call = SendSync(request, false);
+                        call = await Send(request, false);
                     }
                 }
             }

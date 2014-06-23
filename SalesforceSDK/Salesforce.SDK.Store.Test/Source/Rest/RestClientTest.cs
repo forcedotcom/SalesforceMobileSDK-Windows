@@ -87,21 +87,21 @@ namespace Salesforce.SDK.Rest
 
 
         [TestMethod]
-        public void TestCallWithBadAuthToken()
+        public async void TestCallWithBadAuthToken()
         {
             RestClient unauthenticatedRestClient = new RestClient(TestCredentials.INSTANCE_SERVER, BAD_TOKEN, null);
-            RestResponse response = unauthenticatedRestClient.SendSync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
+            RestResponse response = await unauthenticatedRestClient.SendAsync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
             Assert.IsFalse(response.Success, "Success not expected");
             Assert.IsNotNull(response.Error, "Expected error");
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode, "Expected 401");
         }
 
         [TestMethod]
-        public void TestCallWithBadAuthTokenAndTokenProvider()
+        public async void TestCallWithBadAuthTokenAndTokenProvider()
         {
             RestClient unauthenticatedRestClient = new RestClient(TestCredentials.INSTANCE_SERVER, BAD_TOKEN, () => Task.Factory.StartNew(() => _accessToken));
             Assert.AreEqual(BAD_TOKEN, unauthenticatedRestClient.AccessToken, "RestClient should be using the bad token initially");
-            RestResponse response = unauthenticatedRestClient.SendSync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
+            RestResponse response = await unauthenticatedRestClient.SendAsync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
             Assert.IsTrue(response.Success, "Success expected");
             Assert.IsNull(response.Error, "Expected error");
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Expected 200");
@@ -109,26 +109,26 @@ namespace Salesforce.SDK.Rest
         }
 
         [TestMethod]
-        public void TestGetVersions()
+        public async void TestGetVersions()
         {
             // We don't need to be authenticated
             RestClient unauthenticatedRestClient = new RestClient(TestCredentials.INSTANCE_SERVER, BAD_TOKEN, null);
-            RestResponse response = unauthenticatedRestClient.SendSync(RestRequest.GetRequestForVersions());
+            RestResponse response = await unauthenticatedRestClient.SendAsync(RestRequest.GetRequestForVersions());
             CheckResponse(response, HttpStatusCode.OK, true);
         }
 
         [TestMethod]
-        public void TestGetResources() 
+        public async void TestGetResources() 
         {
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForResources(TestCredentials.API_VERSION));
             CheckResponse(response, HttpStatusCode.OK, false);
             CheckKeys(response.AsJObject, "sobjects", "search", "recent");
         }
 
         [TestMethod]
-        public void TestDescribeGlobal()
+        public async void TestDescribeGlobal()
         {
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForDescribeGlobal(TestCredentials.API_VERSION));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForDescribeGlobal(TestCredentials.API_VERSION));
             CheckResponse(response, HttpStatusCode.OK, false);
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "encoding", "maxBatchSize", "sobjects");
@@ -136,9 +136,9 @@ namespace Salesforce.SDK.Rest
         }
 
         [TestMethod]
-        public void TestMetadata()
+        public async void TestMetadata()
         {
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForMetadata(TestCredentials.API_VERSION, "account"));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForMetadata(TestCredentials.API_VERSION, "account"));
             CheckResponse(response, HttpStatusCode.OK, false);
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "objectDescribe", "recentItems");
@@ -147,9 +147,9 @@ namespace Salesforce.SDK.Rest
         }
 
         [TestMethod]
-        public void TestDescribe()
+        public async void TestDescribe()
         {
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForDescribe(TestCredentials.API_VERSION, "account"));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForDescribe(TestCredentials.API_VERSION, "account"));
             CheckResponse(response, HttpStatusCode.OK, false);
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "name", "fields", "urls", "label");
@@ -157,21 +157,21 @@ namespace Salesforce.SDK.Rest
         }
 
         [TestMethod]
-        public void TestCreate()
+        public async void TestCreate()
         {
             Dictionary<string, object> fields = new Dictionary<string, object>() {{"name", generateAccountName()}};
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "id", "errors", "success");
             Assert.IsTrue((bool) jsonResponse["success"], "Create failed");
         }
     
         [TestMethod]
-        public void TestRetrieve() 
+        public async void TestRetrieve() 
         {
             string[] fields = new string[] { "name", "ownerId" };
-            IdName newAccountIdName = CreateAccount();
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
+            IdName newAccountIdName = await CreateAccount();
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
             CheckResponse(response, HttpStatusCode.OK, false);
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "attributes", "Name", "OwnerId", "Id");
@@ -179,45 +179,45 @@ namespace Salesforce.SDK.Rest
         }
     
         [TestMethod]
-        public void TestUpdate()
+        public async void TestUpdate()
         {
             // Create
-            IdName newAccountIdName = CreateAccount();
+            IdName newAccountIdName = await CreateAccount();
     
             // Update
             string updatedAccountName = generateAccountName();
             Dictionary<string, object> fields = new Dictionary<string, object>() {{"name", updatedAccountName}};
 
-            RestResponse updateResponse = _restClient.SendSync(RestRequest.GetRequestForUpdate(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
+            RestResponse updateResponse = await _restClient.SendAsync(RestRequest.GetRequestForUpdate(TestCredentials.API_VERSION, "account", newAccountIdName.Id, fields));
             Assert.IsTrue(updateResponse.Success, "Update failed");
     
             // Retrieve - expect updated name
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new string[] {"name"}));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new string[] {"name"}));
             Assert.AreEqual(updatedAccountName, response.AsJObject["Name"], "Wrong row returned");
         }
     
     
         [TestMethod]
-        public void TestDelete() 
+        public async void TestDelete() 
         {
             // Create
-            IdName newAccountIdName = CreateAccount();
+            IdName newAccountIdName = await CreateAccount();
     
             // Delete
-            RestResponse deleteResponse = _restClient.SendSync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, "account", newAccountIdName.Id));
+            RestResponse deleteResponse = await _restClient.SendAsync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, "account", newAccountIdName.Id));
             Assert.IsTrue(deleteResponse.Success, "Delete failed");
     
             // Retrieve - expect 404
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new string[] {"name"}));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForRetrieve(TestCredentials.API_VERSION, "account", newAccountIdName.Id, new string[] {"name"}));
             Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode, "404 was expected");
         }
     
     
         [TestMethod]
-        public void TestQuery() 
+        public async void TestQuery() 
         {
-            IdName newAccountIdName = CreateAccount();
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForQuery(TestCredentials.API_VERSION, "select name from account where id = '" + newAccountIdName.Id + "'"));
+            IdName newAccountIdName = await CreateAccount();
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForQuery(TestCredentials.API_VERSION, "select name from account where id = '" + newAccountIdName.Id + "'"));
             CheckResponse(response, HttpStatusCode.OK, false);
             JObject jsonResponse = response.AsJObject;
             CheckKeys(jsonResponse, "done", "totalSize", "records");
@@ -226,10 +226,10 @@ namespace Salesforce.SDK.Rest
         }
     
         [TestMethod]
-        public void TestSearch() 
+        public async void TestSearch() 
         {
-            IdName newAccountIdName = CreateAccount();
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + newAccountIdName.Name + "}"));
+            IdName newAccountIdName = await CreateAccount();
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + newAccountIdName.Name + "}"));
             CheckResponse(response, HttpStatusCode.OK, true);
             JArray matchingRows = response.AsJArray;
             Assert.AreEqual(1, matchingRows.Count, "Expected one row");
@@ -243,25 +243,25 @@ namespace Salesforce.SDK.Rest
             return ENTITY_NAME_PREFIX + (new Random()).Next(10000, 99999);
         }
 
-        private IdName CreateAccount() 
+        private async Task<IdName> CreateAccount() 
         {
             string newAccountName = generateAccountName();
             Dictionary<string, object> fields = new Dictionary<string, object>() {{"name", newAccountName}};            
-            RestResponse response = _restClient.SendSync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
+            RestResponse response = await _restClient.SendAsync(RestRequest.GetRequestForCreate(TestCredentials.API_VERSION, "account", fields));
             string newAccountId = (string) response.AsJObject["id"];
             return new IdName(newAccountId, newAccountName);
         }
     
-        private void Cleanup() {
+        private async void Cleanup() {
             try {
-                RestResponse searchResponse = _restClient.SendSync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + ENTITY_NAME_PREFIX + "}"));
+                RestResponse searchResponse = await _restClient.SendAsync(RestRequest.GetRequestForSearch(TestCredentials.API_VERSION, "find {" + ENTITY_NAME_PREFIX + "}"));
                 JArray matchingRows = searchResponse.AsJArray;
                 for (int i=0; i<matchingRows.Count; i++) {
                     JObject matchingRow = (JObject) matchingRows[i];
                     string matchingRowType = (string) matchingRow["attributes"]["type"];
                     string matchingRowId = (string) matchingRow["Id"];
                     Debug.WriteLine("Trying to delete {0}", matchingRowId);
-                    _restClient.SendSync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, matchingRowType, matchingRowId));
+                    await _restClient.SendAsync(RestRequest.GetRequestForDelete(TestCredentials.API_VERSION, matchingRowType, matchingRowId));
                     Debug.WriteLine("Successfully deleted {0}", matchingRowId);
                 }
             }

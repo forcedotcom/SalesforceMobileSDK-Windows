@@ -29,28 +29,36 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using Windows.Web.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Web.Http.Headers;
+using Salesforce.SDK.Source.Utilities;
 
 namespace Salesforce.SDK.Net
 {
     /// <summary>
-    /// Enumeration used to represent the method of a HTTP request
-    /// </summary>
-    public enum RestMethod
-    {
-        GET, POST, PUT, DELETE, HEAD, PATCH
-    }
-
-    /// <summary>
     /// Enumeration used to represent the content type of a HTTP request
     /// </summary>
-    public enum ContentType
+    public enum ContentTypeValues
     {
-        FORM_URLENCODED,
-        JSON,
-        NONE
+        FormUrlEncoded,
+        Json,
+        None
+    }
+    public class HttpCallHeaders
+    {
+        public HttpCredentialsHeaderValue Authorization { get; private set; }
+        public Dictionary<string, string> Headers { get; private set; }
+
+        public HttpCallHeaders(string authorization, Dictionary<string, string> headers)
+        {
+            if (!String.IsNullOrWhiteSpace(authorization))
+            {
+                Authorization = new HttpCredentialsHeaderValue("Bearer", authorization);
+            }
+            Headers = headers;
+        }
     }
 
     /// <summary>
@@ -58,13 +66,13 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public static class Extensions
     {
-        public static string MimeType(this ContentType contentType)
+        public static string MimeType(this ContentTypeValues contentType)
         {
             switch (contentType)
             {
-                case ContentType.JSON: return "application/json";
-                case ContentType.FORM_URLENCODED: return "application/x-www-form-urlencoded";
-                case ContentType.NONE: 
+                case ContentTypeValues.Json: return "application/json";
+                case ContentTypeValues.FormUrlEncoded: return "application/x-www-form-urlencoded";
+                case ContentTypeValues.None: 
                 default:
                     return null;
             }
@@ -77,17 +85,15 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public class HttpCall
     {
-        private readonly RestMethod _method;
-        private readonly Dictionary<string, string> _headers;
-        private readonly string _url;
-        private readonly string _requestBody;
-        private readonly ContentType _contentType;
-
-        private ManualResetEvent _allDone;
-        private HttpWebRequest _request;
-        private string _responseBody;
-        private HttpStatusCode _statusCode;
-        private WebException _webException;
+        private readonly HttpMethod Method;
+        private readonly HttpCallHeaders Headers;
+        private readonly string Url;
+        private readonly string RequestBody;
+        private readonly ContentTypeValues ContentType;
+        private string ResponseBodyText;
+        private HttpClient WebClient;
+        private Exception HttpCallErrorException;
+        private HttpStatusCode StatusCodeValue;
 
         /// <summary>
         /// True if HTTP request has been executed
@@ -96,7 +102,7 @@ namespace Salesforce.SDK.Net
         {
             get
             {
-                return (_responseBody != null || _webException != null);
+                return (ResponseBodyText != null || HttpCallErrorException != null);
             }
         }
 
@@ -108,19 +114,19 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _webException == null;
+                return HttpCallErrorException == null;
             }
         }
 
         /// <summary>
         /// Error that was raised if HTTP request did not execute successfully
         /// </summary>
-        public WebException Error
+        public Exception Error
         {
             get
             {
                 CheckExecuted();
-                return _webException;
+                return HttpCallErrorException;
             }
         }
 
@@ -131,7 +137,7 @@ namespace Salesforce.SDK.Net
         {
             get
             {
-                return _responseBody != null;
+                return ResponseBodyText != null;
             }
         }
 
@@ -143,7 +149,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _responseBody;
+                return ResponseBodyText;
             }
         }
 
@@ -155,7 +161,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return _statusCode;
+                return StatusCodeValue;
             }
         }
 
@@ -175,13 +181,14 @@ namespace Salesforce.SDK.Net
         /// <param name="url"></param>
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
-        public HttpCall(RestMethod method, Dictionary<string, string> headers, string url, string requestBody, ContentType contentType)
+        public HttpCall(HttpMethod method, HttpCallHeaders headers, string url, string requestBody, ContentTypeValues contentType)
         {
-            _method = method;
-            _headers = headers;
-            _url = url;
-            _requestBody = requestBody;
-            _contentType = contentType;
+            WebClient = new HttpClient();
+            Method = method;
+            Headers = headers;
+            Url = url;
+            RequestBody = requestBody;
+            ContentType = contentType;
         }
 
         /// <summary>
@@ -190,9 +197,9 @@ namespace Salesforce.SDK.Net
         /// <param name="headers"></param>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static HttpCall CreateGet(Dictionary<string, string> headers, string url) 
+        public static HttpCall CreateGet(HttpCallHeaders headers, string url) 
         {
-            return new HttpCall(RestMethod.GET, headers, url, null, ContentType.NONE);
+            return new HttpCall(HttpMethod.Get, headers, url, null, ContentTypeValues.None);
         }
 
         /// <summary>
@@ -213,9 +220,9 @@ namespace Salesforce.SDK.Net
         /// <param name="requestBody"></param>
         /// <param name="contentType"></param>
         /// <returns></returns>
-        public static HttpCall CreatePost(Dictionary<string, string> headers, string url, string requestBody, ContentType contentType)
+        public static HttpCall CreatePost(HttpCallHeaders headers, string url, string requestBody, ContentTypeValues contentType)
         {
-            return new HttpCall(RestMethod.POST, headers, url, requestBody, contentType);
+            return new HttpCall(HttpMethod.Post, headers, url, requestBody, contentType);
         }
 
         /// <summary>
@@ -226,16 +233,7 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public static HttpCall CreatePost(string url, string requestBody)
         {
-            return CreatePost(null, url, requestBody, ContentType.FORM_URLENCODED);
-        }
-
-        /// <summary>
-        /// Async method to execute the HTTP request
-        /// </summary>
-        /// <returns></returns>
-        public async Task<HttpCall> Execute()
-        {
-            return await Task.Factory.StartNew(() => ExecuteSync());
+            return CreatePost(null, url, requestBody, ContentTypeValues.FormUrlEncoded);
         }
 
         /// <summary>
@@ -245,106 +243,80 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public async Task<T> ExecuteAndDeserialize<T>()
         {
-            return await Execute().ContinueWith(t =>
-                {
-                    HttpCall call = t.Result;
-                    if (call.Success)
-                    {
-                        return JsonConvert.DeserializeObject<T>(call.ResponseBody);
-                    }
-                    else
-                    {
-                        throw call.Error;
-                    }
-                });
+            HttpCall call = await Execute().ConfigureAwait(false);
+            if (call.Success)
+            {
+                return JsonConvert.DeserializeObject<T>(call.ResponseBody);
+            }
+            else
+            {
+                throw call.Error;
+            }
         }
 
-        private HttpCall ExecuteSync() 
+        /// <summary>
+        /// Executes the HttpCall. This will generate the headers, create the request and populate the HttpCall properties with relevant data.
+        /// The HttpCall may only be called once; further attempts to execute the same call will throw an InvalidOperationException. 
+        /// </summary>
+        /// <returns>HttpCall with populated data</returns>
+        public async Task<HttpCall> Execute() 
         {
             if (Executed)
             {
                 throw new System.InvalidOperationException("A HttpCall can only be executed once");
             }
-
-            _allDone = new ManualResetEvent(false);
-            _request = (HttpWebRequest)HttpWebRequest.Create(_url);
-
-            // Setting method
-            _request.Method = _method.ToString();
-
+            HttpRequestMessage req = new HttpRequestMessage(Method, new Uri(Url));
             // Setting header
-            if (_headers != null)
+            if (Headers != null)
             {
-                foreach (KeyValuePair<string, string> item in _headers)
+                var headers = req.Headers;
+                if (Headers.Authorization != null)
                 {
-                    _request.Headers[item.Key] = item.Value;
+                    headers.Authorization = Headers.Authorization;
+                }
+                foreach (KeyValuePair<string, string> item in Headers.Headers)
+                {
+                    headers[item.Key] = item.Value;
                 }
             }
 
-            if (_method == RestMethod.GET || _method == RestMethod.HEAD || _method == RestMethod.DELETE)
+            if (!String.IsNullOrWhiteSpace(RequestBody))
             {
-                // Start the asynchronous operation to get the response
-                _request.BeginGetResponse(new AsyncCallback(GetResponseCallback), null);
+                switch (ContentType)
+                {
+                    case ContentTypeValues.FormUrlEncoded:
+                        req.Content = new HttpFormUrlEncodedContent(RequestBody.ParseQueryString());
+                        break;
+                    default:
+                        req.Content = new HttpStringContent(RequestBody);
+                            req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(ContentType.MimeType());
+                        break;
+                }
             }
-            else if (_method == RestMethod.POST || _method == RestMethod.PUT || _method == RestMethod.PATCH)
-            {
-                // Setting content type
-                _request.ContentType = _contentType.MimeType();
-
-                // Start the asynchronous operation to send the request body
-                _request.BeginGetRequestStream(new AsyncCallback(GetRequestStreamCallback), null);
-            }
-
-            // Keep the thread from continuing while the asynchronous 
-            _allDone.WaitOne();
-
+            HttpResponseMessage message = await WebClient.SendRequestAsync(req);
+            HandleMessageResponse(message);
             return this;
         }
 
-        private void GetRequestStreamCallback(IAsyncResult asynchronousResult)
+        private async void HandleMessageResponse(HttpResponseMessage response)
         {
-            // End the operation
-            Stream postStream = _request.EndGetRequestStream(asynchronousResult);
-
-            // Sending post body
-            using(var writer = new StreamWriter(postStream))
-            {
-                writer.Write(_requestBody);
-            }
-
-            // Start the asynchronous operation to get the response
-            _request.BeginGetResponse(new AsyncCallback(GetResponseCallback), null);
-        }
-
-        private void GetResponseCallback(IAsyncResult asynchronousResult)
-        {
-            HttpWebResponse response;
-
             // End the operation
             try
             {
-                response = (HttpWebResponse)_request.EndGetResponse(asynchronousResult);
+                response.EnsureSuccessStatusCode();
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                _webException = ex;
-                response = (HttpWebResponse) ex.Response;
+                HttpCallErrorException = ex;
+               // response = (HttpWebResponse) ex.Response;
             }
 
             if (response != null)
             {
-                using (var reader = new StreamReader(response.GetResponseStream()))
-                {
-                    _responseBody = reader.ReadToEnd();
-                }
-                _statusCode = response.StatusCode;
-
+                ResponseBodyText = await response.Content.ReadAsStringAsync();
+                StatusCodeValue = response.StatusCode;
                 response.Dispose();
             }
-
-
-            // Signalling that we are done
-            _allDone.Set();
         }
     }
 }

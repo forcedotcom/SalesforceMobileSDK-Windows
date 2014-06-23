@@ -29,7 +29,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Net;
 using System;
-using System.Net;
+using Windows.Web.Http;
 
 namespace Salesforce.SDK.Rest
 {
@@ -52,7 +52,7 @@ namespace Salesforce.SDK.Rest
             }
         }
 
-        public WebException Error
+        public Exception Error
         {
             get
             {

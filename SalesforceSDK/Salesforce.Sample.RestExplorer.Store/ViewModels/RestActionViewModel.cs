@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Input;
+using Windows.Web.Http;
 
 namespace Salesforce.Sample.RestExplorer.ViewModels
 {
@@ -180,13 +181,14 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         /// and sets the ReturnedRestResponse property of the view-model upon receiving the response back from the server
         /// </summary>
         /// <param name="parameter"></param>
-        public void Execute(object parameter)
+        public async void Execute(object parameter)
         {
             RestClient rc = SalesforceApplication.GlobalClientManager.GetRestClient();
             if (rc != null)
             {
                 RestRequest request = BuildRestRequest();
-                rc.SendAsync(request, (response) => { _vm.ReturnedRestResponse = response; });
+                RestResponse response = await rc.SendAsync(request);
+                _vm.ReturnedRestResponse = response;
             }
         }
 
@@ -228,8 +230,8 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
 
         private RestRequest BuildManualRestReuqest()
         {
-            RestMethod restMethod = (RestMethod)Enum.Parse(typeof(RestMethod), _vm[RestActionViewModel.REQUEST_METHOD], true);
-            return new RestRequest(restMethod, _vm[RestActionViewModel.REQUEST_PATH], _vm[RestActionViewModel.REQUEST_BODY], ContentType.JSON);
+            HttpMethod restMethod = (HttpMethod)Enum.Parse(typeof(HttpMethod), _vm[RestActionViewModel.REQUEST_METHOD], true);
+            return new RestRequest(restMethod, _vm[RestActionViewModel.REQUEST_PATH], _vm[RestActionViewModel.REQUEST_BODY], ContentTypeValues.Json);
         }
 
         private string[] ParseFieldListValue()

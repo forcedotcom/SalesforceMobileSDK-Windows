@@ -32,10 +32,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Web.Http;
 
 namespace Salesforce.SDK.Auth
 {
@@ -177,23 +177,23 @@ namespace Salesforce.SDK.Auth
     public class OAuth2
     {
         // Refresh scope
-        const string REFRESH_SCOPE = "refresh_token";
+        const string RefreshScope = "refresh_token";
 
         // Authorization url
-        const string OAUTH_AUTH_PATH = "/services/oauth2/authorize";
-        const string OAUTH_AUTH_QUERY_STRING = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OauthAuthenticationPath = "/services/oauth2/authorize";
+        const string OauthAuthenticationQueryString = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
-        const string FRONT_DOOR_PATH = "/secur/frontdoor.jsp";
-        const string FRONT_DOOR_QUERY_STRING = "display=touch&sid={0}&retURL={1}";
+        const string FrontDoorPath = "/secur/frontdoor.jsp";
+        const string FrontDoorQueryString = "display=touch&sid={0}&retURL={1}";
 
         // Refresh url
-        const string OAUTH_REFRESH_PATH = "/services/oauth2/token";
-        const string OAUTH_REFRESH_QUERY_STRING = "grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
+        const string OauthRefreshPath = "/services/oauth2/token";
+        const string OauthRefreshQueryString = "?grant_type=refresh_token&format=json&client_id={0}&refresh_token={1}";
 
         // Revoke url
-        const string OAUTH_REVOKE_PATH = "/services/oauth2/revoke";
-        const string OAUTH_REVOKE_QUERY_STRING = "token={0}";
+        const string OauthRevokePath = "/services/oauth2/revoke";
+        const string OauthRevokeQueryString = "token={0}";
 
 
         /// <summary>
@@ -205,14 +205,14 @@ namespace Salesforce.SDK.Auth
         public static string ComputeAuthorizationUrl(LoginOptions loginOptions)
         {
             // Scope
-            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { REFRESH_SCOPE }).Distinct().ToArray());
+            string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { RefreshScope }).Distinct().ToArray());
 
             // Args
             string[] args = { loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            string authorizationUrl = string.Format(loginOptions.LoginUrl + OAUTH_AUTH_PATH + "?" + OAUTH_AUTH_QUERY_STRING, urlEncodedArgs);
+            string authorizationUrl = string.Format(loginOptions.LoginUrl + OauthAuthenticationPath + "?" + OauthAuthenticationQueryString, urlEncodedArgs);
 
             return authorizationUrl;
         }
@@ -231,24 +231,25 @@ namespace Salesforce.SDK.Auth
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
 
             // Authorization url
-            string frontDoorUrl = string.Format(instanceUrl + FRONT_DOOR_PATH + "?" + FRONT_DOOR_QUERY_STRING, urlEncodedArgs);
+            string frontDoorUrl = string.Format(instanceUrl + FrontDoorPath + "?" + FrontDoorQueryString, urlEncodedArgs);
 
             return frontDoorUrl;
         }
 
         /// <summary>
-        /// Async method to get a new auth token by doing a refresh flow
+        /// Async method to make the request for a new auth token.  Method returns an AuthResponse with the data returned back from
+        /// Salesforce.
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
         /// <returns></returns>
-        public static async Task<AuthResponse> RefreshAuthToken(LoginOptions loginOptions, string refreshToken)
+        public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REFRESH_QUERY_STRING, new string[] { loginOptions.ClientId, refreshToken });
+            string argsStr = string.Format(OauthRefreshQueryString, new string[] { loginOptions.ClientId, refreshToken });
 
             // Refresh url
-            string refreshUrl = loginOptions.LoginUrl + OAUTH_REFRESH_PATH;
+            string refreshUrl = loginOptions.LoginUrl + OauthRefreshPath;
 
             // Post
             HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
@@ -258,6 +259,31 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
+        /// Async method for refreshing the token, persisting the data in the encrypted settings and returning the updated account
+        /// with the new access token.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        public static async Task<Account> RefreshAuthToken(Account account)
+        {
+            if (account != null)
+            {
+                try
+                {
+                    AuthStorageHelper auth = new AuthStorageHelper();
+                    AuthResponse response = await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
+                    account.AccessToken = response.AccessToken;
+                    auth.PersistCredentials(account);
+                }
+                catch (Exception)
+                {
+                    Debug.WriteLine("Error refreshing token");
+                }
+            }
+            return account;
+           
+        }
+        /// <summary>
         /// Async method to revoke the user's refresh token (i.e. do a server-side logout for the authenticated user)
         /// </summary>
         /// <param name="loginOptions"></param>
@@ -266,16 +292,35 @@ namespace Salesforce.SDK.Auth
         public static async Task<bool> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
             // Args
-            string argsStr = string.Format(OAUTH_REVOKE_QUERY_STRING, new string[] { refreshToken });
+            string argsStr = string.Format(OauthRevokeQueryString, new string[] { refreshToken });
 
             // Revoke url
-            string revokeUrl = loginOptions.LoginUrl + OAUTH_REVOKE_PATH;
+            string revokeUrl = loginOptions.LoginUrl + OauthRevokePath;
 
             // Post
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
             // Execute post
-            return await c.Execute().ContinueWith(t => t.Result.StatusCode == HttpStatusCode.OK);
+            HttpCall result = await c.Execute().ConfigureAwait(false);
+            return result.StatusCode == HttpStatusCode.Ok;
+        }
+
+        public static void RefreshCookies()
+        {
+            Account account = AccountManager.GetAccount();
+            if (account != null)
+            {
+                Uri loginUri = new Uri(account.LoginUrl);
+                Uri instanceUri = new Uri(account.InstanceUrl);
+                Windows.Web.Http.Filters.HttpBaseProtocolFilter filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
+                Windows.Web.Http.HttpCookie cookie = new Windows.Web.Http.HttpCookie("salesforce", loginUri.Host, "/");
+                Windows.Web.Http.HttpCookie instance = new Windows.Web.Http.HttpCookie("salesforceInstance", instanceUri.Host, "/");
+                cookie.Value = account.AccessToken;
+                instance.Value = account.AccessToken;
+                filter.CookieManager.SetCookie(cookie, false);
+                filter.CookieManager.SetCookie(instance, false);
+                Windows.Web.Http.HttpRequestMessage httpRequestMessage = new Windows.Web.Http.HttpRequestMessage(Windows.Web.Http.HttpMethod.Get, instanceUri);
+            }
         }
 
         public async static void ClearCookies(LoginOptions loginOptions)
@@ -307,8 +352,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
             // Auth header
-            Dictionary<string, string> headers = new Dictionary<string, string>() { { "Authorization", "Bearer " + accessToken } };
-
+            HttpCallHeaders headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
             // Get
             HttpCall c = HttpCall.CreateGet(headers, idUrl);
 
@@ -318,7 +362,7 @@ namespace Salesforce.SDK.Auth
 
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, RestClient client)
         {
-            RestRequest request = new RestRequest(RestMethod.GET, new Uri(idUrl).AbsolutePath);
+            RestRequest request = new RestRequest(HttpMethod.Get, new Uri(idUrl).AbsolutePath);
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
