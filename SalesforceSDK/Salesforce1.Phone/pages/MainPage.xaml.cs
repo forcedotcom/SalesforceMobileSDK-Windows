@@ -34,6 +34,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -51,9 +52,19 @@ namespace Salesforce1.Pages
     /// </summary>
     public sealed partial class MainPage : Page
     {
+
+        public const string CurrentPage = "currentPage{0}";
+        public const string defaultPage = "/one/one.app";
+
         public MainPage()
         {
             this.InitializeComponent();
+            oneView.FrameContentLoading += oneView_FrameContentLoading;
+        }
+
+        void oneView_FrameContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
+        {
+            SavePage(AccountManager.GetAccount(), args.Uri.ToString());
         }
 
         /// <summary>
@@ -69,7 +80,7 @@ namespace Salesforce1.Pages
                 if (!oneView.CanGoBack)
                 {
                     account = await OAuth2.RefreshAuthToken(account);
-                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, account.InstanceUrl + "/one/one.app");
+                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, GetPage(account));
                     oneView.Navigate(new Uri(startPage));
                 }
             }
@@ -83,6 +94,36 @@ namespace Salesforce1.Pages
         private async void Logout(object sender, RoutedEventArgs e)
         {
             await SalesforceApplication.GlobalClientManager.Logout();
+        }
+        
+        private void SavePage(Account account, string page)
+        {
+            if (account != null && page != null && page.Contains(defaultPage))
+            {
+                var settings = ApplicationData.Current.LocalSettings;
+                var key = string.Format(CurrentPage, account.UserId);
+                settings.Values[key] = page;
+            }
+        }
+
+        private string GetPage(Account account)
+        {
+            string value = "";
+            if (account != null)
+            {
+                value = account.InstanceUrl + defaultPage;
+                var settings = ApplicationData.Current.LocalSettings;
+                var key = string.Format(CurrentPage, account.UserId);
+                if (settings.Values.ContainsKey(key))
+                {
+                    value = settings.Values[key] as string;
+                }
+                if (!value.Contains(defaultPage))
+                {
+                    value = account.InstanceUrl + defaultPage;
+                }
+            }
+            return value;
         }
     }
 }

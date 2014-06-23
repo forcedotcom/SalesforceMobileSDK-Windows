@@ -228,7 +228,7 @@ namespace Salesforce.SDK.Auth
         {
             // Args
             string[] args = { accessToken, url };
-            string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
+            string[] urlEncodedArgs = args.Select(s => Uri.EscapeDataString(s)).ToArray();
 
             // Authorization url
             string frontDoorUrl = string.Format(instanceUrl + FrontDoorPath + "?" + FrontDoorQueryString, urlEncodedArgs);

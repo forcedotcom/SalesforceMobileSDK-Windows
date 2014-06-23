@@ -24,6 +24,13 @@
                               HorizontalAlignment="Center"
                               Click="SwitchAccount" VerticalAlignment="Center">
             </AppBarButton>
+            <AppBarButton x:Name="logoutBtn"
+                              DataContext="logout"
+                              Label="{Binding Converter={StaticResource Localize}}"
+                              Icon="HangUp"
+                              HorizontalAlignment="Center"
+                              Click="Logout" VerticalAlignment="Center">
+            </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
