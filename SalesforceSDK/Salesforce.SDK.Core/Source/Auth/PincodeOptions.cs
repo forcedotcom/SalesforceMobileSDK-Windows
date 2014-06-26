@@ -44,12 +44,14 @@ namespace Salesforce.SDK.Auth
         public Account User { get; private set; }
         public PincodeScreen Screen { get; private set; }
         public string Passcode { get; private set; }
+        public MobilePolicy Policy { get; set; }
 
         public PincodeOptions(PincodeScreen screen, Account user, string passcode)
         {
             Screen = screen;
             User = user;
             Passcode = passcode;
+            Policy = User.Policy;
         }
     }
 }

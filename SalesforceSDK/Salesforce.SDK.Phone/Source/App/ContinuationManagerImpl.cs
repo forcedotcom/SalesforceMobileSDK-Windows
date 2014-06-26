@@ -1,6 +1,22 @@
-﻿using System;
+﻿//----------------------------------------------------------------------------------------------
+//    Copyright 2014 Microsoft Corporation
+//
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//----------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
@@ -12,6 +28,7 @@ using Windows.UI.Xaml.Controls;
 /// to a continuation such as the FileOpenPicker or WebAuthenticationBroker
 /// </summary>
 public class ContinuationManagerImpl
+
 {
     IContinuationActivatedEventArgs args = null;
     bool handled = false;
@@ -27,6 +44,23 @@ public class ContinuationManagerImpl
         Continue(args, Window.Current.Content as Frame);
     }
 
+    public bool HandleActivation(IContinuationActivatedEventArgs args, Frame rootFrame)
+    {
+        if (args.Kind == ActivationKind.WebAuthenticationBrokerContinuation)
+        {
+            var wabPage = rootFrame.Content as IWebAuthenticationContinuable;
+            if (wabPage != null)
+            {
+                wabPage.ContinueWebAuthentication(args as WebAuthenticationBrokerContinuationEventArgs);
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
     /// <summary>
     /// Sets the ContinuationArgs for this instance. Should be called by the main activation
     /// handling code in App.xaml.cs
@@ -38,6 +72,9 @@ public class ContinuationManagerImpl
         if (args == null)
             throw new ArgumentNullException("args");
 
+        if (this.args != null && !handled)
+            throw new InvalidOperationException("Can't set args more than once");
+
         this.args = args;
         this.handled = false;
         this.id = Guid.NewGuid();
@@ -48,31 +85,17 @@ public class ContinuationManagerImpl
         switch (args.Kind)
         {
             case ActivationKind.PickFileContinuation:
-                var fileOpenPickerPage = rootFrame.Content as IFileOpenPickerContinuable;
-                if (fileOpenPickerPage != null)
-                {
-                    fileOpenPickerPage.ContinueFileOpenPicker(args as FileOpenPickerContinuationEventArgs);
-                }
                 break;
 
             case ActivationKind.PickSaveFileContinuation:
-                var fileSavePickerPage = rootFrame.Content as IFileSavePickerContinuable;
-                if (fileSavePickerPage != null)
-                {
-                    fileSavePickerPage.ContinueFileSavePicker(args as FileSavePickerContinuationEventArgs);
-                }
                 break;
 
             case ActivationKind.PickFolderContinuation:
-                var folderPickerPage = rootFrame.Content as IFolderPickerContinuable;
-                if (folderPickerPage != null)
-                {
-                    folderPickerPage.ContinueFolderPicker(args as FolderPickerContinuationEventArgs);
-                }
                 break;
 
             case ActivationKind.WebAuthenticationBrokerContinuation:
                 var wabPage = rootFrame.Content as IWebAuthenticationContinuable;
+
                 if (wabPage != null)
                 {
                     wabPage.ContinueWebAuthentication(args as WebAuthenticationBrokerContinuationEventArgs);
@@ -127,47 +150,6 @@ public class ContinuationManagerImpl
         MarkAsStale();
         return args;
     }
-}
-
-/// <summary>
-/// Implement this interface if your page invokes the file open picker
-/// API.
-/// </summary>
-interface IFileOpenPickerContinuable
-{
-    /// <summary>
-    /// This method is invoked when the file open picker returns picked
-    /// files
-    /// </summary>
-    /// <param name="args">Activated event args object that contains returned files from file open picker</param>
-    void ContinueFileOpenPicker(FileOpenPickerContinuationEventArgs args);
-}
-
-/// <summary>
-/// Implement this interface if your page invokes the file save picker
-/// API
-/// </summary>
-interface IFileSavePickerContinuable
-{
-    /// <summary>
-    /// This method is invoked when the file save picker returns saved
-    /// files
-    /// </summary>
-    /// <param name="args">Activated event args object that contains returned file from file save picker</param>
-    void ContinueFileSavePicker(FileSavePickerContinuationEventArgs args);
-}
-
-/// <summary>
-/// Implement this interface if your page invokes the folder picker API
-/// </summary>
-interface IFolderPickerContinuable
-{
-    /// <summary>
-    /// This method is invoked when the folder picker returns the picked
-    /// folder
-    /// </summary>
-    /// <param name="args">Activated event args object that contains returned folder from folder picker</param>
-    void ContinueFolderPicker(FolderPickerContinuationEventArgs args);
 }
 
 /// <summary>

@@ -44,10 +44,10 @@ namespace Salesforce.SDK.Source.Security
     /// </summary>
     public sealed class HmacSHA256KeyGenerator : IKeyGenerator
     {
-        public void GenerateKey(string password, string salt, out Windows.Storage.Streams.IBuffer keyMaterial, out Windows.Storage.Streams.IBuffer iv)
+        public void GenerateKey(string password, string salt, string nonce, out Windows.Storage.Streams.IBuffer keyMaterial, out Windows.Storage.Streams.IBuffer iv)
         {
             IBuffer saltBuffer = CryptographicBuffer.ConvertStringToBinary(salt, BinaryStringEncoding.Utf8);
-            KeyDerivationParameters keyParams = KeyDerivationParameters.BuildForSP800108(saltBuffer, GetNonce());
+            KeyDerivationParameters keyParams = KeyDerivationParameters.BuildForSP800108(saltBuffer, GetNonce(nonce));
             KeyDerivationAlgorithmProvider kdf = KeyDerivationAlgorithmProvider.OpenAlgorithm(Encryptor.Settings.KeyDerivationAlgorithm);
             IBuffer passwordBuffer = CryptographicBuffer.ConvertStringToBinary(password, BinaryStringEncoding.Utf8);
             CryptographicKey keyOriginal = kdf.CreateKey(passwordBuffer);
@@ -109,9 +109,13 @@ namespace Salesforce.SDK.Source.Security
         /// This utility function returns a nonce value for authenticated encryption modes.
         /// </summary>
         /// <returns></returns>
-        private static IBuffer GetNonce()
+        private static IBuffer GetNonce(string nonce)
         {
-            return CryptographicBuffer.ConvertStringToBinary(GetDeviceUniqueId(), BinaryStringEncoding.Utf8);
+            if (String.IsNullOrWhiteSpace(nonce))
+            {
+                nonce = "";
+            }
+            return CryptographicBuffer.ConvertStringToBinary(GetDeviceUniqueId() + nonce, BinaryStringEncoding.Utf8);
         }
     }
 }

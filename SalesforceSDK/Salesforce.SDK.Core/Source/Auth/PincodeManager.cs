@@ -1,4 +1,5 @@
-﻿/*
+﻿using Newtonsoft.Json;
+/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -28,11 +29,13 @@ using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Strings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -44,6 +47,7 @@ namespace Salesforce.SDK.Auth
     {
         private static DispatcherTimer PinTimer = new DispatcherTimer();
         private static readonly string PinBackgroundedTimeKey = "pintimeKey";
+        private static readonly string PincodeHashKey = "pincodeHash";
 
         internal static string GenerateEncryptedPincode(string pincode)
         {
@@ -54,10 +58,52 @@ namespace Salesforce.SDK.Auth
             return Encryptor.Encrypt(res);
         }
 
-        public static bool ValidatePincode(string pincode, string encryptedPincode)
+        public static bool ValidatePincode(string pincode)
         {
             string compare = GenerateEncryptedPincode(pincode);
-            return compare.Equals(encryptedPincode);
+            try
+            {
+                string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrieveData(PincodeHashKey);
+                MobilePolicy policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
+                return compare.Equals(Encryptor.Decrypt(policy.PincodeHash, pincode));
+            } catch (Exception e)
+            {
+                Debug.WriteLine("Error validating pincode");
+            }
+
+            return false;
+        }
+
+        private static MobilePolicy GetMobilePolicy()
+        {
+            string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrieveData(PincodeHashKey);
+            if (retrieved != null)
+            {
+                return JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
+            }
+            return null;
+        }
+        public static void StorePincode(MobilePolicy policy, string pincode)
+        {
+            string hashed = GenerateEncryptedPincode(pincode);
+            MobilePolicy mobilePolicy = new MobilePolicy()
+            {
+                ScreenLockTimeout = policy.PinLength,
+                PinLength = policy.PinLength,
+                PincodeHash = Encryptor.Encrypt(hashed, pincode)
+            };
+            AuthStorageHelper.GetAuthStorageHelper().PersistData(true, PincodeHashKey, JsonConvert.SerializeObject(mobilePolicy));
+        }
+
+        public static void WipePincode()
+        {
+            AuthStorageHelper.GetAuthStorageHelper().DeleteData(PincodeHashKey);
+        }
+
+        public static bool IsPincodeSet()
+        {
+            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+            return settings.Values.ContainsKey(PincodeHashKey);
         }
 
         internal static void SavePinTimer()
@@ -65,8 +111,7 @@ namespace Salesforce.SDK.Auth
             Account account = AccountManager.GetAccount();
             if (account != null && account.Policy != null && account.Policy.ScreenLockTimeout > 0)
             {
-                AuthStorageHelper auth = new AuthStorageHelper();
-                auth.PersistData(PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString(), true);
+                AuthStorageHelper.GetAuthStorageHelper().PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
                 StopTimer();
             }
         }
@@ -74,11 +119,10 @@ namespace Salesforce.SDK.Auth
         internal static void TriggerBackgroundedPinTimer()
         {
             Account account = AccountManager.GetAccount();
-            AuthStorageHelper auth = new AuthStorageHelper();
-            if (account != null && account.Policy != null && account.Policy.ScreenLockTimeout > 0)
+            MobilePolicy policy = GetMobilePolicy();
+            if (account != null && policy != null && policy.ScreenLockTimeout > 0)
             {
-                var policy = account.Policy;
-                var time = auth.RetrieveData(PinBackgroundedTimeKey);
+                var time = AuthStorageHelper.GetAuthStorageHelper().RetrieveData(PinBackgroundedTimeKey);
                 if (time != null)
                 {
                     DateTime previous = DateTime.Parse(time as string);
@@ -101,7 +145,7 @@ namespace Salesforce.SDK.Auth
             }
             else
             {
-                auth.DeleteData(PinBackgroundedTimeKey);
+                AuthStorageHelper.GetAuthStorageHelper().DeleteData(PinBackgroundedTimeKey);
             }
         }
 
@@ -148,12 +192,23 @@ namespace Salesforce.SDK.Auth
                     if (account != null)
                     {
                         PincodeOptions options = null;
-                        if (account.Policy != null && String.IsNullOrWhiteSpace(account.PincodeHash))
+                        if (account.Policy != null && !IsPincodeSet())
                         {
                             options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, account, "");
-                        } else if (account.Policy != null)
+                        } else if (IsPincodeSet())
                         {
-                            options = new PincodeOptions(PincodeOptions.PincodeScreen.Locked, account, "");
+                            MobilePolicy policy = GetMobilePolicy();
+                            if (policy.ScreenLockTimeout < account.Policy.PinLength)
+                            {
+                                policy.ScreenLockTimeout = account.Policy.ScreenLockTimeout;
+                            }
+                            if (policy.PinLength < account.Policy.PinLength)
+                            {
+                                options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, account, "");
+                            } else
+                            {
+                                options = new PincodeOptions(PincodeOptions.PincodeScreen.Locked, account, "");
+                            }
                         }
                         if (options != null)
                         {

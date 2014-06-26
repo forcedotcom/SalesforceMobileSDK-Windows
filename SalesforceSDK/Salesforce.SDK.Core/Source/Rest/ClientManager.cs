@@ -80,8 +80,7 @@ namespace Salesforce.SDK.Rest
                                         {
                                             AuthResponse authResponse = await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                                             account.AccessToken = authResponse.AccessToken;
-                                            AuthStorageHelper auth = new AuthStorageHelper();
-                                            auth.PersistCredentials(account);
+                                            AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                                             return account.AccessToken;
                                         }
                                        );

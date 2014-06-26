@@ -1,5 +1,6 @@
 ﻿using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Native;
 using Salesforce.SDK.Rest;
 /*
  * Copyright (c) 2014, salesforce.com, inc.
@@ -50,7 +51,7 @@ namespace Salesforce1.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainPage : NativeMainPage
     {
 
         public const string CurrentPage = "currentPage{0}";
@@ -83,6 +84,9 @@ namespace Salesforce1.Pages
                     String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, GetPage(account));
                     oneView.Navigate(new Uri(startPage));
                 }
+            } else
+            {
+                base.OnNavigatedTo(e);
             }
         }
 

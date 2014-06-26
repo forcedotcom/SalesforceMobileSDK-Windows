@@ -42,6 +42,17 @@ namespace Salesforce.SDK.Auth
     {
         private const string ACCOUNT_SETTING = "accounts";
         private const string CURRENT_ACCOUNT = "currentAccount";
+        private ApplicationDataContainer settings;
+        
+        public AuthStorageHelper()
+        {
+            settings = ApplicationData.Current.LocalSettings;
+        }
+
+        public static AuthStorageHelper GetAuthStorageHelper()
+        {
+            return new AuthStorageHelper();
+        }
 
         /// <summary>
         /// Persist account, and sets account as the current account.
@@ -49,8 +60,6 @@ namespace Salesforce.SDK.Auth
         /// <param name="account"></param>
         internal void PersistCredentials(Account account)
         {
-            // TODO use PasswordVault
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             Dictionary<string, Account> accounts = RetrievePersistedCredentials();
             if (accounts.ContainsKey(account.UserId))
             {
@@ -69,7 +78,6 @@ namespace Salesforce.SDK.Auth
 
         internal Account RetrieveCurrentAccount()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String key = settings.Values[CURRENT_ACCOUNT] as string;
             if (String.IsNullOrWhiteSpace(key))
                 return null;
@@ -95,7 +103,6 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             string accountJson = settings.Values[ACCOUNT_SETTING] as string;
             if (String.IsNullOrWhiteSpace(accountJson))
                 return new Dictionary<string, Account>();
@@ -108,7 +115,6 @@ namespace Salesforce.SDK.Auth
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(String id)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             Dictionary<string, Account> accounts = RetrievePersistedCredentials();
             accounts.Remove(id);
             String accountJson = JsonConvert.SerializeObject(accounts);
@@ -119,18 +125,16 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         internal void DeletePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             settings.Values.Remove(ACCOUNT_SETTING);
         }
 
-        internal void PersistData(string key, string data, bool replace)
+        internal void PersistData(bool replace, string key, string data, string nonce = null)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             if (settings.Values.ContainsKey(key))
             {
                 if (replace)
                 {
-                    settings.Values[key] = Encryptor.Encrypt(data);
+                    settings.Values[key] = Encryptor.Encrypt(data, nonce);
                 }
             }
             else
@@ -139,20 +143,18 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        internal string RetrieveData(string key)
+        internal string RetrieveData(string key, string nonce = null)
         {
             string data = null;
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             if (settings.Values.ContainsKey(key))
             {
-                data = Encryptor.Decrypt(settings.Values[key] as string);
+                data = Encryptor.Decrypt(settings.Values[key] as string, nonce);
             }
             return data;
         }
 
         internal void DeleteData(string key)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             if (settings.Values.ContainsKey(key))
             {
                 settings.Values.Remove(key);

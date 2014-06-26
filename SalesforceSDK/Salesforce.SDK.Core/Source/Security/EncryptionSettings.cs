@@ -48,9 +48,9 @@ namespace Salesforce.SDK.Source.Security
             KeyGenerator = keyGenerator;
         }
 
-        public void GenerateKey(out IBuffer keyMaterial, out IBuffer iv)
+        public void GenerateKey(out IBuffer keyMaterial, out IBuffer iv, string nonce)
         {
-            KeyGenerator.GenerateKey(Password, Salt, out keyMaterial, out iv);
+            KeyGenerator.GenerateKey(Password, Salt, nonce, out keyMaterial, out iv);
         }
     }
 }

@@ -77,11 +77,12 @@ namespace Salesforce.SDK.Source.Pages
         {
             this.InitializeComponent();
             ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
-            // applicationTitle.Text = loader.GetString("application_title");
+            applicationTitle.Text = loader.GetString("application_title");
             if (Accounts == null || Accounts.Length == 0)
             {
                 string no = loader.GetString("no_accounts");
                 listTitle.Text = loader.GetString("no_accounts");
+                PincodeManager.WipePincode();
             }
             else
             {
@@ -111,6 +112,11 @@ namespace Salesforce.SDK.Source.Pages
                     PincodeManager.LaunchPincodeScreen();
                 }
             }
+        }
+
+        protected override void OnNavigatedFrom(Windows.UI.Xaml.Navigation.NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
         }
 
         void AddServerFlyout_Closed(object sender, object e)
@@ -145,10 +151,19 @@ namespace Salesforce.SDK.Source.Pages
 
         public void StartLoginFlow(LoginOptions loginOptions)
         {
-            Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
-            Uri callbackUri = new Uri(loginOptions.CallbackUrl);
-            OAuth2.ClearCookies(loginOptions);
-            WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null, WebAuthenticationOptions.None);
+            if (loginOptions == null || String.IsNullOrWhiteSpace(loginOptions.CallbackUrl) || String.IsNullOrWhiteSpace(loginOptions.LoginUrl))
+                return;
+            try
+            {
+                SalesforcePhoneApplication.MarkAsStale();
+                Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
+                Uri callbackUri = new Uri(loginOptions.CallbackUrl);
+                WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null, WebAuthenticationOptions.None);
+            } catch (Exception)
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+            }
+            
         }
 
 
@@ -183,8 +198,9 @@ namespace Salesforce.SDK.Source.Pages
             }
             SalesforceApplication.ResetClientManager();
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+            LoginOptions options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
             SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
-            StartLoginFlow(SalesforceConfig.LoginOptions);
+            StartLoginFlow(options);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)

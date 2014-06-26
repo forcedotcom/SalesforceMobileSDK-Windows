@@ -71,7 +71,7 @@ namespace Salesforce.SDK.Auth
 
             // Get auth token (through refresh)
             LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
-            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
+            AuthResponse refreshResponse = OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
             Assert.AreEqual(HttpStatusCode.Ok, DoDescribe(refreshResponse.AccessToken));
@@ -82,7 +82,7 @@ namespace Salesforce.SDK.Auth
         {
             // Get auth token and identity url (through refresh)
             LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
-            AuthResponse refreshResponse = OAuth2.RefreshAuthToken(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
+            AuthResponse refreshResponse = OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Call the identity service
             IdentityResponse identityResponse = OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;

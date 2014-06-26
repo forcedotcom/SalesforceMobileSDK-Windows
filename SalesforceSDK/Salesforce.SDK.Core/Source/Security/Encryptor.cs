@@ -49,13 +49,18 @@ namespace Salesforce.SDK.Source.Security
 
         public static string Encrypt(string text)
         {
+            return Encrypt(text, null);
+        }
+
+        public static string Encrypt(string text, string nonce)
+        {
             if (String.IsNullOrWhiteSpace(text))
             {
                 return null;
             }
             IBuffer keyMaterial;
             IBuffer iv;
-            Settings.GenerateKey(out keyMaterial, out iv);
+            Settings.GenerateKey(out keyMaterial, out iv, nonce);
 
             IBuffer clearTextBuffer = CryptographicBuffer.ConvertStringToBinary(text, BinaryStringEncoding.Utf8);
 
@@ -66,11 +71,15 @@ namespace Salesforce.SDK.Source.Security
             // Encrypt the data and convert it to a Base64 string
             IBuffer encrypted = CryptographicEngine.Encrypt(key, clearTextBuffer, iv);
             string ciphertextString = CryptographicBuffer.EncodeToBase64String(encrypted);
-
             return ciphertextString;
         }
 
         public static string Decrypt(string text)
+        {
+            return Decrypt(text, null);
+        }
+
+        public static string Decrypt(string text, string nonce)
         {
             if (String.IsNullOrWhiteSpace(text))
             {
@@ -78,7 +87,7 @@ namespace Salesforce.SDK.Source.Security
             }
             IBuffer keyMaterial;
             IBuffer iv;
-            Settings.GenerateKey(out keyMaterial, out iv);
+            Settings.GenerateKey(out keyMaterial, out iv, nonce);
 
             SymmetricKeyAlgorithmProvider provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(Settings.SymmetricAlgorithm);
             CryptographicKey key = provider.CreateSymmetricKey(keyMaterial);

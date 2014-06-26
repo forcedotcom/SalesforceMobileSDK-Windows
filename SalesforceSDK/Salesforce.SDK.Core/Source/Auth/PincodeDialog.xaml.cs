@@ -53,7 +53,7 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Defines number of retries of locked screen. We log user out when RetryCounter hits 1.
         /// </summary>
-        private static readonly int MaximumRetries = 4;
+        private static readonly int MaximumRetries = 10;
         private static int RetryCounter = MaximumRetries;
         private static readonly int MinimumWidthForBarMode = 500;
         private static readonly int BarModeHeight = 400;
@@ -161,10 +161,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Equals(Options.Passcode))
             {
-                AuthStorageHelper auth = new AuthStorageHelper();
-                Account account = Options.User;
-                account.PincodeHash = PincodeManager.GenerateEncryptedPincode(Options.Passcode);
-                auth.PersistCredentials(account);
+                PincodeManager.StorePincode(Options.Policy, Options.Passcode);
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
             else
@@ -183,7 +180,7 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             } 
-            else if (PincodeManager.ValidatePincode(Passcode.Password, account.PincodeHash))
+            else if (PincodeManager.ValidatePincode(Passcode.Password))
             {
                 if (Frame.CanGoBack)
                 {

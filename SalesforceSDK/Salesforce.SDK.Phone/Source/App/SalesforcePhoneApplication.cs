@@ -65,11 +65,22 @@ namespace Salesforce.SDK.App
         protected override void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);
-            if (args is IContinuationActivatedEventArgs)
+            if (args is WebAuthenticationBrokerContinuationEventArgs)
             {
                 var continueEvents = args as IContinuationActivatedEventArgs;
-                ContinuationManager.Continue(continueEvents);
+                if (continueEvents != null && 
+                    ContinuationManager.ContinuationArgs != null &&
+                    ContinuationManager.ContinuationArgs.PreviousExecutionState != continueEvents.PreviousExecutionState)
+                {
+                    ContinuationManager.Continue(continueEvents);
+                }
             }
+            Window.Current.Activate();
+        }
+
+        internal static void MarkAsStale()
+        {
+            ContinuationManager.MarkAsStale();
         }
 
         protected async override void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
