@@ -50,7 +50,7 @@ namespace Salesforce.SDK.Auth
         public static void DeleteAccount()
         {
             Account account = GetAccount();
-            AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials(account.UserId);
+            AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials(account.UserName, account.UserId);
         }
 
         public static Dictionary<string, Account> GetAccounts()
@@ -70,6 +70,7 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
+                PincodeManager.SavePinTimer();
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                 RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
                 if (client != null)

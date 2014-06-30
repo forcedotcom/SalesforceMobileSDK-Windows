@@ -109,7 +109,7 @@ namespace Salesforce.SDK.Auth
         private void SetupCreate()
         {
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
-            Content.Text = LocalizedStrings.GetString("passcode_create_security");
+            Description.Text = LocalizedStrings.GetString("passcode_create_security");
             ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Visible;
             ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_length"), Options.User.Policy.PinLength);
             Passcode.KeyDown += CreateClicked;
@@ -121,7 +121,7 @@ namespace Salesforce.SDK.Auth
         private void SetupLocked()
         {
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
-            Content.Text = LocalizedStrings.GetString("passcode_confirm");
+            Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             Passcode.KeyDown += LockedClick;
             RetryCounter = MaximumRetries;
@@ -133,7 +133,7 @@ namespace Salesforce.SDK.Auth
         private void SetupConfirm()
         {
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
-            Content.Text = LocalizedStrings.GetString("passcode_confirm");
+            Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             Passcode.KeyDown += ConfirmClicked;
         }
@@ -162,6 +162,7 @@ namespace Salesforce.SDK.Auth
             if (Passcode.Password.Equals(Options.Passcode))
             {
                 PincodeManager.StorePincode(Options.Policy, Options.Passcode);
+                PincodeManager.Unlock();
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
             else
@@ -182,6 +183,7 @@ namespace Salesforce.SDK.Auth
             } 
             else if (PincodeManager.ValidatePincode(Passcode.Password))
             {
+                PincodeManager.Unlock();
                 if (Frame.CanGoBack)
                 {
                     Frame.GoBack();

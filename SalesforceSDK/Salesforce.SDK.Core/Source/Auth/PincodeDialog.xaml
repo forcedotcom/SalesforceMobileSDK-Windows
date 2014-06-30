@@ -63,7 +63,7 @@
             </Grid>
             <Grid Grid.Row="2" Margin="10">
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                <TextBlock x:Name="Content"
+                <TextBlock x:Name="Description"
                            DataContext="passcode_create_security"
                            Text="{Binding Converter={StaticResource Localize}}"
                            TextAlignment="Center"

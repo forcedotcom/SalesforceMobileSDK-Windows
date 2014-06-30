@@ -52,7 +52,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthStorageHelper()
         {
-            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
+            AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             Assert.IsNotNull(authStorageHelper);
         }
 
@@ -62,7 +62,7 @@ namespace Salesforce.SDK.Auth
             Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "identityUrl", "accessToken", "refreshToken");
             account.UserId = "userId";
             account.UserName = "userName";
-            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
+            AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             CheckAccount(account, false);
             TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
             MethodInfo persist = auth.GetDeclaredMethod("PersistCredentials");
@@ -75,7 +75,7 @@ namespace Salesforce.SDK.Auth
 
         private void CheckAccount(Account expectedAccount, bool exists)
         {
-            AuthStorageHelper authStorageHelper = new AuthStorageHelper();
+            AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
             MethodInfo retrieve = auth.GetDeclaredMethod("RetrievePersistedCredentials");
             var accounts = (Dictionary<string, Account>) retrieve.Invoke(authStorageHelper, null);

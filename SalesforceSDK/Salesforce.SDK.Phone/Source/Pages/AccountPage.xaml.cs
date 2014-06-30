@@ -107,10 +107,7 @@ namespace Salesforce.SDK.Source.Pages
             {
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
-                if (account.Policy != null)
-                {
-                    PincodeManager.LaunchPincodeScreen();
-                }
+                PincodeManager.LaunchPincodeScreen();
             }
         }
 
@@ -155,7 +152,6 @@ namespace Salesforce.SDK.Source.Pages
                 return;
             try
             {
-                SalesforcePhoneApplication.MarkAsStale();
                 Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
                 Uri callbackUri = new Uri(loginOptions.CallbackUrl);
                 WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null, WebAuthenticationOptions.None);
