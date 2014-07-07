@@ -212,7 +212,8 @@ namespace Salesforce.SDK.Auth
             {
                 foreach (var next in creds)
                 {
-                    Account account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(next.Password));
+                    var vaultAccount = Vault.Retrieve(next.Resource, next.UserName);
+                    Account account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
                     if (id.Equals(account.UserId))
                     {
                         Vault.Remove(next);
