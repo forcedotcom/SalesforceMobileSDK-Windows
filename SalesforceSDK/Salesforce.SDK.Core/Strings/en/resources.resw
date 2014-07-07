@@ -204,4 +204,7 @@
   <data name="passcode_must_match" xml:space="preserve">
     <value>The passcodes you enter must match.</value>
   </data>
+  <data name="passcode_logout" xml:space="preserve">
+    <value>Are you sure you want to logout?</value>
+  </data>
 </root>

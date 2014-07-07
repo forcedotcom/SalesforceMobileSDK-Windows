@@ -91,6 +91,13 @@ namespace Salesforce.SDK.Auth
             return false;
         }
 
+        public static void WipeAccounts()
+        {
+            AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials();
+            PincodeManager.WipePincode();
+            SwitchAccount();
+        }
+
         public static void SwitchAccount()
         {
             PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();

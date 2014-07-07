@@ -39,6 +39,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -121,9 +122,16 @@ namespace Salesforce.SDK.Auth
         private void SetupLocked()
         {
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
-            Description.Text = LocalizedStrings.GetString("passcode_confirm");
-            ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
+            Description.Text = "";
+            // code needed to "underline" the text
+            Run description = new Run();
+            Underline underline = new Underline();
+            description.Text = LocalizedStrings.GetString("passcode_forgot_passcode");
+            underline.Inlines.Add(description);
+            Description.Inlines.Add(underline);
             Passcode.KeyDown += LockedClick;
+            Description.Tapped += Description_Tapped;
             RetryCounter = MaximumRetries;
         }
 
@@ -207,6 +215,12 @@ namespace Salesforce.SDK.Auth
             }
         }
 
+
+        void Description_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForgotFlyout.ShowAt(Passcode);
+        }
+
         private void DisplayErrorFlyout(string text)
         {
             ErrorContent.Text = text;
@@ -216,6 +230,15 @@ namespace Salesforce.SDK.Auth
         private void ErrorFlyoutClicked(object sender, RoutedEventArgs e)
         {
             ErrorFlyout.Hide();
+        }
+
+        private void LogoutClicked(object sender, RoutedEventArgs e)
+        {
+            ForgotFlyout.Hide();
+            if (LogoutConfirmButton.Equals(sender))
+            {
+                AccountManager.WipeAccounts();
+            }
         }
 
         void ErrorFlyout_Closed(object sender, object e)

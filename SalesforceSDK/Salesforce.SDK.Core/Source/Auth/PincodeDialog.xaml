@@ -28,6 +28,34 @@
                             HorizontalAlignment="Center"/>
             </StackPanel>
         </Flyout>
+        <Flyout x:Name="ForgotFlyout" 
+                Placement="Bottom">
+            <StackPanel HorizontalAlignment="Stretch">
+                <TextBlock x:Name="ForgotPincodeContent" 
+                               Grid.Row="1"
+                               Margin="5 0 5 15"
+                               HorizontalAlignment="Stretch"
+                               TextWrapping="Wrap"
+                               DataContext="passcode_logout"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Style="{StaticResource TitleTextBlockStyle}"
+                               TextAlignment="Center"/>
+                <Button x:Name="LogoutConfirmButton"
+                            DataContext="yes"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Width="90"
+                            Click="LogoutClicked"
+                            HorizontalAlignment="Center"/>
+                <Button x:Name="LogoutCancelButton"
+                            DataContext="no"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Width="90"
+                            Click="LogoutClicked"
+                            HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Flyout>
     </UserControl.Resources>
 
     <Grid x:Name ="PincodeContainer"
@@ -52,7 +80,7 @@
                            VerticalAlignment="Center"
                            Style="{StaticResource TitleTextBlockStyle}"
                            FontSize="20"/>
-                
+
             </Grid>
 
             <Grid Grid.Row="1">
@@ -63,14 +91,14 @@
             </Grid>
             <Grid Grid.Row="2" Margin="10">
                 <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                <TextBlock x:Name="Description"
+                    <TextBlock x:Name="Description"
                            DataContext="passcode_create_security"
                            Text="{Binding Converter={StaticResource Localize}}"
                            TextAlignment="Center"
                            Margin="5"
                            Style="{StaticResource BodyTextBlockStyle}"/>
 
-                <TextBlock x:Name="ContentFooter"
+                    <TextBlock x:Name="ContentFooter"
                            DataContext="passcode_length"
                            Text="{Binding Converter={StaticResource Localize}}"
                            TextAlignment="Center"
