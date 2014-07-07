@@ -95,13 +95,26 @@ namespace Salesforce.SDK.Auth
             {
                 PincodeContainer.Height = bounds.Height;
                 PincodeWindow.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Top;
-            } else
+            }
+            else
             {
                 // Act as a "bar" for screens that have enough horizontal resolution.
                 PincodeWindow.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
                 PincodeContainer.Height = BarModeHeight;
             }
-  
+
+        }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            if (e != null
+                && Options != null
+                && PincodeOptions.PincodeScreen.Locked.Equals(Options.Screen)
+                && PincodeManager.IsPincodeRequired())
+            {
+                e.Cancel = true;
+            }
+            base.OnNavigatingFrom(e);
         }
 
         /// <summary>
@@ -188,14 +201,15 @@ namespace Salesforce.SDK.Auth
             if (account == null)
             {
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
-            } 
+            }
             else if (PincodeManager.ValidatePincode(Passcode.Password))
             {
                 PincodeManager.Unlock();
                 if (Frame.CanGoBack)
                 {
                     Frame.GoBack();
-                } else
+                }
+                else
                 {
                     Frame.Navigate(SalesforceApplication.RootApplicationPage);
                 }
