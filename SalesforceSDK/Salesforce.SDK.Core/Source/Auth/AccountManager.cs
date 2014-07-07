@@ -42,21 +42,7 @@ namespace Salesforce.SDK.Auth
     /// </summary>
     public class AccountManager
     {
-        private AuthStorageHelper InternalAuthStorage { get; set; }
         private static AccountManager instance = new AccountManager();
-
-        private AccountManager()
-        {
-            InternalAuthStorage = new AuthStorageHelper();
-        }
-
-        internal static AuthStorageHelper AuthStorage
-        {
-            get
-            {
-                return instance.InternalAuthStorage;
-            }
-        }
 
         /// <summary>
         /// Delete Account for currently authenticated user
@@ -64,12 +50,12 @@ namespace Salesforce.SDK.Auth
         public static void DeleteAccount()
         {
             Account account = GetAccount();
-            AuthStorage.DeletePersistedCredentials(account.UserId);
+            AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials(account.UserName, account.UserId);
         }
 
         public static Dictionary<string, Account> GetAccounts()
         {
-            return AuthStorage.RetrievePersistedCredentials();
+            return AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
         }
         /// <summary>
         /// Return Account for currently authenticated user
@@ -77,14 +63,15 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static Account GetAccount()
         {
-            return AuthStorage.RetrieveCurrentAccount();
+            return AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
         }
 
         public static async Task<bool> SwitchToAccount(Account account)
         {
             if (account != null && account.UserId != null)
             {
-                AuthStorage.PersistCredentials(account);
+                PincodeManager.SavePinTimer();
+                AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                 RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
@@ -95,13 +82,20 @@ namespace Salesforce.SDK.Auth
                         account.UserId = identity.UserId;
                         account.UserName = identity.UserName;
                         account.Policy = identity.MobilePolicy;
-                        AuthStorage.PersistCredentials(account);
+                        AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
                     OAuth2.RefreshCookies();
                     return true;
                 }
             }
             return false;
+        }
+
+        public static void WipeAccounts()
+        {
+            AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials();
+            PincodeManager.WipePincode();
+            SwitchAccount();
         }
 
         public static void SwitchAccount()
@@ -127,7 +121,7 @@ namespace Salesforce.SDK.Auth
                 account.UserId = identity.UserId;
                 account.UserName = identity.UserName;
                 account.Policy = identity.MobilePolicy;
-                AuthStorage.PersistCredentials(account);
+                AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
             return account;
         }

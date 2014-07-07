@@ -1,4 +1,5 @@
-﻿/*
+﻿using Salesforce.SDK.Adaptation;
+/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -25,6 +26,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +55,11 @@ namespace Salesforce.SDK.Native
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            SalesforceApplication.GlobalClientManager.GetRestClient();
+            Account account = AccountManager.GetAccount();
+            if (account == null)
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+            }
         }
     }
 }

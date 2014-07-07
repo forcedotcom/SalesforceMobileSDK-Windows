@@ -81,6 +81,8 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         [JsonProperty(PropertyName = "screen_lock")]
         public int ScreenLockTimeout { get; set; }
+
+        public string PincodeHash { get; set; }
     }
 
     /// <summary>
@@ -181,7 +183,7 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OauthAuthenticationPath = "/services/oauth2/authorize";
-        const string OauthAuthenticationQueryString = "display=popup&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OauthAuthenticationQueryString = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
 
         // Front door url
         const string FrontDoorPath = "/secur/frontdoor.jsp";
@@ -228,7 +230,7 @@ namespace Salesforce.SDK.Auth
         {
             // Args
             string[] args = { accessToken, url };
-            string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
+            string[] urlEncodedArgs = args.Select(s => Uri.EscapeDataString(s)).ToArray();
 
             // Authorization url
             string frontDoorUrl = string.Format(instanceUrl + FrontDoorPath + "?" + FrontDoorQueryString, urlEncodedArgs);
@@ -270,10 +272,9 @@ namespace Salesforce.SDK.Auth
             {
                 try
                 {
-                    AuthStorageHelper auth = new AuthStorageHelper();
                     AuthResponse response = await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
-                    auth.PersistCredentials(account);
+                    AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                 }
                 catch (Exception)
                 {

@@ -101,8 +101,8 @@ namespace Salesforce.SDK.App
 
         protected virtual async void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
-            PincodeManager.SavePinTimer();
             var deferral = e.SuspendingOperation.GetDeferral();
+            PincodeManager.SavePinTimer();
             await SuspensionManager.SaveAsync();
             deferral.Complete();
         }
@@ -174,8 +174,6 @@ namespace Salesforce.SDK.App
                 ServerConfiguration = InitializeConfig();
                 GlobalClientManager = new ClientManager();
             }
-
-            GlobalClientManager.GetRestClient();
         }
 
         private async void RefreshToken(object sender, object e)

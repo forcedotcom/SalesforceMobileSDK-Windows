@@ -31,7 +31,10 @@ using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
+using Windows.Security.Credentials;
 using Windows.Storage;
+using System.Linq;
+using System.Diagnostics;
 
 namespace Salesforce.SDK.Auth
 {
@@ -40,8 +43,79 @@ namespace Salesforce.SDK.Auth
     /// </summary>    /// </summary>
     public sealed class AuthStorageHelper
     {
-        private const string ACCOUNT_SETTING = "accounts";
-        private const string CURRENT_ACCOUNT = "currentAccount";
+        private const string PersistedDataStorage = "persistedDataStorage";
+        private const string PasswordVaultAccounts = "Salesforce Accounts";
+        private const string PasswordVaultCurrentAccount = "Salesforce Account";
+        private const string PasswordVaultSecuredData = "Salesforce Secure";
+        private const string PasswordVaultPincode = "Salesforce Pincode";
+        private const string InstallationStatusKey = "InstallationStatus";
+
+        private PasswordVault Vault;
+        private ApplicationDataContainer PersistedData;
+        private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
+
+        public static AuthStorageHelper GetAuthStorageHelper()
+        {
+            return Auth.Value;
+        }
+
+        private AuthStorageHelper()
+        {
+            Vault = new PasswordVault();
+            PersistedData = ApplicationData.Current.LocalSettings;
+            InstallationStatusCheck();
+        }
+
+        private void InstallationStatusCheck()
+        {
+            if (!PersistedData.Values.ContainsKey(InstallationStatusKey))
+            {
+                var accounts = Vault.RetrieveAll();
+                foreach (var next in accounts)
+                {
+                    Vault.Remove(next);
+                }
+                PersistedData.Values.Add(InstallationStatusKey, "");
+            }
+        }
+
+        private IReadOnlyList<PasswordCredential> SafeRetrieveResource(string resource)
+        {
+            try
+            {
+                return Vault.FindAllByResource(resource);
+            } catch (Exception)
+            {
+                Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
+            }
+            return new List<PasswordCredential>();
+        }
+
+        private PasswordCredential SafeRetrieveUser(string resource, string userName)
+        {
+            try
+            {
+                return Vault.Retrieve(resource, userName);
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
+            }
+            return null;
+        }
+
+        private IReadOnlyList<PasswordCredential> SafeRetrieveUser(string userName)
+        {
+            try
+            {
+                return Vault.FindAllByUserName(userName);
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Failed to retrieve vault data for user");
+            }
+            return new List<PasswordCredential>();
+        }
 
         /// <summary>
         /// Persist account, and sets account as the current account.
@@ -49,8 +123,22 @@ namespace Salesforce.SDK.Auth
         /// <param name="account"></param>
         internal void PersistCredentials(Account account)
         {
-            // TODO use PasswordVault
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+            var creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
+            if (creds != null)
+            {
+                Vault.Remove(creds);
+                var current = Vault.FindAllByResource(PasswordVaultCurrentAccount);
+                if (current != null)
+                {
+                    foreach (var user in current)
+                    {
+                        Vault.Remove(user);
+                    }
+                }
+            }
+            string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
+            Vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
+            Vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
             Dictionary<string, Account> accounts = RetrievePersistedCredentials();
             if (accounts.ContainsKey(account.UserId))
             {
@@ -60,20 +148,22 @@ namespace Salesforce.SDK.Auth
             {
                 accounts.Add(account.UserId, account);
             }
-            String accountJson = JsonConvert.SerializeObject(accounts);
-            settings.Values[ACCOUNT_SETTING] = Encryptor.Encrypt(accountJson);
-            settings.Values[CURRENT_ACCOUNT] = Encryptor.Encrypt(account.UserId);
             LoginOptions options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl, account.Scopes);
             SalesforceConfig.LoginOptions = options;
         }
 
         internal Account RetrieveCurrentAccount()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            String key = settings.Values[CURRENT_ACCOUNT] as string;
-            if (String.IsNullOrWhiteSpace(key))
-                return null;
-            return RetrievePersistedCredential(Encryptor.Decrypt(key));
+            var creds = SafeRetrieveResource(PasswordVaultCurrentAccount).FirstOrDefault();
+            if (creds != null)
+            {
+                var account = Vault.Retrieve(creds.Resource, creds.UserName);
+                if (String.IsNullOrWhiteSpace(account.Password))
+                    Vault.Remove(creds);
+                else
+                    return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+            }
+            return null;
         }
 
         /// <summary>
@@ -95,67 +185,118 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            string accountJson = settings.Values[ACCOUNT_SETTING] as string;
-            if (String.IsNullOrWhiteSpace(accountJson))
-                return new Dictionary<string, Account>();
-            return JsonConvert.DeserializeObject<Dictionary<string, Account>>(Encryptor.Decrypt(accountJson));
+            var creds = SafeRetrieveResource(PasswordVaultAccounts);
+            Dictionary<string, Account> accounts = new Dictionary<string, Account>();
+            if (creds != null)
+            {
+                foreach (var next in creds)
+                {
+                    var account = Vault.Retrieve(next.Resource, next.UserName);
+                    if (String.IsNullOrWhiteSpace(account.Password))
+                        Vault.Remove(next);
+                    else
+                        accounts.Add(next.UserName, JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                }
+            }
+            return accounts;
         }
 
         /// <summary>
         /// Delete a persisted account credential based on the user id.
         /// </summary>
         /// <param name="id"></param>
-        internal void DeletePersistedCredentials(String id)
+        internal void DeletePersistedCredentials(string userName, string id)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            Dictionary<string, Account> accounts = RetrievePersistedCredentials();
-            accounts.Remove(id);
-            String accountJson = JsonConvert.SerializeObject(accounts);
-            settings.Values[ACCOUNT_SETTING] = Encryptor.Encrypt(accountJson);
+            var creds = SafeRetrieveUser(userName);
+            if (creds != null)
+            {
+                foreach (var next in creds)
+                {
+                    Account account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(next.Password));
+                    if (id.Equals(account.UserId))
+                    {
+                        Vault.Remove(next);
+                    }
+                }
+            }
         }
         /// <summary>
         /// Delete all persisted accounts
         /// </summary>
         internal void DeletePersistedCredentials()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            settings.Values.Remove(ACCOUNT_SETTING);
+            var accounts = SafeRetrieveResource(PasswordVaultAccounts);
+            var current = SafeRetrieveResource(PasswordVaultCurrentAccount);
+            if (accounts != null)
+            {
+                foreach (var next in accounts)
+                {
+                    Vault.Remove(next);
+                }
+            }
+            if (current != null)
+            {
+                foreach (var next in current)
+                {
+                    Vault.Remove(next);
+                }
+            }
         }
 
-        internal void PersistData(string key, string data, bool replace)
+        internal void PersistPincode(MobilePolicy policy)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            if (settings.Values.ContainsKey(key))
+            DeletePincode();
+            PasswordCredential newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode, JsonConvert.SerializeObject(policy));
+            Vault.Add(newPin);
+        }
+
+        internal string RetrievePincode()
+        {
+            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            if (pin != null)
+                return pin.Password;
+            return null;
+        }
+
+        internal void DeletePincode()
+        {
+            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            if (pin != null)
+            {
+                Vault.Remove(pin);
+            }
+        }
+
+        internal void PersistData(bool replace, string key, string data, string nonce = null)
+        {
+            if (PersistedData.Values.ContainsKey(key))
             {
                 if (replace)
                 {
-                    settings.Values[key] = Encryptor.Encrypt(data);
+                    PersistedData.Values[key] = Encryptor.Encrypt(data, nonce);
                 }
             }
             else
             {
-                settings.Values.Add(key, Encryptor.Encrypt(data));
+                PersistedData.Values.Add(key, Encryptor.Encrypt(data));
             }
         }
 
-        internal string RetrieveData(string key)
+        internal string RetrieveData(string key, string nonce = null)
         {
             string data = null;
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            if (settings.Values.ContainsKey(key))
+            if (PersistedData.Values.ContainsKey(key))
             {
-                data = Encryptor.Decrypt(settings.Values[key] as string);
+                data = Encryptor.Decrypt(PersistedData.Values[key] as string, nonce);
             }
             return data;
         }
 
         internal void DeleteData(string key)
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            if (settings.Values.ContainsKey(key))
+            if (PersistedData.Values.ContainsKey(key))
             {
-                settings.Values.Remove(key);
+                PersistedData.Values.Remove(key);
             }
         }
     }

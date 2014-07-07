@@ -50,8 +50,6 @@ namespace Salesforce.SDK.Auth
         public string RefreshToken { get; private set; }
         [JsonProperty]
         public MobilePolicy Policy { get; internal set; }
-        [JsonProperty]
-        public string PincodeHash { get; internal set; }
 
 
         /// <summary>

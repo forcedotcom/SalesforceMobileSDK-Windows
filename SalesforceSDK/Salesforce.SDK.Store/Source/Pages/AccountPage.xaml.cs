@@ -80,6 +80,7 @@ namespace Salesforce.SDK.Source.Pages
             {
                 string no = loader.GetString("no_accounts");
                 listTitle.Text = loader.GetString("no_accounts");
+                PincodeManager.WipePincode();
             }
             else
             {

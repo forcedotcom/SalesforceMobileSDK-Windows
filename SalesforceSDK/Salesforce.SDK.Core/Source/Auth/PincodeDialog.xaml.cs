@@ -39,6 +39,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -53,7 +54,7 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         /// Defines number of retries of locked screen. We log user out when RetryCounter hits 1.
         /// </summary>
-        private static readonly int MaximumRetries = 4;
+        private static readonly int MaximumRetries = 10;
         private static int RetryCounter = MaximumRetries;
         private static readonly int MinimumWidthForBarMode = 500;
         private static readonly int BarModeHeight = 400;
@@ -109,7 +110,7 @@ namespace Salesforce.SDK.Auth
         private void SetupCreate()
         {
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
-            Content.Text = LocalizedStrings.GetString("passcode_create_security");
+            Description.Text = LocalizedStrings.GetString("passcode_create_security");
             ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Visible;
             ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_length"), Options.User.Policy.PinLength);
             Passcode.KeyDown += CreateClicked;
@@ -121,9 +122,16 @@ namespace Salesforce.SDK.Auth
         private void SetupLocked()
         {
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
-            Content.Text = LocalizedStrings.GetString("passcode_confirm");
-            ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
+            Description.Text = "";
+            // code needed to "underline" the text
+            Run description = new Run();
+            Underline underline = new Underline();
+            description.Text = LocalizedStrings.GetString("passcode_forgot_passcode");
+            underline.Inlines.Add(description);
+            Description.Inlines.Add(underline);
             Passcode.KeyDown += LockedClick;
+            Description.Tapped += Description_Tapped;
             RetryCounter = MaximumRetries;
         }
 
@@ -133,7 +141,7 @@ namespace Salesforce.SDK.Auth
         private void SetupConfirm()
         {
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
-            Content.Text = LocalizedStrings.GetString("passcode_confirm");
+            Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             Passcode.KeyDown += ConfirmClicked;
         }
@@ -161,10 +169,8 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Equals(Options.Passcode))
             {
-                AuthStorageHelper auth = new AuthStorageHelper();
-                Account account = Options.User;
-                account.PincodeHash = PincodeManager.GenerateEncryptedPincode(Options.Passcode);
-                auth.PersistCredentials(account);
+                PincodeManager.StorePincode(Options.Policy, Options.Passcode);
+                PincodeManager.Unlock();
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
             else
@@ -183,8 +189,9 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             } 
-            else if (PincodeManager.ValidatePincode(Passcode.Password, account.PincodeHash))
+            else if (PincodeManager.ValidatePincode(Passcode.Password))
             {
+                PincodeManager.Unlock();
                 if (Frame.CanGoBack)
                 {
                     Frame.GoBack();
@@ -208,6 +215,12 @@ namespace Salesforce.SDK.Auth
             }
         }
 
+
+        void Description_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ForgotFlyout.ShowAt(Passcode);
+        }
+
         private void DisplayErrorFlyout(string text)
         {
             ErrorContent.Text = text;
@@ -217,6 +230,15 @@ namespace Salesforce.SDK.Auth
         private void ErrorFlyoutClicked(object sender, RoutedEventArgs e)
         {
             ErrorFlyout.Hide();
+        }
+
+        private void LogoutClicked(object sender, RoutedEventArgs e)
+        {
+            ForgotFlyout.Hide();
+            if (LogoutConfirmButton.Equals(sender))
+            {
+                AccountManager.WipeAccounts();
+            }
         }
 
         void ErrorFlyout_Closed(object sender, object e)
