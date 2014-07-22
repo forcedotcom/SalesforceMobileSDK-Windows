@@ -30,6 +30,7 @@ using Salesforce.SDK.Rest;
  */
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -60,7 +61,13 @@ namespace Salesforce1.Pages
         public MainPage()
         {
             this.InitializeComponent();
+            oneView.NavigationStarting += oneView_NavigationStarting;
             oneView.FrameContentLoading += oneView_FrameContentLoading;
+        }
+
+        void oneView_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        {
+            Debug.WriteLine(args.Uri.ToString());
         }
 
         void oneView_FrameContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
@@ -90,6 +97,7 @@ namespace Salesforce1.Pages
                base.OnNavigatedTo(e);
             }
         }
+
 
         private void SwitchAccount(object sender, RoutedEventArgs e)
         {

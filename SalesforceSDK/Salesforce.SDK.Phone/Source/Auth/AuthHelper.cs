@@ -64,14 +64,14 @@ namespace Salesforce.SDK.Auth
         {
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
             Frame frame = Window.Current.Content as Frame;
-            if (account.Policy != null)
+            if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {
                 PincodeManager.LaunchPincodeScreen();
-            } else
+            }
+            else
             {
                 frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
-            SalesforcePhoneApplication.ContinuationManager.MarkAsStale();
         }
     }
 }

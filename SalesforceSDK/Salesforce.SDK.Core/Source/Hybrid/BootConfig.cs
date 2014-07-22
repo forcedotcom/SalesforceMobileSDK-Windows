@@ -26,7 +26,10 @@
  */
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
 using System;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Hybrid
 {
@@ -35,7 +38,7 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class BootConfig
     {
-        private const String BOOTCONFIG_JSON = "www\\bootconfig.json";
+        private const String BOOTCONFIG_JSON = "www/bootconfig.json";
         private static BootConfig _instance = null;
 
         /// <summary>
@@ -89,11 +92,11 @@ namespace Salesforce.SDK.Hybrid
 
         
         // Return  the singleton instance (build it the first time it is called)
-        public static BootConfig GetBootConfig()
+        public async static Task<BootConfig> GetBootConfig()
         {
             if (_instance == null)
             {
-                String configStr = ConfigHelper.ReadConfigFromResource(BOOTCONFIG_JSON);
+                String configStr = await ConfigHelper.ReadFileFromApplication(BOOTCONFIG_JSON);
                 _instance = JsonConvert.DeserializeObject<BootConfig>(configStr);
             }
             return _instance;

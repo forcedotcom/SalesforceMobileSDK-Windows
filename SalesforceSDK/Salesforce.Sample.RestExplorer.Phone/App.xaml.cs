@@ -28,7 +28,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    public sealed partial class App : SalesforcePhoneApplication
+    public sealed partial class App : SalesforceApplication
     {
         private TransitionCollection transitions;
 

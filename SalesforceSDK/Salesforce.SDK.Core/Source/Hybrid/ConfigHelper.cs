@@ -25,10 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 ﻿
+using Salesforce.SDK.App;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
+using Windows.Storage;
 using Windows.UI.Xaml;
 
 namespace Salesforce.SDK.Hybrid
@@ -55,6 +58,21 @@ namespace Salesforce.SDK.Hybrid
                     {
                         return reader.ReadToEnd();
                     }
+                }
+            }
+            throw new FileNotFoundException("Resource file not found", path);
+        }
+
+        public async static Task<string> ReadFileFromApplication(string path)
+        {
+            Uri fileUri = new Uri(@"ms-appx:///" + path);
+            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
+            if (file != null)
+            {
+                var stream = await file.OpenStreamForReadAsync();
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
                 }
             }
             throw new FileNotFoundException("Resource file not found", path);

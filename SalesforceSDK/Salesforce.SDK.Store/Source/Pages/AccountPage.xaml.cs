@@ -131,6 +131,7 @@ namespace Salesforce.SDK.Source.Pages
         {
             if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
             {
+                listboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
             }
             else

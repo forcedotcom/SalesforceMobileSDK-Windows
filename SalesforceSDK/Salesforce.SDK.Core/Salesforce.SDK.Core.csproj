@@ -36,6 +36,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Adaptation\PlatformAdapter.cs" />
     <Compile Include="Source\App\ISalesforcePage.cs" />
+    <Compile Include="Source\App\ISFApplicationHelper.cs" />
     <Compile Include="Source\App\SalesforceApplication.cs" />
     <Compile Include="Source\App\SuspensionManager.cs" />
     <Compile Include="Source\Auth\Account.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="Source\Hybrid\ConfigHelper.cs" />
     <Compile Include="Source\Hybrid\HybridMainPage.cs" />
     <Compile Include="Source\Hybrid\SalesforceOAuthPlugin.cs" />
+    <Compile Include="Source\Hybrid\StreamUriResolver.cs" />
     <Compile Include="Source\Native\NativeMainPage.cs" />
     <Compile Include="Source\Net\HttpCall.cs" />
     <Compile Include="Source\Rest\ClientManager.cs" />

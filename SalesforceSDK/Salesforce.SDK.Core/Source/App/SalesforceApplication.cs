@@ -39,6 +39,9 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+#if WINDOWS_PHONE_APP
+using Windows.Phone.UI.Input;
+#endif
 
 
 namespace Salesforce.SDK.App
@@ -65,7 +68,8 @@ namespace Salesforce.SDK.App
 
         private static DispatcherTimer TokenRefresher = new DispatcherTimer();
 
-        public SalesforceApplication() : base()
+        public SalesforceApplication()
+            : base()
         {
             Suspending += OnSuspending;
             CreateClientManager(false);
@@ -73,6 +77,7 @@ namespace Salesforce.SDK.App
             TokenRefresher = new DispatcherTimer();
             TokenRefresher.Interval = TimeSpan.FromMinutes(3);
             TokenRefresher.Tick += RefreshToken;
+            PlatformAdapter.Resolve<ISFApplicationHelper>().Initialize();
         }
 
         /// <summary>
@@ -99,32 +104,6 @@ namespace Salesforce.SDK.App
         /// <returns>Type of the root page</returns>
         protected abstract Type SetRootApplicationPage();
 
-        protected virtual async void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            PincodeManager.SavePinTimer();
-            await SuspensionManager.SaveAsync();
-            deferral.Complete();
-        }
-
-        protected async override void OnActivated(IActivatedEventArgs args)
-        {
-            if (ApplicationExecutionState.Terminated.Equals(args.PreviousExecutionState))
-            {
-                try
-                {
-                    await SuspensionManager.RestoreAsync();
-                }
-                catch (SuspensionManagerException)
-                {
-                    // Assume there is no state and continue
-                }
-            }
-            Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.NavigationFailed += OnNavigationFailed;
-            PincodeManager.TriggerBackgroundedPinTimer();
-        }
-
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
         {
             base.OnWindowCreated(args);
@@ -147,7 +126,8 @@ namespace Salesforce.SDK.App
             {
                 PincodeManager.TriggerBackgroundedPinTimer();
                 TokenRefresher.Start();
-            } else
+            }
+            else
             {
                 PincodeManager.SavePinTimer();
                 TokenRefresher.Stop();
@@ -182,10 +162,35 @@ namespace Salesforce.SDK.App
             {
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
                 OAuth2.RefreshCookies();
-            } catch (WebException)
+            }
+            catch (WebException)
             {
                 // todo: add logging here
             }
         }
+
+        protected void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            PlatformAdapter.Resolve<ISFApplicationHelper>().OnSuspending(e);
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            PlatformAdapter.Resolve<ISFApplicationHelper>().OnActivated(args);
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.NavigationFailed += OnNavigationFailed;
+        }
+
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        {
+#if DEBUG
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                this.DebugSettings.EnableFrameRateCounter = true;
+            }
+#endif
+            PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
+        }
+
     }
 }

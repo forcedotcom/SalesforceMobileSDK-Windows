@@ -25,6 +25,9 @@
           <m3:Rotation Preference="landscape" />
         </m3:InitialRotationPreference>
       </m3:VisualElements>
+      <ApplicationContentUriRules>
+        <Rule Match="https://*.salesforce.com" Type="include" />
+      </ApplicationContentUriRules>
     </Application>
   </Applications>
   <Capabilities>

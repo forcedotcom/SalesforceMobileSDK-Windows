@@ -38,6 +38,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Source.Utilities;
 using Salesforce.SDK.App;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Hybrid
 {
@@ -55,12 +56,12 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class HybridMainPage : Page, ISalesforcePage
     {
-        private const string API_VERSION = "v30.0";
+        private const string ApiVersion = "v30.0";
+        private const string StreamResolverKey = "www";
         private static HybridMainPage _instance;
 
         private SynchronizationContext _syncContext;
         private BootConfig _bootConfig;
-        private LoginOptions _loginOptions;
         private RestClient _client;
         private bool _webAppLoaded;
 
@@ -68,7 +69,7 @@ namespace Salesforce.SDK.Hybrid
         /// Concrete hybrid main page page class should override this method and return the cordova view
         /// </summary>
         /// <returns></returns>
-        protected virtual WebView GetCordovaView() { return null; }
+        protected virtual WebView GetWebView() { return null; }
 
         /// <summary>
         /// Constructor
@@ -77,7 +78,8 @@ namespace Salesforce.SDK.Hybrid
         {
             _instance = this;
             _syncContext = SynchronizationContext.Current;
-            _bootConfig = BootConfig.GetBootConfig();
+            Task<BootConfig> task = Task.Run(() => BootConfig.GetBootConfig());
+            _bootConfig = task.Result;
         }
 
         /// <summary>
@@ -216,15 +218,22 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadLocalStartPage()
         {
-            Uri uri = new Uri("www/" + _bootConfig.StartPage, UriKind.Relative);
-            LoadUri(uri);
+            WebView browser = GetWebView();
+            Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
+
+            // Pass the resolver object to the navigate call.
+            browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
         }
 
         private void LoadUri(Uri uri)
         {
-            WebView browser = GetCordovaView();
+            WebView browser = GetWebView();
             browser.NavigationStarting += onBrowserNavigationStarting;
-            if (GetCordovaView().Source.Equals(uri))
+            if (browser.Source == null)
+            {
+                browser.Navigate(uri);
+            }
+            else if (browser.Source.Equals(uri))
             {
                 // Already there - maybe back in after a log out
                 // Manually reloading page
@@ -233,7 +242,7 @@ namespace Salesforce.SDK.Hybrid
             else
             {
                 // That only works before the view is loaded
-                GetCordovaView().Source = uri;
+                browser.Source = uri;
             }
             _webAppLoaded = true;
         }
@@ -245,7 +254,7 @@ namespace Salesforce.SDK.Hybrid
             {
                 sender.Stop();
                 // Cheap REST call to refresh session
-                _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
+                _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), (response) =>
                     {
                         Uri frontDoorStartURL = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, startURL));
                         _syncContext.Post((state) => { sender.Navigate(state as Uri); }, frontDoorStartURL);
@@ -264,7 +273,7 @@ namespace Salesforce.SDK.Hybrid
             if (uri != null
                 && uri.IsAbsoluteUri
                 && uri.AbsolutePath != null && uri.AbsolutePath == "/"
-                && uri.Query != null) 
+                && uri.Query != null)
             {
                 Dictionary<string, string> qs = uri.ParseQueryString();
                 if ((qs["ec"] == "301" || qs["ec"] == "302") && qs["startURL"] != null)
@@ -272,7 +281,7 @@ namespace Salesforce.SDK.Hybrid
                     return qs["startURL"];
                 }
             }
-            
+
             return null;
         }
 
@@ -296,7 +305,7 @@ namespace Salesforce.SDK.Hybrid
         private void RefreshSession(SalesforceOAuthPlugin plugin)
         {
             // Cheap REST call to refresh session
-            _client.SendAsync(RestRequest.GetRequestForResources(API_VERSION), (response) =>
+            _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), (response) =>
             {
                 if (plugin != null)
                 {

@@ -13,6 +13,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 //----------------------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,6 @@ using Windows.UI.Xaml.Controls;
 /// to a continuation such as the FileOpenPicker or WebAuthenticationBroker
 /// </summary>
 public class ContinuationManagerImpl
-
 {
     IContinuationActivatedEventArgs args = null;
     bool handled = false;
@@ -156,7 +156,7 @@ public class ContinuationManagerImpl
 /// Implement this interface if your page invokes the web authentication
 /// broker
 /// </summary>
-interface IWebAuthenticationContinuable
+public interface IWebAuthenticationContinuable
 {
     /// <summary>
     /// This method is invoked when the web authentication broker returns
