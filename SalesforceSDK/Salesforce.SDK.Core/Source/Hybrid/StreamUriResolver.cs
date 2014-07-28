@@ -55,6 +55,8 @@ namespace Salesforce.SDK.Hybrid
         private async Task<IInputStream> GetFileStreamFromApplicationUriAsync(System.Uri uri)
         {
             StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(uri);
+            if (file == null)
+                return null;
             IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
             return stream;
         }

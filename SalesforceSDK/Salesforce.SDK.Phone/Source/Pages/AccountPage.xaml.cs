@@ -137,6 +137,7 @@ namespace Salesforce.SDK.Source.Pages
         {
             if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
             {
+                listboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
             }
             else
@@ -187,12 +188,8 @@ namespace Salesforce.SDK.Source.Pages
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
         {
-            ServerSetting server = listboxServers.SelectedItem as ServerSetting;
-            if (server == null)
-            {
-                return;
-            }
             SalesforceApplication.ResetClientManager();
+            ServerSetting server = listboxServers.SelectedItem as ServerSetting;
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
             LoginOptions options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
             SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
