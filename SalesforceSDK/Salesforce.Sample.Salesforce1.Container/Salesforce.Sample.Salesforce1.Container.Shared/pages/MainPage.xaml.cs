@@ -61,6 +61,12 @@ namespace Salesforce.Sample.Salesforce1.Container
         {
             this.InitializeComponent();
             oneView.FrameContentLoading += oneView_FrameContentLoading;
+            oneView.LoadCompleted += oneView_LoadCompleted;
+        }
+
+        void oneView_LoadCompleted(object sender, NavigationEventArgs e)
+        {
+            logoutBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
 
         void oneView_FrameContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
@@ -97,7 +103,12 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         private async void Logout(object sender, RoutedEventArgs e)
         {
-            await SalesforceApplication.GlobalClientManager.Logout();
+
+            if (SalesforceApplication.GlobalClientManager != null)
+            {
+                await SalesforceApplication.GlobalClientManager.Logout();
+            }
+            AccountManager.SwitchAccount();
         }
         
         private void SavePage(Account account, string page)

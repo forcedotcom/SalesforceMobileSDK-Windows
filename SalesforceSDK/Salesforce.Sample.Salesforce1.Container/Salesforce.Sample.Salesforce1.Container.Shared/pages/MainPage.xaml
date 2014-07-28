@@ -26,6 +26,7 @@
                               Click="SwitchAccount" VerticalAlignment="Center">
             </AppBarButton>
             <AppBarButton x:Name="logoutBtn"
+                              Visibility="Collapsed"
                               DataContext="logout"
                               Label="{Binding Converter={StaticResource Localize}}"
                               Icon="HangUp"
