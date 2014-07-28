@@ -31,7 +31,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salesforce.One.App.settings
+namespace Salesforce.Sample.Salesforce1.Container.Settings
 {
     class Config : SalesforceConfig
     {

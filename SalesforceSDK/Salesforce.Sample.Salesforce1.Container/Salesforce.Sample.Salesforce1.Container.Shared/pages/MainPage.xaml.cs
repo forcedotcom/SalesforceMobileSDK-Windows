@@ -1,8 +1,4 @@
-﻿using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Native;
-using Salesforce.SDK.Rest;
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -28,6 +24,10 @@ using Salesforce.SDK.Rest;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Native;
+using Salesforce.SDK.Rest;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,7 +46,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace Salesforce1.Pages
+namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -57,7 +57,7 @@ namespace Salesforce1.Pages
         public const string CurrentPage = "currentPage{0}";
         public const string defaultPage = "/one/one.app";
 
-        public MainPage()
+        public MainPage() : base()
         {
             this.InitializeComponent();
             oneView.FrameContentLoading += oneView_FrameContentLoading;

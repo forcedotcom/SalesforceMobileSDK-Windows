@@ -24,11 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.One.App.settings;
+using Salesforce.Sample.Salesforce1.Container.Settings;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
-using Salesforce1.Pages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,9 +46,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=391641
+// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
-namespace Salesforce1
+namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
@@ -60,9 +59,20 @@ namespace Salesforce1
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
-        public App() : base()
+        public App()
+            : base()
         {
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Invoked when Navigation to a certain page fails
+        /// </summary>
+        /// <param name="sender">The Frame which failed navigation</param>
+        /// <param name="e">Details about the navigation failure</param>
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
         protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
