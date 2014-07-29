@@ -43,7 +43,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Salesforce.SDK.Auth
 {
-    public class PincodeManager
+    public class  PincodeManager
     {
         private static DispatcherTimer PinTimer = new DispatcherTimer();
         private static readonly string PinBackgroundedTimeKey = "pintimeKey";
@@ -179,7 +179,7 @@ namespace Salesforce.SDK.Auth
             SavePinTimer();
         }
 
-        internal static void SavePinTimer()
+        public static void SavePinTimer()
         {
             MobilePolicy policy = GetMobilePolicy();
             Account account = AccountManager.GetAccount();
@@ -189,14 +189,14 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        internal static void TriggerBackgroundedPinTimer()
+        public static void TriggerBackgroundedPinTimer()
         {
             Account account = AccountManager.GetAccount();
             MobilePolicy policy = GetMobilePolicy();
             bool required = IsPincodeRequired();
-            if (account != null && policy != null && policy.ScreenLockTimeout > 0)
+            if (account != null)
             {
-                if (required)
+                if (required || (policy == null && account.Policy != null))
                 {
                     LaunchPincodeScreen();
                 }

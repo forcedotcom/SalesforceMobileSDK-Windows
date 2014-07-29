@@ -51,7 +51,8 @@ namespace Salesforce.SDK.Source.Settings
         /// <summary>
         /// Settings key for config.
         /// </summary>
-        private const string CONFIG_SETTINGS = "salesforceConfig";
+        private const string ConfigSettings = "salesforceConfig";
+        private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
         #endregion
 
         #region Public properties & fields
@@ -62,7 +63,7 @@ namespace Salesforce.SDK.Source.Settings
         {
             get
             {
-                return "Salesforce.SDK.Resources.servers.xml";
+                return DefaultServerPath;
             }
         }
 
@@ -100,7 +101,7 @@ namespace Salesforce.SDK.Source.Settings
         public SalesforceConfig()
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            string configJson = settings.Values[CONFIG_SETTINGS] as string;
+            string configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 SetupServers();
@@ -112,7 +113,7 @@ namespace Salesforce.SDK.Source.Settings
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String configJson = JsonConvert.SerializeObject(this);
-            settings.Values[CONFIG_SETTINGS] = Encryptor.Encrypt(configJson);
+            settings.Values[ConfigSettings] = Encryptor.Encrypt(configJson);
         }
 
         public void AddServer(ServerSetting server)
@@ -138,7 +139,16 @@ namespace Salesforce.SDK.Source.Settings
         /// </summary>
         protected void SetupServers()
         {
-            String xml = ConfigHelper.ReadConfigFromResource(ServerFilePath);
+            String xml;
+            try
+            {
+                Task<String> task = Task.Run(() => ConfigHelper.ReadFileFromApplication(ServerFilePath));
+                xml = task.Result;
+            }
+            catch (Exception)
+            {
+                xml = ConfigHelper.ReadConfigFromResource(DefaultServerPath);
+            }
             XDocument servers = XDocument.Parse(xml);
             var connectionCheck = servers.Element("servers").Attribute("allowNewConnections");
             try
@@ -160,7 +170,7 @@ namespace Salesforce.SDK.Source.Settings
         public static T RetrieveConfig<T>() where T : SalesforceConfig
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            string configJson = settings.Values[CONFIG_SETTINGS] as string;
+            string configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
