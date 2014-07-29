@@ -3,3 +3,4 @@ bin/
 *.csproj.user
 *.*~
 TestResults/
+packages/
