@@ -104,7 +104,7 @@ namespace Salesforce.SDK.Auth
             string hashed = GenerateEncryptedPincode(pincode);
             MobilePolicy mobilePolicy = new MobilePolicy()
             {
-                ScreenLockTimeout = policy.PinLength,
+                ScreenLockTimeout = policy.ScreenLockTimeout,
                 PinLength = policy.PinLength,
                 PincodeHash = Encryptor.Encrypt(hashed, pincode)
             };
@@ -232,7 +232,7 @@ namespace Salesforce.SDK.Auth
                             MobilePolicy policy = GetMobilePolicy();
                             if (account.Policy != null)
                             {
-                                if (policy.ScreenLockTimeout < account.Policy.PinLength)
+                                if (policy.ScreenLockTimeout < account.Policy.ScreenLockTimeout)
                                 {
                                     policy.ScreenLockTimeout = account.Policy.ScreenLockTimeout;
                                     AuthStorageHelper.GetAuthStorageHelper().PersistPincode(policy);
