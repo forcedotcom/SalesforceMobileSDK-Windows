@@ -61,10 +61,10 @@ namespace Salesforce.Sample.Salesforce1.Container
         {
             this.InitializeComponent();
             oneView.FrameContentLoading += oneView_FrameContentLoading;
-            oneView.LoadCompleted += oneView_LoadCompleted;
+            oneView.NavigationCompleted += oneView_NavigationCompleted;
         }
 
-        void oneView_LoadCompleted(object sender, NavigationEventArgs e)
+        void oneView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
             logoutBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
         }
