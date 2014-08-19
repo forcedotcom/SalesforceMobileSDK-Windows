@@ -30,7 +30,7 @@ foreach($name in $names)
 $shell = new-object -com shell.application
 $exportedBasePath = $SpecialFolders["Personal"] + "\My Exported Templates\" + $strProject + ".zip"
 $destinationPath = $shell.NameSpace($workingDir + $strProject)
-.\vspte -s SalesforceSDK.sln -p $strProject
+.\vspte -s SalesforceSDK.sln -p $strProject | out-null
 write-output "Extracting MyTemplate.vstemplate from $exportedBasePath"
 $zip = $shell.NameSpace($exportedBasePath)
 foreach($item in $zip.items())
