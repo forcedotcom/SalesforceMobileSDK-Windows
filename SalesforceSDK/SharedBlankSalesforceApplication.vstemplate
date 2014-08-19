@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
+	<TemplateData>
+    <Name>Salesforce Application (Universal Apps)</Name>
+    <Description>Salesforce Universal App</Description>
+    <Icon>BlankApp.png</Icon>
+		<DefaultName>App</DefaultName>
+		<TemplateID>Salesforce.SharedBlankApplication</TemplateID>
+		<TemplateGroupID>WinRT-Managed</TemplateGroupID>
+		<ProjectType>CSharp</ProjectType>
+		<TargetPlatformName>Windows</TargetPlatformName>
+		<RequiredPlatformVersion>6.3.0</RequiredPlatformVersion>
+		<CreateInPlace>true</CreateInPlace>		
+		<CreateNewFolder>false</CreateNewFolder>		
+		<LocationField>Enabled</LocationField>	
+		<PreviewImage>BlankApp.png</PreviewImage>
+		<ProvideDefaultName>true</ProvideDefaultName>
+		<SortOrder>10</SortOrder>
+		<EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+		<NumberOfParentCategoriesToRollUp>2</NumberOfParentCategoriesToRollUp>
+		<PromptForSaveOnCreation>true</PromptForSaveOnCreation>		
+	</TemplateData>
+ 	<TemplateContent>
+ 		<ProjectCollection>
+      <SolutionFolder Name="$projectname$">
+        <ProjectTemplateLink ProjectName="$projectname$.Shared" CopyParameters="true">
+          Salesforce.Universal.Template\Salesforce.Universal.Template.Shared\Shared.vstemplate
+        </ProjectTemplateLink>
+        <ProjectTemplateLink ProjectName="$projectname$.Windows" CopyParameters="true">
+          Salesforce.Universal.Template\Salesforce.Universal.Template.Windows\Windows.vstemplate
+        </ProjectTemplateLink>
+        <ProjectTemplateLink ProjectName="$projectname$.WindowsPhone" CopyParameters="true">
+          Salesforce.Universal.Template\Salesforce.Universal.Template.WindowsPhone\WindowsPhone.vstemplate
+        </ProjectTemplateLink>
+      </SolutionFolder>
+      <SolutionFolder Name="SalesforceSDK">
+        <ProjectTemplateLink ProjectName="Salesforce.SDK.Core">
+          Salesforce.SDK.Core\Core.vstemplate
+        </ProjectTemplateLink>
+        <ProjectTemplateLink ProjectName="Salesforce.SDK.Phone">
+          Salesforce.SDK.Phone\Phone.vstemplate
+        </ProjectTemplateLink>
+        <ProjectTemplateLink ProjectName="Salesforce.SDK.Store">
+          Salesforce.SDK.Store\Store.vstemplate
+        </ProjectTemplateLink>
+      </SolutionFolder>
+ 		</ProjectCollection>
+	</TemplateContent>
+</VSTemplate>

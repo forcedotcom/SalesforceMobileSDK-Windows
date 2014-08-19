@@ -4,3 +4,4 @@ bin/
 *.*~
 TestResults/
 packages/
+!vspte.exe
