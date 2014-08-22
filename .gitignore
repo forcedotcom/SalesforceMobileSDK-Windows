@@ -5,3 +5,6 @@ bin/
 TestResults/
 packages/
 !vspte.exe
+Release/
+Debug/
+ContainerBin/

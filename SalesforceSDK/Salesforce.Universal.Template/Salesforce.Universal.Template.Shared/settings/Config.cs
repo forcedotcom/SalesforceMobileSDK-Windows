@@ -44,7 +44,7 @@ namespace $safeprojectname$
         /// </summary>
         public override string ClientId
         {
-            get { return null; }
+            get { return "$ClientID$"; }
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace $safeprojectname$
         /// </summary>
         public override string CallbackUrl
         {
-            get { return null; }
+            get { return "$CallbackURL$"; }
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace $safeprojectname$
         /// </summary>
         public override string[] Scopes
         {
-            get { return null; }
+            get { return new string[] { $scopes$ }; }
         }
     }
 }

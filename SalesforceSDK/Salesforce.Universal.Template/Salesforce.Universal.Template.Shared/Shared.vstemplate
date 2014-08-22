@@ -24,4 +24,9 @@
       <ProjectItem ReplaceParameters="true" TargetFileName="$ext_projectname$.Shared.projitems">Salesforce.Universal.Template.Shared.projitems</ProjectItem>
     </Project>
   </TemplateContent>
+  <WizardExtension>
+    <!--<Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=e5af9a49a54e5e7c</Assembly>-->
+    <Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=e5af9a49a54e5e7c</Assembly>
+    <FullClassName>TemplateWizard.ChildWizard</FullClassName>
+  </WizardExtension>
 </VSTemplate>

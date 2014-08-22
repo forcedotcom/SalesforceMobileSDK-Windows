@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Source.Security;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -54,15 +55,13 @@ namespace $safeprojectname$
         /// </summary>
         /// <returns></returns>
         protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
-        {
-            /*
+        {         
             EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
             {
-                Password = "password used for encrypting",
-                Salt = "app specific salt for encryption"
+                Password = "$EncryptionPassword$",
+                Salt = "$EncryptionSalt$"
             };
             Encryptor.init(settings);
-             */
             Config config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)
                 config = new Config();
