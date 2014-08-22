@@ -5,10 +5,6 @@ if ($a -eq 1) {
 cls
 Set-Location $source
 
-.\generateTemplate $source Salesforce.SDK.Core Core | Write-Output
-.\generateTemplate $source Salesforce.SDK.Phone Phone | Write-Output
-.\generateTemplate $source Salesforce.SDK.Store Store | Write-Output
-
 $SpecialFolders = @{}
 
 $names = [Environment+SpecialFolder]::GetNames( `
