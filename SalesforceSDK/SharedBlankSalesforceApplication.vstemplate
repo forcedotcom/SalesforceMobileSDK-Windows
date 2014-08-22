@@ -54,8 +54,8 @@
     </CustomParameters>
 	</TemplateContent>
   <WizardExtension>
-    <!--<Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=e5af9a49a54e5e7c</Assembly>-->
-    <Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=e5af9a49a54e5e7c</Assembly>
+    <!--<Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=69245b93ade9431a</Assembly>-->
+    <Assembly>TemplateWizard, Version=1.0.0.0, Culture=Neutral, PublicKeyToken=69245b93ade9431a</Assembly>
     <FullClassName>TemplateWizard.SalesforceTemplateWizard</FullClassName>
   </WizardExtension>
 </VSTemplate>
