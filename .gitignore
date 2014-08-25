@@ -2,9 +2,12 @@ obj/
 bin/
 *.csproj.user
 *.*~
+*.suo
 TestResults/
 packages/
 !vspte.exe
 Release/
 Debug/
 ContainerBin/
+NuGet.Config
+NuGet.exe
