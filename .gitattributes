@@ -1,0 +1,8 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
+*.vstemplate text eol=crlf
+*.sln text eol=crlf
+*.cs text eol=crlf
+*.xml text eol=crlf
+*.config text eol=crlf
+*.targets text eol=crlf
