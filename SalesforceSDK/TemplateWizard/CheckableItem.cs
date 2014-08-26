@@ -26,55 +26,56 @@
  */
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.VisualStudio.PlatformUI;
-using System.Xaml;
-using System.Collections.ObjectModel;
 
 namespace TemplateWizard
 {
-    /// <summary>
-    /// Interaction logic for TemplateForm.xaml
-    /// </summary>
-    public partial class TemplateForm : DialogWindow
+    public class CheckableItem<T> : INotifyPropertyChanged
     {
-        public ObservableCollection<CheckableItem<String>> Scopes { get; set; }
-        public static CheckableItem<String>[] ScopeList =
-        {
-            new CheckableItem<String>("api", true),
-            new CheckableItem<String>("web", false),
-            new CheckableItem<String>("chatter_api", false),
-            new CheckableItem<String>("refresh_token", false),
-            new CheckableItem<String>("full", false)
-        };
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public TemplateForm()
+        private bool PropertyChecked;
+        private T ItemHolder;
+
+        public CheckableItem(T item, bool isChecked =  false)
         {
-            Scopes = new ObservableCollection<CheckableItem<String>>(ScopeList);
-            InitializeComponent();
+            this.ItemHolder = item;
+            this.PropertyChecked = isChecked;
         }
 
-        private void finishButton_Click(object sender, RoutedEventArgs e)
+        public T Item
         {
-            this.DialogResult = true;
-            this.Close();
+            get
+            {
+                return ItemHolder;
+            }
+            set
+            {
+                ItemHolder = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Item"));
+                }
+            }
         }
 
-        private void cancelButton_Click(object sender, RoutedEventArgs e)
+        public bool IsChecked
         {
-            this.DialogResult = false;
-            this.Close();
+            get
+            {
+                return PropertyChecked;
+            }
+            set
+            {
+                PropertyChecked = value;
+                if (PropertyChanged != null)
+                {
+                    PropertyChanged(this, new PropertyChangedEventArgs("IsChecked"));
+                }
+            }
         }
     }
 }

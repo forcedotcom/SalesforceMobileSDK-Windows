@@ -55,16 +55,15 @@ namespace TemplateWizard
 
         public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
         {
-            try
+            TemplateForm window = new TemplateForm();
+            window.ShowDialog();
+            if (window.DialogResult.Value)
             {
-                TemplateForm window = new TemplateForm();
-                window.ShowDialog();
                 PopulateReplacementDictionary(window);
-            } catch (Exception ex)
+            } else
             {
-                MessageBox.Show(ex.ToString());
+                throw new WizardCancelledException();
             }
-            
         }
 
         public bool ShouldAddProjectItem(string filePath)
@@ -74,7 +73,7 @@ namespace TemplateWizard
 
         private void PopulateReplacementDictionary(TemplateForm window)
         {
-            Dictionary<string, string> replacementsDictionary = new Dictionary<string,string>();
+            Dictionary<string, string> replacementsDictionary = new Dictionary<string, string>();
 
             if (!String.IsNullOrEmpty(window.ClientID.Text))
             {
@@ -86,33 +85,26 @@ namespace TemplateWizard
                 replacementsDictionary.Add("$CallbackURL$", window.CallbackURL.Text);
             }
 
-            if (!String.IsNullOrEmpty(window.EncryptionPassword.Text))
+            replacementsDictionary.Add("$EncryptionPassword$", Guid.NewGuid().ToString());
+            replacementsDictionary.Add("$EncryptionSalt$", Guid.NewGuid().ToString());
+           
+            StringBuilder sb = new StringBuilder();
+            bool first = true;
+            foreach (CheckableItem<String> next in window.Scopes)
             {
-                replacementsDictionary.Add("$EncryptionPassword$", window.EncryptionPassword.Text);
-            }
-
-            if (!String.IsNullOrEmpty(window.EncryptionSalt.Text))
-            {
-                replacementsDictionary.Add("$EncryptionSalt$", window.EncryptionSalt.Text);
-            }
-
-            if (window.Scopes.Text != null)
-            {
-                String[] scopes = window.Scopes.Text.Split(',');
-                StringBuilder sb = new StringBuilder();
-                int max = scopes.Length;
-                int count = 1;
-                foreach (String next in scopes)
+                if (next.IsChecked)
                 {
-                    sb.Append("\"").Append(next.Trim()).Append("\"");
-                    if (count < max)
+                    if (!first)
                     {
                         sb.Append(", ");
+                    } else
+                    {
+                        first = false;
                     }
-                    count++;
+                    sb.Append("\"").Append(next.Item).Append("\"");
                 }
-                replacementsDictionary.Add("$scopes$", sb.ToString());
             }
+            replacementsDictionary.Add("$scopes$", sb.ToString());
             ChildWizard.InheritedParams = replacementsDictionary;
         }
     }
