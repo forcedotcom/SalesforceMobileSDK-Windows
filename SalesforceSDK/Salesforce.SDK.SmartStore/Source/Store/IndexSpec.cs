@@ -28,30 +28,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Salesforce.SDK.Utilities
+namespace Salesforce.SDK.SmartStore.Store
 {
-    public static class ExtensionMethods
+    public class IndexSpec
     {
-        private static readonly Regex QUERY_PARAMS = new Regex(@"[?|&](\w+)=([^?|^&]+)");
+        public readonly String Path;
+        public readonly SmartStoreType SmartType;
+        public readonly string ColumnName;
 
-        public static Dictionary<string, string> ParseQueryString(this string queryString)
+        public IndexSpec(String path, SmartStoreType type)
         {
-            var match = QUERY_PARAMS.Match(queryString);
-            Dictionary<string, string> results = new Dictionary<string, string>();
-            while (match.Success)
-            {
-                results.Add(match.Groups[1].Value, match.Groups[2].Value);
-                match = match.NextMatch();
-            }
-            return results;
+            this.Path = path;
+            this.SmartType = type;
+            this.ColumnName = null; // undefined
         }
 
-        public static Dictionary<string, string> ParseQueryString(this Uri uri)
+        public IndexSpec(String path, SmartStoreType type, String columnName)
         {
-            return ParseQueryString(uri.PathAndQuery);
+            this.Path = path;
+            this.SmartType = type;
+            this.ColumnName = columnName;
+        }
+
+        public static Dictionary<string, IndexSpec> MapForIndexSpecs(IndexSpec[] indexSpecs)
+        {
+            Dictionary<string, IndexSpec> map = new Dictionary<string, IndexSpec>();
+            foreach (var indexSpec in indexSpecs)
+            {
+                map.Add(indexSpec.Path, indexSpec);
+            }
+            return map;
         }
     }
 }

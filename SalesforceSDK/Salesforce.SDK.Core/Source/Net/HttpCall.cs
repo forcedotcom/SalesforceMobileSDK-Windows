@@ -33,7 +33,7 @@ using Windows.Web.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Web.Http.Headers;
-using Salesforce.SDK.Source.Utilities;
+using Salesforce.SDK.Utilities;
 
 namespace Salesforce.SDK.Net
 {

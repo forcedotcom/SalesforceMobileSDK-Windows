@@ -33,7 +33,7 @@ using System.Threading;
 using System.Windows;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Source.Utilities;
+using Salesforce.SDK.Utilities;
 using Salesforce.Sample.RestExplorer.Shared;
 using Windows.UI.Xaml;
 using Windows.Phone.UI.Input;

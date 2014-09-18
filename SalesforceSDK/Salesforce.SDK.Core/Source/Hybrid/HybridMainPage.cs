@@ -36,7 +36,7 @@ using System.Threading;
 using Windows.Networking.Connectivity;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Source.Utilities;
+using Salesforce.SDK.Utilities;
 using Salesforce.SDK.App;
 using System.Threading.Tasks;
 

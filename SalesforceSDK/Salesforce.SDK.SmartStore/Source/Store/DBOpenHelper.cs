@@ -24,34 +24,67 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using Salesforce.SDK.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Salesforce.SDK.Utilities
+namespace Salesforce.SDK.SmartStore.Store
 {
-    public static class ExtensionMethods
+    public class DBOpenHelper
     {
-        private static readonly Regex QUERY_PARAMS = new Regex(@"[?|&](\w+)=([^?|^&]+)");
+        public static readonly int DBVersion = 1;
+        public static readonly string DBName = "smartstore{0}.db";
 
-        public static Dictionary<string, string> ParseQueryString(this string queryString)
+        private static Dictionary<string, DBOpenHelper> openHelpers;
+        private static DBOpenHelper defaultHelper;
+        private static readonly object dbopenlock = new Object();
+
+        public string DatabaseFile { private set; get; }
+
+        private DBOpenHelper(string dbName)
         {
-            var match = QUERY_PARAMS.Match(queryString);
-            Dictionary<string, string> results = new Dictionary<string, string>();
-            while (match.Success)
-            {
-                results.Add(match.Groups[1].Value, match.Groups[2].Value);
-                match = match.NextMatch();
-            }
-            return results;
+            DatabaseFile = dbName;
         }
 
-        public static Dictionary<string, string> ParseQueryString(this Uri uri)
+        public static DBOpenHelper GetOpenHelper(Account account)
         {
-            return ParseQueryString(uri.PathAndQuery);
+            lock (dbopenlock)
+            {
+                return GetOpenHelper(account, null);
+            }
+        }
+
+        public static DBOpenHelper GetOpenHelper(Account account, string communityId)
+        {
+            string dbName = String.Format(DBName, "");
+
+            if (account != null)
+            {
+                string uniqueId = account.UserId;
+                DBOpenHelper helper = null;
+                if (openHelpers == null)
+                {
+                    openHelpers = new Dictionary<string, DBOpenHelper>();
+                    helper = new DBOpenHelper(dbName);
+                    openHelpers.Add(uniqueId, helper);
+                }
+                else
+                {
+                    if (!openHelpers.TryGetValue(uniqueId, out helper))
+                    {
+                        helper = new DBOpenHelper(dbName);
+                    }
+                }
+                return helper;
+            }
+            if (defaultHelper == null)
+            {
+                defaultHelper = new DBOpenHelper(dbName);
+            }
+            return defaultHelper;
         }
     }
 }
