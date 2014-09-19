@@ -131,6 +131,7 @@
     <Compile Include="Source\Rest\RestClientTest.cs" />
     <Compile Include="Source\Rest\RestRequestTest.cs" />
     <Compile Include="Source\SmartStore\SmartStoreTest.cs" />
+    <Compile Include="Source\SmartStore\SmartStoreTestLoadTest.cs" />
     <Compile Include="Source\TestCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

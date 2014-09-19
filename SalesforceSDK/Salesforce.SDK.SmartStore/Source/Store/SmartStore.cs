@@ -57,44 +57,65 @@ namespace Salesforce.SDK.SmartStore.Store
         internal static readonly string LongOperationsStatusTable = "long_operations_status";
 
         // Columns of the soup index map table
-        internal static readonly string SoupNameCol = "soupName";
-        internal static readonly string PathCol = "path";
-        internal static readonly string ColumnNameCol = "columnName";
-        internal static readonly string ColumnTypeCol = "columnType";
+        public static readonly string SoupNameCol = "soupName";
+        public static readonly string PathCol = "path";
+        public static readonly string ColumnNameCol = "columnName";
+        public static readonly string ColumnTypeCol = "columnType";
 
         // Columns of a soup table
-        internal static readonly string IdCol = "id";
-        internal static readonly string CreatedCol = "created";
-        internal static readonly string LastModifiedCol = "lastModified";
-        internal static readonly string SoupCol = "soup";
+        public static readonly string IdCol = "id";
+        public static readonly string CreatedCol = "created";
+        public static readonly string LastModifiedCol = "lastModified";
+        public static readonly string SoupCol = "soup";
 
         // Columns of Lon operations status table
-        internal static readonly string TypeCol = "type";
-        internal static readonly string DetailsCol = "details";
-        internal static readonly string StatusCol = "status";
+        public static readonly string TypeCol = "type";
+        public static readonly string DetailsCol = "details";
+        public static readonly string StatusCol = "status";
 
         // JSON fields added to soup element on insert/update
-        internal static readonly string SoupEntryId = "_soupEntryId";
-        internal static readonly string SoupLastModifiedDate = "_soupLastModifiedDate";
+        public static readonly string SoupEntryId = "_soupEntryId";
+        public static readonly string SoupLastModifiedDate = "_soupLastModifiedDate";
 
         // Predicates
-        internal static readonly string SoupNamePredicate = SoupNameCol + " = ?";
-        internal static readonly string PathPredicate = PathCol + " = ?";
-        internal static readonly string IdPredicate = IdCol + " = ?";
+        public static readonly string SoupNamePredicate = SoupNameCol + " = ?";
+        public static readonly string PathPredicate = PathCol + " = ?";
+        public static readonly string IdPredicate = IdCol + " = ?";
+
+        private static readonly object smartlock = new object();
+        private static readonly Regex SmartSqlRegex = new Regex("\\{([^}]+)\\}", RegexOptions.IgnoreCase);
+        private static DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         // Backing database
+        private static string _databasePath;
         internal static string DatabasePath
         {
             get
             {
-                DBOpenHelper open = DBOpenHelper.GetOpenHelper(AccountManager.GetAccount());
-                return Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
+                if (String.IsNullOrWhiteSpace(_databasePath))
+                {
+                    DBOpenHelper open = DBOpenHelper.GetOpenHelper(AccountManager.GetAccount());
+                    _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
+                }
+                return _databasePath;
             }
         }
 
-        internal static readonly object smartlock = new object();
-        internal static readonly Regex SmartSqlRegex = new Regex("\\{([^}]+)\\}", RegexOptions.IgnoreCase);
-        private static DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        public DBHelper Database
+        {
+            get
+            {
+                return DBHelper.GetInstance(DatabasePath);
+            }
+        }
+
+        public static long CurrentTimeMillis
+        {
+            get
+            {
+                return (long)((DateTime.UtcNow - Jan1st1970).TotalMilliseconds);
+            }
+        }
 
         /// <summary>
         /// Create soup index map table to keep track of soups' index specs
@@ -127,7 +148,7 @@ namespace Salesforce.SDK.SmartStore.Store
                               .Append(")");
                 db.Execute(sb.ToString());
 
-                db.CommitTransation();
+                db.CommitTransaction();
                 // Create alter_soup_status table
                 CreateLongOperationsStatusTable(db);
             }
@@ -200,7 +221,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 finally
                 {
-                    db.CommitTransation();
+                    db.CommitTransaction();
                 }
 
                 // Do the rest - create table / indexes
@@ -278,7 +299,7 @@ namespace Salesforce.SDK.SmartStore.Store
             }
             finally
             {
-                db.CommitTransation();
+                db.CommitTransaction();
             }
         }
 
@@ -347,7 +368,7 @@ namespace Salesforce.SDK.SmartStore.Store
                     {
                         if (handleTx)
                         {
-                            db.CommitTransation();
+                            db.CommitTransaction();
                         }
                     }
                 }
@@ -394,7 +415,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 finally
                 {
-                    db.CommitTransation();
+                    db.CommitTransaction();
                 }
             }
         }
@@ -435,7 +456,7 @@ namespace Salesforce.SDK.SmartStore.Store
                     }
                     finally
                     {
-                        db.CommitTransation();
+                        db.CommitTransaction();
                     }
                 }
             }
@@ -608,6 +629,8 @@ namespace Salesforce.SDK.SmartStore.Store
         private void ProjectIndexedPaths(JObject soupElt, Dictionary<string, object> contentValues, IndexSpec indexSpec)
         {
             object value = Project(soupElt, indexSpec.Path);
+            if (value == null)
+                return;
             if (contentValues == null)
             {
                 contentValues = new Dictionary<string, object>();
@@ -645,7 +668,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     db.BeginTransaction();
                 }
-                long now = (long)((DateTime.UtcNow - Jan1st1970).TotalMilliseconds);
+                long now = SmartStore.CurrentTimeMillis;
                 long soupEntryId = db.GetNextId(soupTableName);
 
                 soupElt.Add(SoupEntryId, soupEntryId);
@@ -666,16 +689,169 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     if (handleTx)
                     {
-                        db.CommitTransation();
+                        db.CommitTransaction();
                     }
                     return soupElt;
                 }
                 else
                 {
+                    if (handleTx)
+                    {
+                        db.RollbackTransaction();
+                    }
                     return null;
                 }
 
             }
+        }
+
+        public JObject Upsert(string soupName, JObject soupElt, string externalIdPath)
+        {
+            lock (smartlock)
+            {
+                return Upsert(soupName, soupElt, externalIdPath, true);
+            }
+        }
+
+        public JObject Upsert(string soupName, JObject soupElt)
+        {
+            lock (smartlock)
+            {
+                return Upsert(soupName, soupElt, SoupEntryId);
+            }
+        }
+
+        public JObject Upsert(string soupName, JObject soupElt, string externalIdPath, bool handleTx)
+        {
+            lock (smartlock)
+            {
+                JToken entryIdToken;
+                long entryId = -1;
+                if (SoupEntryId.Equals(externalIdPath, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    if (!soupElt.TryGetValue(SoupEntryId, out entryIdToken))
+                    {
+                        object externalIdObj = Project(soupElt, externalIdPath);
+                        if (externalIdObj != null)
+                        {
+                            entryId = LookupSoupEntryId(soupName, externalIdPath, externalIdObj.ToString());
+                        }
+                    }
+                    else
+                    {
+                        entryId = entryIdToken.Value<long>();
+                    }
+                }
+                if (entryId != -1)
+                {
+                    return Update(soupName, soupElt, entryId, handleTx);
+                }
+                else
+                {
+                    return Create(soupName, soupElt, handleTx);
+                }
+            }
+        }
+
+        public long LookupSoupEntryId(string soupName, string fieldPath, string fieldValue)
+        {
+            lock (smartlock)
+            {
+                DBHelper db = Database;
+                string soupTableName = db.GetSoupTableName(soupName);
+                if (String.IsNullOrWhiteSpace(soupTableName))
+                {
+                    throw new SmartStoreException("Soup: " + soupName + " does not exist");
+                }
+                string columnName = db.GetColumnNameForPath(soupName, fieldPath);
+                var statement = db.Query(soupTableName, new string[] { IdCol }, String.Empty, String.Empty, columnName = " = ?", fieldValue);
+                if (statement.DataCount > 1)
+                {
+                    throw new SmartStoreException(String.Format("There are more than one soup elements where {0} is {0}", fieldPath, fieldValue));
+                }
+                else if (statement.DataCount == 1)
+                {
+                    return statement.GetInteger(0);
+                }
+                return -1; // not found
+            }
+        }
+
+        public JObject Update(String soupName, JObject soupElt, long soupEntryId, bool handleTx)
+        {
+            lock (smartlock)
+            {
+                DBHelper db = Database;
+                string soupTableName = db.GetSoupTableName(soupName);
+                if (String.IsNullOrWhiteSpace(soupTableName))
+                {
+                    throw new SmartStoreException("Soup: " + soupName + " does not exist");
+                }
+                IndexSpec[] indexSpecs = db.GetIndexSpecs(soupName);
+                long now = CurrentTimeMillis;
+
+                soupElt.Add(SoupEntryId, soupEntryId);
+                soupElt.Add(SoupLastModifiedDate, now);
+
+                Dictionary<string, object> contentValues = new Dictionary<string, object>();
+                contentValues.Add(SoupCol, soupElt.ToString());
+                contentValues.Add(LastModifiedCol, now);
+                foreach (IndexSpec indexSpec in indexSpecs)
+                {
+                    ProjectIndexedPaths(soupElt, contentValues, indexSpec);
+                }
+                if (handleTx)
+                {
+                    db.BeginTransaction();
+                }
+                bool success = db.Update(soupTableName, contentValues, IdPredicate, soupEntryId.ToString());
+                if (success)
+                {
+                    if (handleTx)
+                    {
+                        db.CommitTransaction();
+                    }
+                    return soupElt;
+                }
+                else
+                {
+                    if (handleTx)
+                    {
+                        db.RollbackTransaction();
+                    }
+                }
+                return null;
+            }
+        }
+
+        public JArray Retrieve(string soupName, params long[] soupEntryIds)
+        {
+            lock (smartlock)
+            {
+                DBHelper db = Database;
+                string soupTableName = db.GetSoupTableName(soupName);
+                JArray result = new JArray();
+                if (String.IsNullOrWhiteSpace(soupTableName))
+                {
+                    throw new SmartStoreException("Soup: " + soupName + " does not exist");
+                }
+                var statement = db.Query(soupTableName, new string[] { SoupCol }, String.Empty, String.Empty, GetSoupEntryIdsPredicate(soupEntryIds));
+                if (statement.DataCount > 0)
+                {
+                    do
+                    {
+                        string raw = statement.GetText(statement.ColumnIndex(SoupCol));
+                        result.Add(JObject.Parse(raw));
+                    } while (statement.Step() == SQLiteResult.ROW);
+
+                }
+                return result;
+            }
+        }
+
+        private string GetSoupEntryIdsPredicate(long[] soupEntryIds)
+        {
+            return IdCol + " IN (" + String.Join(",", soupEntryIds) + ")";
         }
 
         public static object Project(JObject soup, string path)

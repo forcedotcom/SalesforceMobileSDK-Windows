@@ -42,7 +42,7 @@ namespace Salesforce.SDK.SmartStore.Store
         private static readonly string CountSelect = "SELECT count(*) FROM {0} {1}";
         private static readonly string SeqSelect = "SELECT seq FROM SQLITE_SEQUENCE WHERE name = ?";
         private static readonly string LimitSelect = "SELECT * FROM ({0}) LIMIT {1}";
-        private static readonly string QueryStatement = "SELECT {0} FROM {1} {2} {3}{4}";
+        private static readonly string QueryStatement = "SELECT {0} FROM {1} {2} {3}{4}{5}";
         private static readonly string InsertStatement = "INSERT INTO {0} ({1}) VALUES ({2});";
         private static readonly string UpdateStatement = "UPDATE {0} SET {1} WHERE {2}";
         private static readonly string DeleteStatement = "DELETE FROM {0} WHERE {1}";
@@ -255,19 +255,18 @@ namespace Salesforce.SDK.SmartStore.Store
                 table,
                 whereClause,
                 orderBy,
-                limit);
-            using (var stmt = SQLConnection.Prepare(sql))
+                limit,
+                String.Empty);
+            var stmt = SQLConnection.Prepare(sql);
+            if (args != null)
             {
-                if (args != null)
+                for (int i = 0; i < args.Length; i++)
                 {
-                    for (int i = 0; i < args.Length; i++)
-                    {
-                        stmt.Bind(i + 1, args[i]);
-                    }
+                    stmt.Bind(i + 1, args[i]);
                 }
-                stmt.Step();
-                return stmt as SQLiteStatement;
             }
+            var result = stmt.Step();
+            return stmt as SQLiteStatement;
         }
 
         public long Insert(string table, Dictionary<string, object> contentValues)
@@ -284,7 +283,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 values);
             using (var stmt = SQLConnection.Prepare(sql))
             {
-                stmt.Step();
+               stmt.Step();
             }
             return SQLConnection.LastInsertRowId();
         }
@@ -388,9 +387,15 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public SQLiteResult Execute(string sql)
         {
-            using (var stmt = SQLConnection.Prepare(sql))
+            SQLiteStatement statement;
+            return Execute(sql, out statement);
+        }
+
+        public SQLiteResult Execute(string sql, out SQLiteStatement statement)
+        {
+            using (statement = SQLConnection.Prepare(sql) as SQLiteStatement)
             {
-                return stmt.Step();
+                return statement.Step();
             }
         }
 
@@ -438,7 +443,7 @@ namespace Salesforce.SDK.SmartStore.Store
             return indexSpecs.ToArray();
         }
 
-        internal bool BeginTransaction()
+        public bool BeginTransaction()
         {
             using (var stmt = SQLConnection.Prepare("Begin Transaction"))
             {
@@ -446,9 +451,17 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
-        internal bool CommitTransation()
+        public bool CommitTransaction()
         {
             using (var stmt = SQLConnection.Prepare("Commit Transaction"))
+            {
+                return SQLiteResult.DONE == stmt.Step();
+            }
+        }
+
+        public bool RollbackTransaction()
+        {
+            using (var stmt = SQLConnection.Prepare("Rollback Transaction"))
             {
                 return SQLiteResult.DONE == stmt.Step();
             }
