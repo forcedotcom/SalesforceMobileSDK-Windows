@@ -24,49 +24,37 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Newtonsoft.Json;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Salesforce.SDK.Source.Settings
 {
     public class ServerSetting
     {
         public static readonly string HTTPS_SCHEME = "https://";
+        private string serverHost;
         private string serverName;
 
         [JsonProperty]
         public string ServerName
         {
-            set
-            {
-                serverName = value.Trim();
-            }
-            get
-            {
-                return serverName;
-            }
+            set { serverName = value.Trim(); }
+            get { return serverName; }
         }
 
-        private string serverHost;
         [JsonProperty]
         public string ServerHost
         {
             set
             {
                 serverHost = value.Trim();
-                if (!Uri.IsWellFormedUriString(serverHost, System.UriKind.Absolute))
+                if (!Uri.IsWellFormedUriString(serverHost, UriKind.Absolute))
                 {
                     serverHost = HTTPS_SCHEME + serverHost;
                 }
             }
-            get
-            {
-                return serverHost;
-            }
+            get { return serverHost; }
         }
 
         public override string ToString()

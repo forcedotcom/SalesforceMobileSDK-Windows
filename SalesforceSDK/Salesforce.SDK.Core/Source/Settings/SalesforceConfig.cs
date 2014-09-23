@@ -25,83 +25,86 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Windows.Storage;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
 using Salesforce.SDK.Source.Security;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Resources.Core;
-using Windows.Storage;
-using System.Collections.ObjectModel;
 
 namespace Salesforce.SDK.Source.Settings
 {
     public abstract class SalesforceConfig
     {
-
         #region Private fields
+
         /// <summary>
-        /// Settings key for config.
+        ///     Settings key for config.
         /// </summary>
         private const string ConfigSettings = "salesforceConfig";
+
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
+
         #endregion
 
         #region Public properties & fields
+
         /// <summary>
-        /// Path to the server.xml that comes with the SDK.
+        ///     Path to the server.xml that comes with the SDK.
         /// </summary>
         public virtual string ServerFilePath
         {
-            get
-            {
-                return DefaultServerPath;
-            }
+            get { return DefaultServerPath; }
         }
 
         /// <summary>
-        /// Property that provides a list of all the servers currently in use by the app - built in and added by user.
+        ///     Property that provides a list of all the servers currently in use by the app - built in and added by user.
         /// </summary>
         public ObservableCollection<ServerSetting> ServerList { set; get; }
+
         public bool AllowNewConnections { get; set; }
 
         #endregion
 
         #region Static fields
+
         /// <summary>
-        /// Globally accessible login options; these are the current login settings that will be used when oauth2 is launched.
+        ///     Globally accessible login options; these are the current login settings that will be used when oauth2 is launched.
         /// </summary>
         public static LoginOptions LoginOptions { set; get; }
+
         #endregion
 
         #region Abstract properties
+
         /// <summary>
-        /// Implement this to define your client ID for oauth.  This should match your application settings generated in Salesforce.
+        ///     Implement this to define your client ID for oauth.  This should match your application settings generated in
+        ///     Salesforce.
         /// </summary>
         public abstract string ClientId { get; }
+
         /// <summary>
-        /// Implement to define your callback url when oauth authentication is complete.  This should match your application settings generated in Salesforce.
+        ///     Implement to define your callback url when oauth authentication is complete.  This should match your application
+        ///     settings generated in Salesforce.
         /// </summary>
         public abstract string CallbackUrl { get; }
+
         /// <summary>
-        /// Implement to define the scopes your app will use such as web or api. 
+        ///     Implement to define the scopes your app will use such as web or api.
         /// </summary>
         public abstract string[] Scopes { get; }
-        #endregion
 
+        #endregion
 
         public SalesforceConfig()
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            string configJson = settings.Values[ConfigSettings] as string;
+            var configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 SetupServers();
@@ -120,11 +123,14 @@ namespace Salesforce.SDK.Source.Settings
         {
             if (!String.IsNullOrWhiteSpace(server.ServerName) && !String.IsNullOrWhiteSpace(server.ServerHost))
             {
-                ServerSetting old = ServerList.FirstOrDefault(item => item.ServerHost.Equals(server.ServerHost, StringComparison.CurrentCultureIgnoreCase));
+                ServerSetting old =
+                    ServerList.FirstOrDefault(
+                        item => item.ServerHost.Equals(server.ServerHost, StringComparison.CurrentCultureIgnoreCase));
                 if (old != null)
                 {
                     old.ServerHost = server.ServerHost;
-                } else
+                }
+                else
                 {
                     ServerList.Add(server);
                 }
@@ -133,9 +139,12 @@ namespace Salesforce.SDK.Source.Settings
         }
 
         /// <summary>
-        /// Read the config file and load up the server information.  Uses the xml path from ServerFilePath, please see Salesforce.SDK.Resources.servers.xml for the default values to be used.
-        /// The account dialog is affected by what is set in the serves.xml file.  The attribute allowNewConnections on the servers node will dictate if the "add connection" button is visible or not
-        /// in the account creation UI.  If there is only a single server, and new connections is disabled, add account will immediately go to oauth.
+        ///     Read the config file and load up the server information.  Uses the xml path from ServerFilePath, please see
+        ///     Salesforce.SDK.Resources.servers.xml for the default values to be used.
+        ///     The account dialog is affected by what is set in the serves.xml file.  The attribute allowNewConnections on the
+        ///     servers node will dictate if the "add connection" button is visible or not
+        ///     in the account creation UI.  If there is only a single server, and new connections is disabled, add account will
+        ///     immediately go to oauth.
         /// </summary>
         protected void SetupServers()
         {
@@ -150,27 +159,28 @@ namespace Salesforce.SDK.Source.Settings
                 xml = ConfigHelper.ReadConfigFromResource(DefaultServerPath);
             }
             XDocument servers = XDocument.Parse(xml);
-            var connectionCheck = servers.Element("servers").Attribute("allowNewConnections");
+            XAttribute connectionCheck = servers.Element("servers").Attribute("allowNewConnections");
             try
             {
-                AllowNewConnections = connectionCheck == null || (bool)connectionCheck;
-            } catch (FormatException)
+                AllowNewConnections = connectionCheck == null || (bool) connectionCheck;
+            }
+            catch (FormatException)
             {
                 AllowNewConnections = true;
             }
-            var data = from query in servers.Descendants("server")
-                       select new ServerSetting
-                       {
-                           ServerName = (string)query.Attribute("name"),
-                           ServerHost = (string)query.Attribute("url")
-                       };
+            IEnumerable<ServerSetting> data = from query in servers.Descendants("server")
+                select new ServerSetting
+                {
+                    ServerName = (string) query.Attribute("name"),
+                    ServerHost = (string) query.Attribute("url")
+                };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
         public static T RetrieveConfig<T>() where T : SalesforceConfig
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            string configJson = settings.Values[ConfigSettings] as string;
+            var configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));

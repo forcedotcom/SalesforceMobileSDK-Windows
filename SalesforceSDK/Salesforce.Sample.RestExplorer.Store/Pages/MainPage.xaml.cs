@@ -24,32 +24,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.Sample.RestExplorer.Shared;
-using Salesforce.Sample.RestExplorer.ViewModels;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Rest;
-using Salesforce.SDK.Native;
-using Salesforce.SDK.Source.Settings;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Salesforce.Sample.RestExplorer.Shared;
+using Salesforce.Sample.RestExplorer.ViewModels;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Native;
+using Salesforce.SDK.Rest;
 
 namespace Salesforce.Sample.RestExplorer.Store
 {
     /// <summary>
-    /// Only page of the Rest Explorer Store application
+    ///     Only page of the Rest Explorer Store application
     /// </summary>
     public sealed partial class MainPage : NativeMainPage
     {
-        RestActionViewModel _viewModel;
-        Button[] _buttons;
+        private readonly RestActionViewModel _viewModel;
+        private Button[] _buttons;
 
         /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         public MainPage()
         {
@@ -57,7 +55,11 @@ namespace Salesforce.Sample.RestExplorer.Store
             _viewModel = DataContext as RestActionViewModel;
             _viewModel.PropertyChanged += OnViewModelPropertyChanged;
             _viewModel.SyncContext = SynchronizationContext.Current;
-            _buttons = new Button[] { btnSwitch, btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve, btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout };
+            _buttons = new[]
+            {
+                btnSwitch, btnVersions, btnResources, btnDescribeGlobal, btnDescribe, btnMetadata, btnCreate, btnRetrieve,
+                btnUpdate, btnUpsert, btnDelete, btnQuery, btnSearch, btnManual, btnLogout
+            };
 
             foreach (Button button in _buttons)
             {
@@ -68,7 +70,8 @@ namespace Salesforce.Sample.RestExplorer.Store
         }
 
         /// <summary>
-        /// Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webview control
+        ///     Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webview
+        ///     control
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -83,31 +86,61 @@ namespace Salesforce.Sample.RestExplorer.Store
 
 
         /// <summary>
-        /// When one of the button is clicked, we go hide/show the adequate input controls in the right pane
+        ///     When one of the button is clicked, we go hide/show the adequate input controls in the right pane
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
         {
-            RestAction restAction = RestAction.VERSIONS;
-            
-            switch (((Button)sender).Name)
+            var restAction = RestAction.VERSIONS;
+
+            switch (((Button) sender).Name)
             {
-                case "btnLogout": OnLogout(); return;
-                case "btnSwitch": OnSwitch(); return;
-                case "btnManual": restAction = RestAction.MANUAL; break;
-                case "btnCreate": restAction = RestAction.CREATE; break;
-                case "btnDelete": restAction = RestAction.DELETE; break;
-                case "btnDescribe": restAction = RestAction.DESCRIBE; break;
-                case "btnDescribeGlobal": restAction = RestAction.DESCRIBE_GLOBAL; break;
-                case "btnMetadata": restAction = RestAction.METADATA; break;
-                case "btnQuery": restAction = RestAction.QUERY; break;
-                case "btnResources": restAction = RestAction.RESOURCES; break;
-                case "btnRetrieve": restAction = RestAction.RETRIEVE; break;
-                case "btnSearch": restAction = RestAction.SEARCH; break;
-                case "btnUpdate": restAction = RestAction.UPDATE; break;
-                case "btnUpsert": restAction = RestAction.UPSERT; break;
-                case "btnVersions": restAction = RestAction.VERSIONS; break;
+                case "btnLogout":
+                    OnLogout();
+                    return;
+                case "btnSwitch":
+                    OnSwitch();
+                    return;
+                case "btnManual":
+                    restAction = RestAction.MANUAL;
+                    break;
+                case "btnCreate":
+                    restAction = RestAction.CREATE;
+                    break;
+                case "btnDelete":
+                    restAction = RestAction.DELETE;
+                    break;
+                case "btnDescribe":
+                    restAction = RestAction.DESCRIBE;
+                    break;
+                case "btnDescribeGlobal":
+                    restAction = RestAction.DESCRIBE_GLOBAL;
+                    break;
+                case "btnMetadata":
+                    restAction = RestAction.METADATA;
+                    break;
+                case "btnQuery":
+                    restAction = RestAction.QUERY;
+                    break;
+                case "btnResources":
+                    restAction = RestAction.RESOURCES;
+                    break;
+                case "btnRetrieve":
+                    restAction = RestAction.RETRIEVE;
+                    break;
+                case "btnSearch":
+                    restAction = RestAction.SEARCH;
+                    break;
+                case "btnUpdate":
+                    restAction = RestAction.UPDATE;
+                    break;
+                case "btnUpsert":
+                    restAction = RestAction.UPSERT;
+                    break;
+                case "btnVersions":
+                    restAction = RestAction.VERSIONS;
+                    break;
             }
             SwitchToRestAction(restAction);
         }
@@ -118,7 +151,7 @@ namespace Salesforce.Sample.RestExplorer.Store
         }
 
         /// <summary>
-        /// Helper method called when user select a Rest action
+        ///     Helper method called when user select a Rest action
         /// </summary>
         /// <param name="restAction"></param>
         private void SwitchToRestAction(RestAction restAction)
@@ -128,16 +161,19 @@ namespace Salesforce.Sample.RestExplorer.Store
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
             HashSet<string> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
-            foreach (TextBox tb in new TextBox[] {tbApiVersion, tbObjectType, 
-                tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
-                tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})
+            foreach (TextBox tb in new[]
+            {
+                tbApiVersion, tbObjectType,
+                tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields,
+                tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod
+            })
             {
                 tb.Visibility = names.Contains(tb.Name) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
         /// <summary>
-        /// Helper method to show a RestResponse (formatted) in the result webview control
+        ///     Helper method to show a RestResponse (formatted) in the result webview control
         /// </summary>
         /// <param name="response"></param>
         private void ShowResponse(RestResponse response)

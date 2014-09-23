@@ -24,38 +24,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
     public class IndexSpec
     {
+        public readonly string ColumnName;
         public readonly String Path;
         public readonly SmartStoreType SmartType;
-        public readonly string ColumnName;
 
         public IndexSpec(String path, SmartStoreType type)
         {
-            this.Path = path;
-            this.SmartType = type;
-            this.ColumnName = null; // undefined
+            Path = path;
+            SmartType = type;
+            ColumnName = null; // undefined
         }
 
         public IndexSpec(String path, SmartStoreType type, String columnName)
         {
-            this.Path = path;
-            this.SmartType = type;
-            this.ColumnName = columnName;
+            Path = path;
+            SmartType = type;
+            ColumnName = columnName;
         }
 
         public static Dictionary<string, IndexSpec> MapForIndexSpecs(IndexSpec[] indexSpecs)
         {
-            Dictionary<string, IndexSpec> map = new Dictionary<string, IndexSpec>();
-            foreach (var indexSpec in indexSpecs)
+            var map = new Dictionary<string, IndexSpec>();
+            foreach (IndexSpec indexSpec in indexSpecs)
             {
                 map.Add(indexSpec.Path, indexSpec);
             }

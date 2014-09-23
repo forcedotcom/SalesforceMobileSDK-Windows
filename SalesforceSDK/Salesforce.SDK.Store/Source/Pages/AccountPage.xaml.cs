@@ -24,56 +24,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Settings;
+
 using System;
-using Windows.ApplicationModel.Activation;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using System.Linq;
-using System.Collections.ObjectModel;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
 
 namespace Salesforce.SDK.Source.Pages
 {
     /// <summary>
-    /// Phone based page for displaying accounts. 
+    ///     Phone based page for displaying accounts.
     /// </summary>
     public partial class AccountPage : Page
     {
-        public Account[] Accounts
-        {
-            get
-            {
-                return AccountManager.GetAccounts().Values.ToArray();
-            }
-        }
-
-        public Account CurrentAccount
-        {
-            get
-            {
-                Account account = AccountManager.GetAccount();
-                return account;
-            }
-        }
-
-        public ObservableCollection<ServerSetting> Servers
-        {
-            get
-            {
-                return SalesforceApplication.ServerConfiguration.ServerList;
-            }
-        }
-
         public AccountPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
             // applicationTitle.Text = loader.GetString("application_title");
             if (Accounts == null || Accounts.Length == 0)
@@ -94,10 +69,31 @@ namespace Salesforce.SDK.Source.Pages
             accountsList.SelectionChanged += accountsList_SelectionChanged;
             hostName.PlaceholderText = LocalizedStrings.GetString("name");
             hostAddress.PlaceholderText = LocalizedStrings.GetString("address");
-            addConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed);
+            addConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
+                ? Visibility.Visible
+                : Visibility.Collapsed);
         }
 
-        async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public Account[] Accounts
+        {
+            get { return AccountManager.GetAccounts().Values.ToArray(); }
+        }
+
+        public Account CurrentAccount
+        {
+            get
+            {
+                Account account = AccountManager.GetAccount();
+                return account;
+            }
+        }
+
+        public ObservableCollection<ServerSetting> Servers
+        {
+            get { return SalesforceApplication.ServerConfiguration.ServerList; }
+        }
+
+        private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await AccountManager.SwitchToAccount(accountsList.SelectedItem as Account);
             SalesforceApplication.ResetClientManager();
@@ -112,22 +108,22 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        void AddServerFlyout_Closed(object sender, object e)
+        private void AddServerFlyout_Closed(object sender, object e)
         {
             ServerFlyout.ShowAt(applicationTitle);
         }
 
-        void ServerFlyout_Closed(object sender, object e)
+        private void ServerFlyout_Closed(object sender, object e)
         {
-            loginBar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            loginBar.Visibility = Visibility.Visible;
         }
 
-        void ServerFlyout_Opening(object sender, object e)
+        private void ServerFlyout_Opening(object sender, object e)
         {
-            loginBar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            loginBar.Visibility = Visibility.Collapsed;
         }
 
-        void ShowServerFlyout(object sender, RoutedEventArgs e)
+        private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
             if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
             {
@@ -141,16 +137,17 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        private async void DoAuthFlow(LoginOptions loginOptions)
+        private static async void DoAuthFlow(LoginOptions loginOptions)
         {
             loginOptions.DisplayType = LoginOptions.DefaultStoreDisplayType;
-            Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
-            Uri callbackUri = new Uri(loginOptions.CallbackUrl);
+            var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
+            var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
-            WebAuthenticationResult webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+            var webAuthenticationResult =
+                await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
-                Uri responseUri = new Uri(webAuthenticationResult.ResponseData.ToString());
+                var responseUri = new Uri(webAuthenticationResult.ResponseData);
                 AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
                 PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
             }
@@ -166,9 +163,10 @@ namespace Salesforce.SDK.Source.Pages
         private void addAccount_Click(object sender, RoutedEventArgs e)
         {
             SalesforceApplication.ResetClientManager();
-            ServerSetting server = listboxServers.SelectedItem as ServerSetting;
+            var server = listboxServers.SelectedItem as ServerSetting;
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
-            SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
+            SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
+                config.Scopes);
             DoAuthFlow(SalesforceConfig.LoginOptions);
         }
 
@@ -176,11 +174,11 @@ namespace Salesforce.SDK.Source.Pages
         {
             string hname = hostName.Text;
             string haddress = hostAddress.Text;
-            ServerSetting server = new ServerSetting()
-                {
-                    ServerHost = haddress,
-                    ServerName = hname
-                };
+            var server = new ServerSetting
+            {
+                ServerHost = haddress,
+                ServerName = hname
+            };
             SalesforceApplication.ServerConfiguration.AddServer(server);
 
             ServerFlyout.ShowAt(applicationTitle);

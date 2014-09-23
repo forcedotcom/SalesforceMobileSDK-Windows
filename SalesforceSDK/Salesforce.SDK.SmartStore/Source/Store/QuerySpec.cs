@@ -24,11 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -48,27 +45,26 @@ namespace Salesforce.SDK.SmartStore.Store
             DESC
         };
 
-        private static readonly string SelectCount = "SELECT count(*) ";
-        private static readonly string Select = "SELECT ";
-        private static readonly string From = "FROM ";
-        private static readonly string Where = "WHERE ";
-        private static readonly string OrderBy = "ORDER BY ";
+        private const string SelectCount = "SELECT count(*) ";
+        private const string Select = "SELECT ";
+        private const string From = "FROM ";
+        private const string Where = "WHERE ";
+        private const string OrderBy = "ORDER BY ";
 
-        public readonly SmartQueryType QueryType;
-        public readonly int PageSize;
-        public readonly string SmartSql;
-        public readonly string CountSmartSql;
-
-        public readonly string SoupName;
-        public readonly string Path;
-        public readonly SqlOrder Order;
-
-        public readonly string MatchKey;
         public readonly string BeginKey;
+        public readonly string CountSmartSql;
         public readonly string EndKey;
         public readonly string LikeKey;
+        public readonly string MatchKey;
+        public readonly SqlOrder Order;
+        public readonly int PageSize;
+        public readonly string Path;
+        public readonly SmartQueryType QueryType;
+        public readonly string SmartSql;
+        public readonly string SoupName;
 
-        private QuerySpec(string soupName, string path, SmartQueryType queryType, string matchKey, string beginKey, string endKey, string likeKey, SqlOrder order, int pageSize)
+        private QuerySpec(string soupName, string path, SmartQueryType queryType, string matchKey, string beginKey,
+            string endKey, string likeKey, SqlOrder order, int pageSize)
         {
             SoupName = soupName;
             Path = path;
@@ -104,15 +100,18 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static QuerySpec BuildExactQuerySpec(string soupName, string path, string exactMatchKey, int pageSize)
         {
-            return new QuerySpec(soupName, path, SmartQueryType.Exact, exactMatchKey, null, null, null, SqlOrder.ASC, pageSize);
+            return new QuerySpec(soupName, path, SmartQueryType.Exact, exactMatchKey, null, null, null, SqlOrder.ASC,
+                pageSize);
         }
 
-        public static QuerySpec BuildRangeQuerySpec(string soupName, string path, string beginKey, string endKey, SqlOrder order, int pageSize)
+        public static QuerySpec BuildRangeQuerySpec(string soupName, string path, string beginKey, string endKey,
+            SqlOrder order, int pageSize)
         {
             return new QuerySpec(soupName, path, SmartQueryType.Range, null, beginKey, endKey, null, order, pageSize);
         }
 
-        public static QuerySpec BuildLikeQuerySpec(string soupName, string path, string likeKey, SqlOrder order, int pageSize)
+        public static QuerySpec BuildLikeQuerySpec(string soupName, string path, string likeKey, SqlOrder order,
+            int pageSize)
         {
             return new QuerySpec(soupName, path, SmartQueryType.Like, null, null, null, likeKey, order, pageSize);
         }
@@ -132,7 +131,7 @@ namespace Salesforce.SDK.SmartStore.Store
         }
 
         /// <summary>
-        /// Compute countSmartSql for exact/like/range queries
+        ///     Compute countSmartSql for exact/like/range queries
         /// </summary>
         /// <returns></returns>
         private String ComputeCountSql()
@@ -143,13 +142,13 @@ namespace Salesforce.SDK.SmartStore.Store
         }
 
         /// <summary>
-        /// Compute countSmartSql for smart queries
+        ///     Compute countSmartSql for smart queries
         /// </summary>
         /// <param name="smartSql"></param>
         /// <returns></returns>
         private string ComputeCountSql(string smartSql)
         {
-            int fromLocation = smartSql.ToLower().IndexOf(" from ");
+            int fromLocation = smartSql.ToLower().IndexOf(" from ", StringComparison.CurrentCultureIgnoreCase);
             return SelectCount + smartSql.Substring(fromLocation);
         }
 
@@ -180,13 +179,29 @@ namespace Salesforce.SDK.SmartStore.Store
             string pred = "";
             switch (QueryType)
             {
-                case SmartQueryType.Exact: pred = field + " = ? "; break;
-                case SmartQueryType.Like: pred = field + " LIKE ? "; break;
+                case SmartQueryType.Exact:
+                    pred = field + " = ? ";
+                    break;
+                case SmartQueryType.Like:
+                    pred = field + " LIKE ? ";
+                    break;
                 case SmartQueryType.Range:
-                    if (BeginKey == null && EndKey == null) { break; }
-                    if (EndKey == null) { pred = field + " >= ? "; break; }
-                    if (BeginKey == null) { pred = field + " <= ? "; break; }
-                    else { pred = field + " >= ?  AND " + field + " <= ? "; break; }
+                    if (BeginKey == null && EndKey == null)
+                    {
+                        break;
+                    }
+                    if (EndKey == null)
+                    {
+                        pred = field + " >= ? ";
+                        break;
+                    }
+                    if (BeginKey == null)
+                    {
+                        pred = field + " <= ? ";
+                        break;
+                    }
+                    pred = field + " >= ?  AND " + field + " <= ? ";
+                    break;
                 default:
                     throw new SmartStoreException("Fell through switch: " + QueryType);
             }
@@ -200,7 +215,7 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             if (Path == null) return "";
 
-            return OrderBy + ComputeFieldReference(Path) + " " + Order.ToString() + " ";
+            return OrderBy + ComputeFieldReference(Path) + " " + Order + " ";
         }
 
         /// <summary>
@@ -221,7 +236,7 @@ namespace Salesforce.SDK.SmartStore.Store
             return "{" + SoupName + ":" + field + "}";
         }
 
-        /// <summary> 
+        /// <summary>
         /// </summary>
         /// <returns>args going with the sql predicate returned by getKeyPredicate</returns>
         public String[] getArgs()
@@ -229,18 +244,17 @@ namespace Salesforce.SDK.SmartStore.Store
             switch (QueryType)
             {
                 case SmartQueryType.Exact:
-                    return new String[] { MatchKey };
+                    return new[] {MatchKey};
                 case SmartQueryType.Like:
-                    return new String[] { LikeKey };
+                    return new[] {LikeKey};
                 case SmartQueryType.Range:
                     if (BeginKey == null && EndKey == null)
                         return null;
-                    else if (EndKey == null)
-                        return new String[] { BeginKey };
-                    else if (BeginKey == null)
-                        return new String[] { EndKey };
-                    else
-                        return new String[] { BeginKey, EndKey };
+                    if (EndKey == null)
+                        return new[] {BeginKey};
+                    if (BeginKey == null)
+                        return new[] {EndKey};
+                    return new[] {BeginKey, EndKey};
                 case SmartQueryType.Smart:
                     return null;
                 default:

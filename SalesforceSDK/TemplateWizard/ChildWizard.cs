@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TemplateWizard;
-using System;
+
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EnvDTE;
+using Microsoft.VisualStudio.TemplateWizard;
 
 namespace TemplateWizard
 {
@@ -37,7 +35,8 @@ namespace TemplateWizard
     {
         internal static Dictionary<string, string> InheritedParams;
 
-        public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
+        public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary,
+            WizardRunKind runKind, object[] customParams)
         {
             foreach (var item in InheritedParams)
             {
@@ -48,19 +47,19 @@ namespace TemplateWizard
                 else
                 {
                     replacementsDictionary[item.Key] = item.Value;
-                } 
+                }
             }
         }
 
-        public void BeforeOpeningFile(EnvDTE.ProjectItem projectItem)
+        public void BeforeOpeningFile(ProjectItem projectItem)
         {
         }
 
-        public void ProjectFinishedGenerating(EnvDTE.Project project)
+        public void ProjectFinishedGenerating(Project project)
         {
         }
 
-        public void ProjectItemFinishedGenerating(EnvDTE.ProjectItem projectItem)
+        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
         }
 

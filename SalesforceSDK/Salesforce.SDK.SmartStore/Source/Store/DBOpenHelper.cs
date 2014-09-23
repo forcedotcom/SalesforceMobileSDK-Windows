@@ -24,12 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Auth;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -42,12 +40,12 @@ namespace Salesforce.SDK.SmartStore.Store
         private static DBOpenHelper defaultHelper;
         private static readonly object dbopenlock = new Object();
 
-        public string DatabaseFile { private set; get; }
-
         private DBOpenHelper(string dbName)
         {
             DatabaseFile = dbName;
         }
+
+        public string DatabaseFile { private set; get; }
 
         public static DBOpenHelper GetOpenHelper(Account account)
         {

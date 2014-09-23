@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Salesforce.SDK.Adaptation;
 
@@ -35,7 +36,7 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestGetAuthHelper()
         {
-            IAuthHelper authHelper = PlatformAdapter.Resolve<IAuthHelper>();
+            var authHelper = PlatformAdapter.Resolve<IAuthHelper>();
             Assert.IsNotNull(authHelper);
         }
     }

@@ -24,49 +24,45 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Pages;
+
 using System;
-using Windows.Security.Authentication.Web;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
+using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Pages;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Store specific implementation if IAuthHelper
+    ///     Store specific implementation if IAuthHelper
     /// </summary>
     public sealed class AuthHelper : IAuthHelper
     {
         /// <summary>
-        /// Bring up the WebAuthenticationBroker
+        ///     Bring up the WebAuthenticationBroker
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="clientLoginPage"></param>
         public async void StartLoginFlow()
         {
-            Frame frame = Window.Current.Content as Frame;
+            var frame = Window.Current.Content as Frame;
             if (frame != null)
             {
-                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    frame.Navigate(typeof(AccountPage));
-                });
-
+                await
+                    frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                        () => { frame.Navigate(typeof (AccountPage)); });
             }
         }
 
         /// <summary>
-        /// Persist oauth credentials via the AccountManager
+        ///     Persist oauth credentials via the AccountManager
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
         public async void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            Frame frame = Window.Current.Content as Frame;
+            var frame = Window.Current.Content as Frame;
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
             if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {

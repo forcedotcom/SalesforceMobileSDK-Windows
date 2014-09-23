@@ -24,35 +24,33 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Newtonsoft.Json;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Rest;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Threading;
-using Windows.Networking.Connectivity;
+using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Utilities;
+using Newtonsoft.Json;
 using Salesforce.SDK.App;
-using System.Threading.Tasks;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Rest;
+using Salesforce.SDK.Utilities;
 
 namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
-    /// Super class for Windows Phone hybrid application main page
-    /// Note: some methods have empty implementations so it can't be used directly
-    /// 
-    /// TODO: some of the code below should move to the portable library (Salesforce.SDK.Core)
-    /// TODO: set user agent
-    /// TODO: configure HTML5 cache support
-    /// TODO: capture app home url
-    /// TODO: authenticate should also refresh VF cookies by hitting the "ping" page in a hidden WebBrowser
-    /// TODO: change this to a UserControl?
-    /// FIXME: resuming app causes a reload of web view (so web state is reset)
+    ///     Super class for Windows Phone hybrid application main page
+    ///     Note: some methods have empty implementations so it can't be used directly
+    ///     TODO: some of the code below should move to the portable library (Salesforce.SDK.Core)
+    ///     TODO: set user agent
+    ///     TODO: configure HTML5 cache support
+    ///     TODO: capture app home url
+    ///     TODO: authenticate should also refresh VF cookies by hitting the "ping" page in a hidden WebBrowser
+    ///     TODO: change this to a UserControl?
+    ///     FIXME: resuming app causes a reload of web view (so web state is reset)
     /// </summary>
     public class HybridMainPage : Page, ISalesforcePage
     {
@@ -60,19 +58,13 @@ namespace Salesforce.SDK.Hybrid
         private const string StreamResolverKey = "www";
         private static HybridMainPage _instance;
 
-        private SynchronizationContext _syncContext;
-        private BootConfig _bootConfig;
+        private readonly BootConfig _bootConfig;
+        private readonly SynchronizationContext _syncContext;
         private RestClient _client;
         private bool _webAppLoaded;
 
         /// <summary>
-        /// Concrete hybrid main page page class should override this method and return the cordova view
-        /// </summary>
-        /// <returns></returns>
-        protected virtual WebView GetWebView() { return null; }
-
-        /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         public HybridMainPage()
         {
@@ -83,7 +75,16 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Get active instance of PhoneHybridMainPage
+        ///     Concrete hybrid main page page class should override this method and return the cordova view
+        /// </summary>
+        /// <returns></returns>
+        protected virtual WebView GetWebView()
+        {
+            return null;
+        }
+
+        /// <summary>
+        ///     Get active instance of PhoneHybridMainPage
         /// </summary>
         /// <returns></returns>
         public static HybridMainPage GetInstance()
@@ -100,7 +101,7 @@ namespace Salesforce.SDK.Hybrid
             {
                 OnResumeNotLoggedIn();
             }
-            // Logged in
+                // Logged in
             else
             {
                 // Web app never loaded
@@ -109,15 +110,11 @@ namespace Salesforce.SDK.Hybrid
                     OnResumeLoggedInNotLoaded();
                 }
                 // Web app already loaded
-                else
-                {
-                    // Nothing to do
-                }
             }
         }
 
         /// <summary>
-        /// Called when bringing up page and user is not authenticated
+        ///     Called when bringing up page and user is not authenticated
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
@@ -131,7 +128,7 @@ namespace Salesforce.SDK.Hybrid
                     _client = SalesforceApplication.GlobalClientManager.GetRestClient();
                     // After login, we will end up in OnResumeLoggedInNotLoaded
                 }
-                // Offline
+                    // Offline
                 else
                 {
                     Log("Error:Can't start application that requires authentication while offline");
@@ -139,7 +136,7 @@ namespace Salesforce.SDK.Hybrid
                 }
             }
 
-            // Does not need to be authenticated
+                // Does not need to be authenticated
             else
             {
                 // Local
@@ -148,7 +145,7 @@ namespace Salesforce.SDK.Hybrid
                     Log("Success:Loading local application - no authentication required");
                     LoadLocalStartPage();
                 }
-                // Remote
+                    // Remote
                 else
                 {
                     Log("Success:Loading remote application - no authentication required");
@@ -158,7 +155,7 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Called when bringing up page and user is authenticated but web view has not been loaded yet
+        ///     Called when bringing up page and user is authenticated but web view has not been loaded yet
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
@@ -168,7 +165,7 @@ namespace Salesforce.SDK.Hybrid
                 Log("Success:Loading local application");
                 LoadLocalStartPage();
             }
-            // Remote
+                // Remote
             else
             {
                 // Online
@@ -177,7 +174,7 @@ namespace Salesforce.SDK.Hybrid
                     Log("Success:Loading remote application");
                     LoadRemoteStartPage();
                 }
-                // Offline
+                    // Offline
                 else
                 {
                     // Has cached version
@@ -186,35 +183,35 @@ namespace Salesforce.SDK.Hybrid
                         Log("Success:Loading cached version of remote application because offline");
                     }
                     // No cached version
-                    else
-                    {
-                        Log("Error:Can't load remote application offline without cached version");
-                        LoadErrorPage();
-                    }
+                    Log("Error:Can't load remote application offline without cached version");
+                    LoadErrorPage();
                 }
             }
         }
 
         /// <summary>
-        /// Show error page in cordova view
+        ///     Show error page in cordova view
         /// </summary>
         protected void LoadErrorPage()
         {
-            Uri uri = new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative);
+            var uri = new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative);
             LoadUri(uri);
         }
 
         /// <summary>
-        /// Show remote page in cordova view
+        ///     Show remote page in cordova view
         /// </summary>
         protected void LoadRemoteStartPage()
         {
-            Uri uri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,_client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
+            var uri =
+                new Uri(
+                    OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType, _client.AccessToken,
+                        _bootConfig.StartPage), UriKind.Absolute);
             LoadUri(uri);
         }
 
         /// <summary>
-        /// Show local page in cordova view
+        ///     Show local page in cordova view
         /// </summary>
         protected void LoadLocalStartPage()
         {
@@ -254,17 +251,19 @@ namespace Salesforce.SDK.Hybrid
             {
                 sender.Stop();
                 // Cheap REST call to refresh session
-                _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), (response) =>
-                    {
-                        Uri frontDoorStartURL = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,_client.AccessToken, startURL));
-                        _syncContext.Post((state) => { sender.Navigate(state as Uri); }, frontDoorStartURL);
-                    }
-                );
+                _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
+                {
+                    var frontDoorStartURL =
+                        new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,
+                            _client.AccessToken, startURL));
+                    _syncContext.Post(state => { sender.Navigate(state as Uri); }, frontDoorStartURL);
+                }
+                    );
             }
         }
 
         /// <summary>
-        ///  Login redirect are of the form https://host/?ec=30x&startURL=xyz
+        ///     Login redirect are of the form https://host/?ec=30x&startURL=xyz
         /// </summary>
         /// <param name="uri"></param>
         /// <returns>null if this is not a login redirect and return the the value for startURL if this is a login redirect</returns>
@@ -286,7 +285,7 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Launch login flow if not authenticated or refresh auth token if already authenticated
+        ///     Launch login flow if not authenticated or refresh auth token if already authenticated
         /// </summary>
         /// <param name="plugin"></param>
         public void Authenticate(SalesforceOAuthPlugin plugin)
@@ -305,7 +304,7 @@ namespace Salesforce.SDK.Hybrid
         private void RefreshSession(SalesforceOAuthPlugin plugin)
         {
             // Cheap REST call to refresh session
-            _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), (response) =>
+            _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
             {
                 if (plugin != null)
                 {
@@ -322,30 +321,31 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Return credentials as object with the fields expected by the javascript side
+        ///     Return credentials as object with the fields expected by the javascript side
         /// </summary>
         /// <returns></returns>
         public JSONCredentials GetJSONCredentials()
         {
-            return _client == null ? null : new JSONCredentials(AccountManager.GetAccount(), _client); // TODO have account be provided by RestClient?
+            return _client == null ? null : new JSONCredentials(AccountManager.GetAccount(), _client);
+            // TODO have account be provided by RestClient?
         }
 
         /// <summary>
-        /// Logout current user
+        ///     Logout current user
         /// </summary>
         public async void LogoutCurrentUser()
         {
             _webAppLoaded = false;
             await SalesforceApplication.GlobalClientManager.Logout();
-            _syncContext.Post((state) => { Authenticate(null); }, null); // XXX Authenticate might call Navigate so it must be done on the UI thread
+            _syncContext.Post(state => { Authenticate(null); }, null);
+            // XXX Authenticate might call Navigate so it must be done on the UI thread
         }
 
         /// <summary>
-        ///  Gets the app's homepage as an absolute URL.  Used for attempting to load any cached
-        ///  content that the developer may have built into the app (via HTML5 caching).
-        ///  
-        /// This method will either return the URL as a string, or an empty string if the URL has not been
-        /// initialized.
+        ///     Gets the app's homepage as an absolute URL.  Used for attempting to load any cached
+        ///     content that the developer may have built into the app (via HTML5 caching).
+        ///     This method will either return the URL as a string, or an empty string if the URL has not been
+        ///     initialized.
         /// </summary>
         /// <returns></returns>
         public string GetAppHomeUrl()
@@ -357,14 +357,24 @@ namespace Salesforce.SDK.Hybrid
         {
             Debug.WriteLine("PhoneHybridMainPage:" + p);
         }
-
     }
 
     /// <summary>
-    /// Credentials for javascript consumption
+    ///     Credentials for javascript consumption
     /// </summary>
     public class JSONCredentials
     {
+        public JSONCredentials(Account account, RestClient client)
+        {
+            AccessToken = client.AccessToken;
+            LoginUrl = account.LoginUrl;
+            InstanceUrl = account.InstanceUrl;
+            ClientId = account.ClientId;
+            RefreshToken = account.RefreshToken;
+            UserAgent = "SalesforceMobileSDK/2.0 windows phone"; // FIXME
+            // TODO wire through the other fields
+        }
+
         [JsonProperty(PropertyName = "userAgent")]
         public string UserAgent { get; set; }
 
@@ -391,17 +401,5 @@ namespace Salesforce.SDK.Hybrid
 
         [JsonProperty(PropertyName = "accessToken")]
         public string AccessToken { get; set; }
-
-        public JSONCredentials(Account account, RestClient client)
-        {
-            AccessToken = client.AccessToken;
-            LoginUrl = account.LoginUrl;
-            InstanceUrl = account.InstanceUrl;
-            ClientId = account.ClientId;
-            RefreshToken = account.RefreshToken;
-            UserAgent = "SalesforceMobileSDK/2.0 windows phone"; // FIXME
-            // TODO wire through the other fields
-        }
     }
-
 }

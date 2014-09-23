@@ -24,9 +24,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+
 using System;
 using System.Net;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 
 namespace Salesforce.SDK.Net
 {
@@ -38,7 +39,7 @@ namespace Salesforce.SDK.Net
             try
             {
                 func.Invoke();
-                Assert.Fail(string.Format("An exception of type {0} was expected", typeof(T)));
+                Assert.Fail("An exception of type {0} was expected", typeof (T));
             }
             catch (T)
             {
@@ -52,10 +53,9 @@ namespace Salesforce.SDK.Net
             HttpCall call = HttpCall.CreateGet("http://www.google.com");
             Assert.IsFalse(call.Executed);
             Assert.IsFalse(call.HasResponse);
-            AssertThrows<InvalidOperationException>(() => { var x = call.Success; });
-            AssertThrows<InvalidOperationException>(() => { var x = call.Error; });
-            AssertThrows<InvalidOperationException>(() => { var x = call.ResponseBody; });
-            AssertThrows<InvalidOperationException>(() => { var x = call.StatusCode; });
+            AssertThrows<InvalidOperationException>(() => { bool x = call.Success; });
+            AssertThrows<InvalidOperationException>(() => { Exception x = call.Error; });
+            AssertThrows<InvalidOperationException>(() => { string x = call.ResponseBody; });
         }
 
         [TestMethod]

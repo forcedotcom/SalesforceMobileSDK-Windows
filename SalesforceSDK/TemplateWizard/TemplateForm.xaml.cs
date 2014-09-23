@@ -24,32 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.VisualStudio.PlatformUI;
-using System.Xaml;
 using System.Collections.ObjectModel;
+using System.Windows;
+using Microsoft.VisualStudio.PlatformUI;
 
 namespace TemplateWizard
 {
     /// <summary>
-    /// Interaction logic for TemplateForm.xaml
+    ///     Interaction logic for TemplateForm.xaml
     /// </summary>
     public partial class TemplateForm : DialogWindow
     {
-        public ObservableCollection<CheckableItem<String>> Scopes { get; set; }
         public static CheckableItem<String>[] ScopeList =
         {
             new CheckableItem<String>("api", true),
@@ -65,16 +52,18 @@ namespace TemplateWizard
             InitializeComponent();
         }
 
+        public ObservableCollection<CheckableItem<String>> Scopes { get; set; }
+
         private void finishButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
-            this.Close();
+            DialogResult = true;
+            Close();
         }
 
         private void cancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
     }
 }

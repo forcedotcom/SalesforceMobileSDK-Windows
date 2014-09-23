@@ -24,34 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TemplateWizard
 {
     public class CheckableItem<T> : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private bool PropertyChecked;
         private T ItemHolder;
+        private bool PropertyChecked;
 
-        public CheckableItem(T item, bool isChecked =  false)
+        public CheckableItem(T item, bool isChecked = false)
         {
-            this.ItemHolder = item;
-            this.PropertyChecked = isChecked;
+            ItemHolder = item;
+            PropertyChecked = isChecked;
         }
 
         public T Item
         {
-            get
-            {
-                return ItemHolder;
-            }
+            get { return ItemHolder; }
             set
             {
                 ItemHolder = value;
@@ -64,10 +55,7 @@ namespace TemplateWizard
 
         public bool IsChecked
         {
-            get
-            {
-                return PropertyChecked;
-            }
+            get { return PropertyChecked; }
             set
             {
                 PropertyChecked = value;
@@ -77,5 +65,7 @@ namespace TemplateWizard
                 }
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

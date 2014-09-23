@@ -24,52 +24,39 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Rest;
-using Salesforce.SDK.Source.Settings;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Rest;
+using Salesforce.SDK.Source.Settings;
+
 #if WINDOWS_PHONE_APP
 using Windows.Phone.UI.Input;
 #endif
 
-
 namespace Salesforce.SDK.App
 {
     /// <summary>
-    /// Abstract application class used to provide access to functions in the SalesforceSDK.  use this for your main App.xaml to allow support for the
-    /// SDK, an entry point for handling oauth and account switching, and providing a client manager that can be used across the app in a central location.
+    ///     Abstract application class used to provide access to functions in the SalesforceSDK.  use this for your main
+    ///     App.xaml to allow support for the
+    ///     SDK, an entry point for handling oauth and account switching, and providing a client manager that can be used
+    ///     across the app in a central location.
     /// </summary>
     public abstract class SalesforceApplication : Application
     {
-
-        /// <summary>
-        /// The global client manager is provided for ease of accessing clients such as the RestClient.
-        /// </summary>
-        public static ClientManager GlobalClientManager { get; private set; }
-        /// <summary>
-        /// Returns the Type of the root page; an assistive property to allow an app to return to root after things such as oauth login.
-        /// </summary>
-        public static Type RootApplicationPage { get; private set; }
-        /// <summary>
-        /// The current configuration for the application.
-        /// </summary>
-        public static SalesforceConfig ServerConfiguration { get; private set; }
-
         private static DispatcherTimer TokenRefresher = new DispatcherTimer();
 
-        public SalesforceApplication()
-            : base()
+        protected SalesforceApplication()
         {
             Suspending += OnSuspending;
             CreateClientManager(false);
@@ -81,25 +68,40 @@ namespace Salesforce.SDK.App
         }
 
         /// <summary>
-        /// Use this to initialize your custom SalesforceConfig source, and to set up the Encryptor to use your own app specific, unique salt, password, and key generator.
-        /// An example of code that may go into this method would be as follows:
-        /// 
+        ///     The global client manager is provided for ease of accessing clients such as the RestClient.
+        /// </summary>
+        public static ClientManager GlobalClientManager { get; private set; }
+
+        /// <summary>
+        ///     Returns the Type of the root page; an assistive property to allow an app to return to root after things such as
+        ///     oauth login.
+        /// </summary>
+        public static Type RootApplicationPage { get; private set; }
+
+        /// <summary>
+        ///     The current configuration for the application.
+        /// </summary>
+        public static SalesforceConfig ServerConfiguration { get; private set; }
+
+        /// <summary>
+        ///     Use this to initialize your custom SalesforceConfig source, and to set up the Encryptor to use your own app
+        ///     specific, unique salt, password, and key generator.
+        ///     An example of code that may go into this method would be as follows:
         ///     protected override void InitializeConfig()
         ///     {
-        ///         new Config();
-        ///         EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-        ///         {
-        ///             Password = "mypassword",
-        ///             Salt = "mysalt"
-        ///         };
-        ///         Encryptor.init(settings);
+        ///     new Config();
+        ///     EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
+        ///     {
+        ///     Password = "mypassword",
+        ///     Salt = "mysalt"
+        ///     };
+        ///     Encryptor.init(settings);
         ///     }
         /// </summary>
-        ///
         protected abstract SalesforceConfig InitializeConfig();
 
         /// <summary>
-        /// Implement to return the type of the root page to switch to once oauth completes.
+        ///     Implement to return the type of the root page to switch to once oauth completes.
         /// </summary>
         /// <returns>Type of the root page</returns>
         protected abstract Type SetRootApplicationPage();
@@ -121,7 +123,7 @@ namespace Salesforce.SDK.App
             });
         }
 
-        void coreWindow_PointerMoved(CoreWindow sender, PointerEventArgs args)
+        private void coreWindow_PointerMoved(CoreWindow sender, PointerEventArgs args)
         {
             PincodeManager.StartIdleTimer();
         }
@@ -140,7 +142,7 @@ namespace Salesforce.SDK.App
             }
         }
 
-        private async void OnNavigationFailed(object sender, Windows.UI.Xaml.Navigation.NavigationFailedEventArgs args)
+        private async void OnNavigationFailed(object sender, NavigationFailedEventArgs args)
         {
             if (GlobalClientManager != null)
             {
@@ -175,12 +177,7 @@ namespace Salesforce.SDK.App
             }
         }
 
-        private void IdleCheck(object sender, object e)
-        {
-            PincodeManager.TriggerBackgroundedPinTimer();
-        }
-
-        protected void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        protected void OnSuspending(object sender, SuspendingEventArgs e)
         {
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnSuspending(e);
         }
@@ -188,20 +185,22 @@ namespace Salesforce.SDK.App
         protected override void OnActivated(IActivatedEventArgs args)
         {
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnActivated(args);
-            Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.NavigationFailed += OnNavigationFailed;
+            var rootFrame = Window.Current.Content as Frame;
+            if (rootFrame != null)
+            {
+                rootFrame.NavigationFailed += OnNavigationFailed;
+            }
         }
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 #if DEBUG
-            if (System.Diagnostics.Debugger.IsAttached)
+            if (Debugger.IsAttached)
             {
-                this.DebugSettings.EnableFrameRateCounter = true;
+                DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
-
     }
 }

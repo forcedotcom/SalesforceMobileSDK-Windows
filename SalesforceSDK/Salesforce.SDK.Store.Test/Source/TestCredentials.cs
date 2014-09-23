@@ -32,7 +32,11 @@ namespace Salesforce.SDK
         public const string API_VERSION = "v26.0";
         public const string LOGIN_URL = "https://test.salesforce.com";
         public const string INSTANCE_SERVER = "https://tapp0.salesforce.com";
-        public const string CLIENT_ID = "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
-        public const string REFRESH_TOKEN = "5Aep861_OKMvio5gy9sGt9Z9mdt62xXK.9ugif6nZJYknXeANTICBf4ityN9j6YDgHjFvbzu6FTUQ==";
+
+        public const string CLIENT_ID =
+            "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+
+        public const string REFRESH_TOKEN =
+            "5Aep861_OKMvio5gy9sGt9Z9mdt62xXK.9ugif6nZJYknXeANTICBf4ityN9j6YDgHjFvbzu6FTUQ==";
     }
 }

@@ -24,31 +24,29 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.Sample.RestExplorer.ViewModels;
-using Salesforce.SDK.Rest;
-using System;
+
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
-using System.Windows;
+using Windows.Phone.UI.Input;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Utilities;
 using Salesforce.Sample.RestExplorer.Shared;
-using Windows.UI.Xaml;
-using Windows.Phone.UI.Input;
+using Salesforce.Sample.RestExplorer.ViewModels;
+using Salesforce.SDK.Rest;
 
 namespace Salesforce.Sample.RestExplorer.Phone
 {
     /// <summary>
-    /// Page used to make REST calls and display their results
+    ///     Page used to make REST calls and display their results
     /// </summary>
     public partial class RestActionPage : Page
     {
-        private RestActionViewModel _viewModel;
+        private readonly RestActionViewModel _viewModel;
 
         /// <summary>
-        /// Constructor
+        ///     Constructor
         /// </summary>
         public RestActionPage()
         {
@@ -60,19 +58,19 @@ namespace Salesforce.Sample.RestExplorer.Phone
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
 
-        void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
             if (rootFrame != null && rootFrame.CanGoBack)
             {
                 rootFrame.GoBack();
                 e.Handled = true;
             }
-
         }
 
         /// <summary>
-        /// Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webbrowser control
+        ///     Watching the RETURNED_REST_RESPONSE of the ViewModel and showing the response (formatted) in the result webbrowser
+        ///     control
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -86,8 +84,8 @@ namespace Salesforce.Sample.RestExplorer.Phone
         }
 
         /// <summary>
-        /// When page is navigated to, we first parse the rest action name out of the URI
-        /// Then we hide/show the input controls that should be visible for that action
+        ///     When page is navigated to, we first parse the rest action name out of the URI
+        ///     Then we hide/show the input controls that should be visible for that action
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -97,16 +95,19 @@ namespace Salesforce.Sample.RestExplorer.Phone
             _viewModel[RestActionViewModel.SELECTED_REST_ACTION] = restActionStr;
 
             HashSet<string> names = RestActionViewHelper.GetNamesOfControlsToShow(restActionStr);
-            foreach (TextBox tb in new TextBox[] {tbApiVersion, tbObjectType, 
-                tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields, 
-                tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod})
+            foreach (TextBox tb in new[]
+            {
+                tbApiVersion, tbObjectType,
+                tbObjectId, tbExternalIdField, tbExternalId, tbFieldList, tbFields,
+                tbSoql, tbSosl, tbRequestPath, tbRequestBody, tbRequestMethod
+            })
             {
                 tb.Visibility = names.Contains(tb.Name) ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
         /// <summary>
-        /// Helper method to show a RestResponse (formatted) in the result webbrowser control
+        ///     Helper method to show a RestResponse (formatted) in the result webbrowser control
         /// </summary>
         /// <param name="response"></param>
         private void ShowResponse(RestResponse response)

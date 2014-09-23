@@ -25,17 +25,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
+using Windows.Web.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Net;
-using System;
-using Windows.Web.Http;
 
 namespace Salesforce.SDK.Rest
 {
     public class RestResponse
     {
-        private HttpCall _call;
+        private readonly HttpCall _call;
+        private string _prettyBody;
         private JArray _responseArray;
         private JObject _responseObject;
 
@@ -46,26 +47,17 @@ namespace Salesforce.SDK.Rest
 
         public bool Success
         {
-            get
-            {
-                return _call.Success;
-            }
+            get { return _call.Success; }
         }
 
         public Exception Error
         {
-            get
-            {
-                return _call.Error;
-            }
+            get { return _call.Error; }
         }
 
         public string AsString
         {
-            get
-            {
-                return _call.ResponseBody;
-            }
+            get { return _call.ResponseBody; }
         }
 
         public JArray AsJArray
@@ -94,13 +86,9 @@ namespace Salesforce.SDK.Rest
 
         public HttpStatusCode StatusCode
         {
-            get
-            {
-                return _call.StatusCode;
-            }
+            get { return _call.StatusCode; }
         }
 
-        private string _prettyBody;
         public string PrettyBody
         {
             get

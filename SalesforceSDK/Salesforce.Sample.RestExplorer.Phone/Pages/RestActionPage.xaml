@@ -15,29 +15,30 @@
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Row="0" Grid.Column="0">
-                <TextBox Visibility="Collapsed" Name="tbApiVersion" Text="{Binding [ApiVersion]}"/>
-                <TextBox Visibility="Collapsed" Name="tbObjectType" Text="{Binding [ObjectType]}"/>
-                <TextBox Visibility="Collapsed" Name="tbObjectId" Text="{Binding [ObjectId]}"/>
-                <TextBox Visibility="Collapsed" Name="tbExternalIdField" Text="{Binding [ExternalIdField]}"/>
-                <TextBox Visibility="Collapsed" Name="tbExternalId" Text="{Binding [ExternalId]}"/>
-                <TextBox Visibility="Collapsed" Name="tbFieldList" Text="{Binding [FieldList]}"/>
-                <TextBox Visibility="Collapsed" Name="tbFields" Text="{Binding [Fields]}"/>
-                <TextBox Visibility="Collapsed" Name="tbSoql" Text="{Binding [Soql]}"/>
-                <TextBox Visibility="Collapsed" Name="tbSosl" Text="{Binding [Sosl]}"/>
-                <TextBox Visibility="Collapsed" Name="tbRequestPath" Text="{Binding [RequestPath]}"/>
-                <TextBox Visibility="Collapsed" Name="tbRequestBody" Text="{Binding [RequestBody]}"/>
-                <TextBox Visibility="Collapsed" Name="tbRequestMethod" Text="{Binding [RequestMethod]}" Margin="-2,0,2,0"/>
+                <TextBox Visibility="Collapsed" Name="tbApiVersion" Text="{Binding [ApiVersion]}" />
+                <TextBox Visibility="Collapsed" Name="tbObjectType" Text="{Binding [ObjectType]}" />
+                <TextBox Visibility="Collapsed" Name="tbObjectId" Text="{Binding [ObjectId]}" />
+                <TextBox Visibility="Collapsed" Name="tbExternalIdField" Text="{Binding [ExternalIdField]}" />
+                <TextBox Visibility="Collapsed" Name="tbExternalId" Text="{Binding [ExternalId]}" />
+                <TextBox Visibility="Collapsed" Name="tbFieldList" Text="{Binding [FieldList]}" />
+                <TextBox Visibility="Collapsed" Name="tbFields" Text="{Binding [Fields]}" />
+                <TextBox Visibility="Collapsed" Name="tbSoql" Text="{Binding [Soql]}" />
+                <TextBox Visibility="Collapsed" Name="tbSosl" Text="{Binding [Sosl]}" />
+                <TextBox Visibility="Collapsed" Name="tbRequestPath" Text="{Binding [RequestPath]}" />
+                <TextBox Visibility="Collapsed" Name="tbRequestBody" Text="{Binding [RequestBody]}" />
+                <TextBox Visibility="Collapsed" Name="tbRequestMethod" Text="{Binding [RequestMethod]}"
+                         Margin="-2,0,2,0" />
             </StackPanel>
             <Button Name="btnAction" Grid.Row="1" Grid.Column="0" Command="{Binding SendRequest}">Send Request</Button>
-            <WebView Name="wbResult" Grid.Row="2" Grid.Column="0"/>
+            <WebView Name="wbResult" Grid.Row="2" Grid.Column="0" />
         </Grid>
     </Grid>
 

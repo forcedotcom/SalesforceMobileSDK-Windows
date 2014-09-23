@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -25,29 +24,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Source.Security;
-using Salesforce.SDK.Strings;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
-using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.UI.Popups;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Newtonsoft.Json;
+using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Auth
 {
     public class PincodeManager
     {
-        private static DispatcherTimer IdleTimer;
-        private static readonly string PinBackgroundedTimeKey = "pintimeKey";
-        private static readonly string PincodeRequired = "pincodeRequired";
+        private const string PinBackgroundedTimeKey = "pintimeKey";
+        private const string PincodeRequired = "pincodeRequired";
+        private static readonly DispatcherTimer IdleTimer;
 
         static PincodeManager()
         {
@@ -65,7 +59,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Validate the given pincode against the stored pincode.
+        ///     Validate the given pincode against the stored pincode.
         /// </summary>
         /// <param name="pincode">Pincode to validate</param>
         /// <returns>True if pincode matches</returns>
@@ -75,7 +69,7 @@ namespace Salesforce.SDK.Auth
             try
             {
                 string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
-                MobilePolicy policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
+                var policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
                 return compare.Equals(Encryptor.Decrypt(policy.PincodeHash, pincode));
             }
             catch (Exception)
@@ -87,7 +81,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Returns the global mobile policy stored.
+        ///     Returns the global mobile policy stored.
         /// </summary>
         /// <returns></returns>
         private static MobilePolicy GetMobilePolicy()
@@ -101,14 +95,14 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Stores the pincode and associated mobile policy information including pin length and screen lock timeout.
+        ///     Stores the pincode and associated mobile policy information including pin length and screen lock timeout.
         /// </summary>
         /// <param name="policy"></param>
         /// <param name="pincode"></param>
         public static void StorePincode(MobilePolicy policy, string pincode)
         {
             string hashed = GenerateEncryptedPincode(pincode);
-            MobilePolicy mobilePolicy = new MobilePolicy()
+            var mobilePolicy = new MobilePolicy
             {
                 ScreenLockTimeout = policy.ScreenLockTimeout,
                 PinLength = policy.PinLength,
@@ -118,7 +112,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// This will wipe out the pincode and associated data.
+        ///     This will wipe out the pincode and associated data.
         /// </summary>
         public static void WipePincode()
         {
@@ -129,7 +123,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// This will return true if there is a master pincode set.
+        ///     This will return true if there is a master pincode set.
         /// </summary>
         /// <returns></returns>
         public static bool IsPincodeSet()
@@ -138,7 +132,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// This will return true if a pincode is required before the app can be accessed.
+        ///     This will return true if a pincode is required before the app can be accessed.
         /// </summary>
         /// <returns></returns>
         public static bool IsPincodeRequired()
@@ -150,25 +144,24 @@ namespace Salesforce.SDK.Auth
             {
                 return true;
             }
-            else if (IsPincodeSet())
+            if (IsPincodeSet())
             {
                 MobilePolicy policy = GetMobilePolicy();
                 if (policy != null)
                 {
-                    var time = auth.RetrieveData(PinBackgroundedTimeKey);
+                    string time = auth.RetrieveData(PinBackgroundedTimeKey);
                     if (time != null)
                     {
-                        DateTime previous = DateTime.Parse(time as string);
+                        DateTime previous = DateTime.Parse(time);
                         DateTime current = DateTime.Now.ToUniversalTime();
                         TimeSpan diff = current.Subtract(previous);
                         if (diff.Minutes >= policy.ScreenLockTimeout)
                         {
                             // flag that requires pincode to be entered in the future. Until the flag is deleted a pincode will be required.
-                            auth.PersistData(true, PincodeRequired, time as string);
+                            auth.PersistData(true, PincodeRequired, time);
                             return true;
                         }
                     }
-
                 }
             }
             // We aren't requiring pincode, so remove the flag.
@@ -177,7 +170,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Clear the pincode flag.
+        ///     Clear the pincode flag.
         /// </summary>
         internal static void Unlock()
         {
@@ -191,7 +184,8 @@ namespace Salesforce.SDK.Auth
             Account account = AccountManager.GetAccount();
             if (account != null && policy != null && policy.ScreenLockTimeout > 0)
             {
-                AuthStorageHelper.GetAuthStorageHelper().PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
+                AuthStorageHelper.GetAuthStorageHelper()
+                    .PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
             }
         }
 
@@ -214,15 +208,15 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// This method will launch the pincode screen if the policy requires it.
-        /// If determined that no pincode screen is required, the flag requiring the pincode will be cleared.
+        ///     This method will launch the pincode screen if the policy requires it.
+        ///     If determined that no pincode screen is required, the flag requiring the pincode will be cleared.
         /// </summary>
         public static async void LaunchPincodeScreen()
         {
-            Frame frame = Window.Current.Content as Frame;
-            if (frame != null && !(typeof(PincodeDialog).Equals(frame.SourcePageType)))
+            var frame = Window.Current.Content as Frame;
+            if (frame != null && !(typeof (PincodeDialog).Equals(frame.SourcePageType)))
             {
-                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     Account account = AccountManager.GetAccount();
                     if (account != null)
@@ -259,7 +253,7 @@ namespace Salesforce.SDK.Auth
                         }
                         if (options != null)
                         {
-                            frame.Navigate(typeof(PincodeDialog), options);
+                            frame.Navigate(typeof (PincodeDialog), options);
                         }
                     }
                 });
@@ -268,7 +262,7 @@ namespace Salesforce.SDK.Auth
 
         public static void StartIdleTimer()
         {
-            if (PincodeManager.IsPincodeSet())
+            if (IsPincodeSet())
             {
                 MobilePolicy policy = GetMobilePolicy();
                 IdleTimer.Interval = TimeSpan.FromMinutes(policy.ScreenLockTimeout);
@@ -282,7 +276,7 @@ namespace Salesforce.SDK.Auth
         }
 
 
-        static void IdleTimer_Tick(object sender, object e)
+        private static void IdleTimer_Tick(object sender, object e)
         {
             TriggerBackgroundedPinTimer();
         }

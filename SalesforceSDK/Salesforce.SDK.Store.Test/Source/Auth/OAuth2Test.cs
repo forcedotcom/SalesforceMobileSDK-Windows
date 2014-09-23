@@ -24,12 +24,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Newtonsoft.Json;
-using Salesforce.SDK.Net;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Web.Http;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Newtonsoft.Json;
+using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Auth
 {
@@ -42,10 +43,11 @@ namespace Salesforce.SDK.Auth
             string loginUrl = "https://login.salesforce.com";
             string clientId = "TEST_CLIENT_ID";
             string callbackUrl = "test://sfdc";
-            string[] scopes = { "web", "api" };
-            LoginOptions loginOptions = new LoginOptions(loginUrl, clientId, callbackUrl, scopes);
+            string[] scopes = {"web", "api"};
+            var loginOptions = new LoginOptions(loginUrl, clientId, callbackUrl, scopes);
 
-            string expectedUrl = "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
+            string expectedUrl =
+                "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
             string actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong authorization url");
         }
@@ -57,7 +59,8 @@ namespace Salesforce.SDK.Auth
             string accessToken = "FAKE_ACCESS_TOKEN";
             string url = "https://target.url";
 
-            string expectedUrl = "https://fake.instance/secur/frontdoor.jsp?display=touch&sid=FAKE_ACCESS_TOKEN&retURL=https://target.url";
+            string expectedUrl =
+                "https://fake.instance/secur/frontdoor.jsp?display=touch&sid=FAKE_ACCESS_TOKEN&retURL=https://target.url";
             string actualUrl = OAuth2.ComputeFrontDoorUrl(instanceUrl, accessToken, url);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong front door url");
         }
@@ -70,8 +73,9 @@ namespace Salesforce.SDK.Auth
             Assert.AreEqual(HttpStatusCode.Unauthorized, DoDescribe(null));
 
             // Get auth token (through refresh)
-            LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
-            AuthResponse refreshResponse = OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
+            var loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
+            AuthResponse refreshResponse =
+                OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
             Assert.AreEqual(HttpStatusCode.Ok, DoDescribe(refreshResponse.AccessToken));
@@ -81,11 +85,13 @@ namespace Salesforce.SDK.Auth
         public void testCallIdentityService()
         {
             // Get auth token and identity url (through refresh)
-            LoginOptions loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
-            AuthResponse refreshResponse = OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
+            var loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
+            AuthResponse refreshResponse =
+                OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Call the identity service
-            IdentityResponse identityResponse = OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;
+            IdentityResponse identityResponse =
+                OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;
 
             // Check username
             Assert.AreEqual("sdktest@cs0.com", identityResponse.UserName);
@@ -98,8 +104,10 @@ namespace Salesforce.SDK.Auth
             string userId = "00550000001fg5OAAQ";
             string organizationId = "00D50000000IZ3ZEAW";
             string userName = "user@example.com";
-            string partialResponseWithoutMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\"}";
-            IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithoutMobilePolicy);
+            string partialResponseWithoutMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId +
+                                                        "\",\"organization_id\":\"" + organizationId +
+                                                        "\",\"username\":\"" + userName + "\"}";
+            var idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithoutMobilePolicy);
 
             Assert.AreEqual(idUrl, idResponse.IdentityUrl);
             Assert.AreEqual(userId, idResponse.UserId);
@@ -115,8 +123,11 @@ namespace Salesforce.SDK.Auth
             string userId = "00550000001fg5OAAQ";
             string organizationId = "00D50000000IZ3ZEAW";
             string userName = "user@example.com";
-            string partialResponseWithMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId + "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" + userName + "\",\"mobile_policy\":{\"pin_length\":6,\"screen_lock\":1}}";
-            IdentityResponse idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithMobilePolicy);
+            string partialResponseWithMobilePolicy = "{\"id\":\"" + idUrl + "\",\"user_id\":\"" + userId +
+                                                     "\",\"organization_id\":\"" + organizationId + "\",\"username\":\"" +
+                                                     userName +
+                                                     "\",\"mobile_policy\":{\"pin_length\":6,\"screen_lock\":1}}";
+            var idResponse = JsonConvert.DeserializeObject<IdentityResponse>(partialResponseWithMobilePolicy);
 
             Assert.AreEqual(idUrl, idResponse.IdentityUrl);
             Assert.AreEqual(userId, idResponse.UserId);
@@ -130,10 +141,10 @@ namespace Salesforce.SDK.Auth
         private async Task<HttpStatusCode> DoDescribe(string authToken)
         {
             string describeAccountPath = "/services/data/v26.0/sobjects/Account/describe";
-            HttpCallHeaders headers = new HttpCallHeaders(authToken, new Dictionary<string, string>());
-            HttpCall result = await HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute();
+            var headers = new HttpCallHeaders(authToken, new Dictionary<string, string>());
+            HttpCall result =
+                await HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute();
             return result.StatusCode;
         }
-    
     }
 }

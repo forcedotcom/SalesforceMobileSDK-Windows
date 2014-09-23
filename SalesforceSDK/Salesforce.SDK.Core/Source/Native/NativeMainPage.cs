@@ -1,5 +1,4 @@
-﻿using Salesforce.SDK.Adaptation;
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -25,22 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.Native
 {
     public class NativeMainPage : Page, ISalesforcePage
     {
         /// <summary>
-        /// Helper method for handling logout.
+        ///     Helper method for handling logout.
         /// </summary>
         protected async void OnLogout()
         {
@@ -49,8 +44,8 @@ namespace Salesforce.SDK.Native
         }
 
         /// <summary>
-        /// When navigated to, we try to get a RestClient
-        /// If we are not already authenticated, this will kick off the login flow
+        ///     When navigated to, we try to get a RestClient
+        ///     If we are not already authenticated, this will kick off the login flow
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)

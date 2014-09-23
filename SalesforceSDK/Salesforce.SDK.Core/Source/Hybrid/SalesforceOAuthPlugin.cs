@@ -24,18 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Newtonsoft.Json;
+
 using System;
+using Salesforce.SDK.Hybrid;
 
 namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
-    /// Cordova plugin for Salesforce OAuth
+    ///     Cordova plugin for Salesforce OAuth
     /// </summary>
-    public class SalesforceOAuthPlugin 
+    public class SalesforceOAuthPlugin
     {
         /// <summary>
-        /// Native implementation for "authenticate" action
+        ///     Native implementation for "authenticate" action
         /// </summary>
         public void authenticate(object jsVersion)
         {
@@ -50,14 +51,14 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Native implementation for "getAuthCredentials" action.
+        ///     Native implementation for "getAuthCredentials" action.
         /// </summary>
         public void getAuthCredentials(object jsVersion)
         {
             JSONCredentials credentials = HybridMainPage.GetInstance().GetJSONCredentials();
             if (credentials == null)
             {
-               // DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Never authenticated"));
+                // DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Never authenticated"));
             }
             else
             {
@@ -66,45 +67,45 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        /// Native implementation for "getAppHomeUrl" action
+        ///     Native implementation for "getAppHomeUrl" action
         /// </summary>
         public void getAppHomeUrl(object jsVersion)
         {
             String appHomeUrl = HybridMainPage.GetInstance().GetAppHomeUrl();
-           // PluginResult result = new PluginResult(PluginResult.Status.OK, appHomeUrl);
-           // DispatchCommandResult(result);
+            // PluginResult result = new PluginResult(PluginResult.Status.OK, appHomeUrl);
+            // DispatchCommandResult(result);
         }
 
         /// <summary>
-        /// Native implementation for "logoutCurrentUser" action
+        ///     Native implementation for "logoutCurrentUser" action
         /// </summary>
         public void logoutCurrentUser(object jsVersion)
         {
             HybridMainPage.GetInstance().LogoutCurrentUser();
-           // PluginResult result = new PluginResult(PluginResult.Status.OK);
-          //  DispatchCommandResult(result);
+            // PluginResult result = new PluginResult(PluginResult.Status.OK);
+            //  DispatchCommandResult(result);
         }
 
         /// <summary>
-        /// Called when authenticate succeeded
+        ///     Called when authenticate succeeded
         /// </summary>
         /// <param name="credentials"></param>
         public void OnAuthenticateSuccess(JSONCredentials credentials)
         {
-          //  PluginResult result = new PluginResult(PluginResult.Status.OK);
+            //  PluginResult result = new PluginResult(PluginResult.Status.OK);
             // Doing the serialization ourselfves: we are using JSON.Net but Cordova is using DataContractJsonSerializer
-           // result.Message = JsonConvert.SerializeObject(credentials);
-          //  DispatchCommandResult(result);
+            // result.Message = JsonConvert.SerializeObject(credentials);
+            //  DispatchCommandResult(result);
         }
 
         /// <summary>
-        /// Called when authenticate failed
+        ///     Called when authenticate failed
         /// </summary>
         /// <param name="webException"></param>
         public void OnAuthenticateError(string message)
         {
-           // PluginResult result = new PluginResult(PluginResult.Status.ERROR, message);
-          //  DispatchCommandResult(result);
+            // PluginResult result = new PluginResult(PluginResult.Status.ERROR, message);
+            //  DispatchCommandResult(result);
         }
     }
 }
@@ -112,10 +113,10 @@ namespace Salesforce.SDK.Hybrid
 namespace com.salesforce
 {
     /// <summary>
-    /// Cordova on Windows Phone doesn't take into account the value property on plugin elements in config.xml
-    /// So we have to define a com.salesforce.oauth class since that's the plugin name on the javascript side
+    ///     Cordova on Windows Phone doesn't take into account the value property on plugin elements in config.xml
+    ///     So we have to define a com.salesforce.oauth class since that's the plugin name on the javascript side
     /// </summary>
-    public class oauth : Salesforce.SDK.Hybrid.SalesforceOAuthPlugin
+    public class oauth : SalesforceOAuthPlugin
     {
     }
 }

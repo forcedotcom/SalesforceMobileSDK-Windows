@@ -9,30 +9,28 @@
     xmlns:sfdcStrings="using:Salesforce.SDK.Strings"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <sfdcStrings:LocalizedStrings x:Key="Localize"/>
+        <sfdcStrings:LocalizedStrings x:Key="Localize" />
     </UserControl.Resources>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <WebView x:Name="oneView"/>
+        <WebView x:Name="oneView" />
     </Grid>
 
     <Page.BottomAppBar>
         <CommandBar x:Name="controlBar">
             <AppBarButton x:Name="SwitchAccountBtn"
-                              DataContext="account"
-                              Label="{Binding Converter={StaticResource Localize}}"
-                              Icon="Switch"
-                              HorizontalAlignment="Center"
-                              Click="SwitchAccount" VerticalAlignment="Center">
-            </AppBarButton>
+                          DataContext="account"
+                          Label="{Binding Converter={StaticResource Localize}}"
+                          Icon="Switch"
+                          HorizontalAlignment="Center"
+                          Click="SwitchAccount" VerticalAlignment="Center" />
             <AppBarButton x:Name="logoutBtn"
-                              Visibility="Collapsed"
-                              DataContext="logout"
-                              Label="{Binding Converter={StaticResource Localize}}"
-                              Icon="HangUp"
-                              HorizontalAlignment="Center"
-                              Click="Logout" VerticalAlignment="Center">
-            </AppBarButton>
+                          Visibility="Collapsed"
+                          DataContext="logout"
+                          Label="{Binding Converter={StaticResource Localize}}"
+                          Icon="HangUp"
+                          HorizontalAlignment="Center"
+                          Click="Logout" VerticalAlignment="Center" />
         </CommandBar>
     </Page.BottomAppBar>
 </native:NativeMainPage>

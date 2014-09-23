@@ -24,7 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Auth;
+
 using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.RestExplorer.Shared
@@ -32,30 +32,21 @@ namespace Salesforce.Sample.RestExplorer.Shared
     public class Config : SalesforceConfig
     {
         /// <summary>
-        /// In using this sample you should create a connected app, and replace the ClientId with an id from the generated app.
+        ///     In using this sample you should create a connected app, and replace the ClientId with an id from the generated app.
         /// </summary>
         public override string ClientId
         {
-            get
-            {
-                return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x";
-            }
+            get { return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x"; }
         }
+
         public override string CallbackUrl
         {
-            get
-            {
-                return "sfdc:///axm/detect/oauth/done";
-            }
+            get { return "sfdc:///axm/detect/oauth/done"; }
         }
 
         public override string[] Scopes
         {
-            get
-            {
-                return new string[] { "api" };
-            }
+            get { return new[] {"api"}; }
         }
-
     }
 }

@@ -24,28 +24,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
     public class SmartStoreType
     {
-        public string ColumnType { get; private set; }
-
-        private static readonly string SmartTypeInteger = "integer";
-        private static readonly string SmartTypeString = "string";
-        private static readonly string SmartTypeFloating = "floating";
+        private const string SmartTypeInteger = "integer";
+        private const string SmartTypeString = "string";
+        private const string SmartTypeFloating = "floating";
 
         public static readonly SmartStoreType SmartInteger = new SmartStoreType(SmartTypeInteger);
         public static readonly SmartStoreType SmartString = new SmartStoreType(SmartTypeString);
         public static readonly SmartStoreType SmartFloating = new SmartStoreType(SmartTypeFloating);
+
         public SmartStoreType(string columnType)
         {
-            this.ColumnType = columnType;
+            ColumnType = columnType;
         }
+
+        public string ColumnType { get; private set; }
     }
 }

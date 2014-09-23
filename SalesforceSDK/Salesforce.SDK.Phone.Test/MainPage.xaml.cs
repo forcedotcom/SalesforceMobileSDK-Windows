@@ -24,10 +24,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+using System.Threading;
 using Microsoft.Phone.Controls;
 using Microsoft.VisualStudio.TestPlatform.Core;
 using Microsoft.VisualStudio.TestPlatform.TestExecutor;
-using System.Threading;
 using vstest_executionengine_platformbridge;
 
 namespace Salesforce.SDK.Phone.Test
@@ -40,8 +41,8 @@ namespace Salesforce.SDK.Phone.Test
             InitializeComponent();
 
             var wrapper = new TestExecutorServiceWrapper();
-            new Thread(new ServiceMain((param0, param1) => wrapper.SendMessage((ContractName)param0, param1)).Run).Start();
-
+            new Thread(new ServiceMain((param0, param1) => wrapper.SendMessage((ContractName) param0, param1)).Run)
+                .Start();
         }
     }
 }

@@ -31,118 +31,118 @@
     <!-- RichTextBlock styles -->
 
     <Style x:Key="BasicRichTextStyle" TargetType="RichTextBlock">
-        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}"/>
-        <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
-        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
-        <Setter Property="TextTrimming" Value="WordEllipsis"/>
-        <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="Typography.StylisticSet20" Value="True"/>
-        <Setter Property="Typography.DiscretionaryLigatures" Value="True"/>
-        <Setter Property="Typography.CaseSensitiveForms" Value="True"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="TextTrimming" Value="WordEllipsis" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Typography.StylisticSet20" Value="True" />
+        <Setter Property="Typography.DiscretionaryLigatures" Value="True" />
+        <Setter Property="Typography.CaseSensitiveForms" Value="True" />
     </Style>
 
     <Style x:Key="BaselineRichTextStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BasicRichTextStyle}">
-        <Setter Property="LineHeight" Value="20"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
         <!-- Properly align text along its baseline -->
         <Setter Property="RenderTransform">
             <Setter.Value>
-                <TranslateTransform X="-1" Y="4"/>
+                <TranslateTransform X="-1" Y="4" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="ItemRichTextStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaselineRichTextStyle}"/>
+    <Style x:Key="ItemRichTextStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaselineRichTextStyle}" />
 
     <Style x:Key="BodyRichTextStyle" TargetType="RichTextBlock" BasedOn="{StaticResource BaselineRichTextStyle}">
-        <Setter Property="FontWeight" Value="SemiLight"/>
+        <Setter Property="FontWeight" Value="SemiLight" />
     </Style>
 
     <!-- TextBlock styles -->
 
     <Style x:Key="BasicTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}"/>
-        <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
-        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
-        <Setter Property="TextTrimming" Value="WordEllipsis"/>
-        <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="Typography.StylisticSet20" Value="True"/>
-        <Setter Property="Typography.DiscretionaryLigatures" Value="True"/>
-        <Setter Property="Typography.CaseSensitiveForms" Value="True"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationForegroundThemeBrush}" />
+        <Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="TextTrimming" Value="WordEllipsis" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Typography.StylisticSet20" Value="True" />
+        <Setter Property="Typography.DiscretionaryLigatures" Value="True" />
+        <Setter Property="Typography.CaseSensitiveForms" Value="True" />
     </Style>
 
     <Style x:Key="BaselineTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BasicTextStyle}">
-        <Setter Property="LineHeight" Value="20"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
         <!-- Properly align text along its baseline -->
         <Setter Property="RenderTransform">
             <Setter.Value>
-                <TranslateTransform X="-1" Y="4"/>
+                <TranslateTransform X="-1" Y="4" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="HeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontSize" Value="56"/>
-        <Setter Property="FontWeight" Value="Light"/>
-        <Setter Property="LineHeight" Value="40"/>
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="LineHeight" Value="40" />
         <Setter Property="RenderTransform">
             <Setter.Value>
-                <TranslateTransform X="-2" Y="8"/>
+                <TranslateTransform X="-2" Y="8" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="SubheaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontSize" Value="26.667"/>
-        <Setter Property="FontWeight" Value="Light"/>
-        <Setter Property="LineHeight" Value="30"/>
+        <Setter Property="FontSize" Value="26.667" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="LineHeight" Value="30" />
         <Setter Property="RenderTransform">
             <Setter.Value>
-                <TranslateTransform X="-1" Y="6"/>
+                <TranslateTransform X="-1" Y="6" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="TitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 
     <Style x:Key="SubtitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontWeight" Value="Normal"/>
+        <Setter Property="FontWeight" Value="Normal" />
     </Style>
 
-    <Style x:Key="ItemTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}"/>
+    <Style x:Key="ItemTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}" />
 
     <Style x:Key="BodyTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontWeight" Value="SemiLight"/>
+        <Setter Property="FontWeight" Value="SemiLight" />
     </Style>
 
     <Style x:Key="CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource BaselineTextStyle}">
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
     </Style>
 
     <Style x:Key="GroupHeaderTextStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}"/>
-        <Setter Property="TextTrimming" Value="WordEllipsis"/>
-        <Setter Property="TextWrapping" Value="NoWrap"/>
-        <Setter Property="Typography.StylisticSet20" Value="True"/>
-        <Setter Property="Typography.DiscretionaryLigatures" Value="True"/>
-        <Setter Property="Typography.CaseSensitiveForms" Value="True"/>
-        <Setter Property="FontSize" Value="26.667"/>
-        <Setter Property="LineStackingStrategy" Value="BlockLineHeight"/>
-        <Setter Property="FontWeight" Value="Light"/>
-        <Setter Property="LineHeight" Value="30"/>
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="TextTrimming" Value="WordEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="Typography.StylisticSet20" Value="True" />
+        <Setter Property="Typography.DiscretionaryLigatures" Value="True" />
+        <Setter Property="Typography.CaseSensitiveForms" Value="True" />
+        <Setter Property="FontSize" Value="26.667" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+        <Setter Property="FontWeight" Value="Light" />
+        <Setter Property="LineHeight" Value="30" />
         <Setter Property="RenderTransform">
             <Setter.Value>
-                <TranslateTransform X="-1" Y="6"/>
+                <TranslateTransform X="-1" Y="6" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <!-- Button styles -->
-    
+
     <!--
         TextButtonStyle is used to style a Button using subheader-styled text with no other adornment.  There
         are two styles that are based on TextButtonStyle (TextPrimaryButtonStyle and TextSecondaryButtonStyle)
@@ -150,8 +150,8 @@
         commands.
     -->
     <Style x:Key="TextButtonStyle" TargetType="ButtonBase">
-        <Setter Property="MinWidth" Value="0"/>
-        <Setter Property="MinHeight" Value="0"/>
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
@@ -164,7 +164,7 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="1.5"/>
+                            StrokeDashOffset="1.5" />
                         <Rectangle
                             x:Name="FocusVisualBlack"
                             IsHitTestVisible="False"
@@ -172,28 +172,34 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="0.5"/>
+                            StrokeDashOffset="0.5" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ApplicationPointerOverForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource ApplicationPointerOverForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ApplicationPressedForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource ApplicationPressedForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ApplicationPressedForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource ApplicationPressedForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -201,22 +207,26 @@
                             <VisualStateGroup x:Name="FocusStates">
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetName="FocusVisualWhite" Storyboard.TargetProperty="Opacity"/>
-                                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetName="FocusVisualBlack" Storyboard.TargetProperty="Opacity"/>
+                                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetName="FocusVisualWhite"
+                                                         Storyboard.TargetProperty="Opacity" />
+                                        <DoubleAnimation Duration="0" To="1" Storyboard.TargetName="FocusVisualBlack"
+                                                         Storyboard.TargetProperty="Opacity" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Unfocused"/>
+                                <VisualState x:Name="Unfocused" />
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked"/>
+                                <VisualState x:Name="Checked" />
                                 <VisualState x:Name="Unchecked">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Indeterminate"/>
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
@@ -226,11 +236,11 @@
     </Style>
 
     <Style x:Key="TextPrimaryButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource TextButtonStyle}">
-        <Setter Property="Foreground" Value="{StaticResource ApplicationHeaderForegroundThemeBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationHeaderForegroundThemeBrush}" />
     </Style>
 
     <Style x:Key="TextSecondaryButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource TextButtonStyle}">
-        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ApplicationSecondaryForegroundThemeBrush}" />
     </Style>
 
     <!--
@@ -238,7 +248,7 @@
         This style is used in the SearchResultsPage to allow selection among filters.
     -->
     <Style x:Key="TextRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource TextButtonStyle}">
-        <Setter Property="Margin" Value="0,0,30,0"/>
+        <Setter Property="Margin" Value="0,0,30,0" />
     </Style>
 
     <!--
@@ -247,21 +257,25 @@
         to simplify the use of glyphs from that font.  AutomationProperties.Name is used for the text below the glyph.
     -->
     <Style x:Key="AppBarButtonStyle" TargetType="ButtonBase">
-        <Setter Property="Foreground" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
-        <Setter Property="VerticalAlignment" Value="Stretch"/>
-        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="20"/>
-        <Setter Property="AutomationProperties.ItemType" Value="App Bar Button"/>
+        <Setter Property="Foreground" Value="{StaticResource AppBarItemForegroundThemeBrush}" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="AutomationProperties.ItemType" Value="App Bar Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
                     <Grid x:Name="RootGrid" Width="100" Background="Transparent">
                         <StackPanel VerticalAlignment="Top" Margin="0,12,0,11">
                             <Grid Width="40" Height="40" Margin="0,0,0,5" HorizontalAlignment="Center">
-                                <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0" Foreground="{StaticResource AppBarItemBackgroundThemeBrush}"/>
-                                <TextBlock x:Name="OutlineGlyph" Text="&#xE0A7;" FontFamily="Segoe UI Symbol" FontSize="53.333" Margin="-4,-19,0,0"/>
-                                <ContentPresenter x:Name="Content" HorizontalAlignment="Center" Margin="-1,-1,0,0" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" FontFamily="Segoe UI Symbol"
+                                           FontSize="53.333" Margin="-4,-19,0,0"
+                                           Foreground="{StaticResource AppBarItemBackgroundThemeBrush}" />
+                                <TextBlock x:Name="OutlineGlyph" Text="&#xE0A7;" FontFamily="Segoe UI Symbol"
+                                           FontSize="53.333" Margin="-4,-19,0,0" />
+                                <ContentPresenter x:Name="Content" HorizontalAlignment="Center" Margin="-1,-1,0,0"
+                                                  VerticalAlignment="Center" />
                             </Grid>
                             <TextBlock
                                 x:Name="TextLabel"
@@ -273,85 +287,105 @@
                                 Width="88"
                                 MaxHeight="32"
                                 TextTrimming="WordEllipsis"
-                                Style="{StaticResource BasicTextStyle}"/>
+                                Style="{StaticResource BasicTextStyle}" />
                         </StackPanel>
                         <Rectangle
-                                x:Name="FocusVisualWhite"
-                                IsHitTestVisible="False"
-                                Stroke="{StaticResource FocusVisualWhiteStrokeThemeBrush}"
-                                StrokeEndLineCap="Square"
-                                StrokeDashArray="1,1"
-                                Opacity="0"
-                                StrokeDashOffset="1.5"/>
+                            x:Name="FocusVisualWhite"
+                            IsHitTestVisible="False"
+                            Stroke="{StaticResource FocusVisualWhiteStrokeThemeBrush}"
+                            StrokeEndLineCap="Square"
+                            StrokeDashArray="1,1"
+                            Opacity="0"
+                            StrokeDashOffset="1.5" />
                         <Rectangle
-                                x:Name="FocusVisualBlack"
-                                IsHitTestVisible="False"
-                                Stroke="{StaticResource FocusVisualBlackStrokeThemeBrush}"
-                                StrokeEndLineCap="Square"
-                                StrokeDashArray="1,1"
-                                Opacity="0"
-                                StrokeDashOffset="0.5"/>
+                            x:Name="FocusVisualBlack"
+                            IsHitTestVisible="False"
+                            Stroke="{StaticResource FocusVisualBlackStrokeThemeBrush}"
+                            StrokeEndLineCap="Square"
+                            StrokeDashArray="1,1"
+                            Opacity="0"
+                            StrokeDashOffset="0.5" />
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ApplicationViewStates">
-                                <VisualState x:Name="FullScreenLandscape"/>
-                                <VisualState x:Name="Filled"/>
+                                <VisualState x:Name="FullScreenLandscape" />
+                                <VisualState x:Name="Filled" />
                                 <VisualState x:Name="FullScreenPortrait">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="60"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Width">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="60" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Snapped">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="60"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Width">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="60" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal"/>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPointerOverForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemPointerOverForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OutlineGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OutlineGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPressedForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemPressedForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OutlineGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OutlineGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextLabel"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemDisabledForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -360,15 +394,15 @@
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
                                         <DoubleAnimation
-                                                Storyboard.TargetName="FocusVisualWhite"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="1"
-                                                Duration="0"/>
+                                            Storyboard.TargetName="FocusVisualWhite"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="1"
+                                            Duration="0" />
                                         <DoubleAnimation
-                                                Storyboard.TargetName="FocusVisualBlack"
-                                                Storyboard.TargetProperty="Opacity"
-                                                To="1"
-                                                Duration="0"/>
+                                            Storyboard.TargetName="FocusVisualBlack"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="1"
+                                            Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unfocused" />
@@ -377,20 +411,26 @@
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
-                                        <DoubleAnimation Duration="0" To="0" Storyboard.TargetName="OutlineGlyph" Storyboard.TargetProperty="Opacity"/>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemForegroundThemeBrush}"/>
+                                        <DoubleAnimation Duration="0" To="0" Storyboard.TargetName="OutlineGlyph"
+                                                         Storyboard.TargetProperty="Opacity" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundCheckedGlyph" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundCheckedGlyph"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource AppBarItemPressedForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Content"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource AppBarItemPressedForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Unchecked"/>
-                                <VisualState x:Name="Indeterminate"/>
+                                <VisualState x:Name="Unchecked" />
+                                <VisualState x:Name="Indeterminate" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
@@ -1405,19 +1445,19 @@
     <!-- Title area styles -->
 
     <Style x:Key="PageHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource HeaderTextStyle}">
-        <Setter Property="TextWrapping" Value="NoWrap"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="Margin" Value="0,0,30,40"/>
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="0,0,30,40" />
     </Style>
 
     <Style x:Key="PageSubheaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource SubheaderTextStyle}">
-        <Setter Property="TextWrapping" Value="NoWrap"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="Margin" Value="0,0,0,40"/>
+        <Setter Property="TextWrapping" Value="NoWrap" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="0,0,0,40" />
     </Style>
 
     <Style x:Key="SnappedPageHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource PageSubheaderTextStyle}">
-        <Setter Property="Margin" Value="0,0,18,40"/>
+        <Setter Property="Margin" Value="0,0,18,40" />
     </Style>
 
     <!--
@@ -1425,25 +1465,28 @@
         the conventional page layout are included as part of the style.
     -->
     <Style x:Key="BackButtonStyle" TargetType="Button">
-        <Setter Property="MinWidth" Value="0"/>
-        <Setter Property="Width" Value="48"/>
-        <Setter Property="Height" Value="48"/>
-        <Setter Property="Margin" Value="36,0,36,36"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="56"/>
-        <Setter Property="AutomationProperties.AutomationId" Value="BackButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Back"/>
-        <Setter Property="AutomationProperties.ItemType" Value="Navigation Button"/>
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Width" Value="48" />
+        <Setter Property="Height" Value="48" />
+        <Setter Property="Margin" Value="36,0,36,36" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="56" />
+        <Setter Property="AutomationProperties.AutomationId" Value="BackButton" />
+        <Setter Property="AutomationProperties.Name" Value="Back" />
+        <Setter Property="AutomationProperties.ItemType" Value="Navigation Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid">
                         <Grid Margin="-1,-16,0,0">
-                            <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;" Foreground="{StaticResource BackButtonBackgroundThemeBrush}"/>
-                            <TextBlock x:Name="NormalGlyph" Text="{StaticResource BackButtonGlyph}" Foreground="{StaticResource BackButtonForegroundThemeBrush}"/>
-                            <TextBlock x:Name="ArrowGlyph" Text="&#xE0A6;" Foreground="{StaticResource BackButtonPressedForegroundThemeBrush}" Opacity="0"/>
+                            <TextBlock x:Name="BackgroundGlyph" Text="&#xE0A8;"
+                                       Foreground="{StaticResource BackButtonBackgroundThemeBrush}" />
+                            <TextBlock x:Name="NormalGlyph" Text="{StaticResource BackButtonGlyph}"
+                                       Foreground="{StaticResource BackButtonForegroundThemeBrush}" />
+                            <TextBlock x:Name="ArrowGlyph" Text="&#xE0A6;"
+                                       Foreground="{StaticResource BackButtonPressedForegroundThemeBrush}" Opacity="0" />
                         </Grid>
                         <Rectangle
                             x:Name="FocusVisualWhite"
@@ -1452,7 +1495,7 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="1.5"/>
+                            StrokeDashOffset="1.5" />
                         <Rectangle
                             x:Name="FocusVisualBlack"
                             IsHitTestVisible="False"
@@ -1460,42 +1503,49 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="0.5"/>
+                            StrokeDashOffset="0.5" />
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonPointerOverBackgroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonPointerOverForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonPointerOverForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation
                                             Storyboard.TargetName="ArrowGlyph"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                         <DoubleAnimation
                                             Storyboard.TargetName="NormalGlyph"
                                             Storyboard.TargetProperty="Opacity"
                                             To="0"
-                                            Duration="0"/>
+                                            Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -1507,12 +1557,12 @@
                                             Storyboard.TargetName="FocusVisualWhite"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                         <DoubleAnimation
                                             Storyboard.TargetName="FocusVisualBlack"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unfocused" />
@@ -1530,7 +1580,7 @@
         for the conventional page layout are included as part of the style.
     -->
     <Style x:Key="PortraitBackButtonStyle" TargetType="Button" BasedOn="{StaticResource BackButtonStyle}">
-        <Setter Property="Margin" Value="26,0,26,36"/>
+        <Setter Property="Margin" Value="26,0,26,36" />
     </Style>
 
     <!--
@@ -1541,23 +1591,26 @@
         glyph but are actually distinct.
     -->
     <Style x:Key="SnappedBackButtonStyle" TargetType="Button">
-        <Setter Property="MinWidth" Value="0"/>
-        <Setter Property="Margin" Value="20,0,0,0"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
-        <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="FontSize" Value="26.66667"/>
-        <Setter Property="AutomationProperties.AutomationId" Value="BackButton"/>
-        <Setter Property="AutomationProperties.Name" Value="Back"/>
-        <Setter Property="AutomationProperties.ItemType" Value="Navigation Button"/>
+        <Setter Property="MinWidth" Value="0" />
+        <Setter Property="Margin" Value="20,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="FontFamily" Value="Segoe UI Symbol" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="26.66667" />
+        <Setter Property="AutomationProperties.AutomationId" Value="BackButton" />
+        <Setter Property="AutomationProperties.Name" Value="Back" />
+        <Setter Property="AutomationProperties.ItemType" Value="Navigation Button" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid" Width="36" Height="36" Margin="-3,0,7,33">
                         <Grid Margin="-1,-1,0,0">
-                            <TextBlock x:Name="BackgroundGlyph" Text="&#xE0D4;" Foreground="{StaticResource BackButtonBackgroundThemeBrush}"/>
-                            <TextBlock x:Name="NormalGlyph" Text="{StaticResource BackButtonSnappedGlyph}" Foreground="{StaticResource BackButtonForegroundThemeBrush}"/>
-                            <TextBlock x:Name="ArrowGlyph" Text="&#xE0C4;" Foreground="{StaticResource BackButtonPressedForegroundThemeBrush}" Opacity="0"/>
+                            <TextBlock x:Name="BackgroundGlyph" Text="&#xE0D4;"
+                                       Foreground="{StaticResource BackButtonBackgroundThemeBrush}" />
+                            <TextBlock x:Name="NormalGlyph" Text="{StaticResource BackButtonSnappedGlyph}"
+                                       Foreground="{StaticResource BackButtonForegroundThemeBrush}" />
+                            <TextBlock x:Name="ArrowGlyph" Text="&#xE0C4;"
+                                       Foreground="{StaticResource BackButtonPressedForegroundThemeBrush}" Opacity="0" />
                         </Grid>
                         <Rectangle
                             x:Name="FocusVisualWhite"
@@ -1566,7 +1619,7 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="1.5"/>
+                            StrokeDashOffset="1.5" />
                         <Rectangle
                             x:Name="FocusVisualBlack"
                             IsHitTestVisible="False"
@@ -1574,42 +1627,49 @@
                             StrokeEndLineCap="Square"
                             StrokeDashArray="1,1"
                             Opacity="0"
-                            StrokeDashOffset="0.5"/>
+                            StrokeDashOffset="0.5" />
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonPointerOverBackgroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonPointerOverForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonPointerOverForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BackButtonForegroundThemeBrush}"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundGlyph"
+                                                                       Storyboard.TargetProperty="Foreground">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{StaticResource BackButtonForegroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <DoubleAnimation
                                             Storyboard.TargetName="ArrowGlyph"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                         <DoubleAnimation
                                             Storyboard.TargetName="NormalGlyph"
                                             Storyboard.TargetProperty="Opacity"
                                             To="0"
-                                            Duration="0"/>
+                                            Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -1621,12 +1681,12 @@
                                             Storyboard.TargetName="FocusVisualWhite"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                         <DoubleAnimation
                                             Storyboard.TargetName="FocusVisualBlack"
                                             Storyboard.TargetProperty="Opacity"
                                             To="1"
-                                            Duration="0"/>
+                                            Duration="0" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Unfocused" />
@@ -1645,11 +1705,15 @@
     <DataTemplate x:Key="Standard250x250ItemTemplate">
         <Grid HorizontalAlignment="Left" Width="250" Height="250">
             <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}">
-                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}" />
             </Border>
-            <StackPanel VerticalAlignment="Bottom" Background="{StaticResource ListViewItemOverlayBackgroundThemeBrush}">
-                <TextBlock Text="{Binding Title}" Foreground="{StaticResource ListViewItemOverlayForegroundThemeBrush}" Style="{StaticResource TitleTextStyle}" Height="60" Margin="15,0,15,0"/>
-                <TextBlock Text="{Binding Subtitle}" Foreground="{StaticResource ListViewItemOverlaySecondaryForegroundThemeBrush}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap" Margin="15,0,15,10"/>
+            <StackPanel VerticalAlignment="Bottom"
+                        Background="{StaticResource ListViewItemOverlayBackgroundThemeBrush}">
+                <TextBlock Text="{Binding Title}" Foreground="{StaticResource ListViewItemOverlayForegroundThemeBrush}"
+                           Style="{StaticResource TitleTextStyle}" Height="60" Margin="15,0,15,0" />
+                <TextBlock Text="{Binding Subtitle}"
+                           Foreground="{StaticResource ListViewItemOverlaySecondaryForegroundThemeBrush}"
+                           Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap" Margin="15,0,15,10" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1658,16 +1722,16 @@
     <DataTemplate x:Key="Standard500x130ItemTemplate">
         <Grid Height="110" Width="480" Margin="10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="110" Height="110">
-                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}" />
             </Border>
             <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" MaxHeight="60"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" MaxHeight="60" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1676,16 +1740,16 @@
     <DataTemplate x:Key="Standard130ItemTemplate">
         <Grid Height="110" Margin="6">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="110" Height="110">
-                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
+                <Image Source="{Binding Image}" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}" />
             </Border>
             <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" MaxHeight="60"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" MaxHeight="60" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1697,15 +1761,15 @@
     <DataTemplate x:Key="Standard80ItemTemplate">
         <Grid Margin="6">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Width="60" Height="60">
-                <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+                <Image Source="{Binding Image}" Stretch="UniformToFill" />
             </Border>
             <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource ItemTextStyle}" MaxHeight="40"/>
-                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource ItemTextStyle}" MaxHeight="40" />
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource CaptionTextStyle}" TextWrapping="NoWrap" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1714,16 +1778,19 @@
     <DataTemplate x:Key="StandardSmallIcon300x70ItemTemplate">
         <Grid Width="294" Margin="6">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
-                <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+            <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10"
+                    Width="40" Height="40">
+                <Image Source="{Binding Image}" Stretch="UniformToFill" />
             </Border>
             <StackPanel Grid.Column="1" Margin="10,-10,0,0">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource BodyTextStyle}"
+                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}"
+                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1732,16 +1799,19 @@
     <DataTemplate x:Key="StandardSmallIcon70ItemTemplate">
         <Grid Margin="6">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10" Width="40" Height="40">
-                <Image Source="{Binding Image}" Stretch="UniformToFill"/>
+            <Border Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,0,0,10"
+                    Width="40" Height="40">
+                <Image Source="{Binding Image}" Stretch="UniformToFill" />
             </Border>
             <StackPanel Grid.Column="1" Margin="10,-10,0,0">
-                <TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
-                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource BodyTextStyle}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource BodyTextStyle}"
+                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" />
+                <TextBlock Text="{Binding Description}" Style="{StaticResource BodyTextStyle}"
+                           Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" TextWrapping="NoWrap" />
             </StackPanel>
         </Grid>
     </DataTemplate>
@@ -1759,7 +1829,7 @@
                     Height="130"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Stretch="Uniform"/>
+                    Stretch="Uniform" />
             </Grid>
             <ToolTipService.Placement>Mouse</ToolTipService.Placement>
             <ToolTipService.ToolTip>
@@ -1773,8 +1843,8 @@
 
                     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
                         <Grid Background="{StaticResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="20">
@@ -1784,11 +1854,14 @@
                                 Height="160"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Stretch="Uniform"/>
+                                Stretch="Uniform" />
                         </Grid>
                         <StackPanel Width="200" Grid.Column="1" Margin="0,20,20,20">
-                            <TextBlock Text="{Binding Title}" TextWrapping="NoWrap" Style="{StaticResource BodyTextStyle}"/>
-                            <TextBlock Text="{Binding Description}" MaxHeight="140" Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}" Style="{StaticResource BodyTextStyle}"/>
+                            <TextBlock Text="{Binding Title}" TextWrapping="NoWrap"
+                                       Style="{StaticResource BodyTextStyle}" />
+                            <TextBlock Text="{Binding Description}" MaxHeight="140"
+                                       Foreground="{StaticResource ApplicationSecondaryForegroundThemeBrush}"
+                                       Style="{StaticResource BodyTextStyle}" />
                         </StackPanel>
                     </Grid>
                 </ToolTip>
@@ -1799,16 +1872,16 @@
     <!-- ScrollViewer styles -->
 
     <Style x:Key="HorizontalScrollViewerStyle" TargetType="ScrollViewer">
-        <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Enabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
     </Style>
 
     <Style x:Key="VerticalScrollViewerStyle" TargetType="ScrollViewer">
-        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Enabled" />
         <Setter Property="ScrollViewer.ZoomMode" Value="Disabled" />
@@ -1817,11 +1890,11 @@
     <!-- Page layout roots typically use entrance animations and a theme-appropriate background color -->
 
     <Style x:Key="LayoutRootStyle" TargetType="Panel">
-        <Setter Property="Background" Value="{StaticResource ApplicationPageBackgroundThemeBrush}"/>
+        <Setter Property="Background" Value="{StaticResource ApplicationPageBackgroundThemeBrush}" />
         <Setter Property="ChildrenTransitions">
             <Setter.Value>
                 <TransitionCollection>
-                    <EntranceThemeTransition/>
+                    <EntranceThemeTransition />
                 </TransitionCollection>
             </Setter.Value>
         </Setter>
