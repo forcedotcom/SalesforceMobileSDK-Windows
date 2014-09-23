@@ -148,7 +148,7 @@ namespace Salesforce.SDK.Auth
             {
                 accounts.Add(account.UserId, account);
             }
-            LoginOptions options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl, account.Scopes);
+            LoginOptions options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl, LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
         }
 

@@ -43,11 +43,17 @@ using Windows.UI.Xaml.Controls;
 
 namespace Salesforce.SDK.Auth
 {
-    public class  PincodeManager
+    public class PincodeManager
     {
-        private static DispatcherTimer PinTimer = new DispatcherTimer();
+        private static DispatcherTimer IdleTimer;
         private static readonly string PinBackgroundedTimeKey = "pintimeKey";
         private static readonly string PincodeRequired = "pincodeRequired";
+
+        static PincodeManager()
+        {
+            IdleTimer = new DispatcherTimer();
+            IdleTimer.Tick += IdleTimer_Tick;
+        }
 
         internal static string GenerateEncryptedPincode(string pincode)
         {
@@ -93,7 +99,7 @@ namespace Salesforce.SDK.Auth
             }
             return null;
         }
-        
+
         /// <summary>
         /// Stores the pincode and associated mobile policy information including pin length and screen lock timeout.
         /// </summary>
@@ -258,6 +264,27 @@ namespace Salesforce.SDK.Auth
                     }
                 });
             }
+        }
+
+        public static void StartIdleTimer()
+        {
+            if (PincodeManager.IsPincodeSet())
+            {
+                MobilePolicy policy = GetMobilePolicy();
+                IdleTimer.Interval = TimeSpan.FromMinutes(policy.ScreenLockTimeout);
+                if (IdleTimer.IsEnabled)
+                {
+                    IdleTimer.Stop();
+                }
+                SavePinTimer();
+                IdleTimer.Start();
+            }
+        }
+
+
+        static void IdleTimer_Tick(object sender, object e)
+        {
+            TriggerBackgroundedPinTimer();
         }
     }
 }

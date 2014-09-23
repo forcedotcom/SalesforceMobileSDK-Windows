@@ -87,7 +87,7 @@ namespace Salesforce.Sample.Salesforce1.Container
                 if (!oneView.CanGoBack)
                 {
                     account = await OAuth2.RefreshAuthToken(account);
-                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, GetPage(account));
+                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, LoginOptions.DefaultDisplayType, account.AccessToken, GetPage(account));
                     oneView.Navigate(new Uri(startPage));
                 }
             } else

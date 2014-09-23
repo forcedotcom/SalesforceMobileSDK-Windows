@@ -355,7 +355,7 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
-        public async void DeleteDatabase(string databaseFile)
+        public void DeleteDatabase(string databaseFile)
         {
             Instances.Remove(DatabasePath);
             SQLConnection.Dispose();
@@ -393,10 +393,8 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public SQLiteResult Execute(string sql, out SQLiteStatement statement)
         {
-            using (statement = SQLConnection.Prepare(sql) as SQLiteStatement)
-            {
-                return statement.Step();
-            }
+            statement = SQLConnection.Prepare(sql) as SQLiteStatement;
+            return statement.Step();
         }
 
         public string GetColumnNameForPath(String soupName, String path)

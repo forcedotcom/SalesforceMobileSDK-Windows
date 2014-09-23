@@ -143,6 +143,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private async void DoAuthFlow(LoginOptions loginOptions)
         {
+            loginOptions.DisplayType = LoginOptions.DefaultStoreDisplayType;
             Uri loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             Uri callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);

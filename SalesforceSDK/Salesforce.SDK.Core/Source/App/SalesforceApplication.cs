@@ -117,7 +117,13 @@ namespace Salesforce.SDK.App
             {
                 CoreWindow coreWindow = CoreApplication.MainView.CoreWindow;
                 coreWindow.VisibilityChanged += CoreVisibilityChanged;
+                coreWindow.PointerMoved += coreWindow_PointerMoved;
             });
+        }
+
+        void coreWindow_PointerMoved(CoreWindow sender, PointerEventArgs args)
+        {
+            PincodeManager.StartIdleTimer();
         }
 
         private void CoreVisibilityChanged(CoreWindow sender, VisibilityChangedEventArgs args)
@@ -167,6 +173,11 @@ namespace Salesforce.SDK.App
             {
                 // todo: add logging here
             }
+        }
+
+        private void IdleCheck(object sender, object e)
+        {
+            PincodeManager.TriggerBackgroundedPinTimer();
         }
 
         protected void OnSuspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)

@@ -44,10 +44,27 @@ namespace Salesforce.SDK.Auth
     /// </summary>
     public class LoginOptions
     {
+        public static readonly string DefaultPhoneDisplayType = "touch";
+        public static readonly string DefaultStoreDisplayType = "page";
+        public static readonly string DefaultDisplayType = DefaultPhoneDisplayType;
         public string LoginUrl { get; private set; }
         public string ClientId { get; private set; }
         public string CallbackUrl { get; private set; }
+        public string DisplayType { get; set; }
         public string[] Scopes { get; private set; }
+
+
+        /// <summary>
+        /// Constructor for LoginOptions
+        /// </summary>
+        /// <param name="loginUrl"></param>
+        /// <param name="clientId"></param>
+        /// <param name="displayType"></param>
+        /// <param name="scopes"></param>
+        public LoginOptions(string loginUrl, string clientId, string callbackUrl, string[] scopes)
+            : this(loginUrl, clientId, callbackUrl, DefaultDisplayType, scopes)
+        {
+        }
 
         /// <summary>
         /// Constructor for LoginOptions
@@ -56,12 +73,13 @@ namespace Salesforce.SDK.Auth
         /// <param name="clientId"></param>
         /// <param name="callbackUrl"></param>
         /// <param name="scopes"></param>
-        public LoginOptions(string loginUrl, string clientId, string callbackUrl, string[] scopes)
+        public LoginOptions(string loginUrl, string clientId, string callbackUrl, string displayType, string[] scopes)
         {
             LoginUrl = loginUrl;
             ClientId = clientId;
             CallbackUrl = callbackUrl;
             Scopes = scopes;
+            DisplayType = displayType;
         }
     }
 
@@ -183,11 +201,11 @@ namespace Salesforce.SDK.Auth
 
         // Authorization url
         const string OauthAuthenticationPath = "/services/oauth2/authorize";
-        const string OauthAuthenticationQueryString = "display=touch&response_type=token&client_id={0}&redirect_uri={1}&scope={2}";
+        const string OauthAuthenticationQueryString = "display={0}&response_type=token&client_id={1}&redirect_uri={2}&scope={3}";
 
         // Front door url
         const string FrontDoorPath = "/secur/frontdoor.jsp";
-        const string FrontDoorQueryString = "display=touch&sid={0}&retURL={1}";
+        const string FrontDoorQueryString = "display={0}&sid={1}&retURL={2}";
 
         // Refresh url
         const string OauthRefreshPath = "/services/oauth2/token";
@@ -210,8 +228,8 @@ namespace Salesforce.SDK.Auth
             string scopeStr = string.Join(" ", loginOptions.Scopes.Concat(new string[] { RefreshScope }).Distinct().ToArray());
 
             // Args
-            string[] args = { loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
-            string[] urlEncodedArgs = args.Select(s => Uri.EscapeUriString(s)).ToArray();
+            string[] args = { loginOptions.DisplayType, loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr };
+            string[] urlEncodedArgs = args.Select(s => System.Net.WebUtility.UrlEncode(s)).ToArray();
 
             // Authorization url
             string authorizationUrl = string.Format(loginOptions.LoginUrl + OauthAuthenticationPath + "?" + OauthAuthenticationQueryString, urlEncodedArgs);
@@ -220,7 +238,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Build the front-doored URL for a given URL
+        /// Build the front-doored URL for a given URL with the default displaytype
         /// </summary>
         /// <param name="instanceUrl"></param>
         /// <param name="accessToken"></param>
@@ -228,8 +246,21 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static string ComputeFrontDoorUrl(string instanceUrl, string accessToken, string url)
         {
+            return ComputeFrontDoorUrl(instanceUrl, LoginOptions.DefaultDisplayType, accessToken, url);
+        }
+
+       /// <summary>
+        /// Build the front-doored URL for a given URL
+       /// </summary>
+       /// <param name="instanceUrl"></param>
+       /// <param name="displayType"></param>
+       /// <param name="accessToken"></param>
+       /// <param name="url"></param>
+       /// <returns></returns>
+        public static string ComputeFrontDoorUrl(string instanceUrl, string displayType, string accessToken, string url)
+        {
             // Args
-            string[] args = { accessToken, url };
+            string[] args = { displayType, accessToken, url };
             string[] urlEncodedArgs = args.Select(s => Uri.EscapeDataString(s)).ToArray();
 
             // Authorization url
@@ -282,7 +313,7 @@ namespace Salesforce.SDK.Auth
                 }
             }
             return account;
-           
+
         }
         /// <summary>
         /// Async method to revoke the user's refresh token (i.e. do a server-side logout for the authenticated user)

@@ -102,7 +102,7 @@ namespace Salesforce.SDK.Auth
 
         public LoginOptions GetLoginOptions()
         {
-            return new LoginOptions(LoginUrl, ClientId, CallbackUrl, Scopes);
+            return new LoginOptions(LoginUrl, ClientId, CallbackUrl, LoginOptions.DefaultDisplayType, Scopes);
         }
     }
 }

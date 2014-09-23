@@ -209,7 +209,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadRemoteStartPage()
         {
-            Uri uri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
+            Uri uri = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,_client.AccessToken, _bootConfig.StartPage), UriKind.Absolute);
             LoadUri(uri);
         }
 
@@ -256,7 +256,7 @@ namespace Salesforce.SDK.Hybrid
                 // Cheap REST call to refresh session
                 _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), (response) =>
                     {
-                        Uri frontDoorStartURL = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, _client.AccessToken, startURL));
+                        Uri frontDoorStartURL = new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,_client.AccessToken, startURL));
                         _syncContext.Post((state) => { sender.Navigate(state as Uri); }, frontDoorStartURL);
                     }
                 );
