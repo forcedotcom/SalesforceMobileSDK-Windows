@@ -24,37 +24,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// object representing an authenticated user credentials
+    ///     object representing an authenticated user credentials
     /// </summary>
     public class Account
     {
-        public string LoginUrl { get; private set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-        public string ClientId { get; private set; }
-        public string CallbackUrl { get; private set; }
-        public string[] Scopes { get; private set; }
-        public string InstanceUrl { get; private set; }
-        public string IdentityUrl { get; private set; }
-        public string AccessToken { get; set; }
-        public string RefreshToken { get; private set; }
-        [JsonProperty]
-        public MobilePolicy Policy { get; internal set; }
-
-
         /// <summary>
-        /// Constructor for Account
-        /// NB: the Account is not stored anywhere until we call PersistCredentials on the IAuthStorageHelper
+        ///     Constructor for Account
+        ///     NB: the Account is not stored anywhere until we call PersistCredentials on the IAuthStorageHelper
         /// </summary>
         /// <param name="loginUrl"></param>
         /// <param name="clientId"></param>
@@ -63,7 +45,8 @@ namespace Salesforce.SDK.Auth
         /// <param name="instanceUrl"></param>
         /// <param name="accessToken"></param>
         /// <param name="refreshToken"></param>
-        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl, string identityUrl, string accessToken, string refreshToken)
+        public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl,
+            string identityUrl, string accessToken, string refreshToken)
         {
             LoginUrl = loginUrl;
             ClientId = clientId;
@@ -75,8 +58,23 @@ namespace Salesforce.SDK.Auth
             RefreshToken = refreshToken;
         }
 
+        public string LoginUrl { get; private set; }
+        public string UserId { get; set; }
+        public string UserName { get; set; }
+        public string ClientId { get; private set; }
+        public string CallbackUrl { get; private set; }
+        public string[] Scopes { get; private set; }
+        public string InstanceUrl { get; private set; }
+        public string IdentityUrl { get; private set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; private set; }
+
+        [JsonProperty]
+        public MobilePolicy Policy { get; internal set; }
+
+
         /// <summary>
-        /// Serialize Account object as a JSON string
+        ///     Serialize Account object as a JSON string
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
@@ -86,7 +84,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Deserialize Account from a JSON string
+        ///     Deserialize Account from a JSON string
         /// </summary>
         /// <param name="accountJson"></param>
         /// <returns></returns>
@@ -102,7 +100,7 @@ namespace Salesforce.SDK.Auth
 
         public LoginOptions GetLoginOptions()
         {
-            return new LoginOptions(LoginUrl, ClientId, CallbackUrl, Scopes);
+            return new LoginOptions(LoginUrl, ClientId, CallbackUrl, LoginOptions.DefaultDisplayType, Scopes);
         }
     }
 }

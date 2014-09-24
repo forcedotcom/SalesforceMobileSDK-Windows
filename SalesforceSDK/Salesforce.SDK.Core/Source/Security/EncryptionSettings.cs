@@ -24,22 +24,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Windows.Storage.Streams;
 
 namespace Salesforce.SDK.Source.Security
 {
     public sealed class EncryptionSettings
     {
-        public string Password { get; set; }
-        public string Salt { get; set; }
-        public string SymmetricAlgorithm { get; private set; }
-        public string KeyDerivationAlgorithm { get; private set; }
-        private IKeyGenerator KeyGenerator;
+        private readonly IKeyGenerator KeyGenerator;
 
         public EncryptionSettings(IKeyGenerator keyGenerator)
         {
@@ -47,6 +39,11 @@ namespace Salesforce.SDK.Source.Security
             KeyDerivationAlgorithm = Encryptor.PreferredKeyDerivationAlgorithm;
             KeyGenerator = keyGenerator;
         }
+
+        public string Password { get; set; }
+        public string Salt { get; set; }
+        public string SymmetricAlgorithm { get; private set; }
+        public string KeyDerivationAlgorithm { get; private set; }
 
         public void GenerateKey(out IBuffer keyMaterial, out IBuffer iv, string nonce)
         {

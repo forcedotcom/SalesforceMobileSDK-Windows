@@ -1,6 +1,4 @@
-﻿using Salesforce.SDK.App;
-using Salesforce.SDK.Source.Pages;
-/*
+﻿/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -27,43 +25,43 @@ using Salesforce.SDK.Source.Pages;
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
-using System.Windows;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Pages;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Phone specific implementation if IAuthHelper
+    ///     Phone specific implementation if IAuthHelper
     /// </summary>
     public sealed class AuthHelper : IAuthHelper
     {
         /// <summary>
-        /// Navigate to the /Pages/LoginPage.xaml and load login page in the webview
+        ///     Navigate to the /Pages/LoginPage.xaml and load login page in the webview
         /// </summary>
         /// <param name="loginOptions"></param>
         public async void StartLoginFlow()
         {
-            Frame frame = Window.Current.Content as Frame;
+            var frame = Window.Current.Content as Frame;
             if (frame != null)
             {
-                await frame.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    frame.Navigate(typeof(AccountPage));
-                });
-
+                await
+                    frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                        () => { frame.Navigate(typeof (AccountPage)); });
             }
         }
 
         /// <summary>
-        /// Persist oauth credentials via the AccountManager and navigate back to previous screen
+        ///     Persist oauth credentials via the AccountManager and navigate back to previous screen
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
         public async void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse)
         {
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
-            Frame frame = Window.Current.Content as Frame;
+            var frame = Window.Current.Content as Frame;
             if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {
                 PincodeManager.LaunchPincodeScreen();

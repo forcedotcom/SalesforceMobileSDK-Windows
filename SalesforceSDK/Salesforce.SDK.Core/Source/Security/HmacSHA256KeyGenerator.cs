@@ -24,81 +24,84 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.System.Profile;
-using Windows.ApplicationModel;
 
 namespace Salesforce.SDK.Source.Security
 {
     /// <summary>
-    /// This class is a sample encryption key generator. It is highly recommended that you roll your own and provide it's configuration in your Application class
-    /// extending SalesforceApplication or SaleforcePhoneApplication. 
+    ///     This class is a sample encryption key generator. It is highly recommended that you roll your own and provide it's
+    ///     configuration in your Application class
+    ///     extending SalesforceApplication or SaleforcePhoneApplication.
     /// </summary>
     public sealed class HmacSHA256KeyGenerator : IKeyGenerator
     {
-        public void GenerateKey(string password, string salt, string nonce, out Windows.Storage.Streams.IBuffer keyMaterial, out Windows.Storage.Streams.IBuffer iv)
+        public void GenerateKey(string password, string salt, string nonce, out IBuffer keyMaterial, out IBuffer iv)
         {
             IBuffer saltBuffer = CryptographicBuffer.ConvertStringToBinary(salt, BinaryStringEncoding.Utf8);
             KeyDerivationParameters keyParams = KeyDerivationParameters.BuildForSP800108(saltBuffer, GetNonce(nonce));
-            KeyDerivationAlgorithmProvider kdf = KeyDerivationAlgorithmProvider.OpenAlgorithm(Encryptor.Settings.KeyDerivationAlgorithm);
+            KeyDerivationAlgorithmProvider kdf =
+                KeyDerivationAlgorithmProvider.OpenAlgorithm(Encryptor.Settings.KeyDerivationAlgorithm);
             IBuffer passwordBuffer = CryptographicBuffer.ConvertStringToBinary(password, BinaryStringEncoding.Utf8);
             CryptographicKey keyOriginal = kdf.CreateKey(passwordBuffer);
 
             int keySize = 256;
-            int ivSize = 128 / 8;
-            uint totalData = (uint)(keySize + ivSize);
+            int ivSize = 128/8;
+            var totalData = (uint) (keySize + ivSize);
             IBuffer keyDerived = CryptographicEngine.DeriveKeyMaterial(keyOriginal, keyParams, totalData);
-            
+
             byte[] keyMaterialBytes = keyDerived.ToArray();
             keyMaterial = WindowsRuntimeBuffer.Create(keyMaterialBytes, 0, keySize, keySize);
             iv = WindowsRuntimeBuffer.Create(keyMaterialBytes, keySize, ivSize, ivSize);
         }
 
         /// <summary>
-        /// It is recommended you generate a way that is unique for the app/device. In this example we normalize the hardware ID for things that rarely change and add a few strings related to the app.
-        /// See http://code.msdn.microsoft.com/windowsapps/How-to-use-ASHWID-to-3742c83e for examples on ASHWID use.
+        ///     It is recommended you generate a way that is unique for the app/device. In this example we normalize the hardware
+        ///     ID for things that rarely change and add a few strings related to the app.
+        ///     See http://code.msdn.microsoft.com/windowsapps/How-to-use-ASHWID-to-3742c83e for examples on ASHWID use.
         /// </summary>
         /// <returns></returns>
         private static string GetDeviceUniqueId()
         {
-            var id = HardwareIdentification.GetPackageSpecificToken(null);
+            HardwareToken id = HardwareIdentification.GetPackageSpecificToken(null);
             string normalized = NormalizeHardwareId(id.Id.ToArray());
             HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm("MD5");
-            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(normalized + typeof(HmacSHA256KeyGenerator).FullName, BinaryStringEncoding.Utf8);
+            IBuffer buff =
+                CryptographicBuffer.ConvertStringToBinary(normalized + typeof (HmacSHA256KeyGenerator).FullName,
+                    BinaryStringEncoding.Utf8);
             IBuffer hashed = alg.HashData(buff);
             return CryptographicBuffer.EncodeToHexString(hashed);
         }
 
         /// <summary>
-        /// Simplified version of going through the hardware string. There are many different hardware items that can be looked at, and a good number of them can change when things are plugged in or
-        /// turned on or off.  In this we went for a few items that should stay relatively the same.
+        ///     Simplified version of going through the hardware string. There are many different hardware items that can be looked
+        ///     at, and a good number of them can change when things are plugged in or
+        ///     turned on or off.  In this we went for a few items that should stay relatively the same.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         private static string NormalizeHardwareId(Byte[] id)
         {
-            var hardwareIdString = BitConverter.ToString(id).Replace("-", "");
-            StringBuilder normalized = new StringBuilder();
-            for (var i = 0; i < hardwareIdString.Length / 8; i++)
+            string hardwareIdString = BitConverter.ToString(id).Replace("-", "");
+            var normalized = new StringBuilder();
+            for (int i = 0; i < hardwareIdString.Length/8; i++)
             {
-                switch (hardwareIdString.Substring(i * 8, 4))
+                switch (hardwareIdString.Substring(i*8, 4))
                 {
                     case "0100": // Processor 
-                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
                     case "0500": // Audio Adapter 
-                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
                     case "0900": // System BIOS 
-                        normalized.Append(hardwareIdString.Substring(i * 8 + 4, 4));
+                        normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
                 }
             }
@@ -106,7 +109,7 @@ namespace Salesforce.SDK.Source.Security
         }
 
         /// <summary>
-        /// This utility function returns a nonce value for authenticated encryption modes.
+        ///     This utility function returns a nonce value for authenticated encryption modes.
         /// </summary>
         /// <returns></returns>
         private static IBuffer GetNonce(string nonce)

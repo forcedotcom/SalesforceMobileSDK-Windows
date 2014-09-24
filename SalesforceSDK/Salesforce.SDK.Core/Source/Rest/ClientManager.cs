@@ -24,24 +24,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+using System.Threading.Tasks;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Settings;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Rest
 {
     /// <summary>
-    /// Factory class for RestClient
-    /// Credentials are stored via the AccountManager
-    /// When no account is found, it kicks off the login flow and creates a new Account
+    ///     Factory class for RestClient
+    ///     Credentials are stored via the AccountManager
+    ///     When no account is found, it kicks off the login flow and creates a new Account
     /// </summary>
     public class ClientManager
     {
-
         /// <summary>
-        /// Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke the user auth tokens
+        ///     Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke
+        ///     the user auth tokens
         /// </summary>
         /// <returns>true if server logout was successful</returns>
         public async Task<bool> Logout()
@@ -59,15 +58,12 @@ namespace Salesforce.SDK.Rest
                 }
                 return loggedOut;
             }
-            else
-            {
-                GetRestClient();
-                return await Task.Factory.StartNew(() => true);
-            }
+            GetRestClient();
+            return await Task.Factory.StartNew(() => true);
         }
 
         /// <summary>
-        /// Returns a RestClient if user is already authenticated or null
+        ///     Returns a RestClient if user is already authenticated or null
         /// </summary>
         /// <returns></returns>
         public RestClient PeekRestClient()
@@ -76,23 +72,21 @@ namespace Salesforce.SDK.Rest
             if (account != null)
             {
                 return new RestClient(account.InstanceUrl, account.AccessToken,
-                                        async () =>
-                                        {
-                                            AuthResponse authResponse = await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                                            account.AccessToken = authResponse.AccessToken;
-                                            AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
-                                            return account.AccessToken;
-                                        }
-                                       );
+                    async () =>
+                    {
+                        AuthResponse authResponse =
+                            await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
+                        account.AccessToken = authResponse.AccessToken;
+                        AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+                        return account.AccessToken;
+                    }
+                    );
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
-        /// Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
+        ///     Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
         /// </summary>
         /// <returns></returns>
         public RestClient GetRestClient()

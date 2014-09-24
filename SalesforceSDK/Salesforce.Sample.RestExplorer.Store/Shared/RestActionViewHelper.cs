@@ -24,27 +24,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Rest;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Salesforce.SDK.Rest;
 
 namespace Salesforce.Sample.RestExplorer.Shared
 {
     /// <summary>
-    /// Helper class for Rest Explorer main page (phone and store) 
+    ///     Helper class for Rest Explorer main page (phone and store)
     /// </summary>
     public class RestActionViewHelper
     {
         /// <summary>
-        /// Returns controls to show by name (since control actual types are different on phone and store)
+        ///     Returns controls to show by name (since control actual types are different on phone and store)
         /// </summary>
         /// <param name="restActionStr"></param>
         /// <returns></returns>
         public static HashSet<string> GetNamesOfControlsToShow(string restActionStr)
         {
-            HashSet<string> names = new HashSet<string>();
-            RestAction restAction = (RestAction)Enum.Parse(typeof(RestAction), restActionStr);
+            var names = new HashSet<string>();
+            var restAction = (RestAction) Enum.Parse(typeof (RestAction), restActionStr);
             switch (restAction)
             {
                 case RestAction.VERSIONS:
@@ -110,7 +111,7 @@ namespace Salesforce.Sample.RestExplorer.Shared
         }
 
         /// <summary>
-        /// Build HTML from a RestResponse
+        ///     Build HTML from a RestResponse
         /// </summary>
         /// <param name="response"></param>
         /// <returns></returns>
@@ -118,7 +119,7 @@ namespace Salesforce.Sample.RestExplorer.Shared
         {
             string[] blocks = (response == null
                 ? null
-                : new string[] { "<b>Status Code:</b>" + response.StatusCode, "<b>Body:</b>\n" + response.PrettyBody });
+                : new[] {"<b>Status Code:</b>" + response.StatusCode, "<b>Body:</b>\n" + response.PrettyBody});
 
             string htmlHead = @"
             <head>
@@ -130,7 +131,7 @@ namespace Salesforce.Sample.RestExplorer.Shared
             </head>
             ";
 
-            StringBuilder sb = new StringBuilder(htmlHead);
+            var sb = new StringBuilder(htmlHead);
 
             sb.Append("<body>");
 

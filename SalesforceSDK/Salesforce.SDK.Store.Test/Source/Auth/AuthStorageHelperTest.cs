@@ -24,14 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Security;
-using Salesforce.SDK.Source.Settings;
+
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Auth
 {
@@ -41,7 +39,7 @@ namespace Salesforce.SDK.Auth
         [TestInitialize]
         public void Setup()
         {
-             EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
             {
                 Password = "mypassword",
                 Salt = "mysalt"
@@ -59,17 +57,20 @@ namespace Salesforce.SDK.Auth
         [TestMethod]
         public void TestPersistRetrieveDeleteCredentials()
         {
-            Account account = new Account("loginUrl", "clientId", "callbackUrl", new string[] { "scopeA", "scopeB" }, "instanceUrl", "identityUrl", "accessToken", "refreshToken");
+            var account = new Account("loginUrl", "clientId", "callbackUrl", new[] {"scopeA", "scopeB"}, "instanceUrl",
+                "identityUrl", "accessToken", "refreshToken");
             account.UserId = "userId";
             account.UserName = "userName";
             AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             CheckAccount(account, false);
             TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
             MethodInfo persist = auth.GetDeclaredMethod("PersistCredentials");
-            MethodInfo delete = auth.GetDeclaredMethods("DeletePersistedCredentials").First(method => method.GetParameters().Count() == 1);
-            persist.Invoke(authStorageHelper, new object[] { account });
+            MethodInfo delete =
+                auth.GetDeclaredMethods("DeletePersistedCredentials")
+                    .First(method => method.GetParameters().Count() == 1);
+            persist.Invoke(authStorageHelper, new object[] {account});
             CheckAccount(account, true);
-            delete.Invoke(authStorageHelper, new object[] { account.UserId });
+            delete.Invoke(authStorageHelper, new object[] {account.UserId});
             CheckAccount(account, false);
         }
 
@@ -81,11 +82,13 @@ namespace Salesforce.SDK.Auth
             var accounts = (Dictionary<string, Account>) retrieve.Invoke(authStorageHelper, null);
             if (!exists)
             {
-                Assert.IsFalse(accounts.ContainsKey(expectedAccount.UserId), "Account " + expectedAccount.UserId + " should not have been found");
+                Assert.IsFalse(accounts.ContainsKey(expectedAccount.UserId),
+                    "Account " + expectedAccount.UserId + " should not have been found");
             }
             else
             {
-                Assert.IsTrue(accounts.ContainsKey(expectedAccount.UserId),  "Account " + expectedAccount.UserId + " should exist");
+                Assert.IsTrue(accounts.ContainsKey(expectedAccount.UserId),
+                    "Account " + expectedAccount.UserId + " should exist");
                 Account account = accounts[expectedAccount.UserId];
                 Assert.AreEqual(expectedAccount.LoginUrl, account.LoginUrl);
                 Assert.AreEqual(expectedAccount.ClientId, account.ClientId);

@@ -24,20 +24,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
-using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
+using Windows.Security.Cryptography;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Windows.Foundation;
 using Windows.Web;
-using Windows.Security.Cryptography;
 
 namespace Salesforce.SDK.Hybrid
 {
     public sealed class StreamUriResolver : IUriToStreamResolver
     {
-        public IAsyncOperation<IInputStream> UriToStreamAsync(System.Uri uri)
+        public IAsyncOperation<IInputStream> UriToStreamAsync(Uri uri)
         {
             string host = uri.Host;
             int delimiter = host.LastIndexOf('_');
@@ -47,12 +47,12 @@ namespace Salesforce.SDK.Hybrid
             string contentIdentifier = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, buffer);
             string relativePath = uri.PathAndQuery;
 
-            System.Uri appDataUri = new Uri("ms-appx:///" + contentIdentifier + relativePath);
+            var appDataUri = new Uri("ms-appx:///" + contentIdentifier + relativePath);
 
             return GetFileStreamFromApplicationUriAsync(appDataUri).AsAsyncOperation();
         }
 
-        private async Task<IInputStream> GetFileStreamFromApplicationUriAsync(System.Uri uri)
+        private async Task<IInputStream> GetFileStreamFromApplicationUriAsync(Uri uri)
         {
             StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(uri);
             if (file == null)

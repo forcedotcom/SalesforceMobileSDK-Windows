@@ -24,62 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Native;
-using Salesforce.SDK.Rest;
+
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Native;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    ///     An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : NativeMainPage
     {
-
         public const string CurrentPage = "currentPage{0}";
         public const string defaultPage = "/one/one.app";
 
-        public MainPage() : base()
+        public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             oneView.FrameContentLoading += oneView_FrameContentLoading;
             oneView.NavigationCompleted += oneView_NavigationCompleted;
         }
 
-        void oneView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
+        private void oneView_NavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
         {
-            logoutBtn.Visibility = Windows.UI.Xaml.Visibility.Visible;
+            logoutBtn.Visibility = Visibility.Visible;
         }
 
-        void oneView_FrameContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
+        private void oneView_FrameContentLoading(WebView sender, WebViewContentLoadingEventArgs args)
         {
             SavePage(AccountManager.GetAccount(), args.Uri.ToString());
         }
 
         /// <summary>
-        /// When navigated to, we try to get a RestClient
-        /// If we are not already authenticated, this will kick off the login flow
+        ///     When navigated to, we try to get a RestClient
+        ///     If we are not already authenticated, this will kick off the login flow
         /// </summary>
         /// <param name="e"></param>
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Account account = AccountManager.GetAccount();
             if (account != null)
@@ -87,10 +76,12 @@ namespace Salesforce.Sample.Salesforce1.Container
                 if (!oneView.CanGoBack)
                 {
                     account = await OAuth2.RefreshAuthToken(account);
-                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, account.AccessToken, GetPage(account));
+                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, LoginOptions.DefaultDisplayType,
+                        account.AccessToken, GetPage(account));
                     oneView.Navigate(new Uri(startPage));
                 }
-            } else
+            }
+            else
             {
                 base.OnNavigatedTo(e);
             }
@@ -103,20 +94,19 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         private async void Logout(object sender, RoutedEventArgs e)
         {
-
             if (SalesforceApplication.GlobalClientManager != null)
             {
                 await SalesforceApplication.GlobalClientManager.Logout();
             }
             AccountManager.SwitchAccount();
         }
-        
+
         private void SavePage(Account account, string page)
         {
             if (account != null && page != null && page.Contains(defaultPage))
             {
-                var settings = ApplicationData.Current.LocalSettings;
-                var key = string.Format(CurrentPage, account.UserId);
+                ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+                string key = string.Format(CurrentPage, account.UserId);
                 settings.Values[key] = page;
             }
         }
@@ -127,8 +117,8 @@ namespace Salesforce.Sample.Salesforce1.Container
             if (account != null)
             {
                 value = account.InstanceUrl + defaultPage;
-                var settings = ApplicationData.Current.LocalSettings;
-                var key = string.Format(CurrentPage, account.UserId);
+                ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
+                string key = string.Format(CurrentPage, account.UserId);
                 if (settings.Values.ContainsKey(key))
                 {
                     value = settings.Values[key] as string;

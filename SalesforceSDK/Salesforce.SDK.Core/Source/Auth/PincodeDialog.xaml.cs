@@ -24,25 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Strings;
+
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Strings;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -50,18 +43,19 @@ namespace Salesforce.SDK.Auth
 {
     public sealed partial class PincodeDialog : Page
     {
-        private PincodeOptions Options;
         /// <summary>
-        /// Defines number of retries of locked screen. We log user out when RetryCounter hits 1.
+        ///     Defines number of retries of locked screen. We log user out when RetryCounter hits 1.
         /// </summary>
-        private static readonly int MaximumRetries = 10;
+        private const int MaximumRetries = 10;
+
         private static int RetryCounter = MaximumRetries;
-        private static readonly int MinimumWidthForBarMode = 500;
-        private static readonly int BarModeHeight = 400;
+        private const int MinimumWidthForBarMode = 500;
+        private const int BarModeHeight = 400;
+        private PincodeOptions Options;
 
         public PincodeDialog()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Passcode.PlaceholderText = LocalizedStrings.GetString("passcode");
             ErrorFlyout.Closed += ErrorFlyout_Closed;
         }
@@ -89,20 +83,19 @@ namespace Salesforce.SDK.Auth
                     break;
             }
             Passcode.Password = "";
-            var bounds = Window.Current.Bounds;
+            Rect bounds = Window.Current.Bounds;
             // This screen will adjust size for "narrow" views; if the view is sufficiently narrow it will fill the screen and move text to the top, so it can be seen with virtual keyboard.
             if (bounds.Width < MinimumWidthForBarMode)
             {
                 PincodeContainer.Height = bounds.Height;
-                PincodeWindow.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Top;
+                PincodeWindow.VerticalAlignment = VerticalAlignment.Top;
             }
             else
             {
                 // Act as a "bar" for screens that have enough horizontal resolution.
-                PincodeWindow.VerticalAlignment = Windows.UI.Xaml.VerticalAlignment.Center;
+                PincodeWindow.VerticalAlignment = VerticalAlignment.Center;
                 PincodeContainer.Height = BarModeHeight;
             }
-
         }
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -118,19 +111,20 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Configures the dialog for creating a pincode.
+        ///     Configures the dialog for creating a pincode.
         /// </summary>
         private void SetupCreate()
         {
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
             Description.Text = LocalizedStrings.GetString("passcode_create_security");
-            ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Visible;
-            ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_length"), Options.User.Policy.PinLength);
+            ContentFooter.Visibility = Visibility.Visible;
+            ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_length"),
+                Options.User.Policy.PinLength);
             Passcode.KeyDown += CreateClicked;
         }
 
         /// <summary>
-        /// Configures the dialog to act as a lockscreen.
+        ///     Configures the dialog to act as a lockscreen.
         /// </summary>
         private void SetupLocked()
         {
@@ -138,8 +132,8 @@ namespace Salesforce.SDK.Auth
             ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
             Description.Text = "";
             // code needed to "underline" the text
-            Run description = new Run();
-            Underline underline = new Underline();
+            var description = new Run();
+            var underline = new Underline();
             description.Text = LocalizedStrings.GetString("passcode_forgot_passcode");
             underline.Inlines.Add(description);
             Description.Inlines.Add(underline);
@@ -149,13 +143,13 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Configures the dialog to act as a confirmation for the entered pincode.
+        ///     Configures the dialog to act as a confirmation for the entered pincode.
         /// </summary>
         private void SetupConfirm()
         {
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
             Description.Text = LocalizedStrings.GetString("passcode_confirm");
-            ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+            ContentFooter.Visibility = Visibility.Collapsed;
             Passcode.KeyDown += ConfirmClicked;
         }
 
@@ -166,12 +160,13 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Length >= Options.User.Policy.PinLength)
             {
-                PincodeOptions options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
-                Frame.Navigate(typeof(PincodeDialog), options);
+                var options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
+                Frame.Navigate(typeof (PincodeDialog), options);
             }
             else
             {
-                DisplayErrorFlyout(String.Format(LocalizedStrings.GetString("passcode_length"), Options.User.Policy.PinLength));
+                DisplayErrorFlyout(String.Format(LocalizedStrings.GetString("passcode_length"),
+                    Options.User.Policy.PinLength));
             }
         }
 
@@ -220,17 +215,14 @@ namespace Salesforce.SDK.Auth
                 {
                     await SalesforceApplication.GlobalClientManager.Logout();
                 }
-                else
-                {
-                    RetryCounter--;
-                    ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_incorrect"), RetryCounter);
-                    ContentFooter.Visibility = Windows.UI.Xaml.Visibility.Visible;
-                }
+                RetryCounter--;
+                ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_incorrect"), RetryCounter);
+                ContentFooter.Visibility = Visibility.Visible;
             }
         }
 
 
-        void Description_Tapped(object sender, TappedRoutedEventArgs e)
+        private void Description_Tapped(object sender, TappedRoutedEventArgs e)
         {
             ForgotFlyout.ShowAt(Passcode);
         }
@@ -255,12 +247,12 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        void ErrorFlyout_Closed(object sender, object e)
+        private void ErrorFlyout_Closed(object sender, object e)
         {
             if (PincodeOptions.PincodeScreen.Confirm == Options.Screen)
             {
-                PincodeOptions options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, Options.User, "");
-                Frame.Navigate(typeof(PincodeDialog), options);
+                var options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, Options.User, "");
+                Frame.Navigate(typeof (PincodeDialog), options);
             }
         }
     }

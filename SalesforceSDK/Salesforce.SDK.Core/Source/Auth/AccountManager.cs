@@ -24,28 +24,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Newtonsoft.Json;
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Security;
+
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using Salesforce.SDK.Source.Settings;
-using Salesforce.SDK.Rest;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Rest;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Class providing (static) methods for creating/deleting or retrieving an Account
+    ///     Class providing (static) methods for creating/deleting or retrieving an Account
     /// </summary>
     public class AccountManager
     {
-        private static AccountManager instance = new AccountManager();
-
         /// <summary>
-        /// Delete Account for currently authenticated user
+        ///     Delete Account for currently authenticated user
         /// </summary>
         public static void DeleteAccount()
         {
@@ -57,8 +51,9 @@ namespace Salesforce.SDK.Auth
         {
             return AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
         }
+
         /// <summary>
-        /// Return Account for currently authenticated user
+        ///     Return Account for currently authenticated user
         /// </summary>
         /// <returns></returns>
         public static Account GetAccount()
@@ -104,17 +99,19 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Create and persist Account for newly authenticated user
+        ///     Create and persist Account for newly authenticated user
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
-        public async static Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
+        public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            Account account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl, loginOptions.Scopes,
+            var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
+                loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
             var cm = new ClientManager();
-            var client = cm.PeekRestClient();
-            IdentityResponse identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+            RestClient client = cm.PeekRestClient();
+            IdentityResponse identity =
+                await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
 
             if (identity != null)
             {

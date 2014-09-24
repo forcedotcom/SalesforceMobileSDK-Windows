@@ -9,39 +9,38 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <UserControl.Resources>
-        <strings:LocalizedStrings x:Key="Localize"/>
+        <strings:LocalizedStrings x:Key="Localize" />
 
         <Flyout x:Name="ServerFlyout">
             <StackPanel>
                 <TextBlock x:Name="serverFlyoutLabel"
-                               DataContext="choose_connection"
-                               Text="{Binding Converter={StaticResource Localize}}"
-                               Grid.Row="1"
-                               Margin="5"
-                               Style="{StaticResource SubheaderTextBlockStyle}"
-                               TextAlignment="Center"/>
+                           DataContext="choose_connection"
+                           Text="{Binding Converter={StaticResource Localize}}"
+                           Grid.Row="1"
+                           Margin="5"
+                           Style="{StaticResource SubheaderTextBlockStyle}"
+                           TextAlignment="Center" />
                 <ListBox x:Name="listboxServers"
                          SelectionMode="Single"
-                         FontSize="20"
-                         />
-                <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" Width="Auto">
+                         FontSize="20" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
                     <Button x:Name="addConnection"
                             DataContext="add_connection"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="addConnection_Click"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center" />
                     <Button x:Name="addAccount"
                             DataContext="continue"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="addAccount_Click"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center" />
                 </StackPanel>
 
             </StackPanel>
         </Flyout>
-        
+
         <Flyout x:Name="AddServerFlyout">
             <StackPanel>
                 <StackPanel>
@@ -51,29 +50,29 @@
                                Grid.Row="1"
                                Margin="5 0 5 15"
                                Style="{StaticResource SubheaderTextBlockStyle}"
-                               TextAlignment="Center"/>
+                               TextAlignment="Center" />
                     <TextBox x:Name="hostName"
                              DataContext="name"
                              Text="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch"/>
+                             HorizontalAlignment="Stretch" />
                     <TextBox x:Name="hostAddress"
                              DataContext="address"
                              Text="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch"/>
+                             HorizontalAlignment="Stretch" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" Width="Auto">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
                     <Button x:Name="cancelCustomHostBtn"
                             DataContext="cancel"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="cancelCustomHostBtn_Click"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center" />
                     <Button x:Name="addCustomHostBtn"
                             DataContext="ok"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="addCustomHostBtn_Click"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
         </Flyout>
@@ -82,15 +81,15 @@
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock x:Name="applicationTitle"
                    DataContext="application_title"
                    Text="{Binding Converter={StaticResource Localize}}"
                    Grid.Row="0"
                    Margin="5"
-                   Style="{StaticResource HeaderTextBlockStyle}"/>
+                   Style="{StaticResource HeaderTextBlockStyle}" />
         <TextBlock x:Name="listTitle"
                    DataContext="select_account"
                    Text="{Binding Converter={StaticResource Localize}}"
@@ -98,10 +97,10 @@
                    Margin="5"
                    Style="{StaticResource SubheaderTextBlockStyle}" />
         <ListBox Grid.Row="2" x:Name="accountsList"
-                     SelectionMode="Single"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Center"
-                     FontSize="20" />
+                 SelectionMode="Single"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 FontSize="20" />
     </Grid>
 
     <Page.BottomAppBar>
@@ -111,8 +110,7 @@
                               DataContext="account"
                               Label="{Binding Converter={StaticResource Localize}}"
                               Icon="Add"
-                              Click="ShowServerFlyout">
-                </AppBarButton>
+                              Click="ShowServerFlyout" />
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.BottomAppBar>

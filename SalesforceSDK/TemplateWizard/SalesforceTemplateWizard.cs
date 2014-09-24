@@ -24,28 +24,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.PlatformUI;
-using Microsoft.VisualStudio.TemplateWizard;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+using EnvDTE;
+using Microsoft.VisualStudio.TemplateWizard;
 
 namespace TemplateWizard
 {
-    class SalesforceTemplateWizard : IWizard
+    internal class SalesforceTemplateWizard : IWizard
     {
-        public void BeforeOpeningFile(EnvDTE.ProjectItem projectItem)
+        public void BeforeOpeningFile(ProjectItem projectItem)
         {
         }
 
-        public void ProjectFinishedGenerating(EnvDTE.Project project)
+        public void ProjectFinishedGenerating(Project project)
         {
         }
 
-        public void ProjectItemFinishedGenerating(EnvDTE.ProjectItem projectItem)
+        public void ProjectItemFinishedGenerating(ProjectItem projectItem)
         {
         }
 
@@ -53,14 +51,16 @@ namespace TemplateWizard
         {
         }
 
-        public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary, WizardRunKind runKind, object[] customParams)
+        public void RunStarted(object automationObject, Dictionary<string, string> replacementsDictionary,
+            WizardRunKind runKind, object[] customParams)
         {
-            TemplateForm window = new TemplateForm();
+            var window = new TemplateForm();
             window.ShowDialog();
             if (window.DialogResult.Value)
             {
                 PopulateReplacementDictionary(window);
-            } else
+            }
+            else
             {
                 throw new WizardCancelledException();
             }
@@ -73,7 +73,7 @@ namespace TemplateWizard
 
         private void PopulateReplacementDictionary(TemplateForm window)
         {
-            Dictionary<string, string> replacementsDictionary = new Dictionary<string, string>();
+            var replacementsDictionary = new Dictionary<string, string>();
 
             if (!String.IsNullOrEmpty(window.ClientID.Text))
             {
@@ -87,17 +87,18 @@ namespace TemplateWizard
 
             replacementsDictionary.Add("$EncryptionPassword$", Guid.NewGuid().ToString());
             replacementsDictionary.Add("$EncryptionSalt$", Guid.NewGuid().ToString());
-           
-            StringBuilder sb = new StringBuilder();
+
+            var sb = new StringBuilder();
             bool first = true;
-            foreach (CheckableItem<String> next in window.Scopes)
+            foreach (var next in window.Scopes)
             {
                 if (next.IsChecked)
                 {
                     if (!first)
                     {
                         sb.Append(", ");
-                    } else
+                    }
+                    else
                     {
                         first = false;
                     }

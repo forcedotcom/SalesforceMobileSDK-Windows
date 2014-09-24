@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,27 +32,30 @@ using System.Reflection;
 
 namespace Salesforce.SDK.Adaptation
 {
-    enum Platform
+    internal enum Platform
     {
         Phone,
         Store
     }
 
-    public class PlatformNotSupportedException : Exception { }
+    public class PlatformNotSupportedException : Exception
+    {
+    }
 
     public class PlatformAdapter
     {
-        private static readonly object _lock = new object();
-        private static Dictionary<Type, object> _resolveCache = new Dictionary<Type, object>();
+        private static readonly object Lock = new object();
+        private static readonly Dictionary<Type, object> ResolveCache = new Dictionary<Type, object>();
 
         private static Assembly _platformAssembly;
-        static Assembly PlatformAssembly
+
+        private static Assembly PlatformAssembly
         {
             get
             {
                 if (_platformAssembly == null)
                 {
-                    foreach (Platform platform in Enum.GetValues(typeof(Platform)))
+                    foreach (Platform platform in Enum.GetValues(typeof (Platform)))
                     {
                         _platformAssembly = TryLoadPlatformAssembly(platform);
                         if (_platformAssembly != null)
@@ -67,17 +71,17 @@ namespace Salesforce.SDK.Adaptation
 
         public static T Resolve<T>()
         {
-            Type interfaceType = typeof(T);
-            lock (_lock)
+            Type interfaceType = typeof (T);
+            lock (Lock)
             {
                 object instance;
-                if (!_resolveCache.TryGetValue(interfaceType, out instance))
+                if (!ResolveCache.TryGetValue(interfaceType, out instance))
                 {
                     Type concreteType = GetConcreteType(interfaceType);
                     if (concreteType != null)
                     {
                         instance = Activator.CreateInstance(concreteType);
-                        _resolveCache.Add(interfaceType, instance);
+                        ResolveCache.Add(interfaceType, instance);
                     }
                 }
 
@@ -86,7 +90,7 @@ namespace Salesforce.SDK.Adaptation
                     throw new PlatformNotSupportedException();
                 }
 
-                return (T)instance;
+                return (T) instance;
             }
         }
 
@@ -99,8 +103,8 @@ namespace Salesforce.SDK.Adaptation
 
         private static Assembly TryLoadPlatformAssembly(Platform platform)
         {
-            AssemblyName assemblyName = new AssemblyName();
-            assemblyName.Name = "Salesforce.SDK." + platform.ToString();
+            var assemblyName = new AssemblyName();
+            assemblyName.Name = "Salesforce.SDK." + platform;
             try
             {
                 return Assembly.Load(assemblyName);

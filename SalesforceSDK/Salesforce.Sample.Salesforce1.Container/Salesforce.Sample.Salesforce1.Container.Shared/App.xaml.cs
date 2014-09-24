@@ -24,66 +24,51 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+using System;
+using Windows.UI.Xaml.Navigation;
 using Salesforce.Sample.Salesforce1.Container.Settings;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
 namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>
-    /// Provides application-specific behavior to supplement the default Application class.
+    ///     Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     public sealed partial class App : SalesforceApplication
     {
         /// <summary>
-        /// Initializes the singleton application object.  This is the first line of authored code
-        /// executed, and as such is the logical equivalent of main() or WinMain().
+        ///     Initializes the singleton application object.  This is the first line of authored code
+        ///     executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
-            : base()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         /// <summary>
-        /// Invoked when Navigation to a certain page fails
+        ///     Invoked when Navigation to a certain page fails
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
-        protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
+        protected override SalesforceConfig InitializeConfig()
         {
-            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
             {
                 Password = "supercalifragilisticexpialidocious",
                 Salt = "friesaresaltyforsure"
             };
             Encryptor.init(settings);
-            Config config = SalesforceConfig.RetrieveConfig<Config>();
+            var config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)
                 config = new Config();
             return config;
@@ -91,7 +76,7 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         protected override Type SetRootApplicationPage()
         {
-            return typeof(MainPage);
+            return typeof (MainPage);
         }
     }
 }

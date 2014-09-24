@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Salesforce.SDK.App;
-/*
+﻿/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -26,38 +24,34 @@ using Salesforce.SDK.App;
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Security;
-using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using Windows.Security.Credentials;
 using Windows.Storage;
-using System.Linq;
-using System.Diagnostics;
+using Newtonsoft.Json;
+using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Store specific implementation if IAuthStorageHelper
-    /// </summary>    /// </summary>
+    ///     Store specific implementation if IAuthStorageHelper
+    /// </summary>
+    /// ///
+    /// </summary>
     public sealed class AuthStorageHelper
     {
-        private const string PersistedDataStorage = "persistedDataStorage";
         private const string PasswordVaultAccounts = "Salesforce Accounts";
         private const string PasswordVaultCurrentAccount = "Salesforce Account";
         private const string PasswordVaultSecuredData = "Salesforce Secure";
         private const string PasswordVaultPincode = "Salesforce Pincode";
         private const string InstallationStatusKey = "InstallationStatus";
 
-        private PasswordVault Vault;
-        private ApplicationDataContainer PersistedData;
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
-
-        public static AuthStorageHelper GetAuthStorageHelper()
-        {
-            return Auth.Value;
-        }
+        private readonly ApplicationDataContainer PersistedData;
+        private readonly PasswordVault Vault;
 
         private AuthStorageHelper()
         {
@@ -66,12 +60,17 @@ namespace Salesforce.SDK.Auth
             InstallationStatusCheck();
         }
 
+        public static AuthStorageHelper GetAuthStorageHelper()
+        {
+            return Auth.Value;
+        }
+
         private void InstallationStatusCheck()
         {
             if (!PersistedData.Values.ContainsKey(InstallationStatusKey))
             {
-                var accounts = Vault.RetrieveAll();
-                foreach (var next in accounts)
+                IReadOnlyList<PasswordCredential> accounts = Vault.RetrieveAll();
+                foreach (PasswordCredential next in accounts)
                 {
                     Vault.Remove(next);
                 }
@@ -79,12 +78,13 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        private IReadOnlyList<PasswordCredential> SafeRetrieveResource(string resource)
+        private IEnumerable<PasswordCredential> SafeRetrieveResource(string resource)
         {
             try
             {
                 return Vault.FindAllByResource(resource);
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
             }
@@ -104,7 +104,7 @@ namespace Salesforce.SDK.Auth
             return null;
         }
 
-        private IReadOnlyList<PasswordCredential> SafeRetrieveUser(string userName)
+        private IEnumerable<PasswordCredential> SafeRetrieveUser(string userName)
         {
             try
             {
@@ -118,19 +118,19 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Persist account, and sets account as the current account.
+        ///     Persist account, and sets account as the current account.
         /// </summary>
         /// <param name="account"></param>
         internal void PersistCredentials(Account account)
         {
-            var creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
+            PasswordCredential creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
             if (creds != null)
             {
                 Vault.Remove(creds);
-                var current = Vault.FindAllByResource(PasswordVaultCurrentAccount);
+                IReadOnlyList<PasswordCredential> current = Vault.FindAllByResource(PasswordVaultCurrentAccount);
                 if (current != null)
                 {
-                    foreach (var user in current)
+                    foreach (PasswordCredential user in current)
                     {
                         Vault.Remove(user);
                     }
@@ -139,25 +139,17 @@ namespace Salesforce.SDK.Auth
             string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
             Vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
             Vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
-            Dictionary<string, Account> accounts = RetrievePersistedCredentials();
-            if (accounts.ContainsKey(account.UserId))
-            {
-                accounts[account.UserId] = account;
-            }
-            else
-            {
-                accounts.Add(account.UserId, account);
-            }
-            LoginOptions options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl, account.Scopes);
+            var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
+                LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
         }
 
         internal Account RetrieveCurrentAccount()
         {
-            var creds = SafeRetrieveResource(PasswordVaultCurrentAccount).FirstOrDefault();
+            PasswordCredential creds = SafeRetrieveResource(PasswordVaultCurrentAccount).FirstOrDefault();
             if (creds != null)
             {
-                var account = Vault.Retrieve(creds.Resource, creds.UserName);
+                PasswordCredential account = Vault.Retrieve(creds.Resource, creds.UserName);
                 if (String.IsNullOrWhiteSpace(account.Password))
                     Vault.Remove(creds);
                 else
@@ -167,7 +159,7 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Retrieve an account based on the id of the user.
+        ///     Retrieve an account based on the id of the user.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -180,40 +172,41 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        /// Retrieve persisted account
+        ///     Retrieve persisted account
         /// </summary>
         /// <returns></returns>
         internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
-            var creds = SafeRetrieveResource(PasswordVaultAccounts);
-            Dictionary<string, Account> accounts = new Dictionary<string, Account>();
+            IEnumerable<PasswordCredential> creds = SafeRetrieveResource(PasswordVaultAccounts);
+            var accounts = new Dictionary<string, Account>();
             if (creds != null)
             {
-                foreach (var next in creds)
+                foreach (PasswordCredential next in creds)
                 {
-                    var account = Vault.Retrieve(next.Resource, next.UserName);
+                    PasswordCredential account = Vault.Retrieve(next.Resource, next.UserName);
                     if (String.IsNullOrWhiteSpace(account.Password))
                         Vault.Remove(next);
                     else
-                        accounts.Add(next.UserName, JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                        accounts.Add(next.UserName,
+                            JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
                 }
             }
             return accounts;
         }
 
         /// <summary>
-        /// Delete a persisted account credential based on the user id.
+        ///     Delete a persisted account credential based on the user id.
         /// </summary>
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(string userName, string id)
         {
-            var creds = SafeRetrieveUser(userName);
+            IEnumerable<PasswordCredential> creds = SafeRetrieveUser(userName);
             if (creds != null)
             {
-                foreach (var next in creds)
+                foreach (PasswordCredential next in creds)
                 {
-                    var vaultAccount = Vault.Retrieve(next.Resource, next.UserName);
-                    Account account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
+                    PasswordCredential vaultAccount = Vault.Retrieve(next.Resource, next.UserName);
+                    var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
                     if (id.Equals(account.UserId))
                     {
                         Vault.Remove(next);
@@ -221,23 +214,24 @@ namespace Salesforce.SDK.Auth
                 }
             }
         }
+
         /// <summary>
-        /// Delete all persisted accounts
+        ///     Delete all persisted accounts
         /// </summary>
         internal void DeletePersistedCredentials()
         {
-            var accounts = SafeRetrieveResource(PasswordVaultAccounts);
-            var current = SafeRetrieveResource(PasswordVaultCurrentAccount);
+            IEnumerable<PasswordCredential> accounts = SafeRetrieveResource(PasswordVaultAccounts);
+            IEnumerable<PasswordCredential> current = SafeRetrieveResource(PasswordVaultCurrentAccount);
             if (accounts != null)
             {
-                foreach (var next in accounts)
+                foreach (PasswordCredential next in accounts)
                 {
                     Vault.Remove(next);
                 }
             }
             if (current != null)
             {
-                foreach (var next in current)
+                foreach (PasswordCredential next in current)
                 {
                     Vault.Remove(next);
                 }
@@ -247,13 +241,14 @@ namespace Salesforce.SDK.Auth
         internal void PersistPincode(MobilePolicy policy)
         {
             DeletePincode();
-            PasswordCredential newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode, JsonConvert.SerializeObject(policy));
+            var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
+                JsonConvert.SerializeObject(policy));
             Vault.Add(newPin);
         }
 
         internal string RetrievePincode()
         {
-            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
                 return pin.Password;
             return null;
@@ -261,7 +256,7 @@ namespace Salesforce.SDK.Auth
 
         internal void DeletePincode()
         {
-            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
                 Vault.Remove(pin);

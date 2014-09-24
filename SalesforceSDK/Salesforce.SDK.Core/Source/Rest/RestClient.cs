@@ -24,46 +24,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Net;
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using Windows.Web.Http;
 using System.Threading.Tasks;
+using Windows.Web.Http;
+using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
     public delegate void AsyncRequestCallback(RestResponse response);
+
     public delegate Task<string> AccessTokenProvider();
 
     public class RestClient
     {
-        private AccessTokenProvider _accessTokenProvider;
+        private readonly AccessTokenProvider _accessTokenProvider;
 
-        private string _instanceUrl;
-        public string InstanceUrl
-        {
-            get
-            {
-                return _instanceUrl;
-            }
-        }
+        private readonly string _instanceUrl;
 
 
         private string _accessToken;
-        public string AccessToken
-        {
-            get
-            {
-                return _accessToken;
-            }
-        }
 
         public RestClient(string instanceUrl, string accessToken, AccessTokenProvider accessTokenProvider)
         {
             _instanceUrl = instanceUrl;
             _accessToken = accessToken;
             _accessTokenProvider = accessTokenProvider;
+        }
+
+        public string InstanceUrl
+        {
+            get { return _instanceUrl; }
+        }
+
+        public string AccessToken
+        {
+            get { return _accessToken; }
         }
 
         public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
@@ -84,13 +81,16 @@ namespace Salesforce.SDK.Rest
         private async Task<HttpCall> Send(RestRequest request, bool retryInvalidToken)
         {
             string url = _instanceUrl + request.Path;
-            HttpCallHeaders headers = new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
+            var headers = new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
             if (request.AdditionalHeaders != null)
             {
                 headers.Headers.Concat(request.AdditionalHeaders);
             }
 
-            HttpCall call = await new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute().ConfigureAwait(false);
+            HttpCall call =
+                await
+                    new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute()
+                        .ConfigureAwait(false);
 
             if (!call.HasResponse)
             {
@@ -113,6 +113,5 @@ namespace Salesforce.SDK.Rest
             // Done
             return call;
         }
-
     }
 }

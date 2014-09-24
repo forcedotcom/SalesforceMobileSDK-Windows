@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid Background="Transparent">
         <StackPanel Width="Auto" Height="Auto">
             <Button Width="Auto" Name="btnLogout" VerticalAlignment="Center" HorizontalAlignment="Stretch">Logout</Button>
             <Button Width="Auto" Name="btnSwitch" VerticalAlignment="Center" HorizontalAlignment="Stretch">Switch Account</Button>
@@ -16,11 +16,11 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Row="0" Grid.Column="0">
-                    <Button Name="btnVersions"  HorizontalAlignment="Center">Versions</Button>
+                    <Button Name="btnVersions" HorizontalAlignment="Center">Versions</Button>
                     <Button Name="btnResources" HorizontalAlignment="Center">Resources</Button>
                     <Button Name="btnDescribeGlobal" HorizontalAlignment="Center">Describe Global</Button>
                     <Button Name="btnMetadata" HorizontalAlignment="Center">Metadata</Button>

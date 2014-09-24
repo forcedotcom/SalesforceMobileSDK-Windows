@@ -24,33 +24,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-﻿
-using Salesforce.SDK.App;
+
 using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Windows;
 using Windows.Storage;
-using Windows.UI.Xaml;
 
 namespace Salesforce.SDK.Hybrid
 {
     /// <summary>
-    /// Helper for reading files from resources.
+    ///     Helper for reading files from resources.
     /// </summary>
     public class ConfigHelper
     {
         /// <summary>
-        ///  Return string containing contents of resource file
-        ///  Throws a FileNotFoundException if the file cannot be found
+        ///     Return string containing contents of resource file
+        ///     Throws a FileNotFoundException if the file cannot be found
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public static string ReadConfigFromResource(string path)
         {
-            Assembly assembly = typeof(ConfigHelper).GetTypeInfo().Assembly;
-            using (var resource = assembly.GetManifestResourceStream(path))
+            Assembly assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
+            using (Stream resource = assembly.GetManifestResourceStream(path))
             {
                 if (resource != null)
                 {
@@ -63,13 +60,13 @@ namespace Salesforce.SDK.Hybrid
             throw new FileNotFoundException("Resource file not found", path);
         }
 
-        public async static Task<string> ReadFileFromApplication(string path)
+        public static async Task<string> ReadFileFromApplication(string path)
         {
-            Uri fileUri = new Uri(@"ms-appx:///" + path);
+            var fileUri = new Uri(@"ms-appx:///" + path);
             StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
             if (file != null)
             {
-                var stream = await file.OpenStreamForReadAsync();
+                Stream stream = await file.OpenStreamForReadAsync();
                 using (var reader = new StreamReader(stream))
                 {
                     return reader.ReadToEnd();

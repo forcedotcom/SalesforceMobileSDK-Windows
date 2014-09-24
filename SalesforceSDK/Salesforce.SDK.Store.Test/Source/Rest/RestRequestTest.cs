@@ -24,174 +24,195 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Salesforce.SDK.Net;
+
 using System.Collections.Generic;
 using Windows.Web.Http;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
     [TestClass]
     public class RestRequestTest
     {
-    	private const string TEST_API_VERSION = "v99.0";
-    	private const string TEST_OBJECT_TYPE = "testObjectType";
-    	private const string TEST_OBJECT_ID = "testObjectId";
-    	private const string TEST_EXTERNAL_ID_FIELD = "testExternalIdField";
-    	private const string TEST_EXTERNAL_ID = "testExternalId";
-    	private const string TEST_QUERY = "testQuery";
-    	private const string TEST_SEARCH = "testSearch";
-    	private const string TEST_FIELDS_string = "{\"fieldX\":\"value with spaces\",\"name\":\"testAccount\"}";
-    	private const string TEST_FIELDS_LIST_string = "name,fieldX";
+        private const string TEST_API_VERSION = "v99.0";
+        private const string TEST_OBJECT_TYPE = "testObjectType";
+        private const string TEST_OBJECT_ID = "testObjectId";
+        private const string TEST_EXTERNAL_ID_FIELD = "testExternalIdField";
+        private const string TEST_EXTERNAL_ID = "testExternalId";
+        private const string TEST_QUERY = "testQuery";
+        private const string TEST_SEARCH = "testSearch";
+        private const string TEST_FIELDS_string = "{\"fieldX\":\"value with spaces\",\"name\":\"testAccount\"}";
+        private const string TEST_FIELDS_LIST_string = "name,fieldX";
         private const string FORM_URLENCODED = "application/x-www-form-urlencoded";
-        private const string APPLICATION_JSON = "application/json"; 
+        private const string APPLICATION_JSON = "application/json";
 
-        private string[] TEST_FIELDS_LIST = new string[]{"name", "fieldX"};    	
-    	private Dictionary<string, object> TEST_FIELDS = new Dictionary<string, object> {{"fieldX", "value with spaces"},{"name", "testAccount"}};
-    	
-        [TestMethod]
-        public void TestGetRequestForVersions() 
+        private readonly Dictionary<string, object> TEST_FIELDS = new Dictionary<string, object>
         {
-    		RestRequest request = RestRequest.GetRequestForVersions();
-    		Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
-            Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/", request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    	
+            {"fieldX", "value with spaces"},
+            {"name", "testAccount"}
+        };
+
+        private readonly string[] TEST_FIELDS_LIST = {"name", "fieldX"};
+
         [TestMethod]
-    	public void TestGetRequestForResources() 
+        public void TestGetRequestForVersions()
         {
-    		RestRequest request = RestRequest.GetRequestForResources(TEST_API_VERSION);
+            RestRequest request = RestRequest.GetRequestForVersions();
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/", request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
-    	
+            Assert.AreEqual("/services/data/", request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForDescribeGlobal() 
+        public void TestGetRequestForResources()
         {
-    		RestRequest request = RestRequest.GetRequestForDescribeGlobal(TEST_API_VERSION);
+            RestRequest request = RestRequest.GetRequestForResources(TEST_API_VERSION);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/", request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
-    	
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/", request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
+
         [TestMethod]
-    	public void TestGetRequestForMetadata() 
+        public void TestGetRequestForDescribeGlobal()
         {
-    		RestRequest request = RestRequest.GetRequestForMetadata(TEST_API_VERSION, TEST_OBJECT_TYPE);
+            RestRequest request = RestRequest.GetRequestForDescribeGlobal(TEST_API_VERSION);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/", request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/", request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
+
         [TestMethod]
-        public void TestGetRequestForDescribe() 
+        public void TestGetRequestForMetadata()
         {
-    		RestRequest request = RestRequest.GetRequestForDescribe(TEST_API_VERSION, TEST_OBJECT_TYPE);
+            RestRequest request = RestRequest.GetRequestForMetadata(TEST_API_VERSION, TEST_OBJECT_TYPE);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/describe/", request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
-    	
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/", request.Path,
+                "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-        public void TestGetRequestForCreate() 
+        public void TestGetRequestForDescribe()
         {
-    		RestRequest request = RestRequest.GetRequestForCreate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_FIELDS);
+            RestRequest request = RestRequest.GetRequestForDescribe(TEST_API_VERSION, TEST_OBJECT_TYPE);
+            Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
+            Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/describe/",
+                request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
+
+        [TestMethod]
+        public void TestGetRequestForCreate()
+        {
+            RestRequest request = RestRequest.GetRequestForCreate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_FIELDS);
             Assert.AreEqual(HttpMethod.Post, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.Json, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    	
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE, request.Path,
+                "Wrong path");
+            Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForRetrieve() 
+        public void TestGetRequestForRetrieve()
         {
-    		RestRequest request = RestRequest.GetRequestForRetrieve(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS_LIST);
+            RestRequest request = RestRequest.GetRequestForRetrieve(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID,
+                TEST_FIELDS_LIST);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID + "?fields=" + TEST_FIELDS_LIST_string, request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
+            Assert.AreEqual(
+                "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID +
+                "?fields=" + TEST_FIELDS_LIST_string, request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForUpdate() 
+        public void TestGetRequestForUpdate()
         {
-    		RestRequest request = RestRequest.GetRequestForUpdate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID, TEST_FIELDS);
+            RestRequest request = RestRequest.GetRequestForUpdate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID,
+                TEST_FIELDS);
             Assert.AreEqual(HttpMethod.Patch, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.Json, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    	
+            Assert.AreEqual(
+                "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID,
+                request.Path, "Wrong path");
+            Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForUpsert()
+        public void TestGetRequestForUpsert()
         {
-    		RestRequest request = RestRequest.GetRequestForUpsert(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_EXTERNAL_ID_FIELD, TEST_EXTERNAL_ID, TEST_FIELDS);
+            RestRequest request = RestRequest.GetRequestForUpsert(TEST_API_VERSION, TEST_OBJECT_TYPE,
+                TEST_EXTERNAL_ID_FIELD, TEST_EXTERNAL_ID, TEST_FIELDS);
             Assert.AreEqual(HttpMethod.Patch, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.Json, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_EXTERNAL_ID_FIELD + "/" + TEST_EXTERNAL_ID, request.Path, "Wrong path");
-    		Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
+            Assert.AreEqual(
+                "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_EXTERNAL_ID_FIELD +
+                "/" + TEST_EXTERNAL_ID, request.Path, "Wrong path");
+            Assert.AreEqual(TEST_FIELDS_string, request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForDelete() 
+        public void TestGetRequestForDelete()
         {
-    		RestRequest request = RestRequest.GetRequestForDelete(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID);
+            RestRequest request = RestRequest.GetRequestForDelete(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID);
             Assert.AreEqual(HttpMethod.Delete, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID, request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    	
-    	public void TestGetRequestForQuery() 
+            Assert.AreEqual(
+                "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID,
+                request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
+        public void TestGetRequestForQuery()
         {
-    		RestRequest request = RestRequest.GetRequestForQuery(TEST_API_VERSION, TEST_QUERY);
+            RestRequest request = RestRequest.GetRequestForQuery(TEST_API_VERSION, TEST_QUERY);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/query?q=" + TEST_QUERY, request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/query?q=" + TEST_QUERY, request.Path, "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestGetRequestForSeach()
+        public void TestGetRequestForSeach()
         {
-    		RestRequest request = RestRequest.GetRequestForSearch(TEST_API_VERSION, TEST_SEARCH);
+            RestRequest request = RestRequest.GetRequestForSearch(TEST_API_VERSION, TEST_SEARCH);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
-    		Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/search?q=" + TEST_SEARCH, request.Path, "Wrong path");
-    		Assert.IsNull(request.RequestBody, "Wrong request body");
-    		Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
-    	}
-    
+            Assert.AreEqual("/services/data/" + TEST_API_VERSION + "/search?q=" + TEST_SEARCH, request.Path,
+                "Wrong path");
+            Assert.IsNull(request.RequestBody, "Wrong request body");
+            Assert.IsNull(request.AdditionalHeaders, "Wrong additional headers");
+        }
+
         [TestMethod]
-    	public void TestAdditionalHeaders() 
+        public void TestAdditionalHeaders()
         {
-    		Dictionary<string, string> headers = new Dictionary<string, string>() {{"X-Foo", "RestRequestName"}};
-            RestRequest request = new RestRequest(HttpMethod.Get, "/my/foo/", null, ContentTypeValues.None, headers);
+            var headers = new Dictionary<string, string> {{"X-Foo", "RestRequestName"}};
+            var request = new RestRequest(HttpMethod.Get, "/my/foo/", null, ContentTypeValues.None, headers);
             Assert.AreEqual(HttpMethod.Get, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.None, request.ContentType, "Wrong content type");
             Assert.AreEqual("/my/foo/", request.Path, "Wrong path");
             Assert.IsNull(request.RequestBody, "Wrong body");
             Assert.AreEqual(headers, request.AdditionalHeaders, "Wrong headers");
-    	}
+        }
     }
 }

@@ -24,38 +24,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.App
 {
     public sealed class SFApplicationHelper : ISFApplicationHelper
     {
-
         public void Initialize()
         {
             // nothing special to do here
         }
 
         /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used when the application is launched to open a specific file, to display
-        /// search results, and so forth.
+        ///     Invoked when the application is launched normally by the end user.  Other entry points
+        ///     will be used when the application is launched to open a specific file, to display
+        ///     search results, and so forth.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         public async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -118,7 +112,7 @@ namespace Salesforce.SDK.App
 
         public async void OnSuspending(SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             PincodeManager.SavePinTimer();
             await SuspensionManager.SaveAsync();
             deferral.Complete();

@@ -24,16 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using Salesforce.SDK.Source.Settings;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salesforce.Sample.Salesforce1.Container.Settings
 {
-    class Config : SalesforceConfig
+    internal class Config : SalesforceConfig
     {
         public override string ClientId
         {
@@ -47,7 +43,7 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
 
         public override string[] Scopes
         {
-            get { return new string[] { "web", "api" }; }
+            get { return new[] {"web", "api"}; }
         }
     }
 }

@@ -28,18 +28,18 @@
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    /// Interface for auth related operations that are implemented in the platform specific assemblies
+    ///     Interface for auth related operations that are implemented in the platform specific assemblies
     /// </summary>
     public interface IAuthHelper
     {
         /// <summary>
-        /// Kicks off ogin flow
+        ///     Kicks off ogin flow
         /// </summary>
         /// <param name="loginOptions"></param>
         void StartLoginFlow();
 
         /// <summary>
-        /// Called once the login flow has completed, creates the account
+        ///     Called once the login flow has completed, creates the account
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>

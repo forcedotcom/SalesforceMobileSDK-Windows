@@ -24,15 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
+
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Phone.UI.Input;
@@ -40,13 +34,15 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.App
 {
     public sealed class SFApplicationHelper : ISFApplicationHelper
     {
-        public static ContinuationManagerImpl ContinuationManager { get; private set; }
         private TransitionCollection transitions;
+        public static ContinuationManagerImpl ContinuationManager { get; private set; }
 
         public void Initialize()
         {
@@ -55,46 +51,14 @@ namespace Salesforce.SDK.App
         }
 
         /// <summary>
-        /// Restores the content transitions after the app has launched.
-        /// </summary>
-        /// <param name="sender">The object where the handler is attached.</param>
-        /// <param name="e">Details about the navigation event.</param>
-        private void RootFrame_FirstNavigated(object sender, NavigationEventArgs e)
-        {
-            var rootFrame = sender as Frame;
-            rootFrame.ContentTransitions = this.transitions ?? new TransitionCollection() { new NavigationThemeTransition() };
-            rootFrame.Navigated -= this.RootFrame_FirstNavigated;
-        }
-
-        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
-        {
-            Frame frame = Window.Current.Content as Frame;
-            if (frame == null)
-            {
-                return;
-            }
-
-            if (frame.SourcePageType.Equals(typeof(PincodeDialog)))
-            {
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
-                e.Handled = true;
-            }
-            else if (frame.CanGoBack)
-            {
-                frame.GoBack();
-                e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// Invoked when the application is launched normally by the end user.  Other entry points
-        /// will be used when the application is launched to open a specific file, to display
-        /// search results, and so forth.
+        ///     Invoked when the application is launched normally by the end user.  Other entry points
+        ///     will be used when the application is launched to open a specific file, to display
+        ///     search results, and so forth.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
         public async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+            var rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
@@ -133,15 +97,15 @@ namespace Salesforce.SDK.App
                 // Removes the turnstile navigation for startup.
                 if (rootFrame.ContentTransitions != null)
                 {
-                    this.transitions = new TransitionCollection();
-                    foreach (var c in rootFrame.ContentTransitions)
+                    transitions = new TransitionCollection();
+                    foreach (Transition c in rootFrame.ContentTransitions)
                     {
-                        this.transitions.Add(c);
+                        transitions.Add(c);
                     }
                 }
 
                 rootFrame.ContentTransitions = null;
-                rootFrame.Navigated += this.RootFrame_FirstNavigated;
+                rootFrame.Navigated += RootFrame_FirstNavigated;
 
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
@@ -170,7 +134,7 @@ namespace Salesforce.SDK.App
                     Debug.WriteLine("Exception during OnActivated, " + e.StackTrace);
                 }
             }
-            
+
             PincodeManager.TriggerBackgroundedPinTimer();
             if (args is IContinuationActivatedEventArgs)
             {
@@ -179,7 +143,8 @@ namespace Salesforce.SDK.App
                 try
                 {
                     ContinuationManager.Continue(continueEvents);
-                } catch (InvalidOperationException e)
+                }
+                catch (InvalidOperationException e)
                 {
                     Debug.WriteLine("Exception while continuing, " + e.StackTrace);
                 }
@@ -189,10 +154,42 @@ namespace Salesforce.SDK.App
 
         public async void OnSuspending(SuspendingEventArgs e)
         {
-            var deferral = e.SuspendingOperation.GetDeferral();
+            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
             await SuspensionManager.SaveAsync();
             ContinuationManager.MarkAsStale();
             deferral.Complete();
+        }
+
+        /// <summary>
+        ///     Restores the content transitions after the app has launched.
+        /// </summary>
+        /// <param name="sender">The object where the handler is attached.</param>
+        /// <param name="e">Details about the navigation event.</param>
+        private void RootFrame_FirstNavigated(object sender, NavigationEventArgs e)
+        {
+            var rootFrame = sender as Frame;
+            rootFrame.ContentTransitions = transitions ?? new TransitionCollection {new NavigationThemeTransition()};
+            rootFrame.Navigated -= RootFrame_FirstNavigated;
+        }
+
+        private void HardwareButtons_BackPressed(object sender, BackPressedEventArgs e)
+        {
+            var frame = Window.Current.Content as Frame;
+            if (frame == null)
+            {
+                return;
+            }
+
+            if (frame.SourcePageType.Equals(typeof (PincodeDialog)))
+            {
+                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                e.Handled = true;
+            }
+            else if (frame.CanGoBack)
+            {
+                frame.GoBack();
+                e.Handled = true;
+            }
         }
     }
 }
