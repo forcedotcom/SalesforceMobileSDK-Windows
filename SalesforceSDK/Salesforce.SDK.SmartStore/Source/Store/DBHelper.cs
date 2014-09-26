@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using SQLitePCL;
 
 namespace Salesforce.SDK.SmartStore.Store
@@ -277,12 +278,27 @@ namespace Salesforce.SDK.SmartStore.Store
             }
             string columns = String.Join(", ", contentValues.Keys);
             string values = "'" + String.Join("', '", contentValues.Values) + "'";
+            var valueBindingString = new StringBuilder();
+            for (int i = 0, max = contentValues.Count; i < max; i++)
+            {
+                valueBindingString.Append("?");
+                if ((i + 1) < max)
+                {
+                    valueBindingString.Append(", ");
+                }
+            }
             string sql = String.Format(InsertStatement,
                 table,
                 columns,
-                values);
+                valueBindingString.ToString());
             using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
             {
+                int count = 1;
+                foreach (var key in contentValues.Keys)
+                {
+                    stmt.Bind(count, contentValues[key]);
+                    count++;
+                }
                 stmt.Step();
             }
             return SQLConnection.LastInsertRowId();

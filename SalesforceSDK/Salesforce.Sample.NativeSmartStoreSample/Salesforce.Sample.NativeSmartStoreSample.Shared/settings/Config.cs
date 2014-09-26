@@ -24,65 +24,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+using Salesforce.SDK.Source.Settings;
 using System;
 using System.Collections.Generic;
-using Salesforce.SDK.Auth;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Salesforce.SDK.SmartStore.Store
+namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {
-    public class DBOpenHelper
+    /// <summary>
+    /// Implement this class to configure the settings for your application.  You can find instructions on how to create a connected app from the included website.
+    /// https://help.salesforce.com/apex/HTViewHelpDoc?id=connected_app_create.htm
+    /// </summary>
+    class Config : SalesforceConfig
     {
-        public static readonly int DBVersion = 1;
-        public static readonly string DBName = "smartstore{0}.db";
-
-        private static Dictionary<string, DBOpenHelper> openHelpers;
-        private static DBOpenHelper defaultHelper;
-        private static readonly object dbopenlock = new Object();
-
-        private DBOpenHelper(string dbName)
+        /// <summary>
+        /// This should return the client id generated when you create a connected app through Salesforce.
+        /// </summary>
+        public override string ClientId
         {
-            DatabaseFile = dbName;
+            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
         }
 
-        public string DatabaseFile { private set; get; }
-
-        public static DBOpenHelper GetOpenHelper(Account account)
+        /// <summary>
+        /// This should return the callback url generated when you create a connected app through Salesforce.
+        /// </summary>
+        public override string CallbackUrl
         {
-            lock (dbopenlock)
-            {
-                return GetOpenHelper(account, null);
-            }
+            get { return "sfdc:///axm/detect/oauth/done"; }
         }
 
-        public static DBOpenHelper GetOpenHelper(Account account, string communityId)
+        /// <summary>
+        /// Return the scopes that you wish to use in your app. Limit to what you actually need, try to refrain from listing all scopes.
+        /// </summary>
+        public override string[] Scopes
         {
-            string dbName = String.Format(DBName, "");
-
-            if (account != null)
-            {
-                string uniqueId = account.UserId;
-                DBOpenHelper helper = null;
-                if (openHelpers == null)
-                {
-                    openHelpers = new Dictionary<string, DBOpenHelper>();
-                    helper = new DBOpenHelper(String.Format(DBName, uniqueId));
-                    openHelpers.Add(uniqueId, helper);
-                }
-                else
-                {
-                    if (!openHelpers.TryGetValue(uniqueId, out helper))
-                    {
-                        helper = new DBOpenHelper(dbName);
-                    }
-                }
-                return helper;
-            }
-            if (defaultHelper == null)
-            {
-                defaultHelper = new DBOpenHelper(dbName);
-            }
-            return defaultHelper;
+            get { return new string[] { "api", "web" }; }
         }
     }
 }

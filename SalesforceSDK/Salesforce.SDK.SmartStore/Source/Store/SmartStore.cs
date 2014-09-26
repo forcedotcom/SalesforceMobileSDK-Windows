@@ -601,20 +601,23 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     object raw = GetObject(statement, i);
                     long value;
-                    if (long.TryParse(raw.ToString(), out value))
+                    if (raw != null)
                     {
-                        row.Add(new JValue(value));
-                    }
-                    else
-                    {
-                        double dvalue;
-                        if (double.TryParse(raw.ToString(), out dvalue))
+                        if (long.TryParse(raw.ToString(), out value))
                         {
-                            row.Add(new JValue(dvalue));
+                            row.Add(new JValue(value));
                         }
                         else
                         {
-                            row.Add(raw.ToString());
+                            double dvalue;
+                            if (double.TryParse(raw.ToString(), out dvalue))
+                            {
+                                row.Add(new JValue(dvalue));
+                            }
+                            else
+                            {
+                                row.Add(raw.ToString());
+                            }
                         }
                     }
                 }
