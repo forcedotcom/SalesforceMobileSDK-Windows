@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -52,12 +53,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static Dictionary<string, IndexSpec> MapForIndexSpecs(IndexSpec[] indexSpecs)
         {
-            var map = new Dictionary<string, IndexSpec>();
-            foreach (IndexSpec indexSpec in indexSpecs)
-            {
-                map.Add(indexSpec.Path, indexSpec);
-            }
-            return map;
+            return indexSpecs.ToDictionary(indexSpec => indexSpec.Path);
         }
     }
 }

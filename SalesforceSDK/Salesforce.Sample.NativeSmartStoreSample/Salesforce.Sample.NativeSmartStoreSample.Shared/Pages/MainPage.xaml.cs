@@ -159,6 +159,8 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared.Pages
                 _store.DeleteOpportunitiesSoup();
                 _store.CreateAccountsSoup();
                 _store.CreateOpportunitiesSoup();
+                Accounts.Clear();
+                Opportunities.Clear();
             }
             catch
             {

@@ -256,7 +256,7 @@ namespace Salesforce.SDK.Hybrid
                     var frontDoorStartURL =
                         new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,
                             _client.AccessToken, startURL));
-                    _syncContext.Post(state => { sender.Navigate(state as Uri); }, frontDoorStartURL);
+                    _syncContext.Post(state => sender.Navigate(state as Uri), frontDoorStartURL);
                 }
                     );
             }
@@ -337,7 +337,7 @@ namespace Salesforce.SDK.Hybrid
         {
             _webAppLoaded = false;
             await SalesforceApplication.GlobalClientManager.Logout();
-            _syncContext.Post(state => { Authenticate(null); }, null);
+            _syncContext.Post(state => Authenticate(null), null);
             // XXX Authenticate might call Navigate so it must be done on the UI thread
         }
 

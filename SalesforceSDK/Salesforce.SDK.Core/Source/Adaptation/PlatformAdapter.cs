@@ -103,8 +103,7 @@ namespace Salesforce.SDK.Adaptation
 
         private static Assembly TryLoadPlatformAssembly(Platform platform)
         {
-            var assemblyName = new AssemblyName();
-            assemblyName.Name = "Salesforce.SDK." + platform;
+            var assemblyName = new AssemblyName {Name = "Salesforce.SDK." + platform};
             try
             {
                 return Assembly.Load(assemblyName);

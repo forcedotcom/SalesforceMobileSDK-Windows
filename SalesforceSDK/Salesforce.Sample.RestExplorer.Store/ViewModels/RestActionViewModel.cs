@@ -193,41 +193,41 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
             var restAction = (RestAction) Enum.Parse(typeof (RestAction), _vm[RestActionViewModel.SELECTED_REST_ACTION]);
             switch (restAction)
             {
-                case RestAction.VERSIONS:
+                case RestAction.Versions:
                     return RestRequest.GetRequestForVersions();
-                case RestAction.RESOURCES:
+                case RestAction.Resources:
                     return RestRequest.GetRequestForResources(_vm[RestActionViewModel.API_VERSION]);
-                case RestAction.DESCRIBE_GLOBAL:
+                case RestAction.DescribeGlobal:
                     return RestRequest.GetRequestForDescribeGlobal(_vm[RestActionViewModel.API_VERSION]);
-                case RestAction.METADATA:
+                case RestAction.Metadata:
                     return RestRequest.GetRequestForMetadata(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE]);
-                case RestAction.DESCRIBE:
+                case RestAction.Describe:
                     return RestRequest.GetRequestForDescribe(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE]);
-                case RestAction.CREATE:
+                case RestAction.Create:
                     return RestRequest.GetRequestForCreate(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE], ParseFieldsValue());
-                case RestAction.RETRIEVE:
+                case RestAction.Retrieve:
                     return RestRequest.GetRequestForRetrieve(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE], _vm[RestActionViewModel.OBJECT_ID], ParseFieldListValue());
-                case RestAction.UPSERT:
+                case RestAction.Upsert:
                     return RestRequest.GetRequestForUpsert(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE], _vm[RestActionViewModel.EXTERNAL_ID_FIELD],
                         _vm[RestActionViewModel.EXTERNAL_ID], ParseFieldsValue());
-                case RestAction.UPDATE:
+                case RestAction.Update:
                     return RestRequest.GetRequestForUpdate(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE], _vm[RestActionViewModel.OBJECT_ID], ParseFieldsValue());
-                case RestAction.DELETE:
+                case RestAction.Delete:
                     return RestRequest.GetRequestForDelete(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.OBJECT_TYPE], _vm[RestActionViewModel.OBJECT_ID]);
-                case RestAction.QUERY:
+                case RestAction.Query:
                     return RestRequest.GetRequestForQuery(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.SOQL]);
-                case RestAction.SEARCH:
+                case RestAction.Search:
                     return RestRequest.GetRequestForSearch(_vm[RestActionViewModel.API_VERSION],
                         _vm[RestActionViewModel.SOSL]);
-                case RestAction.MANUAL:
+                case RestAction.Manual:
                     return BuildManualRestReuqest();
                 default:
                     throw new InvalidOperationException();

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using Windows.ApplicationModel.Contacts;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartStore.Store;
 
