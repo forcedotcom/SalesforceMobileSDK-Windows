@@ -32,6 +32,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Xaml.Media.Imaging;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
@@ -98,6 +100,12 @@ namespace Salesforce.SDK.Source.Settings
         ///     Implement to define the scopes your app will use such as web or api.
         /// </summary>
         public abstract string[] Scopes { get; }
+
+        public abstract Color LoginBackgroundColor { get; }
+
+        public abstract Uri LoginBackgroundLogo { get; }
+
+        public abstract string ApplicationTitle { get; }
 
         #endregion
 

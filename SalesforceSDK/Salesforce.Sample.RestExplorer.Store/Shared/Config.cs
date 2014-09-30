@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Windows.UI;
 using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.RestExplorer.Shared
@@ -47,6 +48,21 @@ namespace Salesforce.Sample.RestExplorer.Shared
         public override string[] Scopes
         {
             get { return new[] {"api"}; }
+        }
+
+        public override Windows.UI.Color LoginBackgroundColor
+        {
+            get { return Colors.DarkOrange; }
+        }
+
+        public override System.Uri LoginBackgroundLogo
+        {
+            get { return null; }
+        }
+
+        public override string ApplicationTitle
+        {
+            get { return "Salesforce RestExplorer Sample"; }
         }
     }
 }

@@ -24,12 +24,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+using Windows.UI;
 using Salesforce.SDK.Source.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {
@@ -61,6 +60,22 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         public override string[] Scopes
         {
             get { return new string[] { "api", "web" }; }
+        }
+
+        public override Color LoginBackgroundColor
+        {
+            get { return Colors.DarkSeaGreen; }
+        }
+
+
+        public override string ApplicationTitle
+        {
+            get { return "Native SmartStore Sample"; }
+        }
+
+        public override Uri LoginBackgroundLogo
+        {
+            get { return null; }
         }
     }
 }

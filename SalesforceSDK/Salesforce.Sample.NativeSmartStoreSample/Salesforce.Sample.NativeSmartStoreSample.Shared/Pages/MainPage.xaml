@@ -73,7 +73,6 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="controlBar">
             <AppBarButton x:Name="logoutBtn"
-                          Visibility="Collapsed"
                           DataContext="logout"
                           Label="{Binding Converter={StaticResource Localize}}"
                           Icon="HangUp"

@@ -26,6 +26,8 @@
  */
 
 using Salesforce.SDK.Source.Settings;
+using System;
+using Windows.UI;
 
 namespace Salesforce.Sample.Salesforce1.Container.Settings
 {
@@ -43,7 +45,24 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
 
         public override string[] Scopes
         {
-            get { return new[] {"web", "api"}; }
+            get { return new[] { "web", "api" }; }
+        }
+
+        public override Color LoginBackgroundColor
+        {
+            get { return Colors.DeepSkyBlue; }
+        }
+
+        private readonly Uri _loginLogo = new Uri("ms-appx:///Assets/salesforceLogo.png");
+        
+        public override Uri LoginBackgroundLogo
+        {
+            get { return _loginLogo; }
+        }
+
+        public override string ApplicationTitle
+        {
+            get { return null; }
         }
     }
 }
