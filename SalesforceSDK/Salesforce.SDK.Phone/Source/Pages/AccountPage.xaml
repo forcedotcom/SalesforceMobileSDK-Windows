@@ -70,6 +70,25 @@
                 </StackPanel>
             </StackPanel>
         </Flyout>
+        
+        <Flyout x:Name="MessageFlyout"
+                Placement="Bottom">
+            <StackPanel x:Name="MessageFlyoutPanel" Background="Transparent">
+                <TextBlock x:Name="MessageContent"
+                           Grid.Row="1"
+                           Margin="5 0 5 15"
+                           HorizontalAlignment="Stretch"
+                           TextWrapping="Wrap"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           TextAlignment="Center" />
+                <Button x:Name="CloseMessageButton"
+                            DataContext="ok"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Click="CloseMessageButton_OnClick"
+                            HorizontalAlignment="Center" />
+            </StackPanel>
+        </Flyout>
     </UserControl.Resources>
 
     <StackPanel Background="Transparent" x:Name="Container">

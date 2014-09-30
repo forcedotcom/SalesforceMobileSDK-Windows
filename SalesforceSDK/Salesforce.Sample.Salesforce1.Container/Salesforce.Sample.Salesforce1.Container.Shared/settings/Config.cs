@@ -62,7 +62,7 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
 
         public override string ApplicationTitle
         {
-            get { return null; }
+            get { return "Salesforce Sample Container"; }
         }
     }
 }

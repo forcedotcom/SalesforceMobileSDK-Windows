@@ -33,13 +33,13 @@ using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -52,6 +52,11 @@ namespace Salesforce.SDK.Source.Pages
         private const string MultipleUserViewState = "MultipleUser";
         private const string LoggingUserInViewState = "LoggingUserIn";
         private string _currentState;
+
+        public AccountPage()
+        {
+            InitializeComponent();
+        }
 
         public Account[] Accounts
         {
@@ -67,9 +72,9 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        public AccountPage()
+        public ObservableCollection<ServerSetting> Servers
         {
-            InitializeComponent();
+            get { return SalesforceApplication.ServerConfiguration.ServerList; }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -96,8 +101,11 @@ namespace Salesforce.SDK.Source.Pages
 
             if (config.LoginBackgroundLogo != null)
             {
-                ApplicationLogo.Items.Clear();
-                ApplicationLogo.Items.Add(config.LoginBackgroundLogo);
+                if (ApplicationLogo.Items != null)
+                {
+                    ApplicationLogo.Items.Clear();
+                    ApplicationLogo.Items.Add(config.LoginBackgroundLogo);
+                }
                 if (titleMissing)
                 {
                     var padding = new Thickness(10, 24, 10, 24);
@@ -106,8 +114,8 @@ namespace Salesforce.SDK.Source.Pages
             }
             var background = new SolidColorBrush(config.LoginBackgroundColor);
             PageRoot.Background = background;
-           // ServerFlyoutPanel.Background = background;
-          //  AddServerFlyoutPanel.Background = background;
+            // ServerFlyoutPanel.Background = background;
+            //  AddServerFlyoutPanel.Background = background;
             if (Accounts == null || Accounts.Length == 0)
             {
                 _currentState = SingleUserViewState;
@@ -135,11 +143,6 @@ namespace Salesforce.SDK.Source.Pages
                 : Visibility.Collapsed);
         }
 
-
-        public ObservableCollection<ServerSetting> Servers
-        {
-            get { return SalesforceApplication.ServerConfiguration.ServerList; }
-        }
 
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -185,13 +188,19 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
+        private void DisplayErrorDialog(string message)
+        {
+            MessageContent.Text = message;
+            MessageFlyout.ShowAt(ApplicationLogo);
+        }
+
         private async void DoAuthFlow(LoginOptions loginOptions)
         {
             loginOptions.DisplayType = LoginOptions.DefaultStoreDisplayType;
             var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
-            var webAuthenticationResult =
+            WebAuthenticationResult webAuthenticationResult =
                 await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
@@ -201,6 +210,7 @@ namespace Salesforce.SDK.Source.Pages
             }
             else
             {
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
                 SetupAccountPage();
             }
         }
@@ -233,7 +243,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
         {
-            StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
+            if (ListboxServers.Items != null) StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
         }
 
         private void ListboxServers_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -257,13 +267,17 @@ namespace Salesforce.SDK.Source.Pages
                 SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
                     config.Scopes);
                 DoAuthFlow(options);
-                
             }
         }
 
         private void SetLoginBarVisibility(Visibility state)
         {
             LoginBar.Visibility = MultipleUserViewState.Equals(_currentState) ? state : Visibility.Collapsed;
+        }
+
+        private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MessageFlyout.Hide();
         }
     }
 }

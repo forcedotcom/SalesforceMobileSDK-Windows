@@ -28,7 +28,6 @@
 using Windows.UI;
 using Salesforce.SDK.Source.Settings;
 using System;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {

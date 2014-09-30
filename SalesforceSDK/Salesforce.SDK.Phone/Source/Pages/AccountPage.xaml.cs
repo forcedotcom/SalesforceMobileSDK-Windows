@@ -33,7 +33,6 @@ using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
@@ -49,15 +48,64 @@ namespace Salesforce.SDK.Source.Pages
     /// </summary>
     public partial class AccountPage : Page, IWebAuthenticationContinuable
     {
-        private bool _addServerFlyoutShowing;
         private const string SingleUserViewState = "SingleUser";
         private const string MultipleUserViewState = "MultipleUser";
         private const string LoggingUserInViewState = "LoggingUserIn";
+        private bool _addServerFlyoutShowing;
         private string _currentState;
-        
+
         public AccountPage()
         {
             InitializeComponent();
+        }
+
+        public Account[] Accounts
+        {
+            get { return AccountManager.GetAccounts().Values.ToArray(); }
+        }
+
+        public Account CurrentAccount
+        {
+            get
+            {
+                Account account = AccountManager.GetAccount();
+                return account;
+            }
+        }
+
+        public ObservableCollection<ServerSetting> Servers
+        {
+            get { return SalesforceApplication.ServerConfiguration.ServerList; }
+        }
+
+        public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
+        {
+            WebAuthenticationResult webResult = args.WebAuthenticationResult;
+            if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
+            {
+                var responseUri = new Uri(webResult.ResponseData);
+                if (!responseUri.Query.Contains("error="))
+                {
+                    AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+                    PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(SalesforceConfig.LoginOptions, authResponse);
+                }
+                else
+                {
+                    DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
+                    SetupAccountPage();
+                }
+            }
+            else
+            {
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
+                SetupAccountPage();
+            }
+        }
+
+        private void DisplayErrorDialog(string message)
+        {
+            MessageContent.Text = message;
+            MessageFlyout.ShowAt(ApplicationLogo);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -84,7 +132,11 @@ namespace Salesforce.SDK.Source.Pages
 
             if (config.LoginBackgroundLogo != null)
             {
-                ApplicationLogo.Items.Add(config.LoginBackgroundLogo);
+                if (ApplicationLogo.Items != null)
+                {
+                    ApplicationLogo.Items.Clear();
+                    ApplicationLogo.Items.Add(config.LoginBackgroundLogo);
+                }
                 if (titleMissing)
                 {
                     var padding = new Thickness(10, 24, 10, 24);
@@ -120,47 +172,6 @@ namespace Salesforce.SDK.Source.Pages
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
                 ? Visibility.Visible
                 : Visibility.Collapsed);
-        }
-
-        public Account[] Accounts
-        {
-            get { return AccountManager.GetAccounts().Values.ToArray(); }
-        }
-
-        public Account CurrentAccount
-        {
-            get
-            {
-                Account account = AccountManager.GetAccount();
-                return account;
-            }
-        }
-
-        public ObservableCollection<ServerSetting> Servers
-        {
-            get { return SalesforceApplication.ServerConfiguration.ServerList; }
-        }
-
-        public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
-        {
-            WebAuthenticationResult webResult = args.WebAuthenticationResult;
-            if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
-            {
-                var responseUri = new Uri(webResult.ResponseData);
-                if (!responseUri.Query.Contains("error="))
-                {
-                    AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
-                    PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(SalesforceConfig.LoginOptions, authResponse);
-                }
-                else
-                {
-                    SetupAccountPage();
-                }
-            }
-            else
-            {
-                SetupAccountPage();
-            }
         }
 
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -201,6 +212,7 @@ namespace Salesforce.SDK.Source.Pages
             }
             else
             {
+                ListboxServers.SelectedIndex = -1;
                 ServerFlyout.ShowAt(ApplicationTitle);
             }
         }
@@ -222,7 +234,6 @@ namespace Salesforce.SDK.Source.Pages
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
         }
-
 
         private void addConnection_Click(object sender, RoutedEventArgs e)
         {
@@ -277,13 +288,17 @@ namespace Salesforce.SDK.Source.Pages
                 SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
                     config.Scopes);
                 StartLoginFlow(options);
-                
             }
         }
 
         private void SetLoginBarVisibility(Visibility state)
         {
             LoginBar.Visibility = MultipleUserViewState.Equals(_currentState) ? state : Visibility.Collapsed;
+        }
+
+        private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MessageFlyout.Hide();
         }
     }
 }
