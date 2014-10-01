@@ -33,7 +33,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
@@ -48,34 +48,15 @@ namespace Salesforce.SDK.Source.Pages
     /// </summary>
     public partial class AccountPage : Page, IWebAuthenticationContinuable
     {
-        private bool AddServerFlyoutShowing;
+        private const string SingleUserViewState = "SingleUser";
+        private const string MultipleUserViewState = "MultipleUser";
+        private const string LoggingUserInViewState = "LoggingUserIn";
+        private bool _addServerFlyoutShowing;
+        private string _currentState;
 
         public AccountPage()
         {
             InitializeComponent();
-            ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
-            applicationTitle.Text = loader.GetString("application_title");
-            if (Accounts == null || Accounts.Length == 0)
-            {
-                string no = loader.GetString("no_accounts");
-                listTitle.Text = loader.GetString("no_accounts");
-                PincodeManager.WipePincode();
-            }
-            else
-            {
-                listTitle.Text = loader.GetString("select_account");
-            }
-            listboxServers.ItemsSource = Servers;
-            accountsList.ItemsSource = Accounts;
-            ServerFlyout.Opening += ServerFlyout_Opening;
-            ServerFlyout.Closed += ServerFlyout_Closed;
-            AddServerFlyout.Closed += AddServerFlyout_Closed;
-            accountsList.SelectionChanged += accountsList_SelectionChanged;
-            hostName.PlaceholderText = LocalizedStrings.GetString("name");
-            hostAddress.PlaceholderText = LocalizedStrings.GetString("address");
-            addConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
-                ? Visibility.Visible
-                : Visibility.Collapsed);
         }
 
         public Account[] Accounts
@@ -108,12 +89,94 @@ namespace Salesforce.SDK.Source.Pages
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(SalesforceConfig.LoginOptions, authResponse);
                 }
+                else
+                {
+                    DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
+                    SetupAccountPage();
+                }
             }
+            else
+            {
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
+                SetupAccountPage();
+            }
+        }
+
+        private void DisplayErrorDialog(string message)
+        {
+            MessageContent.Text = message;
+            MessageFlyout.ShowAt(ApplicationLogo);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            SetupAccountPage();
+        }
+
+        private void SetupAccountPage()
+        {
+            ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
+            SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+            bool titleMissing = true;
+            if (!String.IsNullOrWhiteSpace(config.ApplicationTitle))
+            {
+                ApplicationTitle.Visibility = Visibility.Visible;
+                ApplicationTitle.Text = config.ApplicationTitle;
+                titleMissing = false;
+            }
+            else
+            {
+                ApplicationTitle.Visibility = Visibility.Collapsed;
+            }
+
+            if (config.LoginBackgroundLogo != null)
+            {
+                if (ApplicationLogo.Items != null)
+                {
+                    ApplicationLogo.Items.Clear();
+                    ApplicationLogo.Items.Add(config.LoginBackgroundLogo);
+                }
+                if (titleMissing)
+                {
+                    var padding = new Thickness(10, 24, 10, 24);
+                    ApplicationLogo.Margin = padding;
+                }
+            }
+            var background = new SolidColorBrush(config.LoginBackgroundColor);
+            Background = background;
+            ServerFlyoutPanel.Background = background;
+            AddServerFlyoutPanel.Background = background;
+            if (Accounts == null || Accounts.Length == 0)
+            {
+                _currentState = SingleUserViewState;
+                SetLoginBarVisibility(Visibility.Collapsed);
+                PincodeManager.WipePincode();
+                VisualStateManager.GoToState(this, SingleUserViewState, true);
+            }
+            else
+            {
+                _currentState = MultipleUserViewState;
+                SetLoginBarVisibility(Visibility.Visible);
+                ListTitle.Text = loader.GetString("select_account");
+                VisualStateManager.GoToState(this, MultipleUserViewState, true);
+            }
+            ListboxServers.ItemsSource = Servers;
+            AccountsList.ItemsSource = Accounts;
+            ServerFlyout.Opening += ServerFlyout_Opening;
+            ServerFlyout.Closed += ServerFlyout_Closed;
+            AddServerFlyout.Closed += AddServerFlyout_Closed;
+            AccountsList.SelectionChanged += accountsList_SelectionChanged;
+            hostName.PlaceholderText = LocalizedStrings.GetString("name");
+            hostAddress.PlaceholderText = LocalizedStrings.GetString("address");
+            AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
+                ? Visibility.Visible
+                : Visibility.Collapsed);
         }
 
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await AccountManager.SwitchToAccount(accountsList.SelectedItem as Account);
+            await AccountManager.SwitchToAccount(AccountsList.SelectedItem as Account);
             SalesforceApplication.ResetClientManager();
             if (SalesforceApplication.GlobalClientManager.PeekRestClient() != null)
             {
@@ -123,39 +186,34 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-        }
-
         private void AddServerFlyout_Closed(object sender, object e)
         {
-            ServerFlyout.ShowAt(applicationTitle);
-            AddServerFlyoutShowing = false;
+            ServerFlyout.ShowAt(ApplicationTitle);
+            _addServerFlyoutShowing = false;
         }
 
         private void ServerFlyout_Closed(object sender, object e)
         {
-            if (!AddServerFlyoutShowing)
-                loginBar.Visibility = Visibility.Visible;
+            if (!_addServerFlyoutShowing)
+                SetLoginBarVisibility(Visibility.Visible);
         }
 
         private void ServerFlyout_Opening(object sender, object e)
         {
-            loginBar.Visibility = Visibility.Collapsed;
+            SetLoginBarVisibility(Visibility.Collapsed);
         }
 
         private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
             if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
             {
-                listboxServers.SelectedIndex = 0;
+                ListboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
             }
             else
             {
-                ServerFlyout.Placement = FlyoutPlacementMode.Bottom;
-                ServerFlyout.ShowAt(applicationTitle);
+                ListboxServers.SelectedIndex = -1;
+                ServerFlyout.ShowAt(ApplicationTitle);
             }
         }
 
@@ -177,24 +235,12 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-
         private void addConnection_Click(object sender, RoutedEventArgs e)
         {
-            AddServerFlyoutShowing = true;
+            _addServerFlyoutShowing = true;
             hostName.Text = "";
             hostAddress.Text = "";
-            AddServerFlyout.ShowAt(applicationTitle);
-        }
-
-        private void addAccount_Click(object sender, RoutedEventArgs e)
-        {
-            SalesforceApplication.ResetClientManager();
-            var server = listboxServers.SelectedItem as ServerSetting;
-            SalesforceConfig config = SalesforceApplication.ServerConfiguration;
-            var options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
-            SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
-                config.Scopes);
-            StartLoginFlow(options);
+            AddServerFlyout.ShowAt(ApplicationTitle);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -208,12 +254,51 @@ namespace Salesforce.SDK.Source.Pages
             };
             SalesforceApplication.ServerConfiguration.AddServer(server);
 
-            ServerFlyout.ShowAt(applicationTitle);
+            ServerFlyout.ShowAt(ApplicationTitle);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            ServerFlyout.ShowAt(applicationTitle);
+            ServerFlyout.ShowAt(ApplicationTitle);
+        }
+
+        private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
+        {
+            StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
+        }
+
+        private void ListboxServers_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+        }
+
+        private void addAccount_Click(object sender, RoutedEventArgs e)
+        {
+            StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+        }
+
+        private void StartLoginFlow(ServerSetting server)
+        {
+            if (server != null)
+            {
+                VisualStateManager.GoToState(this, LoggingUserInViewState, true);
+                SalesforceApplication.ResetClientManager();
+                SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+                var options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
+                SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
+                    config.Scopes);
+                StartLoginFlow(options);
+            }
+        }
+
+        private void SetLoginBarVisibility(Visibility state)
+        {
+            LoginBar.Visibility = MultipleUserViewState.Equals(_currentState) ? state : Visibility.Collapsed;
+        }
+
+        private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MessageFlyout.Hide();
         }
     }
 }

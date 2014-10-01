@@ -66,7 +66,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 if (openHelpers == null)
                 {
                     openHelpers = new Dictionary<string, DBOpenHelper>();
-                    helper = new DBOpenHelper(dbName);
+                    helper = new DBOpenHelper(String.Format(DBName, uniqueId));
                     openHelpers.Add(uniqueId, helper);
                 }
                 else

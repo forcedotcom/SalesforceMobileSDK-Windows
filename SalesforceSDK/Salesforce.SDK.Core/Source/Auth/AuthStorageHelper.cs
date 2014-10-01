@@ -39,8 +39,7 @@ namespace Salesforce.SDK.Auth
     /// <summary>
     ///     Store specific implementation if IAuthStorageHelper
     /// </summary>
-    /// ///
-    /// </summary>
+    ///
     public sealed class AuthStorageHelper
     {
         private const string PasswordVaultAccounts = "Salesforce Accounts";
@@ -50,13 +49,13 @@ namespace Salesforce.SDK.Auth
         private const string InstallationStatusKey = "InstallationStatus";
 
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
-        private readonly ApplicationDataContainer PersistedData;
-        private readonly PasswordVault Vault;
+        private readonly ApplicationDataContainer _persistedData;
+        private readonly PasswordVault _vault;
 
         private AuthStorageHelper()
         {
-            Vault = new PasswordVault();
-            PersistedData = ApplicationData.Current.LocalSettings;
+            _vault = new PasswordVault();
+            _persistedData = ApplicationData.Current.LocalSettings;
             InstallationStatusCheck();
         }
 
@@ -67,14 +66,14 @@ namespace Salesforce.SDK.Auth
 
         private void InstallationStatusCheck()
         {
-            if (!PersistedData.Values.ContainsKey(InstallationStatusKey))
+            if (!_persistedData.Values.ContainsKey(InstallationStatusKey))
             {
-                IReadOnlyList<PasswordCredential> accounts = Vault.RetrieveAll();
+                IReadOnlyList<PasswordCredential> accounts = _vault.RetrieveAll();
                 foreach (PasswordCredential next in accounts)
                 {
-                    Vault.Remove(next);
+                    _vault.Remove(next);
                 }
-                PersistedData.Values.Add(InstallationStatusKey, "");
+                _persistedData.Values.Add(InstallationStatusKey, "");
             }
         }
 
@@ -82,7 +81,7 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return Vault.FindAllByResource(resource);
+                return _vault.FindAllByResource(resource);
             }
             catch (Exception)
             {
@@ -95,7 +94,7 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return Vault.Retrieve(resource, userName);
+                return _vault.Retrieve(resource, userName);
             }
             catch (Exception)
             {
@@ -108,7 +107,7 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return Vault.FindAllByUserName(userName);
+                return _vault.FindAllByUserName(userName);
             }
             catch (Exception)
             {
@@ -126,19 +125,19 @@ namespace Salesforce.SDK.Auth
             PasswordCredential creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
             if (creds != null)
             {
-                Vault.Remove(creds);
-                IReadOnlyList<PasswordCredential> current = Vault.FindAllByResource(PasswordVaultCurrentAccount);
+                _vault.Remove(creds);
+                IReadOnlyList<PasswordCredential> current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
                 if (current != null)
                 {
                     foreach (PasswordCredential user in current)
                     {
-                        Vault.Remove(user);
+                        _vault.Remove(user);
                     }
                 }
             }
             string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
-            Vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
-            Vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
+            _vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
+            _vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
             var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
                 LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
@@ -149,9 +148,9 @@ namespace Salesforce.SDK.Auth
             PasswordCredential creds = SafeRetrieveResource(PasswordVaultCurrentAccount).FirstOrDefault();
             if (creds != null)
             {
-                PasswordCredential account = Vault.Retrieve(creds.Resource, creds.UserName);
+                PasswordCredential account = _vault.Retrieve(creds.Resource, creds.UserName);
                 if (String.IsNullOrWhiteSpace(account.Password))
-                    Vault.Remove(creds);
+                    _vault.Remove(creds);
                 else
                     return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
             }
@@ -183,9 +182,9 @@ namespace Salesforce.SDK.Auth
             {
                 foreach (PasswordCredential next in creds)
                 {
-                    PasswordCredential account = Vault.Retrieve(next.Resource, next.UserName);
+                    PasswordCredential account = _vault.Retrieve(next.Resource, next.UserName);
                     if (String.IsNullOrWhiteSpace(account.Password))
-                        Vault.Remove(next);
+                        _vault.Remove(next);
                     else
                         accounts.Add(next.UserName,
                             JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
@@ -197,6 +196,7 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         ///     Delete a persisted account credential based on the user id.
         /// </summary>
+        /// <param name="userName"></param>
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(string userName, string id)
         {
@@ -205,11 +205,11 @@ namespace Salesforce.SDK.Auth
             {
                 foreach (PasswordCredential next in creds)
                 {
-                    PasswordCredential vaultAccount = Vault.Retrieve(next.Resource, next.UserName);
+                    PasswordCredential vaultAccount = _vault.Retrieve(next.Resource, next.UserName);
                     var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
                     if (id.Equals(account.UserId))
                     {
-                        Vault.Remove(next);
+                        _vault.Remove(next);
                     }
                 }
             }
@@ -226,14 +226,14 @@ namespace Salesforce.SDK.Auth
             {
                 foreach (PasswordCredential next in accounts)
                 {
-                    Vault.Remove(next);
+                    _vault.Remove(next);
                 }
             }
             if (current != null)
             {
                 foreach (PasswordCredential next in current)
                 {
-                    Vault.Remove(next);
+                    _vault.Remove(next);
                 }
             }
         }
@@ -243,7 +243,7 @@ namespace Salesforce.SDK.Auth
             DeletePincode();
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
                 JsonConvert.SerializeObject(policy));
-            Vault.Add(newPin);
+            _vault.Add(newPin);
         }
 
         internal string RetrievePincode()
@@ -259,40 +259,40 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
-                Vault.Remove(pin);
+                _vault.Remove(pin);
             }
         }
 
         internal void PersistData(bool replace, string key, string data, string nonce = null)
         {
-            if (PersistedData.Values.ContainsKey(key))
+            if (_persistedData.Values.ContainsKey(key))
             {
                 if (replace)
                 {
-                    PersistedData.Values[key] = Encryptor.Encrypt(data, nonce);
+                    _persistedData.Values[key] = Encryptor.Encrypt(data, nonce);
                 }
             }
             else
             {
-                PersistedData.Values.Add(key, Encryptor.Encrypt(data));
+                _persistedData.Values.Add(key, Encryptor.Encrypt(data));
             }
         }
 
         internal string RetrieveData(string key, string nonce = null)
         {
             string data = null;
-            if (PersistedData.Values.ContainsKey(key))
+            if (_persistedData.Values.ContainsKey(key))
             {
-                data = Encryptor.Decrypt(PersistedData.Values[key] as string, nonce);
+                data = Encryptor.Decrypt(_persistedData.Values[key] as string, nonce);
             }
             return data;
         }
 
         internal void DeleteData(string key)
         {
-            if (PersistedData.Values.ContainsKey(key))
+            if (_persistedData.Values.ContainsKey(key))
             {
-                PersistedData.Values.Remove(key);
+                _persistedData.Values.Remove(key);
             }
         }
     }

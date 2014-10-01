@@ -24,12 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using Windows.UI;
 using Salesforce.SDK.Source.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace $safeprojectname$
 {
@@ -61,6 +58,22 @@ namespace $safeprojectname$
         public override string[] Scopes
         {
             get { return new string[] { $scopes$ }; }
+        }
+
+        public override Color LoginBackgroundColor
+        {
+            get { return Colors.DeepSkyBlue; }
+        }
+
+
+        public override string ApplicationTitle
+        {
+            get { return "$safeprojectname$"; }
+        }
+
+        public override Uri LoginBackgroundLogo
+        {
+            get { return null; }
         }
     }
 }

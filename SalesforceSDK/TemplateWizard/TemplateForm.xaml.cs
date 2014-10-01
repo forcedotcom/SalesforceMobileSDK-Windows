@@ -65,5 +65,10 @@ namespace TemplateWizard
             DialogResult = false;
             Close();
         }
+
+        public void Connect(int connectionId, object target)
+        {
+            // not implemented
+        }
     }
 }

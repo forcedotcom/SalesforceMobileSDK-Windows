@@ -49,7 +49,7 @@ namespace Salesforce.SDK.Auth
             {
                 await
                     frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                        () => { frame.Navigate(typeof (AccountPage)); });
+                        () => frame.Navigate(typeof (AccountPage)));
             }
         }
 

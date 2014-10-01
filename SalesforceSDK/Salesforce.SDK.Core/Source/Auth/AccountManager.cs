@@ -109,7 +109,7 @@ namespace Salesforce.SDK.Auth
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
             var cm = new ClientManager();
-            RestClient client = cm.PeekRestClient();
+            cm.PeekRestClient();
             IdentityResponse identity =
                 await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
 

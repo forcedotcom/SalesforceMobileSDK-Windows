@@ -11,38 +11,32 @@
     <UserControl.Resources>
         <strings:LocalizedStrings x:Key="Localize" />
 
-        <Flyout x:Name="ServerFlyout">
-            <StackPanel>
-                <TextBlock x:Name="serverFlyoutLabel"
+        <Flyout x:Name="ServerFlyout" Placement="Full">
+            <StackPanel x:Name="ServerFlyoutPanel" Background="Transparent">
+                <TextBlock x:Name="ServerFlyoutLabel"
                            DataContext="choose_connection"
                            Text="{Binding Converter={StaticResource Localize}}"
                            Grid.Row="1"
                            Margin="5"
                            Style="{StaticResource SubheaderTextBlockStyle}"
                            TextAlignment="Center" />
-                <ListBox x:Name="listboxServers"
+                <ListBox x:Name="ListboxServers"
                          SelectionMode="Single"
-                         FontSize="20" />
+                         FontSize="20"
+                         SelectionChanged="ListboxServers_OnSelectionChanged"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
-                    <Button x:Name="addConnection"
+                    <Button x:Name="AddConnection"
                             DataContext="add_connection"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="addConnection_Click"
                             HorizontalAlignment="Center" />
-                    <Button x:Name="addAccount"
-                            DataContext="continue"
-                            Content="{Binding Converter={StaticResource Localize}}"
-                            Margin="10 0 10 0"
-                            Click="addAccount_Click"
-                            HorizontalAlignment="Center" />
                 </StackPanel>
-
             </StackPanel>
         </Flyout>
 
-        <Flyout x:Name="AddServerFlyout">
-            <StackPanel>
+        <Flyout x:Name="AddServerFlyout" Placement="Full">
+            <StackPanel x:Name="AddServerFlyoutPanel" Background="Transparent">
                 <StackPanel>
                     <TextBlock x:Name="addServerFlyoutLabel"
                                DataContext="new_connection"
@@ -61,52 +55,159 @@
                              HorizontalAlignment="Stretch" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
+                    <Button x:Name="addCustomHostBtn"
+                            DataContext="add"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Click="addCustomHostBtn_Click"
+                            HorizontalAlignment="Center" />
                     <Button x:Name="cancelCustomHostBtn"
                             DataContext="cancel"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="cancelCustomHostBtn_Click"
                             HorizontalAlignment="Center" />
-                    <Button x:Name="addCustomHostBtn"
+                </StackPanel>
+            </StackPanel>
+        </Flyout>
+        
+        <Flyout x:Name="MessageFlyout"
+                Placement="Bottom">
+            <StackPanel x:Name="MessageFlyoutPanel" Background="Transparent">
+                <TextBlock x:Name="MessageContent"
+                           Grid.Row="1"
+                           Margin="5 0 5 15"
+                           HorizontalAlignment="Stretch"
+                           TextWrapping="Wrap"
+                           Style="{StaticResource TitleTextBlockStyle}"
+                           TextAlignment="Center" />
+                <Button x:Name="CloseMessageButton"
                             DataContext="ok"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
-                            Click="addCustomHostBtn_Click"
+                            Click="CloseMessageButton_OnClick"
                             HorizontalAlignment="Center" />
-                </StackPanel>
             </StackPanel>
         </Flyout>
     </UserControl.Resources>
 
-    <Grid Background="Transparent">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <TextBlock x:Name="applicationTitle"
+    <StackPanel Background="Transparent" x:Name="Container">
+        <TextBlock x:Name="ApplicationTitle"
                    DataContext="application_title"
+                   Text="{Binding Converter={StaticResource Localize}}"
+                   Margin="5"
+                   Style="{StaticResource HeaderTextBlockStyle}" />
+        <ItemsControl x:Name="ApplicationLogo">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Grid Background="Transparent" x:Name="MultiUserGrid"  Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="ListTitle"
+                   DataContext="select_account"
                    Text="{Binding Converter={StaticResource Localize}}"
                    Grid.Row="0"
                    Margin="5"
-                   Style="{StaticResource HeaderTextBlockStyle}" />
-        <TextBlock x:Name="listTitle"
-                   DataContext="select_account"
-                   Text="{Binding Converter={StaticResource Localize}}"
-                   Grid.Row="1"
-                   Margin="5"
                    Style="{StaticResource SubheaderTextBlockStyle}" />
-        <ListBox Grid.Row="2" x:Name="accountsList"
+            <ListBox Grid.Row="1" x:Name="AccountsList"
                  SelectionMode="Single"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Center"
                  FontSize="20" />
-    </Grid>
+        </Grid>
+
+        <Grid Background="Transparent" x:Name="SingleUserGrid">
+            <StackPanel HorizontalAlignment="Center" Width="Auto">
+                <Button x:Name="LoginToSalesforce"
+                            DataContext="login_to_salesforce"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Click="LoginToSalesforce_OnClick"
+                            HorizontalAlignment="Center" />
+                <Button x:Name="ChooseConnection"
+                            DataContext="choose_connection"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Click="ShowServerFlyout"
+                            Width="{Binding ElementName=LoginToSalesforce, Path=ActualWidth}"
+                            HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoginView">
+                <VisualState x:Name="SingleUser">
+                    <Storyboard>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="MultiUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="SingleUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                        </ObjectAnimationUsingKeyFrames>
+
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="MultipleUser">
+                    <Storyboard>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="SingleUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="MultiUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                        </ObjectAnimationUsingKeyFrames>
+
+                    </Storyboard>
+                </VisualState>
+
+                <VisualState x:Name="LoggingUserIn">
+                    <Storyboard>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="SingleUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+
+                        <ObjectAnimationUsingKeyFrames
+                    Storyboard.TargetName="MultiUserGrid"
+                    Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </StackPanel>
+
+
 
     <Page.BottomAppBar>
-        <CommandBar x:Name="loginBar">
+        <CommandBar x:Name="LoginBar">
             <CommandBar.PrimaryCommands>
-                <AppBarButton x:Name="appBarAddAccount"
+                <AppBarButton x:Name="AppBarAddAccount"
                               DataContext="account"
                               Label="{Binding Converter={StaticResource Localize}}"
                               Icon="Add"

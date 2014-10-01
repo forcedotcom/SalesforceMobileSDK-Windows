@@ -10,6 +10,7 @@ You will need the following for the SDK,
 1) Visual Studio 2013 with Update 3 or newer
 2) Visual Studio SDK Installed: http://msdn.microsoft.com/en-us/library/bb166441.aspx
 3) Sqlite installed for Visual Studio (http://www.sqlite.org/2014/sqlite-winrt81-3080600.vsix). This package is for Windows Phone and Store 8.1 apps.
+4) Sqlite for Windows Phone 8.1 as well http://visualstudiogallery.msdn.microsoft.com/1d04f82f-2fe9-4727-a2f9-a2db127ddc9a
 
 BUILDING
 

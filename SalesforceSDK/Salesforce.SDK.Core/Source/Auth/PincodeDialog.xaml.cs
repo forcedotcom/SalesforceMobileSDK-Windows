@@ -62,7 +62,7 @@ namespace Salesforce.SDK.Auth
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter == null || !(e.Parameter is PincodeOptions))
+            if (e.Parameter != null && !(e.Parameter is PincodeOptions))
             {
                 Options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, AccountManager.GetAccount(), "");
             }
@@ -70,18 +70,26 @@ namespace Salesforce.SDK.Auth
             {
                 Options = e.Parameter as PincodeOptions;
             }
-            switch (Options.Screen)
+            if (Options != null)
             {
-                case PincodeOptions.PincodeScreen.Locked:
-                    SetupLocked();
-                    break;
-                case PincodeOptions.PincodeScreen.Confirm:
-                    SetupConfirm();
-                    break;
-                default:
-                    SetupCreate();
-                    break;
+                switch (Options.Screen)
+                {
+                    case PincodeOptions.PincodeScreen.Locked:
+                        SetupLocked();
+                        break;
+                    case PincodeOptions.PincodeScreen.Confirm:
+                        SetupConfirm();
+                        break;
+                    default:
+                        SetupCreate();
+                        break;
+                }
             }
+            else
+            {
+                SetupCreate();
+            }
+              
             Passcode.Password = "";
             Rect bounds = Window.Current.Bounds;
             // This screen will adjust size for "narrow" views; if the view is sufficiently narrow it will fill the screen and move text to the top, so it can be seen with virtual keyboard.

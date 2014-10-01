@@ -61,8 +61,7 @@ namespace Salesforce.SDK.App
             Suspending += OnSuspending;
             CreateClientManager(false);
             RootApplicationPage = SetRootApplicationPage();
-            TokenRefresher = new DispatcherTimer();
-            TokenRefresher.Interval = TimeSpan.FromMinutes(3);
+            TokenRefresher = new DispatcherTimer {Interval = TimeSpan.FromMinutes(3)};
             TokenRefresher.Tick += RefreshToken;
             PlatformAdapter.Resolve<ISFApplicationHelper>().Initialize();
         }

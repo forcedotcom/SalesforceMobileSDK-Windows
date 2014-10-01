@@ -235,7 +235,7 @@ namespace Salesforce.SDK.Auth
 
             // Args
             string[] args = {loginOptions.DisplayType, loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr};
-            string[] urlEncodedArgs = args.Select(s => WebUtility.UrlEncode(s)).ToArray();
+            string[] urlEncodedArgs = args.Select(WebUtility.UrlEncode).ToArray();
 
             // Authorization url
             string authorizationUrl =
@@ -269,7 +269,7 @@ namespace Salesforce.SDK.Auth
         {
             // Args
             string[] args = {displayType, accessToken, url};
-            string[] urlEncodedArgs = args.Select(s => Uri.EscapeDataString(s)).ToArray();
+            string[] urlEncodedArgs = args.Select(Uri.EscapeDataString).ToArray();
 
             // Authorization url
             string frontDoorUrl = string.Format(instanceUrl + FrontDoorPath + "?" + FrontDoorQueryString, urlEncodedArgs);

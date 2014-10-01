@@ -36,20 +36,20 @@ namespace Salesforce.SDK.Rest
 {
     public enum RestAction
     {
-        VERSIONS,
-        RESOURCES,
-        DESCRIBE_GLOBAL,
-        METADATA,
-        DESCRIBE,
-        CREATE,
-        RETRIEVE,
-        UPSERT,
-        UPDATE,
-        DELETE,
-        QUERY,
-        SEARCH,
+        Versions,
+        Resources,
+        DescribeGlobal,
+        Metadata,
+        Describe,
+        Create,
+        Retrieve,
+        Upsert,
+        Update,
+        Delete,
+        Query,
+        Search,
         // Other
-        MANUAL
+        Manual
     }
 
     internal static class Extensions
@@ -59,40 +59,40 @@ namespace Salesforce.SDK.Rest
             string format = "";
             switch (action)
             {
-                case RestAction.VERSIONS:
+                case RestAction.Versions:
                     format = "/services/data/";
                     break;
-                case RestAction.RESOURCES:
+                case RestAction.Resources:
                     format = "/services/data/{0}/";
                     break;
-                case RestAction.DESCRIBE_GLOBAL:
+                case RestAction.DescribeGlobal:
                     format = "/services/data/{0}/sobjects/";
                     break;
-                case RestAction.METADATA:
+                case RestAction.Metadata:
                     format = "/services/data/{0}/sobjects/{1}/";
                     break;
-                case RestAction.DESCRIBE:
+                case RestAction.Describe:
                     format = "/services/data/{0}/sobjects/{1}/describe/";
                     break;
-                case RestAction.CREATE:
+                case RestAction.Create:
                     format = "/services/data/{0}/sobjects/{1}";
                     break;
-                case RestAction.RETRIEVE:
+                case RestAction.Retrieve:
                     format = "/services/data/{0}/sobjects/{1}/{2}";
                     break;
-                case RestAction.UPSERT:
+                case RestAction.Upsert:
                     format = "/services/data/{0}/sobjects/{1}/{2}/{3}";
                     break;
-                case RestAction.UPDATE:
+                case RestAction.Update:
                     format = "/services/data/{0}/sobjects/{1}/{2}";
                     break;
-                case RestAction.DELETE:
+                case RestAction.Delete:
                     format = "/services/data/{0}/sobjects/{1}/{2}";
                     break;
-                case RestAction.QUERY:
+                case RestAction.Query:
                     format = "/services/data/{0}/query";
                     break;
-                case RestAction.SEARCH:
+                case RestAction.Search:
                     format = "/services/data/{0}/search";
                     break;
             }
@@ -127,10 +127,8 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="method">The HTTP method for the request (GET/POST/DELETE etc)</param>
         /// <param name="path">The URI path, this will automatically be resolved against the users current instance host.</param>
-        /// <param name="requestBody">The request body if there is one, can be null.</param>
-        /// <param name="contentType">The content type.</param>
-        /// <param name="additionalHeaders">Additional HTTP headers, can be null.</param>
-        public RestRequest(HttpMethod method, string path) : this(method, path, null, ContentTypeValues.None, null)
+        public RestRequest(HttpMethod method, string path)
+            : this(method, path, null, ContentTypeValues.None, null)
         {
         }
 
@@ -181,30 +179,31 @@ namespace Salesforce.SDK.Rest
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForVersions()
         {
-            return new RestRequest(HttpMethod.Get, RestAction.VERSIONS.Path());
+            return new RestRequest(HttpMethod.Get, RestAction.Versions.Path());
         }
 
         /// <summary>
         ///     Request to list available resources for the specified API version, including resource name and URI.
         ///     See
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_discoveryresource.htm
-        ///     <summary>
-        ///         <param name="apiVersion">API version e.g. v26.0</param>
-        ///         <returns>A RestRequest</returns>
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForResources(string apiVersion)
         {
-            return new RestRequest(HttpMethod.Get, RestAction.RESOURCES.Path(apiVersion));
+            return new RestRequest(HttpMethod.Get, RestAction.Resources.Path(apiVersion));
         }
 
         /// <summary>
         ///     Request to list the available objects and their metadata for your organization's data.
         ///     See
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_describeGlobal.htm
-        ///     <param name="apiVersion">API version e.g. v26.0</param>
-        ///     <returns>A RestRequest</returns>
+        /// </summary>
+        /// <param name="apiVersion">API version e.g. v26.0</param>
+        /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDescribeGlobal(string apiVersion)
         {
-            return new RestRequest(HttpMethod.Get, RestAction.DESCRIBE_GLOBAL.Path(apiVersion));
+            return new RestRequest(HttpMethod.Get, RestAction.DescribeGlobal.Path(apiVersion));
         }
 
         /// <summary>
@@ -217,7 +216,7 @@ namespace Salesforce.SDK.Rest
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForMetadata(string apiVersion, string objectType)
         {
-            return new RestRequest(HttpMethod.Get, RestAction.METADATA.Path(apiVersion, objectType));
+            return new RestRequest(HttpMethod.Get, RestAction.Metadata.Path(apiVersion, objectType));
         }
 
         /// <summary>
@@ -230,7 +229,7 @@ namespace Salesforce.SDK.Rest
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDescribe(string apiVersion, string objectType)
         {
-            return new RestRequest(HttpMethod.Get, RestAction.DESCRIBE.Path(apiVersion, objectType));
+            return new RestRequest(HttpMethod.Get, RestAction.Describe.Path(apiVersion, objectType));
         }
 
         /// <summary>
@@ -246,7 +245,7 @@ namespace Salesforce.SDK.Rest
             Dictionary<string, object> fields)
         {
             string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(HttpMethod.Post, RestAction.CREATE.Path(apiVersion, objectType), fieldsData,
+            return new RestRequest(HttpMethod.Post, RestAction.Create.Path(apiVersion, objectType), fieldsData,
                 ContentTypeValues.Json);
         }
 
@@ -261,13 +260,13 @@ namespace Salesforce.SDK.Rest
         /// <param name="fieldsList">Fields</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForRetrieve(string apiVersion, string objectType, string objectId,
-            string[] fieldList)
+            string[] fieldsList)
         {
-            var path = new StringBuilder(RestAction.RETRIEVE.Path(apiVersion, objectType, objectId));
-            if (fieldList != null && fieldList.Length > 0)
+            var path = new StringBuilder(RestAction.Retrieve.Path(apiVersion, objectType, objectId));
+            if (fieldsList != null && fieldsList.Length > 0)
             {
                 path.Append("?fields=");
-                path.Append(Uri.EscapeUriString(string.Join(",", fieldList)));
+                path.Append(Uri.EscapeUriString(string.Join(",", fieldsList)));
             }
 
             return new RestRequest(HttpMethod.Get, path.ToString());
@@ -281,12 +280,13 @@ namespace Salesforce.SDK.Rest
         ///     <param name="objectType">Ojbect type</param>
         ///     <param name="objectId">object id</param>
         ///     <param name="fields">Fields</param>
+        /// </summary>
         ///     <returns>A RestRequest</returns>
         public static RestRequest GetRequestForUpdate(string apiVersion, string objectType, string objectId,
             Dictionary<string, object> fields)
         {
             string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(HttpMethod.Patch, RestAction.UPDATE.Path(apiVersion, objectType, objectId),
+            return new RestRequest(HttpMethod.Patch, RestAction.Update.Path(apiVersion, objectType, objectId),
                 fieldsData, ContentTypeValues.Json);
         }
 
@@ -300,13 +300,14 @@ namespace Salesforce.SDK.Rest
         ///     <param name="externalIdField">External id field</param>
         ///     <param name="externalId">External id</param>
         ///     <param name="fields">Fields</param>
+        /// </summary>
         ///     <returns>A RestRequest</returns>
         public static RestRequest GetRequestForUpsert(string apiVersion, string objectType, string externalIdField,
             string externalId, Dictionary<string, object> fields)
         {
             string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
             return new RestRequest(HttpMethod.Patch,
-                RestAction.UPSERT.Path(apiVersion, objectType, externalIdField, externalId), fieldsData,
+                RestAction.Upsert.Path(apiVersion, objectType, externalIdField, externalId), fieldsData,
                 ContentTypeValues.Json);
         }
 
@@ -321,7 +322,7 @@ namespace Salesforce.SDK.Rest
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDelete(string apiVersion, string objectType, string objectId)
         {
-            return new RestRequest(HttpMethod.Delete, RestAction.DELETE.Path(apiVersion, objectType, objectId));
+            return new RestRequest(HttpMethod.Delete, RestAction.Delete.Path(apiVersion, objectType, objectId));
         }
 
         /// <summary>
@@ -329,11 +330,11 @@ namespace Salesforce.SDK.Rest
         ///     See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_search.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="q">Query string</param
+        /// <param name="q">Query string</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForSearch(string apiVersion, string q)
         {
-            var path = new StringBuilder(RestAction.SEARCH.Path(apiVersion));
+            var path = new StringBuilder(RestAction.Search.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
             return new RestRequest(HttpMethod.Get, path.ToString());
@@ -344,11 +345,11 @@ namespace Salesforce.SDK.Rest
         ///     See http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_query.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="q">Query string</param
+        /// <param name="q">Query string</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForQuery(string apiVersion, string q)
         {
-            var path = new StringBuilder(RestAction.QUERY.Path(apiVersion));
+            var path = new StringBuilder(RestAction.Query.Path(apiVersion));
             path.Append("?q=");
             path.Append(Uri.EscapeUriString(q));
             return new RestRequest(HttpMethod.Get, path.ToString());

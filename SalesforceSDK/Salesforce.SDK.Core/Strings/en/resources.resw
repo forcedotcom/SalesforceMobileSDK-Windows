@@ -207,4 +207,19 @@
   <data name="passcode_logout" xml:space="preserve">
     <value>Are you sure you want to logout?</value>
   </data>
+  <data name="add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="login_to_salesforce" xml:space="preserve">
+    <value>Login to Salesforce.com</value>
+  </data>
+  <data name="logging_in" xml:space="preserve">
+    <value>Logging into Salesforce.com</value>
+  </data>
+  <data name="generic_authentication_error" xml:space="preserve">
+    <value>Authentication error. Please try again.</value>
+  </data>
+  <data name="generic_error" xml:space="preserve">
+    <value>An error has occurred, please try again.</value>
+  </data>
 </root>

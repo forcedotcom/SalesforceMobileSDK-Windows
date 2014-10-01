@@ -66,7 +66,7 @@ namespace Salesforce.Sample.RestExplorer.Store
                 button.Click += OnAnyButtonClicked;
             }
 
-            SwitchToRestAction(RestAction.VERSIONS);
+            SwitchToRestAction(RestAction.Versions);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Salesforce.Sample.RestExplorer.Store
         /// <param name="e"></param>
         private void OnAnyButtonClicked(object sender, RoutedEventArgs e)
         {
-            var restAction = RestAction.VERSIONS;
+            var restAction = RestAction.Versions;
 
             switch (((Button) sender).Name)
             {
@@ -103,43 +103,43 @@ namespace Salesforce.Sample.RestExplorer.Store
                     OnSwitch();
                     return;
                 case "btnManual":
-                    restAction = RestAction.MANUAL;
+                    restAction = RestAction.Manual;
                     break;
                 case "btnCreate":
-                    restAction = RestAction.CREATE;
+                    restAction = RestAction.Create;
                     break;
                 case "btnDelete":
-                    restAction = RestAction.DELETE;
+                    restAction = RestAction.Delete;
                     break;
                 case "btnDescribe":
-                    restAction = RestAction.DESCRIBE;
+                    restAction = RestAction.Describe;
                     break;
                 case "btnDescribeGlobal":
-                    restAction = RestAction.DESCRIBE_GLOBAL;
+                    restAction = RestAction.DescribeGlobal;
                     break;
                 case "btnMetadata":
-                    restAction = RestAction.METADATA;
+                    restAction = RestAction.Metadata;
                     break;
                 case "btnQuery":
-                    restAction = RestAction.QUERY;
+                    restAction = RestAction.Query;
                     break;
                 case "btnResources":
-                    restAction = RestAction.RESOURCES;
+                    restAction = RestAction.Resources;
                     break;
                 case "btnRetrieve":
-                    restAction = RestAction.RETRIEVE;
+                    restAction = RestAction.Retrieve;
                     break;
                 case "btnSearch":
-                    restAction = RestAction.SEARCH;
+                    restAction = RestAction.Search;
                     break;
                 case "btnUpdate":
-                    restAction = RestAction.UPDATE;
+                    restAction = RestAction.Update;
                     break;
                 case "btnUpsert":
-                    restAction = RestAction.UPSERT;
+                    restAction = RestAction.Upsert;
                     break;
                 case "btnVersions":
-                    restAction = RestAction.VERSIONS;
+                    restAction = RestAction.Versions;
                     break;
             }
             SwitchToRestAction(restAction);

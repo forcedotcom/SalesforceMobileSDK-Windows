@@ -48,60 +48,60 @@ namespace Salesforce.Sample.RestExplorer.Shared
             var restAction = (RestAction) Enum.Parse(typeof (RestAction), restActionStr);
             switch (restAction)
             {
-                case RestAction.VERSIONS:
+                case RestAction.Versions:
                     break;
-                case RestAction.RESOURCES:
+                case RestAction.Resources:
                     names.Add("tbApiVersion");
                     break;
-                case RestAction.DESCRIBE_GLOBAL:
+                case RestAction.DescribeGlobal:
                     names.Add("tbApiVersion");
                     break;
-                case RestAction.METADATA:
-                    names.Add("tbApiVersion");
-                    names.Add("tbObjectType");
-                    break;
-                case RestAction.DESCRIBE:
+                case RestAction.Metadata:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     break;
-                case RestAction.CREATE:
+                case RestAction.Describe:
+                    names.Add("tbApiVersion");
+                    names.Add("tbObjectType");
+                    break;
+                case RestAction.Create:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     names.Add("tbFields");
                     break;
-                case RestAction.RETRIEVE:
+                case RestAction.Retrieve:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     names.Add("tbObjectId");
                     names.Add("tbFieldList");
                     break;
-                case RestAction.UPSERT:
+                case RestAction.Upsert:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     names.Add("tbExternalIdField");
                     names.Add("tbExternalId");
                     names.Add("tbFields");
                     break;
-                case RestAction.UPDATE:
+                case RestAction.Update:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     names.Add("tbObjectId");
                     names.Add("tbFields");
                     break;
-                case RestAction.DELETE:
+                case RestAction.Delete:
                     names.Add("tbApiVersion");
                     names.Add("tbObjectType");
                     names.Add("tbObjectId");
                     break;
-                case RestAction.QUERY:
+                case RestAction.Query:
                     names.Add("tbApiVersion");
                     names.Add("tbSoql");
                     break;
-                case RestAction.SEARCH:
+                case RestAction.Search:
                     names.Add("tbApiVersion");
                     names.Add("tbSosl");
                     break;
-                case RestAction.MANUAL:
+                case RestAction.Manual:
                     names.Add("tbRequestPath");
                     names.Add("tbRequestBody");
                     names.Add("tbRequestMethod");
