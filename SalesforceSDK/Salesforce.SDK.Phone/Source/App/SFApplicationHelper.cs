@@ -185,10 +185,9 @@ namespace Salesforce.SDK.App
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
                 e.Handled = true;
             }
-            else if (frame.CanGoBack)
+            else
             {
-                frame.GoBack();
-                e.Handled = true;
+                e.Handled = false;
             }
         }
     }
