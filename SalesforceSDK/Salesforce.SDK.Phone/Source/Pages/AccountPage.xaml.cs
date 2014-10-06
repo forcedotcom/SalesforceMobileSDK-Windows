@@ -167,8 +167,8 @@ namespace Salesforce.SDK.Source.Pages
             ServerFlyout.Closed += ServerFlyout_Closed;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
-            hostName.PlaceholderText = LocalizedStrings.GetString("name");
-            hostAddress.PlaceholderText = LocalizedStrings.GetString("address");
+            HostName.PlaceholderText = LocalizedStrings.GetString("name");
+            HostAddress.PlaceholderText = LocalizedStrings.GetString("address");
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
                 ? Visibility.Visible
                 : Visibility.Collapsed);
@@ -238,15 +238,15 @@ namespace Salesforce.SDK.Source.Pages
         private void addConnection_Click(object sender, RoutedEventArgs e)
         {
             _addServerFlyoutShowing = true;
-            hostName.Text = "";
-            hostAddress.Text = "";
+            HostName.Text = "";
+            HostAddress.Text = "";
             AddServerFlyout.ShowAt(ApplicationTitle);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            string hname = hostName.Text;
-            string haddress = hostAddress.Text;
+            string hname = HostName.Text;
+            string haddress = HostAddress.Text;
             var server = new ServerSetting
             {
                 ServerHost = haddress,

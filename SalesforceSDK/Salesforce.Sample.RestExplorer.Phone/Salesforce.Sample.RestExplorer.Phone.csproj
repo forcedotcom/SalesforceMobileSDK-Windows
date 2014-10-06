@@ -159,9 +159,7 @@
     <None Include="packages.config" />
     <Content Include="www\bootconfig.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SalesforceSDK\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

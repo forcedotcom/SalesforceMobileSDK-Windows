@@ -222,4 +222,10 @@
   <data name="generic_error" xml:space="preserve">
     <value>An error has occurred, please try again.</value>
   </data>
+  <data name="address_label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="host_label" xml:space="preserve">
+    <value>Host (Example: login.salesforce.com)</value>
+  </data>
 </root>
