@@ -167,8 +167,6 @@ namespace Salesforce.SDK.Source.Pages
             ServerFlyout.Closed += ServerFlyout_Closed;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
-            HostName.PlaceholderText = LocalizedStrings.GetString("name");
-            HostAddress.PlaceholderText = LocalizedStrings.GetString("address");
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
                 ? Visibility.Visible
                 : Visibility.Collapsed);
