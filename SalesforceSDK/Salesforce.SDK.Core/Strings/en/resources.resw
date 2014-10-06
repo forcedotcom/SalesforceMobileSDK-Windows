@@ -223,9 +223,9 @@
     <value>An error has occurred, please try again.</value>
   </data>
   <data name="address_label" xml:space="preserve">
-    <value>Label</value>
+    <value>Host (Example: login.salesforce.com)</value>
   </data>
   <data name="host_label" xml:space="preserve">
-    <value>Host (Example: login.salesforce.com)</value>
+    <value>Label</value>
   </data>
 </root>

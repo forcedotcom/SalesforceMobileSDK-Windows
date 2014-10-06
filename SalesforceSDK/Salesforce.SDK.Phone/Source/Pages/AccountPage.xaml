@@ -41,11 +41,12 @@
                     <TextBlock x:Name="AddServerFlyoutLabel"
                                DataContext="new_connection"
                                Text="{Binding Converter={StaticResource Localize}}"
-                               Grid.Row="1"
                                Margin="5 0 5 15"
                                Style="{StaticResource SubheaderTextBlockStyle}"
                                TextAlignment="Center" />
                     <TextBox x:Name="HostAddress"
+                             DataContext="address"
+                             PlaceholderText="{Binding Converter={StaticResource Localize}}"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
                             <DataTemplate>
@@ -58,6 +59,8 @@
                         </TextBox.HeaderTemplate>
                     </TextBox>
                     <TextBox x:Name="HostName"
+                             DataContext="name"
+                             PlaceholderText="{Binding Converter={StaticResource Localize}}"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
                             <DataTemplate>
