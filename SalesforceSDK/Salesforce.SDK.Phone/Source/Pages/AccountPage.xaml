@@ -38,30 +38,46 @@
         <Flyout x:Name="AddServerFlyout" Placement="Full">
             <StackPanel x:Name="AddServerFlyoutPanel" Background="Transparent">
                 <StackPanel>
-                    <TextBlock x:Name="addServerFlyoutLabel"
+                    <TextBlock x:Name="AddServerFlyoutLabel"
                                DataContext="new_connection"
                                Text="{Binding Converter={StaticResource Localize}}"
                                Grid.Row="1"
                                Margin="5 0 5 15"
                                Style="{StaticResource SubheaderTextBlockStyle}"
                                TextAlignment="Center" />
-                    <TextBox x:Name="hostName"
-                             DataContext="name"
-                             Text="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch" />
-                    <TextBox x:Name="hostAddress"
-                             DataContext="address"
-                             Text="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch" />
+                    <TextBox x:Name="HostAddress"
+                             HorizontalAlignment="Stretch">
+                        <TextBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    DataContext="address_label"
+                                    Text="{Binding Converter={StaticResource Localize}}"
+                                    Foreground="DimGray"
+                                    Margin="10 0 0 0" />
+                            </DataTemplate>
+                        </TextBox.HeaderTemplate>
+                    </TextBox>
+                    <TextBox x:Name="HostName"
+                             HorizontalAlignment="Stretch">
+                        <TextBox.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    DataContext="host_label"
+                                    Text="{Binding Converter={StaticResource Localize}}"
+                                    Foreground="DimGray"
+                                    Margin="10 0 0 0" />
+                            </DataTemplate>
+                        </TextBox.HeaderTemplate>
+                    </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
-                    <Button x:Name="addCustomHostBtn"
+                    <Button x:Name="AddCustomHostBtn"
                             DataContext="add"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="addCustomHostBtn_Click"
                             HorizontalAlignment="Center" />
-                    <Button x:Name="cancelCustomHostBtn"
+                    <Button x:Name="CancelCustomHostBtn"
                             DataContext="cancel"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
@@ -70,7 +86,7 @@
                 </StackPanel>
             </StackPanel>
         </Flyout>
-        
+
         <Flyout x:Name="MessageFlyout"
                 Placement="Bottom">
             <StackPanel x:Name="MessageFlyoutPanel" Background="Transparent">
