@@ -50,6 +50,7 @@ namespace Salesforce.SDK.Native
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
             Account account = AccountManager.GetAccount();
             if (account == null)
             {
