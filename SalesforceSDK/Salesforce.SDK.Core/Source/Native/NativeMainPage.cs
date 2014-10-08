@@ -40,7 +40,8 @@ namespace Salesforce.SDK.Native
         protected async void OnLogout()
         {
             await SalesforceApplication.GlobalClientManager.Logout();
-            OnNavigatedTo(null);
+
+            CheckIfLoginNeeded();
         }
 
         /// <summary>
@@ -51,6 +52,12 @@ namespace Salesforce.SDK.Native
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+
+            CheckIfLoginNeeded();
+        }
+
+        private void CheckIfLoginNeeded()
+        {
             Account account = AccountManager.GetAccount();
             if (account == null)
             {
