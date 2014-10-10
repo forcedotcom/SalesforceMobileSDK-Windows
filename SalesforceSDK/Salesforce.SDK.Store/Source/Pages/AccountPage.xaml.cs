@@ -205,12 +205,21 @@ namespace Salesforce.SDK.Source.Pages
             if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webAuthenticationResult.ResponseData);
-                AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
-                PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
+                if (!String.IsNullOrWhiteSpace(responseUri.Query) &&
+                    responseUri.Query.IndexOf("error", StringComparison.CurrentCultureIgnoreCase) >= 0)
+                {
+                    DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
+                    SetupAccountPage();
+                }
+                else
+                {
+                    AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+                    PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
+                }
             }
             else
             {
-                DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
                 SetupAccountPage();
             }
         }
