@@ -141,6 +141,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         [JsonProperty(PropertyName = "mobile_policy")]
         public MobilePolicy MobilePolicy { get; set; }
+
     }
 
     /// <summary>
@@ -191,6 +192,12 @@ namespace Salesforce.SDK.Auth
         {
             set { Scopes = value.Split(' '); }
         }
+
+        [JsonProperty(PropertyName = "sfdc_community_id")]
+        public string CommunityId { get; set; }
+
+        [JsonProperty(PropertyName = "sfdc_community_url")]
+        public string CommunityUrl { get; set; }
     }
 
     /// <summary>
@@ -450,6 +457,12 @@ namespace Salesforce.SDK.Auth
                         break;
                     case "scope":
                         res.Scopes = value.Split('+');
+                        break;
+                    case "sfdc_community_id":
+                        res.CommunityId = value;
+                        break;
+                    case "sfdc_community_url":
+                        res.CommunityUrl = value;
                         break;
                     default:
                         Debug.WriteLine("Parameter not recognized {0}", name);

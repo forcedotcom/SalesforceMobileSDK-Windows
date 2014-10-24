@@ -35,7 +35,7 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
     {
         public override string ClientId
         {
-            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
+            get { return "SfdcMobileChatterAndroid"; }
         }
 
         public override string CallbackUrl

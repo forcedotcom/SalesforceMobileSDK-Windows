@@ -310,14 +310,29 @@ namespace Salesforce.SDK.SmartStore.Store
             string sql = String.Format(DeleteStatement,
                 table,
                 values);
-            using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
+            using (var stmt = SQLConnection.Prepare(sql))
             {
                 int place = 1;
-                foreach (object next in contentValues.Values)
+                foreach (var next in contentValues.Values)
                 {
                     stmt.Bind(place, next);
                     place++;
                 }
+                return stmt.Step() == SQLiteResult.DONE;
+            }
+        }
+
+        public bool Delete(string table, string whereClause)
+        {
+            if (String.IsNullOrWhiteSpace(table) || String.IsNullOrWhiteSpace(whereClause))
+            {
+                throw new InvalidOperationException("Must specify a table and provide where clause to delete");
+            }
+            string sql = String.Format(DeleteStatement,
+                table,
+                whereClause);
+            using (var stmt = SQLConnection.Prepare(sql))
+            {
                 return stmt.Step() == SQLiteResult.DONE;
             }
         }

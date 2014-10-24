@@ -433,7 +433,7 @@ namespace Salesforce.SDK.SmartStore.Store
         }
 
         /// <summary>
-        ///     Destroy a soup; cleanup of all entries in the sup index map table and drops the soup table.
+        ///     Destroy a soup; cleanup of all entries in the soup index map table and drops the soup table.
         /// </summary>
         /// <param name="soupName"></param>
         public void DropSoup(string soupName)
@@ -614,9 +614,9 @@ namespace Salesforce.SDK.SmartStore.Store
                 else
                 {
                     object raw = GetObject(statement, i);
-                    long value;
                     if (raw != null)
                     {
+                        long value;
                         if (long.TryParse(raw.ToString(), out value))
                         {
                             row.Add(new JValue(value));
@@ -637,6 +637,31 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
             }
             return row;
+        }
+
+        public void Delete(string soupName, long[] soupEntryIds, Boolean handleTx)
+        {
+            lock (smartlock)
+            {
+                var db = DBHelper.GetInstance(DatabasePath);
+                string soupTableName = db.GetSoupTableName(soupName);
+                if (String.IsNullOrWhiteSpace(soupTableName)) throw new SmartStoreException("Soup: " + soupName + " does not exist");
+                if (handleTx)
+                {
+                    db.BeginTransaction();
+                }
+                try
+                {
+                    db.Delete(soupTableName, GetSoupEntryIdsPredicate(soupEntryIds));
+                }
+                finally
+                {
+                    if (handleTx)
+                    {
+                        db.CommitTransaction();
+                    }
+                }
+            }
         }
 
         private void ProjectIndexedPaths(JObject soupElt, Dictionary<string, object> contentValues, IndexSpec indexSpec)

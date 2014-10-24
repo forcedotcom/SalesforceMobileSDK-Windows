@@ -34,6 +34,8 @@ namespace Salesforce.SDK.Auth
     /// </summary>
     public class Account
     {
+        public const string InternalCommunityId = "000000000000000000";
+
         /// <summary>
         ///     Constructor for Account
         ///     NB: the Account is not stored anywhere until we call PersistCredentials on the IAuthStorageHelper
@@ -43,6 +45,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="callbackUrl"></param>
         /// <param name="scopes"></param>
         /// <param name="instanceUrl"></param>
+        /// <param name="identityUrl"></param>
         /// <param name="accessToken"></param>
         /// <param name="refreshToken"></param>
         public Account(string loginUrl, string clientId, string callbackUrl, string[] scopes, string instanceUrl,
@@ -68,6 +71,8 @@ namespace Salesforce.SDK.Auth
         public string IdentityUrl { get; private set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; private set; }
+        public string CommunityId { get; set; }
+        public string CommunityUrl { get; set; }
 
         [JsonProperty]
         public MobilePolicy Policy { get; internal set; }

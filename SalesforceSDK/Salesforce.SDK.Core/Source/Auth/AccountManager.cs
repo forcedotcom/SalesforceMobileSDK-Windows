@@ -108,6 +108,8 @@ namespace Salesforce.SDK.Auth
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
+            account.CommunityId = authResponse.CommunityId;
+            account.CommunityUrl = authResponse.CommunityUrl;
             var cm = new ClientManager();
             cm.PeekRestClient();
             IdentityResponse identity =
