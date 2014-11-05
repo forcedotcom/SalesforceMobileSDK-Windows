@@ -44,10 +44,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Manager\CacheManager.cs" />
+    <Compile Include="Manager\SOQLBuilder.cs" />
+    <Compile Include="Manager\SOSLBuilder.cs" />
+    <Compile Include="Manager\SOSLReturningBuilder.cs" />
+    <Compile Include="Manager\SyncManager.cs" />
     <Compile Include="Model\SalesforceObject.cs" />
     <Compile Include="Model\SalesforceObjectLayoutColumn.cs" />
     <Compile Include="Model\SalesforceObjectType.cs" />
     <Compile Include="Model\SalesforceObjectTypeLayout.cs" />
+    <Compile Include="Model\SyncOptions.cs" />
+    <Compile Include="Model\SyncState.cs" />
+    <Compile Include="Model\SyncTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Constants.cs" />
   </ItemGroup>

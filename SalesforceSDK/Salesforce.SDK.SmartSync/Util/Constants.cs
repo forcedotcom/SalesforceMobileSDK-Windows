@@ -25,13 +25,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.SmartStore.Store;
 
 namespace Salesforce.SDK.SmartSync.Util
 {
     /// <summary>
-    /// This class contains commonly used constants such as field names, SObject types, attribute names, etc.
+    ///     This class contains commonly used constants such as field names, SObject types, attribute names, etc.
     /// </summary>
     public static class Constants
     {
@@ -94,8 +97,59 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string LayoutColumnsField = "searchColumns";
 
         /**
+         * SyncState, SyncOptions, Status constants
+         */
+
+        public const string SyncsSoup = "syncs_soup";
+        public const string SyncType = "type";
+        public const string SyncTarget = "target";
+        public const string SyncOptions = "options";
+        public const string SyncSoupName = "soupName";
+        public const string SyncStatus = "status";
+        public const string SyncProgress = "progress";
+        public const string SyncTotalSize = "totalSize";
+        public const string SyncAsString = "syncAsString";
+        public const string FieldList = "fieldlist";
+        public const string QueryType = "type";
+        public const string Query = "query";
+        public const string Fieldlist = "fieldlist";
+        public const string SObjectType = "sobjectType";
+        /**
+         * Helper static methods
+         */
+
+        public static string GenerateAccountCommunityId(Account account, string communityId)
+        {
+            if (account == null)
+            {
+                throw new SmartStoreException("Account cannot be null");
+            }
+            string uniqueId;
+            if (Account.InternalCommunityId.Equals(communityId))
+            {
+                communityId = null;
+            }
+            if (!String.IsNullOrWhiteSpace(communityId))
+            {
+                uniqueId = account.UserId + communityId;
+            }
+            else
+            {
+                uniqueId = account.UserId;
+            }
+            return uniqueId;
+        }
+
+        /**
          * Helper extension method
          */
+
+        public static T Get<T>(this Dictionary<string, object> dict, string keyName)
+        {
+            object value;
+            dict.TryGetValue(keyName, out value);
+            return (T) value;
+        }
 
         public static T ExtractValue<T>(this JObject obj, string valueName)
         {
@@ -106,6 +160,5 @@ namespace Salesforce.SDK.SmartSync.Util
             }
             return default(T);
         }
-
     }
 }

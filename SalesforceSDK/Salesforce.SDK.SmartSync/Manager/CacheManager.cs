@@ -1,4 +1,31 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2014, salesforce.com, inc.
+ * All rights reserved.
+ * Redistribution and use of this software in source and binary forms, with or
+ * without modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * - Neither the name of salesforce.com, inc. nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission of salesforce.com, inc.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Newtonsoft.Json.Linq;
@@ -31,7 +58,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         public const string SfdcType = "type";
 
         private static volatile Dictionary<string, CacheManager> _instances;
-        private static readonly object cachelock = new Object();
+        private static readonly object Cachelock = new Object();
 
         private readonly SmartStore.Store.SmartStore _smartStore;
         private Dictionary<string, List<SalesforceObject>> _objectCacheMap;
@@ -49,28 +76,6 @@ namespace Salesforce.SDK.SmartSync.Manager
             return GetInstance(account, null);
         }
 
-        private static string GenerateUniqueId(Account account, string communityId)
-        {
-            if (account == null)
-            {
-                throw new SmartStoreException("Account cannot be null");
-            }
-            string uniqueId;
-            if (Account.InternalCommunityId.Equals(communityId))
-            {
-                communityId = null;
-            }
-            if (!String.IsNullOrWhiteSpace(communityId))
-            {
-                uniqueId = account.UserId + communityId;
-            }
-            else
-            {
-                uniqueId = account.UserId;
-            }
-            return uniqueId;
-        }
-
         public static CacheManager GetInstance(Account account, string communityId)
         {
             if (account == null)
@@ -81,8 +86,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 return null;
             }
-            string uniqueId = GenerateUniqueId(account, communityId);
-            lock (cachelock)
+            string uniqueId = Constants.GenerateAccountCommunityId(account, communityId);
+            lock (Cachelock)
             {
                 CacheManager instance = null;
                 if (_instances != null)
@@ -115,12 +120,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
             if (account != null)
             {
-                lock (cachelock)
+                lock (Cachelock)
                 {
                     CacheManager instance = GetInstance(account, communityId);
                     if (instance == null) return;
                     instance.ResetInMemoryCache();
-                    _instances.Remove(GenerateUniqueId(account, communityId));
+                    _instances.Remove(Constants.GenerateAccountCommunityId(account, communityId));
                 }
             }
         }
@@ -138,12 +143,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
             if (account != null)
             {
-                lock (cachelock)
+                lock (Cachelock)
                 {
                     CacheManager instance = GetInstance(account, communityId);
                     if (instance == null) return;
                     instance.CleanCache();
-                    _instances.Remove(GenerateUniqueId(account, communityId));
+                    _instances.Remove(Constants.GenerateAccountCommunityId(account, communityId));
                 }
             }
         }
@@ -395,7 +400,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         public void WriteObjectTypes(List<SalesforceObjectType> objectTypes, string cacheKey, string cacheType)
         {
-            if (!WriteCache(objectTypes, cacheKey, cacheType, _objectTypeCacheMap)) return;
+            if (!PreWriteCache(objectTypes, cacheKey, cacheType, _objectTypeCacheMap)) return;
             // Inserts or updates data in smart store.
             var data = new JArray();
             foreach (SalesforceObjectType objectType in objectTypes)
@@ -419,7 +424,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         public void WriteObjectLayouts(List<SalesforceObjectTypeLayout> objectLayouts, string cacheKey, string cacheType)
         {
-            if (!WriteCache(objectLayouts, cacheKey, cacheType, _objectTypeLayoutCacheMap)) return;
+            if (!PreWriteCache(objectLayouts, cacheKey, cacheType, _objectTypeLayoutCacheMap)) return;
             // Inserts or updates data in smart store.
             var data = new JArray();
             foreach (SalesforceObjectTypeLayout objectLayout in objectLayouts)
@@ -444,7 +449,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         public void WriteObjects(List<SalesforceObject> objects, string cacheKey, string cacheType)
         {
-            if (!WriteCache(objects, cacheKey, cacheType, _objectCacheMap)) return;
+            if (!PreWriteCache(objects, cacheKey, cacheType, _objectCacheMap)) return;
             // Inserts or updates data in smart store.
             var data = new JArray();
             foreach (SalesforceObject obj in objects)
@@ -467,7 +472,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         }
 
         /// <summary>
-        /// Helper method; validation and cache updates for the write methods.
+        ///     Helper method; validation and cache updates for the write methods.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="objects"></param>
@@ -475,7 +480,8 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <param name="cacheType"></param>
         /// <param name="cache"></param>
         /// <returns></returns>
-        private bool WriteCache<T>(List<T> objects, string cacheKey, string cacheType, IDictionary<string, List<T>> cache)
+        private bool PreWriteCache<T>(List<T> objects, string cacheKey, string cacheType,
+            IDictionary<string, List<T>> cache)
         {
             if (objects == null || String.IsNullOrWhiteSpace(cacheKey) || String.IsNullOrWhiteSpace(cacheType) ||
                 objects.Count == 0)

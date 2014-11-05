@@ -25,15 +25,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using Windows.Storage;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
-using Salesforce.SDK.Native;
-
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace Salesforce.Sample.Salesforce1.Container

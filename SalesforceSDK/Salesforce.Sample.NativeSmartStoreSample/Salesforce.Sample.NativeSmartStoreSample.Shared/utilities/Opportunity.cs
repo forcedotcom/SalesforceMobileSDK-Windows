@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using Newtonsoft.Json;
-
-namespace Salesforce.Sample.NativeSmartStoreSample.utilities
+﻿namespace Salesforce.Sample.NativeSmartStoreSample.utilities
 {
     public class Opportunity : INotifyPropertyChanged
     {

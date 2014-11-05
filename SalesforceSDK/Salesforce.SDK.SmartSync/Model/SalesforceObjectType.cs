@@ -134,7 +134,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public override int GetHashCode()
         {
-            var result = Name.GetHashCode();
+            int result = Name.GetHashCode();
             result ^= RawData.GetHashCode() + result*37;
             return result;
         }

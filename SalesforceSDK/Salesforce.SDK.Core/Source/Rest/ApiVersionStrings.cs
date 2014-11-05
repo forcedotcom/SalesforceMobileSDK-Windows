@@ -25,40 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Salesforce.Sample.Salesforce1.Container.Settings
+namespace Salesforce.SDK.Rest
 {
-    internal class Config : SalesforceConfig
+    public class ApiVersionStrings
     {
-        public override string ClientId
-        {
-            get { return "SfdcMobileChatterAndroid"; }
-        }
-
-        public override string CallbackUrl
-        {
-            get { return "sfdc:///axm/detect/oauth/done"; }
-        }
-
-        public override string[] Scopes
-        {
-            get { return new[] { "web", "api" }; }
-        }
-
-        public override Color LoginBackgroundColor
-        {
-            get { return Colors.DeepSkyBlue; }
-        }
-
-        private readonly Uri _loginLogo = new Uri("ms-appx:///Assets/salesforceLogo.png");
-        
-        public override Uri LoginBackgroundLogo
-        {
-            get { return _loginLogo; }
-        }
-
-        public override string ApplicationTitle
-        {
-            get { return "Salesforce Sample Container"; }
-        }
+        public const string VersionNumber = "v31.0";
+        public const string ApiPrefix = "/services/data/";
+        public const string BasePath = ApiPrefix + VersionNumber;
+        public const string BaseChatterPath = BasePath + "/chatter/";
+        public const string BaseConnectPath = BasePath + "/connect/";
+        public const string BaseSobjectPath = BasePath + "/sobjects/";
     }
 }

@@ -1,0 +1,148 @@
+﻿/*
+ * Copyright (c) 2014, salesforce.com, inc.
+ * All rights reserved.
+ * Redistribution and use of this software in source and binary forms, with or
+ * without modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * - Neither the name of salesforce.com, inc. nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission of salesforce.com, inc.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+using System;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.SmartStore.Store;
+using Salesforce.SDK.SmartSync.Util;
+
+namespace Salesforce.SDK.SmartSync.Model
+{
+    public class SyncState
+    {
+        public enum SyncStatusTypes
+        {
+            New,
+            Running,
+            Done,
+            Failed
+        }
+
+        public enum SyncTypes
+        {
+            SyncDown,
+            SyncUp
+        }
+
+        public long Id { private set; get; }
+        public SyncTypes SyncType { private set; get; }
+        public SyncTarget Target { private set; get; } // null for sync-up
+        public SyncOptions Options { private set; get; } // null for sync-down
+        public String SoupName { private set; get; }
+        public SyncStatusTypes Status { set; get; }
+        public int Progress { set; get; }
+        public int TotalSize { set; get; }
+
+        public static void SetupSyncsSoupIfNeeded(SmartStore.Store.SmartStore store)
+        {
+            if (store.HasSoup(Constants.SyncsSoup))
+            {
+                return;
+            }
+            IndexSpec[] indexSpecs = {new IndexSpec(Constants.SyncType, SmartStoreType.SmartString)};
+            store.RegisterSoup(Constants.SyncsSoup, indexSpecs);
+        }
+
+        public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncTarget target, string soupName)
+        {
+            var sync = new JObject
+            {
+                {Constants.SyncType, SyncTypes.SyncUp.ToString()},
+                {Constants.SyncTarget, target.AsJSON()},
+                {Constants.SyncSoupName, soupName},
+                {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
+                {Constants.SyncProgress, 0},
+                {Constants.SyncTotalSize, -1}
+            };
+            sync = store.Upsert(Constants.SyncsSoup, sync);
+            return FromJSON(sync);
+        }
+
+        public static SyncState CreateSyncUp(SmartStore.Store.SmartStore store, SyncOptions options, string soupName)
+        {
+            var sync = new JObject
+            {
+                {Constants.SyncType, SyncTypes.SyncDown.ToString()},
+                {Constants.SyncSoupName, soupName},
+                {Constants.SyncOptions, options.AsJSON()},
+                {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
+                {Constants.SyncProgress, 0},
+                {Constants.SyncTotalSize, -1}
+            };
+            sync = store.Upsert(Constants.SyncsSoup, sync);
+            return FromJSON(sync);
+        }
+
+        public static SyncState FromJSON(JObject sync)
+        {
+            var state = new SyncState
+            {
+                Id = sync.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId),
+                Target = SyncTarget.FromJSON(sync.ExtractValue<JObject>(Constants.SyncTarget)),
+                Options = SyncOptions.FromJSON(sync.ExtractValue<JObject>(Constants.SyncOptions)),
+                SoupName = sync.ExtractValue<string>(Constants.SyncSoupName),
+                Progress = sync.ExtractValue<int>(Constants.SyncProgress),
+                TotalSize = sync.ExtractValue<int>(Constants.SyncTotalSize)
+            };
+            state.SyncType = (SyncTypes) Enum.Parse(typeof (SyncTypes), sync.ExtractValue<string>(Constants.SyncType));
+            state.Status =
+                (SyncStatusTypes) Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus));
+            return state;
+        }
+
+        public static SyncState ById(SmartStore.Store.SmartStore store, long id)
+        {
+            JArray syncs = store.Retrieve(Constants.SyncsSoup, id);
+            if (syncs == null || syncs.Count == 0)
+            {
+                return null;
+            }
+            return FromJSON(syncs[0] as JObject);
+        }
+
+        public JObject AsJSON()
+        {
+            var sync = new JObject
+            {
+                {SmartStore.Store.SmartStore.SoupEntryId, Id},
+                {Constants.SyncType, SyncType.ToString()},
+                {Constants.SyncSoupName, SoupName},
+                {Constants.SyncStatus, Status.ToString()},
+                {Constants.SyncProgress, Progress},
+                {Constants.SyncTotalSize, TotalSize}
+            };
+            if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJSON());
+            if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJSON());
+            return sync;
+        }
+
+        public void Save(SmartStore.Store.SmartStore store)
+        {
+            store.Update(Constants.SyncsSoup, AsJSON(), Id, true);
+        }
+    }
+}

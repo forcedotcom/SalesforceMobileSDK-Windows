@@ -25,52 +25,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Salesforce.Sample.NativeSmartStoreSample.Shared
+using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.SmartSync.Util;
+
+namespace Salesforce.SDK.SmartSync.Model
 {
-    /// <summary>
-    /// Implement this class to configure the settings for your application.  You can find instructions on how to create a connected app from the included website.
-    /// https://help.salesforce.com/apex/HTViewHelpDoc?id=connected_app_create.htm
-    /// </summary>
-    class Config : SalesforceConfig
+    public class SyncOptions
     {
-        /// <summary>
-        /// This should return the client id generated when you create a connected app through Salesforce.
-        /// </summary>
-        public override string ClientId
+        private SyncOptions(List<string> fieldList)
         {
-            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
+            FieldList = fieldList;
         }
 
-        /// <summary>
-        /// This should return the callback url generated when you create a connected app through Salesforce.
-        /// </summary>
-        public override string CallbackUrl
+        public List<string> FieldList { private set; get  }
+
+        public static SyncOptions FromJSON(JObject options)
         {
-            get { return "sfdc:///axm/detect/oauth/done"; }
+            if (options == null)
+                return null;
+            var array = options.ExtractValue<JArray>(Constants.FieldList);
+            return new SyncOptions(array.ToObject<List<string>>());
         }
 
-        /// <summary>
-        /// Return the scopes that you wish to use in your app. Limit to what you actually need, try to refrain from listing all scopes.
-        /// </summary>
-        public override string[] Scopes
+        public static SyncOptions OptionsForSyncUp(List<string> fieldList)
         {
-            get { return new string[] { "api", "web" }; }
+            return new SyncOptions(fieldList);
         }
 
-        public override Color LoginBackgroundColor
+        public JObject AsJSON()
         {
-            get { return Colors.DarkSeaGreen; }
-        }
-
-
-        public override string ApplicationTitle
-        {
-            get { return "Native SmartStore Sample"; }
-        }
-
-        public override Uri LoginBackgroundLogo
-        {
-            get { return null; }
+            var options = new JObject {{Constants.FieldList, new JArray(FieldList)}};
+            return options;
         }
     }
 }
