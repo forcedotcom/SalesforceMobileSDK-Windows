@@ -40,7 +40,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public List<string> FieldList { private set; get  }
 
-        public static SyncOptions FromJSON(JObject options)
+        public static SyncOptions FromJson(JObject options)
         {
             if (options == null)
                 return null;
@@ -53,7 +53,7 @@ namespace Salesforce.SDK.SmartSync.Model
             return new SyncOptions(fieldList);
         }
 
-        public JObject AsJSON()
+        public JObject AsJson()
         {
             var options = new JObject {{Constants.FieldList, new JArray(FieldList)}};
             return options;

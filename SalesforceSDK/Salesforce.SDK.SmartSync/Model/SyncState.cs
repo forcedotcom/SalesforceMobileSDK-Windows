@@ -57,6 +57,10 @@ namespace Salesforce.SDK.SmartSync.Model
         public int Progress { set; get; }
         public int TotalSize { set; get; }
 
+        /// <summary>
+        ///     Create syncs soup if needed.
+        /// </summary>
+        /// <param name="store"></param>
         public static void SetupSyncsSoupIfNeeded(SmartStore.Store.SmartStore store)
         {
             if (store.HasSoup(Constants.SyncsSoup))
@@ -67,43 +71,62 @@ namespace Salesforce.SDK.SmartSync.Model
             store.RegisterSoup(Constants.SyncsSoup, indexSpecs);
         }
 
+        /// <summary>
+        ///     Create sync state in database for a sync down and return corresponding SyncState
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="target"></param>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncTarget target, string soupName)
         {
             var sync = new JObject
             {
                 {Constants.SyncType, SyncTypes.SyncUp.ToString()},
-                {Constants.SyncTarget, target.AsJSON()},
+                {Constants.SyncTarget, target.AsJson()},
                 {Constants.SyncSoupName, soupName},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
             sync = store.Upsert(Constants.SyncsSoup, sync);
-            return FromJSON(sync);
+            return FromJson(sync);
         }
 
+        /// <summary>
+        ///     Create sync state in database for a sync up and return corresponding SyncState
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="options"></param>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         public static SyncState CreateSyncUp(SmartStore.Store.SmartStore store, SyncOptions options, string soupName)
         {
             var sync = new JObject
             {
                 {Constants.SyncType, SyncTypes.SyncDown.ToString()},
                 {Constants.SyncSoupName, soupName},
-                {Constants.SyncOptions, options.AsJSON()},
+                {Constants.SyncOptions, options.AsJson()},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
             sync = store.Upsert(Constants.SyncsSoup, sync);
-            return FromJSON(sync);
+            return FromJson(sync);
         }
 
-        public static SyncState FromJSON(JObject sync)
+        /// <summary>
+        ///     Build SyncState from json
+        /// </summary>
+        /// <param name="sync"></param>
+        /// <returns></returns>
+        public static SyncState FromJson(JObject sync)
         {
             var state = new SyncState
             {
                 Id = sync.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId),
-                Target = SyncTarget.FromJSON(sync.ExtractValue<JObject>(Constants.SyncTarget)),
-                Options = SyncOptions.FromJSON(sync.ExtractValue<JObject>(Constants.SyncOptions)),
+                Target = SyncTarget.FromJson(sync.ExtractValue<JObject>(Constants.SyncTarget)),
+                Options = SyncOptions.FromJson(sync.ExtractValue<JObject>(Constants.SyncOptions)),
                 SoupName = sync.ExtractValue<string>(Constants.SyncSoupName),
                 Progress = sync.ExtractValue<int>(Constants.SyncProgress),
                 TotalSize = sync.ExtractValue<int>(Constants.SyncTotalSize)
@@ -114,6 +137,12 @@ namespace Salesforce.SDK.SmartSync.Model
             return state;
         }
 
+        /// <summary>
+        ///     Build SyncState from store sync given by id
+        /// </summary>
+        /// <param name="store"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public static SyncState ById(SmartStore.Store.SmartStore store, long id)
         {
             JArray syncs = store.Retrieve(Constants.SyncsSoup, id);
@@ -121,10 +150,14 @@ namespace Salesforce.SDK.SmartSync.Model
             {
                 return null;
             }
-            return FromJSON(syncs[0] as JObject);
+            return FromJson(syncs[0] as JObject);
         }
 
-        public JObject AsJSON()
+        /// <summary>
+        ///     json representation of sync
+        /// </summary>
+        /// <returns></returns>
+        public JObject AsJson()
         {
             var sync = new JObject
             {
@@ -135,14 +168,18 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncProgress, Progress},
                 {Constants.SyncTotalSize, TotalSize}
             };
-            if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJSON());
-            if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJSON());
+            if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJson());
+            if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJson());
             return sync;
         }
 
+        /// <summary>
+        ///     Save SyncState to db
+        /// </summary>
+        /// <param name="store"></param>
         public void Save(SmartStore.Store.SmartStore store)
         {
-            store.Update(Constants.SyncsSoup, AsJSON(), Id, true);
+            store.Update(Constants.SyncsSoup, AsJson(), Id, true);
         }
     }
 }

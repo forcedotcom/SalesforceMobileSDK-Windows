@@ -41,6 +41,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             _properties = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        ///     Returns an instance of this class based on the fields passed as a comma separated string.
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public static SOQLBuilder GetInstanceWithFields(string fields)
         {
             var instance = new SOQLBuilder();
@@ -50,70 +55,129 @@ namespace Salesforce.SDK.SmartSync.Manager
             return instance;
         }
 
+        /// <summary>
+        ///     Returns an instance of this class based on the fields passed as an array of strings.
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public static SOQLBuilder GetInstanceWithFields(params string[] fields)
         {
             return GetInstanceWithFields(String.Join(", ", fields));
         }
 
+        /// <summary>
+        ///     Adds the 'fields' clause.
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public SOQLBuilder Fields(string fields)
         {
             _properties.Add("fields", fields);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'from' clause.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <returns></returns>
         public SOQLBuilder From(string from)
         {
             _properties.Add("from", from);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'where' clause.
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public SOQLBuilder Where(string where)
         {
             _properties.Add("where", where);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'with' clause.
+        /// </summary>
+        /// <param name="with"></param>
+        /// <returns></returns>
         public SOQLBuilder With(string with)
         {
             _properties.Add("with", with);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'groupBy' clause.
+        /// </summary>
+        /// <param name="groupBy"></param>
+        /// <returns></returns>
         public SOQLBuilder GroupBy(string groupBy)
         {
             _properties.Add("groupBy", groupBy);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'having' clause.
+        /// </summary>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public SOQLBuilder Having(string having)
         {
             _properties.Add("having", having);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'orderBy' clause.
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
         public SOQLBuilder OrderBy(string orderBy)
         {
             _properties.Add("orderBy", orderBy);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'limit' clause.
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public SOQLBuilder Limit(int limit)
         {
             _properties.Add("limit", limit);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'offset' clause.
+        /// </summary>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public SOQLBuilder Offset(int offset)
         {
             _properties.Add("offset", offset);
             return this;
         }
 
+        /// <summary>
+        ///     Builds and encodes the query.
+        /// </summary>
+        /// <returns></returns>
         public string BuildAndEncode()
         {
             return Uri.EscapeUriString(Build());
         }
 
+        /// <summary>
+        ///     Builds and encodes with path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string BuildAndEncodeWithPath(string path)
         {
             string result = BuildWithPath(path);
@@ -124,6 +188,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             return result;
         }
 
+        /// <summary>
+        ///     Builds with path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string BuildWithPath(string path)
         {
             string result = null;
@@ -136,6 +205,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             return result;
         }
 
+        /// <summary>
+        ///     Builds the query.
+        /// </summary>
+        /// <returns></returns>
         public string Build()
         {
             var query = new StringBuilder();

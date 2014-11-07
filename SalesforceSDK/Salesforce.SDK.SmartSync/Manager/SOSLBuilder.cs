@@ -43,6 +43,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             _returning = new List<SOSLReturningBuilder>();
         }
 
+        /// <summary>
+        ///     Returns an instance of this class based on the search term passed in.
+        /// </summary>
+        /// <param name="searchTerm"></param>
+        /// <returns></returns>
         public static SOSLBuilder GetInstanceWithSearchTerm(string searchTerm)
         {
             var instance = new SOSLBuilder();
@@ -51,37 +56,62 @@ namespace Salesforce.SDK.SmartSync.Manager
             return instance;
         }
 
+        /// <summary>
+        ///     Adds the 'searchGroup' clause.
+        /// </summary>
+        /// <param name="searchGroup"></param>
+        /// <returns></returns>
         public SOSLBuilder SearchGroup(string searchGroup)
         {
             _properties.Add("searchGroup", searchGroup);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'returningSpec' clause.
+        /// </summary>
+        /// <param name="returningSpec"></param>
+        /// <returns></returns>
         public SOSLBuilder Returning(SOSLReturningBuilder returningSpec)
         {
             _returning.Add(returningSpec);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'divisionFilter' clause.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public SOSLBuilder DivisionFilter(string filter)
         {
             _properties.Add("divisionFilter", filter);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'dataCategory' clause.
+        /// </summary>
+        /// <param name="dataCategory"></param>
+        /// <returns></returns>
         public SOSLBuilder DataCategory(string dataCategory)
         {
             _properties.Add("dataCategory", dataCategory);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'limit' clause.
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public SOSLBuilder Limit(int limit)
         {
             _properties.Add("limit", limit);
             return this;
         }
 
-        public SOSLBuilder SearchTerm(string searchTerm)
+        private SOSLBuilder SearchTerm(string searchTerm)
         {
             string searchValue = searchTerm ?? "";
 
@@ -108,11 +138,20 @@ namespace Salesforce.SDK.SmartSync.Manager
             return this;
         }
 
+        /// <summary>
+        ///     Builds and encodes the query.
+        /// </summary>
+        /// <returns></returns>
         public string BuildAndEncode()
         {
             return Uri.EscapeUriString(Build());
         }
 
+        /// <summary>
+        ///     Builds and encodes with path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string BuildAndEncodeWithPath(string path)
         {
             string result = BuildWithPath(path);
@@ -123,6 +162,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             return result;
         }
 
+        /// <summary>
+        ///     Builds with path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string BuildWithPath(string path)
         {
             string result = null;
@@ -135,6 +179,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             return result;
         }
 
+        /// <summary>
+        ///     Builds the query.
+        /// </summary>
+        /// <returns></returns>
         public string Build()
         {
             var query = new StringBuilder();

@@ -32,6 +32,9 @@ using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.SmartSync.Model
 {
+    /// <summary>
+    ///     Target for sync u i.e. set of objects to download from server
+    /// </summary>
     public class SyncTarget
     {
         public enum QueryTypes
@@ -55,7 +58,12 @@ namespace Salesforce.SDK.SmartSync.Model
         public List<string> FieldList { private set; get; }
         public string ObjectType { private set; get; }
 
-        public static SyncTarget FromJSON(JObject target)
+        /// <summary>
+        ///     Build SyncTarget from json
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public static SyncTarget FromJson(JObject target)
         {
             var queryType = target.ExtractValue<QueryTypes>(Constants.QueryType);
             var query = target.ExtractValue<string>(Constants.Query);
@@ -69,7 +77,10 @@ namespace Salesforce.SDK.SmartSync.Model
             return new SyncTarget(queryType, query, fieldList, objectType);
         }
 
-        public JObject AsJSON()
+        /// <summary>
+        /// </summary>
+        /// <returns>json representation of target</returns>
+        public JObject AsJson()
         {
             var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
             if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
@@ -78,16 +89,32 @@ namespace Salesforce.SDK.SmartSync.Model
             return target;
         }
 
+        /// <summary>
+        ///     Build SyncTarget for soql target
+        /// </summary>
+        /// <param name="soql"></param>
+        /// <returns></returns>
         public static SyncTarget TargetForSOQLSyncDown(string soql)
         {
             return new SyncTarget(QueryTypes.Soql, soql, null, null);
         }
 
+        /// <summary>
+        ///     Build SyncTarget for sosl target
+        /// </summary>
+        /// <param name="sosl"></param>
+        /// <returns></returns>
         public static SyncTarget TargetForSOSLSyncDown(string sosl)
         {
             return new SyncTarget(QueryTypes.Sosl, sosl, null, null);
         }
 
+        /// <summary>
+        ///     Build SyncTarget for mru target
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <param name="fieldList"></param>
+        /// <returns></returns>
         public static SyncTarget TargetForMRUSyncDown(string objectType, List<string> fieldList)
         {
             return new SyncTarget(QueryTypes.Mru, null, fieldList, objectType);

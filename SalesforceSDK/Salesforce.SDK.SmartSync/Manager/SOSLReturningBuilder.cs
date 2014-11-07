@@ -41,6 +41,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             _properties = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        ///     Returns an instance of this class based on the object name.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static SOSLReturningBuilder GetInstanceWithObjectName(string name)
         {
             var instance = new SOSLReturningBuilder();
@@ -49,42 +54,76 @@ namespace Salesforce.SDK.SmartSync.Manager
             return instance;
         }
 
+        /// <summary>
+        ///     Adds the 'fields' clause.
+        /// </summary>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder Fields(string fields)
         {
             _properties.Add("fields", fields);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'where' clause.
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder Where(string where)
         {
             _properties.Add("where", where);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'orderBy' clause.
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder OrderBy(string orderBy)
         {
             _properties.Add("orderBy", orderBy);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'objectName' clause.
+        /// </summary>
+        /// <param name="objectName"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder ObjectName(string objectName)
         {
             _properties.Add("objectName", objectName);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'limit' clause.
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder Limit(int limit)
         {
             _properties.Add("limit", limit);
             return this;
         }
 
+        /// <summary>
+        ///     Adds the 'withNetwork' clause.
+        /// </summary>
+        /// <param name="withNetwork"></param>
+        /// <returns></returns>
         public SOSLReturningBuilder WithNetwork(string withNetwork)
         {
             _properties.Add("withNetwork", withNetwork);
             return this;
         }
 
+        /// <summary>
+        ///     Builds the query.
+        /// </summary>
+        /// <returns></returns>
         public string Build()
         {
             var query = new StringBuilder();

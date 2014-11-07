@@ -50,21 +50,32 @@ namespace Salesforce.SDK.SmartSync.Manager
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
         private readonly string _apiVersion;
+        private readonly RestClient _restClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
-        private readonly RestClient restClient;
 
         private SyncManager(Account account, string communityId)
         {
             _smartStore = new SmartStore.Store.SmartStore();
-            restClient = SalesforceApplication.GlobalClientManager.GetRestClient();
+            _restClient = SalesforceApplication.GlobalClientManager.GetRestClient();
             _apiVersion = ApiVersionStrings.VersionNumber;
         }
 
+        /// <summary>
+        ///     Returns the instance of this class associated with this user.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
         public static SyncManager GetInstance(Account account)
         {
             return GetInstance(account, null);
         }
 
+        /// <summary>
+        ///     Returns the instance of this class associated with this user and community.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="communityId"></param>
+        /// <returns></returns>
         public static SyncManager GetInstance(Account account, string communityId)
         {
             if (account == null)
@@ -95,11 +106,20 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Resets the Sync manager associated with this user.
+        /// </summary>
+        /// <param name="account"></param>
         public static void Reset(Account account)
         {
             Reset(account, null);
         }
 
+        /// <summary>
+        ///     Resets the Sync manager associated with this user and community.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="communityId"></param>
         public static void Reset(Account account, string communityId)
         {
             if (account == null)
@@ -117,11 +137,22 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Get details of a sync state.
+        /// </summary>
+        /// <param name="syncId"></param>
+        /// <returns></returns>
         public SyncState GetSyncStatus(long syncId)
         {
             return SyncState.ById(_smartStore, syncId);
         }
 
+        /// <summary>
+        ///     Create and run a sync down.
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         public SyncState SyncDown(SyncTarget target, string soupName)
         {
             SyncState sync = SyncState.CreateSyncDown(_smartStore, target, soupName);
@@ -129,6 +160,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return sync;
         }
 
+        /// <summary>
+        ///     Create and run a sync up.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         public SyncState SyncUp(SyncOptions options, string soupName)
         {
             SyncState sync = SyncState.CreateSyncUp(_smartStore, options, soupName);
@@ -221,7 +258,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 }
 
 
-                RestResponse response = await restClient.SendAsync(request);
+                RestResponse response = await _restClient.SendAsync(request);
 
                 if (response.Success)
                 {
@@ -275,7 +312,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             SyncTarget target = sync.Target;
             // Get recent items ids from server
             RestRequest request = RestRequest.GetRequestForMetadata(_apiVersion, target.ObjectType);
-            RestResponse response = await restClient.SendAsync(request);
+            RestResponse response = await _restClient.SendAsync(request);
             List<string> recentItems = Pluck<string>(response.AsJObject.ExtractValue<JArray>(Constants.RecentItems),
                 Constants.Id);
 
@@ -288,7 +325,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
             // Get recent items attributes from server
             request = RestRequest.GetRequestForQuery(_apiVersion, soql);
-            response = await restClient.SendAsync(request);
+            response = await _restClient.SendAsync(request);
             JObject responseJson = response.AsJObject;
             var records = responseJson.ExtractValue<JArray>(Constants.Records);
             int totalSize = records.Count;
@@ -309,7 +346,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             RestRequest request = RestRequest.GetRequestForQuery(_apiVersion, query);
 
             // Call server
-            RestResponse response = await restClient.SendAsync(request);
+            RestResponse response = await _restClient.SendAsync(request);
             JObject responseJson = response.AsJObject;
 
             int countSaved = 0;
@@ -334,7 +371,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 var nextRecordsUrl = responseJson.ExtractValue<string>(Constants.NextRecordsUrl);
                 responseJson = String.IsNullOrWhiteSpace(nextRecordsUrl)
                     ? null
-                    : restClient.SendAsync(HttpMethod.Get, nextRecordsUrl).Result.AsJObject;
+                    : _restClient.SendAsync(HttpMethod.Get, nextRecordsUrl).Result.AsJObject;
             } while (responseJson != null);
         }
 
@@ -344,7 +381,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             RestRequest request = RestRequest.GetRequestForSearch(_apiVersion, target.Query);
 
             // Call server
-            RestResponse response = await restClient.SendAsync(request);
+            RestResponse response = await _restClient.SendAsync(request);
 
             // Parse response
             JArray records = response.AsJArray;
@@ -358,7 +395,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        private List<T> Pluck<T>(IEnumerable<JToken> jArray, string key)
+        private static List<T> Pluck<T>(IEnumerable<JToken> jArray, string key)
         {
             return jArray.Select(t => t.ToObject<JObject>().Value<T>(key)).ToList();
         }

@@ -76,6 +76,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return GetInstance(account, null);
         }
 
+        /// <summary>
+        ///     Returns the instance of this class associated with the given user and community id.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="communityId"></param>
+        /// <returns></returns>
         public static CacheManager GetInstance(Account account, string communityId)
         {
             if (account == null)
@@ -107,11 +113,20 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Resets the cache manager for the user account.  The method clears only the in memory cache.
+        /// </summary>
+        /// <param name="account"></param>
         public static void SoftReset(Account account)
         {
             SoftReset(account, null);
         }
 
+        /// <summary>
+        ///     Resets the cache manager for the user account.  The method clears only the in memory cache.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="communityId"></param>
         public static void SoftReset(Account account, string communityId)
         {
             if (account == null)
@@ -130,11 +145,22 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Resets the cache manager for this user account. This method clears the in memory cache and the underlying cache in
+        ///     the database.
+        /// </summary>
+        /// <param name="account"></param>
         public static void HardReset(Account account)
         {
             HardReset(account, null);
         }
 
+        /// <summary>
+        ///     Resets the cache manager for this user account. This method clears the in memory cache and the underlying cache in
+        ///     the database.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="communityId"></param>
         public static void HardReset(Account account, string communityId)
         {
             if (account == null)
@@ -153,11 +179,20 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Returns whether the specified cache exists.
+        /// </summary>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         public bool DoesCacheExist(string soupName)
         {
             return !String.IsNullOrWhiteSpace(soupName) && _smartStore.HasSoup(soupName);
         }
 
+        /// <summary>
+        ///     Removes existing data from the specified cache.
+        /// </summary>
+        /// <param name="soupName"></param>
         public void RemoveCache(string soupName)
         {
             if (!String.IsNullOrWhiteSpace(soupName))
@@ -172,6 +207,16 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Returns whether the cache needs to be refreshed. Before this method is called, either 'doesCacheExist', or
+        ///     'lastCacheUpdateTime' should be
+        ///     called to determine whether the cache already exists and the last update time of the cache.
+        /// </summary>
+        /// <param name="cacheExists"></param>
+        /// <param name="cachePolicy"></param>
+        /// <param name="lastCachedTime"></param>
+        /// <param name="refreshifOlderThan"></param>
+        /// <returns></returns>
         public bool NeedToReloadCache(bool cacheExists, CachePolicy cachePolicy, long lastCachedTime,
             long refreshifOlderThan)
         {
@@ -195,6 +240,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return (timeDiff > refreshifOlderThan);
         }
 
+        /// <summary>
+        ///     Returns the last time the cache was refreshed.
+        /// </summary>
+        /// <param name="cacheType"></param>
+        /// <param name="cacheKey"></param>
+        /// <returns></returns>
         public long GetLastCacheUpdateTime(string cacheType, string cacheKey)
         {
             if (String.IsNullOrWhiteSpace(cacheType) || String.IsNullOrWhiteSpace(cacheKey) ||
@@ -222,6 +273,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return 0;
         }
 
+        /// <summary>
+        ///     Reads a list of Salesforce object types from the cache.
+        /// </summary>
+        /// <param name="cacheType"></param>
+        /// <param name="cacheKey"></param>
+        /// <returns></returns>
         public List<SalesforceObjectType> ReadObjectTypes(string cacheType, string cacheKey)
         {
             var cachedList = new List<SalesforceObjectType>();
@@ -279,6 +336,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return cachedList;
         }
 
+        /// <summary>
+        ///     Reads a list of Salesforce objects from the cache.
+        /// </summary>
+        /// <param name="cacheType"></param>
+        /// <param name="cacheKey"></param>
+        /// <returns></returns>
         public List<SalesforceObject> ReadObjects(string cacheType, string cacheKey)
         {
             var cachedList = new List<SalesforceObject>();
@@ -336,6 +399,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return cachedList;
         }
 
+        /// <summary>
+        ///     Reads a list of Salesforce object layouts from the cache.
+        /// </summary>
+        /// <param name="cacheType"></param>
+        /// <param name="cacheKey"></param>
+        /// <returns></returns>
         public List<SalesforceObjectTypeLayout> ReadObjectLayouts(string cacheType, string cacheKey)
         {
             var cachedList = new List<SalesforceObjectTypeLayout>();
@@ -398,6 +467,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             return cachedList;
         }
 
+        /// <summary>
+        ///     Writes a list of Salesforce object types to the cache.
+        /// </summary>
+        /// <param name="objectTypes"></param>
+        /// <param name="cacheKey"></param>
+        /// <param name="cacheType"></param>
         public void WriteObjectTypes(List<SalesforceObjectType> objectTypes, string cacheKey, string cacheType)
         {
             if (!PreWriteCache(objectTypes, cacheKey, cacheType, _objectTypeCacheMap)) return;
@@ -422,6 +497,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Writes a list of Salesforce object layouts to the cache.
+        /// </summary>
+        /// <param name="objectLayouts"></param>
+        /// <param name="cacheKey"></param>
+        /// <param name="cacheType"></param>
         public void WriteObjectLayouts(List<SalesforceObjectTypeLayout> objectLayouts, string cacheKey, string cacheType)
         {
             if (!PreWriteCache(objectLayouts, cacheKey, cacheType, _objectTypeLayoutCacheMap)) return;
@@ -447,6 +528,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Writes a list of Salesforce objects to the cache.
+        /// </summary>
+        /// <param name="objects"></param>
+        /// <param name="cacheKey"></param>
+        /// <param name="cacheType"></param>
         public void WriteObjects(List<SalesforceObject> objects, string cacheKey, string cacheType)
         {
             if (!PreWriteCache(objects, cacheKey, cacheType, _objectCacheMap)) return;
@@ -500,6 +587,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             return true;
         }
 
+        /// <summary>
+        ///     Helper method that registers a soup with index specs.
+        /// </summary>
+        /// <param name="soupName"></param>
+        /// <param name="cacheKey"></param>
         private void RegisterSoup(string soupName, string cacheKey)
         {
             RegisterMasterSoup();
@@ -510,6 +602,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Helper method that registers the master soup, if necessary.
+        /// </summary>
         private void RegisterMasterSoup()
         {
             if (!DoesCacheExist(SoupOfSoups))
@@ -519,6 +614,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Helper method that inserts/updates a record in the cache.
+        /// </summary>
+        /// <param name="soupName"></param>
+        /// <param name="jObject"></param>
+        /// <param name="cacheKey"></param>
         private void UpsertData(string soupName, JObject jObject, string cacheKey)
         {
             if (jObject == null || String.IsNullOrWhiteSpace(soupName))
@@ -537,6 +638,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Returns the list of soups being used in the cache.
+        /// </summary>
+        /// <returns></returns>
         private JArray GetAllSoupNames()
         {
             const string smartSql = "SELECT {" + SoupOfSoups + ":" + SoupNamesKey + "} FROM {" + SoupOfSoups + "}";
@@ -555,6 +660,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             return results ?? new JArray();
         }
 
+        /// <summary>
+        ///     Helper method that returns whether the specified soup name exists
+        /// </summary>
+        /// <param name="soupName"></param>
+        /// <returns></returns>
         private bool DoesMasterSoupContainSoup(String soupName)
         {
             JArray soupNames = GetAllSoupNames();
@@ -573,6 +683,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             return false;
         }
 
+        /// <summary>
+        ///     Adds a soup name to the master soup, if it does not exist.
+        /// </summary>
+        /// <param name="soupName"></param>
         private void AddSoupNameToMasterSoup(string soupName)
         {
             if (DoesMasterSoupContainSoup(soupName))
@@ -590,6 +704,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Removes a soup name from the master soup, if it exists.
+        /// </summary>
+        /// <param name="soupName"></param>
         private void RemoveSoupNameFromMasterSoup(String soupName)
         {
             if (!DoesMasterSoupContainSoup(soupName))
@@ -608,11 +726,17 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Clears the master soup of all data.
+        /// </summary>
         private void ClearMasterSoup()
         {
             _smartStore.DropSoup(SoupOfSoups);
         }
 
+        /// <summary>
+        ///     Clears all soups used by this class and the master soup.
+        /// </summary>
         private void ClearAllSoups()
         {
             JArray soupNames = GetAllSoupNames();
@@ -627,6 +751,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Clears the cache and creates a new clean cache.
+        /// </summary>
         private void CleanCache()
         {
             ResetInMemoryCache();
@@ -639,6 +766,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
+        /// <summary>
+        ///     Resets the in memory cache.
+        /// </summary>
         private void ResetInMemoryCache()
         {
             _objectCacheMap = new Dictionary<string, List<SalesforceObject>>();
