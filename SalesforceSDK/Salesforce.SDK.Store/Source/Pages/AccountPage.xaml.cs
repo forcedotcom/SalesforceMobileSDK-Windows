@@ -136,6 +136,7 @@ namespace Salesforce.SDK.Source.Pages
             ServerFlyout.Closed += ServerFlyout_Closed;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
+            ListboxServers.SelectedValue = null;
             HostName.PlaceholderText = LocalizedStrings.GetString("name");
             HostAddress.PlaceholderText = LocalizedStrings.GetString("address");
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
@@ -216,6 +217,10 @@ namespace Salesforce.SDK.Source.Pages
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
+            }
+            else if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
+            {
+                SetupAccountPage();
             }
             else
             {
