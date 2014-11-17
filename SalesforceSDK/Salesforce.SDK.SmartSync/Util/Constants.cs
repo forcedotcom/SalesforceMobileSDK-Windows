@@ -125,7 +125,7 @@ namespace Salesforce.SDK.SmartSync.Util
                 throw new SmartStoreException("Account cannot be null");
             }
             string uniqueId;
-            if (Account.InternalCommunityId.Equals(communityId))
+            if (Salesforce.SDK.Auth.Account.InternalCommunityId.Equals(communityId))
             {
                 communityId = null;
             }

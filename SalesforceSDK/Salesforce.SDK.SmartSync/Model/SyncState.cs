@@ -82,14 +82,19 @@ namespace Salesforce.SDK.SmartSync.Model
         {
             var sync = new JObject
             {
-                {Constants.SyncType, SyncTypes.SyncUp.ToString()},
+                {Constants.SyncType, SyncTypes.SyncDown.ToString()},
                 {Constants.SyncTarget, target.AsJson()},
                 {Constants.SyncSoupName, soupName},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
-            sync = store.Upsert(Constants.SyncsSoup, sync);
+            var upserted = store.Upsert(Constants.SyncsSoup, sync);
+            if (upserted != null)
+            {
+                return FromJson(upserted);
+            }
+            sync[Constants.SyncStatus] = SyncStatusTypes.Failed.ToString();
             return FromJson(sync);
         }
 
@@ -104,14 +109,19 @@ namespace Salesforce.SDK.SmartSync.Model
         {
             var sync = new JObject
             {
-                {Constants.SyncType, SyncTypes.SyncDown.ToString()},
+                {Constants.SyncType, SyncTypes.SyncUp.ToString()},
                 {Constants.SyncSoupName, soupName},
                 {Constants.SyncOptions, options.AsJson()},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
-            sync = store.Upsert(Constants.SyncsSoup, sync);
+            var upserted = store.Upsert(Constants.SyncsSoup, sync);
+            if (upserted != null)
+            {
+                return FromJson(upserted);
+            }
+            sync[Constants.SyncStatus] = SyncStatusTypes.Failed.ToString();
             return FromJson(sync);
         }
 
@@ -122,6 +132,7 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <returns></returns>
         public static SyncState FromJson(JObject sync)
         {
+            if (sync == null) return null;
             var state = new SyncState
             {
                 Id = sync.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId),
@@ -129,11 +140,12 @@ namespace Salesforce.SDK.SmartSync.Model
                 Options = SyncOptions.FromJson(sync.ExtractValue<JObject>(Constants.SyncOptions)),
                 SoupName = sync.ExtractValue<string>(Constants.SyncSoupName),
                 Progress = sync.ExtractValue<int>(Constants.SyncProgress),
-                TotalSize = sync.ExtractValue<int>(Constants.SyncTotalSize)
+                TotalSize = sync.ExtractValue<int>(Constants.SyncTotalSize),
+                SyncType = (SyncTypes) Enum.Parse(typeof (SyncTypes), sync.ExtractValue<string>(Constants.SyncType)),
+                Status =
+                    (SyncStatusTypes)
+                        Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus))
             };
-            state.SyncType = (SyncTypes) Enum.Parse(typeof (SyncTypes), sync.ExtractValue<string>(Constants.SyncType));
-            state.Status =
-                (SyncStatusTypes) Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus));
             return state;
         }
 

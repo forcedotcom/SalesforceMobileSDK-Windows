@@ -67,8 +67,8 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public string ObjectType { set; get; }
         public string Name { set; get; }
-        public string ObjectId { private set; get; }
-        public JObject RawData { private set; get; }
+        public string ObjectId { set; get; }
+        public JObject RawData { set; get; }
 
         public override string ToString()
         {

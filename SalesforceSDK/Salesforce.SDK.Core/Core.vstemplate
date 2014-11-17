@@ -58,6 +58,7 @@
           <ProjectItem ReplaceParameters="true" TargetFileName="HttpCall.cs">HttpCall.cs</ProjectItem>
         </Folder>
         <Folder Name="Rest" TargetFolderName="Rest">
+          <ProjectItem ReplaceParameters="true" TargetFileName="ApiVersionStrings.cs">ApiVersionStrings.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="ClientManager.cs">ClientManager.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="RestClient.cs">RestClient.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="RestRequest.cs">RestRequest.cs</ProjectItem>

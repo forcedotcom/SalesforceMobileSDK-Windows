@@ -72,7 +72,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder Fields(string fields)
         {
-            _properties.Add("fields", fields);
+            _properties["fields"] = fields;
             return this;
         }
 
@@ -83,7 +83,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder From(string from)
         {
-            _properties.Add("from", from);
+            _properties["from"] = from;
             return this;
         }
 
@@ -94,7 +94,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder Where(string where)
         {
-            _properties.Add("where", where);
+            _properties["where"] = where;
             return this;
         }
 
@@ -105,7 +105,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder With(string with)
         {
-            _properties.Add("with", with);
+            _properties["with"] = with;
             return this;
         }
 
@@ -116,7 +116,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder GroupBy(string groupBy)
         {
-            _properties.Add("groupBy", groupBy);
+            _properties["groupBy"] = groupBy;
             return this;
         }
 
@@ -127,7 +127,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder Having(string having)
         {
-            _properties.Add("having", having);
+            _properties["having"] = having;
             return this;
         }
 
@@ -138,7 +138,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder OrderBy(string orderBy)
         {
-            _properties.Add("orderBy", orderBy);
+            _properties["orderBy"] = orderBy;
             return this;
         }
 
@@ -149,7 +149,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder Limit(int limit)
         {
-            _properties.Add("limit", limit);
+            _properties["limit"] = limit;
             return this;
         }
 
@@ -160,7 +160,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOQLBuilder Offset(int offset)
         {
-            _properties.Add("offset", offset);
+            _properties["offset"] = offset;
             return this;
         }
 

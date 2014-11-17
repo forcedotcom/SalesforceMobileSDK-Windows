@@ -43,10 +43,10 @@ namespace Salesforce.SDK.SmartSync.Manager
 {
     public class SyncManager
     {
-        private const string Local = "__local__";
-        private const string LocallyCreated = "__locally_created__";
-        private const string LocallyUpdated = "__locally_updated__";
-        private const string LocallyDeleted = "__locally_deleted__";
+        public const string Local = "__local__";
+        public const string LocallyCreated = "__locally_created__";
+        public const string LocallyUpdated = "__locally_updated__";
+        public const string LocallyDeleted = "__locally_deleted__";
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
         private readonly string _apiVersion;
@@ -58,6 +58,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             _smartStore = new SmartStore.Store.SmartStore();
             _restClient = SalesforceApplication.GlobalClientManager.GetRestClient();
             _apiVersion = ApiVersionStrings.VersionNumber;
+            SyncState.SetupSyncsSoupIfNeeded(_smartStore);
         }
 
         /// <summary>
@@ -152,11 +153,12 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// </summary>
         /// <param name="target"></param>
         /// <param name="soupName"></param>
+        /// <param name="callback"></param>
         /// <returns></returns>
-        public SyncState SyncDown(SyncTarget target, string soupName)
+        public SyncState SyncDown(SyncTarget target, string soupName, Action<SyncState> callback)
         {
             SyncState sync = SyncState.CreateSyncDown(_smartStore, target, soupName);
-            RunSync(sync);
+            RunSync(sync, callback);
             return sync;
         }
 
@@ -165,17 +167,18 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// </summary>
         /// <param name="options"></param>
         /// <param name="soupName"></param>
+        /// <param name="callback"></param>
         /// <returns></returns>
-        public SyncState SyncUp(SyncOptions options, string soupName)
+        public SyncState SyncUp(SyncOptions options, string soupName, Action<SyncState> callback)
         {
             SyncState sync = SyncState.CreateSyncUp(_smartStore, options, soupName);
-            RunSync(sync);
+            RunSync(sync, callback);
             return sync;
         }
 
-        public void RunSync(SyncState sync)
+        private void RunSync(SyncState sync, Action<SyncState> callback)
         {
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, -1 /* don't change */);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, -1 /* don't change */, callback);
             Task.Run(() =>
             {
                 try
@@ -183,50 +186,51 @@ namespace Salesforce.SDK.SmartSync.Manager
                     switch (sync.SyncType)
                     {
                         case SyncState.SyncTypes.SyncDown:
-                            SyncDown(sync);
+                            SyncDown(sync, callback);
                             break;
                         case SyncState.SyncTypes.SyncUp:
-                            SyncUp(sync);
+                            SyncUp(sync, callback);
                             break;
                     }
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, -1 /* don't change */);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, -1 /* don't change */, callback);
                 }
                 catch (Exception)
                 {
                     Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Failed, -1 /* don't change */, -1 /* don't change */);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Failed, -1 /* don't change */, -1 /* don't change */, callback);
                 }
             });
         }
 
-        private async void SyncUp(SyncState sync)
+        private async void SyncUp(SyncState sync, Action<SyncState> callback)
         {
             if (sync == null)
                 throw new SmartStoreException("SyncState sync was null");
-            QuerySpec querySpec = QuerySpec.BuildExactQuerySpec(sync.SoupName, Local, "true", 2000);
+            QuerySpec querySpec = QuerySpec.BuildExactQuerySpec(sync.SoupName, Local, "True", 2000);
             JArray records = _smartStore.Query(querySpec, 0);
             int totalSize = records.Count;
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
             for (int i = 0; i < totalSize; i++)
             {
                 var record = records[i].Value<JObject>();
                 SyncAction action;
                 JToken hasAction;
-                if (record.TryGetValue(LocallyDeleted, out hasAction))
+
+                if (record.TryGetValue(LocallyDeleted, out hasAction) && hasAction.Value<bool>())
                 {
                     action = SyncAction.Delete;
                 }
-                else if (record.TryGetValue(LocallyCreated, out hasAction))
+                else if (record.TryGetValue(LocallyCreated, out hasAction) && hasAction.Value<bool>())
                 {
                     action = SyncAction.Create;
                 }
-                else if (record.TryGetValue(LocallyCreated, out hasAction))
+                else if (record.TryGetValue(LocallyUpdated, out hasAction) && hasAction.Value<bool>())
                 {
                     action = SyncAction.Update;
                 }
                 else continue;
 
-                var objectType = (string) SmartStore.Store.SmartStore.Project(record, Constants.SobjectType);
+                var objectType = SmartStore.Store.SmartStore.Project(record, Constants.SobjectType).ToString();
                 var objectId = record.ExtractValue<string>(Constants.Id);
 
                 var fields = new Dictionary<string, object>();
@@ -264,12 +268,12 @@ namespace Salesforce.SDK.SmartSync.Manager
                 {
                     if (SyncAction.Create == action)
                     {
-                        record.Add(Constants.Id, response.AsJObject[Constants.Id]);
+                        record[Constants.Id] = response.AsJObject[Constants.Id];
                     }
-                    record.Add(Local, false);
-                    record.Add(LocallyCreated, false);
-                    record.Add(LocallyUpdated, false);
-                    record.Add(LocallyUpdated, false);
+                    record[Local] = false;
+                    record[LocallyCreated] = false;
+                    record[LocallyUpdated] = false;
+                    record[LocallyUpdated] = false;
 
                     if (SyncAction.Delete == action)
                     {
@@ -278,36 +282,40 @@ namespace Salesforce.SDK.SmartSync.Manager
                     }
                     else
                     {
-                        _smartStore.Update(sync.SoupName, record,
-                            record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId), true);
+                        _smartStore.Update(sync.SoupName, record, record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId), false);
                     }
+                }
+                else if (HttpStatusCode.NotFound == response.StatusCode)
+                {
+                    _smartStore.Delete(sync.SoupName,
+                            new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, true);
                 }
 
                 int progress = (i + 1)*100/totalSize;
                 if (progress < 100)
                 {
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, -1 /* don't change */);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, -1 /* don't change */, callback);
                 }
             }
         }
 
-        private void SyncDown(SyncState sync)
+        private void SyncDown(SyncState sync, Action<SyncState> callback)
         {
             switch (sync.Target.QueryType)
             {
                 case SyncTarget.QueryTypes.Mru:
-                    SyncDownMru(sync);
+                    SyncDownMru(sync, callback);
                     break;
                 case SyncTarget.QueryTypes.Soql:
-                    SyncDownSoql(sync);
+                    SyncDownSoql(sync, callback);
                     break;
                 case SyncTarget.QueryTypes.Sosl:
-                    SyncDownSosl(sync);
+                    SyncDownSosl(sync, callback);
                     break;
             }
         }
 
-        private async void SyncDownMru(SyncState sync)
+        private async void SyncDownMru(SyncState sync, Action<SyncState> callback)
         {
             SyncTarget target = sync.Target;
             // Get recent items ids from server
@@ -331,14 +339,14 @@ namespace Salesforce.SDK.SmartSync.Manager
             int totalSize = records.Count;
 
             // Save to smartstore
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
             if (totalSize > 0)
             {
                 SaveRecordsToSmartStore(sync.SoupName, records);
             }
         }
 
-        private async void SyncDownSoql(SyncState sync)
+        private async void SyncDownSoql(SyncState sync, Action<SyncState> callback)
         {
             string soupName = sync.SoupName;
             SyncTarget target = sync.Target;
@@ -346,12 +354,21 @@ namespace Salesforce.SDK.SmartSync.Manager
             RestRequest request = RestRequest.GetRequestForQuery(_apiVersion, query);
 
             // Call server
-            RestResponse response = await _restClient.SendAsync(request);
+            RestResponse response;
+            try
+            {
+                response = await _restClient.SendAsync(request);
+            }
+            catch (Exception)
+            {
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, 0, -1, callback);
+                return;
+            }
             JObject responseJson = response.AsJObject;
 
             int countSaved = 0;
             var totalSize = responseJson.ExtractValue<int>(Constants.TotalSize);
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
 
             do
             {
@@ -363,7 +380,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 // Update sync status
                 if (countSaved < totalSize)
                 {
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved*100/totalSize, -1 /* don't change */);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved * 100 / totalSize, -1 /* don't change */, callback);
                 }
 
 
@@ -375,7 +392,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             } while (responseJson != null);
         }
 
-        private async void SyncDownSosl(SyncState sync)
+        private async void SyncDownSosl(SyncState sync, Action<SyncState> callback)
         {
             SyncTarget target = sync.Target;
             RestRequest request = RestRequest.GetRequestForSearch(_apiVersion, target.Query);
@@ -388,7 +405,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             int totalSize = records.Count;
 
             // Save to smartstore
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
             if (totalSize > 0)
             {
                 SaveRecordsToSmartStore(sync.SoupName, records);
@@ -400,21 +417,21 @@ namespace Salesforce.SDK.SmartSync.Manager
             return jArray.Select(t => t.ToObject<JObject>().Value<T>(key)).ToList();
         }
 
-        private void SaveRecordsToSmartStore(string soupName, JArray records)
+        private void SaveRecordsToSmartStore(string soupName, IEnumerable<JToken> records)
         {
             _smartStore.Database.BeginTransaction();
             foreach (JObject record in records.Select(t => t.ToObject<JObject>()))
             {
-                record.Add(Local, false);
-                record.Add(LocallyCreated, false);
-                record.Add(LocallyUpdated, false);
-                record.Add(LocallyUpdated, false);
+                record[Local] = false;
+                record[LocallyCreated] = false;
+                record[LocallyUpdated] = false;
+                record[LocallyUpdated] = false;
                 _smartStore.Upsert(soupName, record, Constants.Id, false);
             }
             _smartStore.Database.CommitTransaction();
         }
 
-        private void UpdateSync(SyncState sync, SyncState.SyncStatusTypes status, int progress, int totalSize)
+        private void UpdateSync(SyncState sync, SyncState.SyncStatusTypes status, int progress, int totalSize, Action<SyncState> callback)
         {
             if (sync == null)
                 return;
@@ -422,6 +439,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (progress != -1) sync.Progress = progress;
             if (totalSize != -1) sync.TotalSize = totalSize;
             sync.Save(_smartStore);
+            if (callback == null) return;
+            callback(sync);
         }
 
         private enum SyncAction

@@ -65,7 +65,9 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <returns></returns>
         public static SyncTarget FromJson(JObject target)
         {
-            var queryType = target.ExtractValue<QueryTypes>(Constants.QueryType);
+            if (target == null) return null;
+            var tempTarget = target.ExtractValue<string>(Constants.QueryType);
+            var queryType = (QueryTypes) Enum.Parse(typeof (QueryTypes), tempTarget);
             var query = target.ExtractValue<string>(Constants.Query);
             var jFieldList = target.ExtractValue<JArray>(Constants.FieldList);
             var fieldList = new List<string>();

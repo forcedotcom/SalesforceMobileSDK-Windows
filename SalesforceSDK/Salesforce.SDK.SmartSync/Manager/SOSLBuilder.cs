@@ -63,7 +63,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLBuilder SearchGroup(string searchGroup)
         {
-            _properties.Add("searchGroup", searchGroup);
+            _properties["searchGroup"] = searchGroup;
             return this;
         }
 
@@ -85,7 +85,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLBuilder DivisionFilter(string filter)
         {
-            _properties.Add("divisionFilter", filter);
+            _properties["divisionFilter"] = filter;
             return this;
         }
 
@@ -96,7 +96,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLBuilder DataCategory(string dataCategory)
         {
-            _properties.Add("dataCategory", dataCategory);
+            _properties["dataCategory"] = dataCategory;
             return this;
         }
 
@@ -107,7 +107,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLBuilder Limit(int limit)
         {
-            _properties.Add("limit", limit);
+            _properties["limit"] = limit;
             return this;
         }
 
@@ -134,7 +134,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 searchValue = searchValue.Replace(":", "\\:");
                 searchValue = searchValue.Replace("!", "\\!");
             }
-            _properties.Add("searchTerm", searchValue);
+            _properties["searchTerm"] = searchValue;
             return this;
         }
 

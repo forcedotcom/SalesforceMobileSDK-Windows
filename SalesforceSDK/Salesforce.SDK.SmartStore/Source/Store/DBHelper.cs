@@ -133,8 +133,13 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 prog.Bind(1, tableName);
                 SQLiteResult result = prog.Step();
+                long data = 0;
+                if (prog.DataCount > 0)
+                {
+                     data = prog.GetInteger(0);
+                }
                 prog.Dispose();
-                return SQLConnection.LastInsertRowId() + 1;
+                return data + 1;
             }
         }
 
@@ -250,9 +255,10 @@ namespace Salesforce.SDK.SmartStore.Store
                     stmt.Bind(count, contentValues[key]);
                     count++;
                 }
-                stmt.Step();
+                var result = stmt.Step();
             }
-            return SQLConnection.LastInsertRowId();
+            long insertId = SQLConnection.LastInsertRowId();
+            return insertId;
         }
 
         public bool Update(string table, Dictionary<string, object> contentValues, string whereClause,
@@ -271,7 +277,7 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 entries += " = ?";
             }
-            string sql = String.Format(InsertStatement,
+            string sql = String.Format(UpdateStatement,
                 table,
                 entries,
                 whereClause);
@@ -291,8 +297,8 @@ namespace Salesforce.SDK.SmartStore.Store
                         place++;
                     }
                 }
-
-                return stmt.Step() == SQLiteResult.DONE;
+                var result = stmt.Step();
+                return result == SQLiteResult.DONE;
             }
         }
 
@@ -334,7 +340,8 @@ namespace Salesforce.SDK.SmartStore.Store
                 whereClause);
             using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
             {
-                return stmt.Step() == SQLiteResult.DONE;
+                var result = stmt.Step();
+                return result == SQLiteResult.DONE;
             }
         }
 
@@ -370,7 +377,7 @@ namespace Salesforce.SDK.SmartStore.Store
         protected string GetSoupTableNameFromDb(string soupName)
         {
             using (
-                SQLiteStatement stmt = Query(SmartStore.SoupNamesTable, new[] {SmartStore.IdCol}, String.Empty,
+                SQLiteStatement stmt = Query(SmartStore.SoupNamesTable, new[] { SmartStore.IdCol }, String.Empty,
                     String.Empty,
                     SmartStore.SoupNamePredicate, soupName))
             {
@@ -428,7 +435,7 @@ namespace Salesforce.SDK.SmartStore.Store
         protected IndexSpec[] GetIndexSpecsFromDb(String soupName)
         {
             SQLiteStatement statement = Query(SmartStore.SoupIndexMapTable,
-                new[] {SmartStore.PathCol, SmartStore.ColumnNameCol, SmartStore.ColumnTypeCol}, null,
+                new[] { SmartStore.PathCol, SmartStore.ColumnNameCol, SmartStore.ColumnTypeCol }, null,
                 null, SmartStore.SoupNamePredicate, soupName);
 
             if (statement.DataCount < 1)

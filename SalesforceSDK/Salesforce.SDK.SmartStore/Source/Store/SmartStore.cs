@@ -642,10 +642,11 @@ namespace Salesforce.SDK.SmartStore.Store
             return row;
         }
 
-        public void Delete(string soupName, long[] soupEntryIds, Boolean handleTx)
+        public bool Delete(string soupName, long[] soupEntryIds, Boolean handleTx)
         {
             lock (smartlock)
             {
+                bool success = false;
                 DBHelper db = DBHelper.GetInstance(DatabasePath);
                 string soupTableName = db.GetSoupTableName(soupName);
                 if (String.IsNullOrWhiteSpace(soupTableName))
@@ -656,7 +657,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 try
                 {
-                    db.Delete(soupTableName, GetSoupEntryIdsPredicate(soupEntryIds));
+                    success = db.Delete(soupTableName, GetSoupEntryIdsPredicate(soupEntryIds));
                 }
                 finally
                 {
@@ -665,6 +666,7 @@ namespace Salesforce.SDK.SmartStore.Store
                         db.CommitTransaction();
                     }
                 }
+                return success;
             }
         }
 
@@ -677,15 +679,15 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 contentValues = new Dictionary<string, object>();
             }
-            if (SmartStoreType.SmartInteger.Equals(indexSpec.SmartType))
+            if (SmartStoreType.SmartInteger.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, Int32.Parse(value.ToString()));
             }
-            else if (SmartStoreType.SmartString.Equals(indexSpec.SmartType))
+            else if (SmartStoreType.SmartString.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, value.ToString());
             }
-            else if (SmartStoreType.SmartFloating.Equals(indexSpec.SmartType))
+            else if (SmartStoreType.SmartFloating.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, Double.Parse(value.ToString()));
             }
@@ -713,8 +715,8 @@ namespace Salesforce.SDK.SmartStore.Store
                 long now = CurrentTimeMillis;
                 long soupEntryId = db.GetNextId(soupTableName);
 
-                soupElt.Add(SoupEntryId, soupEntryId);
-                soupElt.Add(SoupLastModifiedDate, now);
+                soupElt[SoupEntryId] = soupEntryId;
+                soupElt[SoupLastModifiedDate] = now;
                 var contentValues = new Dictionary<string, object>
                 {
                     {IdCol, soupEntryId},
@@ -769,17 +771,17 @@ namespace Salesforce.SDK.SmartStore.Store
                 if (SoupEntryId.Equals(externalIdPath, StringComparison.CurrentCultureIgnoreCase))
                 {
                     JToken entryIdToken;
-                    if (!soupElt.TryGetValue(SoupEntryId, out entryIdToken))
-                    {
-                        object externalIdObj = Project(soupElt, externalIdPath);
-                        if (externalIdObj != null)
-                        {
-                            entryId = LookupSoupEntryId(soupName, externalIdPath, externalIdObj.ToString());
-                        }
-                    }
-                    else
+                    if (soupElt.TryGetValue(SoupEntryId, out entryIdToken))
                     {
                         entryId = entryIdToken.Value<long>();
+                    }
+                }
+                else
+                {
+                    object externalIdObj = Project(soupElt, externalIdPath);
+                    if (externalIdObj != null)
+                    {
+                        entryId = LookupSoupEntryId(soupName, externalIdPath, externalIdObj.ToString());
                     }
                 }
                 if (entryId != -1)
@@ -830,9 +832,23 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 IndexSpec[] indexSpecs = db.GetIndexSpecs(soupName);
                 long now = CurrentTimeMillis;
+                if (soupElt[SoupEntryId] == null)
+                {
+                    soupElt.Add(SoupEntryId, soupEntryId);
+                }
+                else
+                {
+                    soupElt[SoupEntryId] = soupEntryId;
+                }
+                if (soupElt[SoupLastModifiedDate] == null)
+                {
+                    soupElt.Add(SoupLastModifiedDate, now);
+                }
+                else
+                {
+                    soupElt[SoupLastModifiedDate] = now;
+                }
 
-                soupElt.Add(SoupEntryId, soupEntryId);
-                soupElt.Add(SoupLastModifiedDate, now);
 
                 var contentValues = new Dictionary<string, object>
                 {

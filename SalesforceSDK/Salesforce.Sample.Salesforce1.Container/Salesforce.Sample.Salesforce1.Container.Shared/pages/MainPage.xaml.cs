@@ -27,6 +27,11 @@
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+using Salesforce.SDK.Auth;
+using Salesforce.SDK.Native;
+using System;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>
@@ -35,7 +40,7 @@ namespace Salesforce.Sample.Salesforce1.Container
     public sealed partial class MainPage : NativeMainPage
     {
         public const string CurrentPage = "currentPage{0}";
-        public const string defaultPage = "/one/one.app";
+        public const string DefaultPage = "/one/one.app";
 
         public MainPage()
         {
@@ -67,7 +72,7 @@ namespace Salesforce.Sample.Salesforce1.Container
                 if (!oneView.CanGoBack)
                 {
                     account = await OAuth2.RefreshAuthToken(account);
-                    String startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, LoginOptions.DefaultDisplayType,
+                    string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, LoginOptions.DefaultDisplayType,
                         account.AccessToken, GetPage(account));
                     oneView.Navigate(new Uri(startPage));
                 }
@@ -94,7 +99,7 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         private void SavePage(Account account, string page)
         {
-            if (account != null && page != null && page.Contains(defaultPage))
+            if (account != null && page != null && page.Contains(DefaultPage))
             {
                 ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
                 string key = string.Format(CurrentPage, account.UserId);
@@ -107,16 +112,16 @@ namespace Salesforce.Sample.Salesforce1.Container
             string value = "";
             if (account != null)
             {
-                value = account.InstanceUrl + defaultPage;
+                value = account.InstanceUrl + DefaultPage;
                 ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
                 string key = string.Format(CurrentPage, account.UserId);
                 if (settings.Values.ContainsKey(key))
                 {
                     value = settings.Values[key] as string;
                 }
-                if (!value.Contains(defaultPage))
+                if (!value.Contains(DefaultPage))
                 {
-                    value = account.InstanceUrl + defaultPage;
+                    value = account.InstanceUrl + DefaultPage;
                 }
             }
             return value;

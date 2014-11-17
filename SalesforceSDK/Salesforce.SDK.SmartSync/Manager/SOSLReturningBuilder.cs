@@ -61,7 +61,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder Fields(string fields)
         {
-            _properties.Add("fields", fields);
+            _properties["fields"] = fields;
             return this;
         }
 
@@ -72,7 +72,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder Where(string where)
         {
-            _properties.Add("where", where);
+            _properties["where"] = where;
             return this;
         }
 
@@ -83,7 +83,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder OrderBy(string orderBy)
         {
-            _properties.Add("orderBy", orderBy);
+            _properties["orderBy"] = orderBy;
             return this;
         }
 
@@ -94,7 +94,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder ObjectName(string objectName)
         {
-            _properties.Add("objectName", objectName);
+            _properties["objectName"] = objectName;
             return this;
         }
 
@@ -105,7 +105,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder Limit(int limit)
         {
-            _properties.Add("limit", limit);
+            _properties["limit"] = limit;
             return this;
         }
 
@@ -116,7 +116,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public SOSLReturningBuilder WithNetwork(string withNetwork)
         {
-            _properties.Add("withNetwork", withNetwork);
+            _properties["withNetwork"] = withNetwork;
             return this;
         }
 
