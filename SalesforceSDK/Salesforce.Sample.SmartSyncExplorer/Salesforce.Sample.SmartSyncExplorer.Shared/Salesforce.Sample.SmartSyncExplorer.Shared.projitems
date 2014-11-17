@@ -27,7 +27,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)settings\Config.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)utilities\SmartStoreExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)utilities\SortedObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\ContactObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\ContactSyncViewModel.cs" />

@@ -5,6 +5,8 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Security;
 using System;
 using Windows.UI.Xaml.Navigation;
+using Salesforce.SDK.Source.Settings;
+
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {
     /// <summary>

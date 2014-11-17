@@ -27,6 +27,13 @@
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
+using System;
+using Windows.UI.Xaml.Navigation;
+using Salesforce.Sample.Salesforce1.Container.Settings;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Source.Settings;
+
 namespace Salesforce.Sample.Salesforce1.Container
 {
     /// <summary>

@@ -27,9 +27,12 @@
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+using Windows.Storage;
+using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Native;
 using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 namespace Salesforce.Sample.Salesforce1.Container

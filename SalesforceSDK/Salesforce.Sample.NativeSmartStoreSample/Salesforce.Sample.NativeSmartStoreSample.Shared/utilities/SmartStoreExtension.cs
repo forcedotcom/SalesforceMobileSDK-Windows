@@ -1,4 +1,9 @@
-﻿namespace Salesforce.Sample.NativeSmartStoreSample.utilities
+﻿using System;
+using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.SmartStore.Store;
+
+namespace Salesforce.Sample.NativeSmartStoreSample.utilities
 {
     public class SmartStoreExtension
     {
