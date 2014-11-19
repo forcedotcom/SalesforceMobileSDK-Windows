@@ -27,6 +27,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Contacts;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -54,20 +56,40 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         }
 
         public static ContactSyncViewModel ContactsDataModel { private set; get; }
+        public static MainPage MainPageReference { private set; get; }
+        private bool _firstSync;
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             Account account = AccountManager.GetAccount();
+            MainPageReference = this;
+            ContactsTable.DataContext = this;
+            _firstSync = true;
             if (account != null)
             {
                 ContactsDataModel = new ContactSyncViewModel();
                 ContactsDataModel.SyncDownContacts();
-                ContactsTable.DataContext = this;
+                ContactsDataModel.ContactsSynced += ContactsDataModel_ContactsSynced;
                 ContactsTable.ItemsSource = ContactsDataModel.Contacts;
+                IndexTable.ItemsSource = ContactsDataModel.IndexReference;
+                ContactsDataModel.Filter = String.Empty;
             }
             else
             {
                 base.OnNavigatedTo(e);
+            }
+        }
+
+        void ContactsDataModel_ContactsSynced(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_firstSync && ContactsDataModel.Contacts.Count == 0)
+            {
+                _firstSync = false;
+                Task.Delay(1000).ContinueWith(a => ContactsDataModel.SyncDownContacts());
+            }
+            else
+            {
+               
             }
         }
 
@@ -88,20 +110,16 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             MessageFlyout.ShowAt(ContactsTable);
         }
 
-        private void ContactsTable_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void ZoomIn()
         {
-            if (e.AddedItems != null && e.AddedItems.Count > 0)
+            Zoom.IsZoomedInViewActive = true;
+            if (!String.IsNullOrWhiteSpace(ContactsDataModel.Filter))
             {
-                EditCard edit = EditCardPanel;
-                edit.DeleteVisible(true);
-                var data = e.AddedItems[0] as ContactObject;
-                if (data != null)
-                {
-                    edit.Contact = data;
-                    edit.AttachedFlyout = EditCardFlyout;
-                    DependencyObject container = ContactsTable.ContainerFromItem(data);
-                    EditCardFlyout.ShowAt(container as FrameworkElement);
-                }
+                ContactsTable.ItemsSource = ContactsDataModel.FilteredContacts;
+            }
+            else
+            {
+                ContactsTable.ItemsSource = ContactsDataModel.Contacts;
             }
         }
 
@@ -140,6 +158,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         void FilterBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var text = FilterBox.Text;
+            MainPage.ContactsDataModel.FilterUsesContains = true;
             ContactsDataModel.Filter = text;
             if (String.IsNullOrEmpty(text))
             {
@@ -148,6 +167,23 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             else
             {
                 ContactsTable.ItemsSource = ContactsDataModel.FilteredContacts;
+            }
+        }
+
+        private void ContactsTable_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (e.ClickedItem != null)
+            {
+                EditCard edit = EditCardPanel;
+                edit.DeleteVisible(true);
+                var data = e.ClickedItem as ContactObject;
+                if (data != null)
+                {
+                    edit.Contact = data;
+                    edit.AttachedFlyout = EditCardFlyout;
+                    DependencyObject container = ContactsTable.ContainerFromItem(data);
+                    EditCardFlyout.ShowAt(container as FrameworkElement);
+                }
             }
         }
     }

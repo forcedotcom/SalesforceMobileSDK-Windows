@@ -9,50 +9,51 @@
     d:DesignHeight="230"
     d:DesignWidth="400">
 
-    <Border BorderBrush="Black" BorderThickness="1" CornerRadius="5">
-        <Grid>
+    <Canvas>
+        <Rectangle Fill="Black" Opacity="0.2" Width="390" Height="230" Margin="0 5 0 0" Canvas.ZIndex="0" Canvas.Left="5"/>
+        <Border BorderBrush="#33000000" BorderThickness="1">
+        <Grid Height="228" Width="400">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="4*" />
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" CornerRadius="5 0 0 5">
+            <Border Grid.Column="0">
                 <Border.Background>DeepSkyBlue</Border.Background>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="3*" />
-                        <RowDefinition Height="2*" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" VerticalAlignment="Top" >
-                        <Border Background="LightSkyBlue" CornerRadius="5 0 0 5">
-                            <TextBlock x:Name="SyncBlock" HorizontalAlignment="Stretch"
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="2*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" VerticalAlignment="Top" >
+                            <Border Background="LightSkyBlue">
+                                <TextBlock x:Name="SyncBlock" HorizontalAlignment="Stretch"
                                        Padding="10" 
                                        TextAlignment="Center" 
                                        Text="{Binding SyncStatus}"
                                        FontSize="25"
                                        FontFamily="Segoe UI Symbol"
                                        Foreground="Black" />
-                        </Border>
-                    </StackPanel>
+                            </Border>
+                        </StackPanel>
 
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                        <Border Background="LightSkyBlue">
-                            <TextBlock x:Name="PhoneIcon" Text="&#x1f4de;" FontFamily="Segoe UI Symbol"
+                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                            <Border Background="LightSkyBlue">
+                                <TextBlock x:Name="PhoneIcon" Text="&#x1f4de;" FontFamily="Segoe UI Symbol"
                                        Foreground="Black" TextAlignment="Center" FontSize="22" Height="30" />
-                        </Border>
-                        <Border Background="DeepSkyBlue">
-                            <TextBlock Text="&#x1f4e7;" FontFamily="Segoe UI Symbol" Foreground="Black"
+                            </Border>
+                            <Border Background="DeepSkyBlue">
+                                <TextBlock Text="&#x1f4e7;" FontFamily="Segoe UI Symbol" Foreground="Black"
                                        TextAlignment="Center" FontSize="22" Height="30" />
-                        </Border>
-                        <Border Background="LightSkyBlue" CornerRadius="0 0 0 5">
-                            <TextBlock Text="&#x2302;" FontFamily="Segoe UI Symbol" Foreground="Black"
+                            </Border>
+                            <Border Background="LightSkyBlue">
+                                <TextBlock Text="&#x2302;" FontFamily="Segoe UI Symbol" Foreground="Black"
                                        TextAlignment="Center" FontSize="22" Height="30" />
-                        </Border>
-                    </StackPanel>
-                </Grid>
-
-            </Border>
-            <Border Grid.Column="1" CornerRadius="0 5 5 0">
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            <Border Grid.Column="1">
                 <Border.Background>White</Border.Background>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -73,7 +74,7 @@
                             <TextBlock x:Name="EmailBlock" Text="{Binding Email}" FontSize="14" TextAlignment="Left"
                                        VerticalAlignment="Center" Padding="5" Foreground="Black" />
                         </Border>
-                        <Border Background="LightSkyBlue" Height="30" CornerRadius="0 0 5 0">
+                        <Border Background="LightSkyBlue" Height="30">
                             <TextBlock x:Name="AddressBlock" Text="{Binding Address}" FontSize="14"
                                        TextAlignment="Left" Foreground="Black" Padding="5" VerticalAlignment="Center" />
                         </Border>
@@ -82,4 +83,5 @@
             </Border>
         </Grid>
     </Border>
+    </Canvas>
 </UserControl>

@@ -52,28 +52,56 @@
                        VerticalAlignment="Top" HorizontalAlignment="Center" Margin="10" />
         </StackPanel>
 
-        <GridView Grid.Row="1" x:Name="ContactsTable" ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Single"
-                  SelectionChanged="ContactsTable_OnSelectionChanged">
-            <GridView.ItemContainerStyle>
-                <Style TargetType="FrameworkElement">
-                    <Setter Property="Margin" Value="25" />
-                </Style>
-            </GridView.ItemContainerStyle>
-            <GridView.ItemContainerTransitions>
-                <TransitionCollection>
-                    <EntranceThemeTransition />
-                    <RepositionThemeTransition />
-                </TransitionCollection>
-            </GridView.ItemContainerTransitions>
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <controls:BusinessCard
+        <SemanticZoom Grid.Row="1" x:Name="Zoom">
+            <SemanticZoom.ZoomedOutView>
+                <GridView Grid.Row="1" x:Name="IndexTable" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="Single" Height="650" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="FrameworkElement">
+                            <Setter Property="Margin" Value="25" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:IndexCard
+                        Height="100"
+                        Width="100" 
+                                IndexString="{Binding Path=IndexReference}"/>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </SemanticZoom.ZoomedOutView>
+            <SemanticZoom.ZoomedInView>
+                <GridView Grid.Row="1" x:Name="ContactsTable" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" SelectionMode="None" IsItemClickEnabled="True" ItemClick="ContactsTable_OnItemClick">
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="FrameworkElement">
+                            <Setter Property="Margin" Value="25" />
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition />
+                            <RepositionThemeTransition />
+                        </TransitionCollection>
+                    </GridView.ItemContainerTransitions>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <controls:BusinessCard
                         Height="230"
                         Width="400" />
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </SemanticZoom.ZoomedInView>
+        </SemanticZoom>
+        
     </Grid>
 
     <Page.BottomAppBar>

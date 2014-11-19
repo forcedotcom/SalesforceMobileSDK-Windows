@@ -24,7 +24,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -46,8 +48,9 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
     public sealed class ContactSyncViewModel : INotifyPropertyChanged
     {
         public const string ContactSoup = "contacts";
-        public const int Limit = 10000;
+        public const int Limit = 1000;
         private static readonly object _syncLock = new object();
+        public event PropertyChangedEventHandler ContactsSynced;
 
         private static readonly IndexSpec[] ContactsIndexSpec =
         {
@@ -63,6 +66,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private readonly SmartStore _store;
         private readonly SyncManager _syncManager;
 
+        private SortedObservableCollection<ContactObject> _contacts;
+        private string _filter;
+        private SortedObservableCollection<ContactObject> _filteredContacts;
+        private SortedObservableCollection<string> _indexReference;
+
         public ContactSyncViewModel()
         {
             Account account = AccountManager.GetAccount();
@@ -72,17 +80,12 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             _syncManager = SyncManager.GetInstance(account);
             Contacts = new SortedObservableCollection<ContactObject>();
             FilteredContacts = new SortedObservableCollection<ContactObject>();
+            IndexReference = new SortedObservableCollection<string>();
         }
-
-        private SortedObservableCollection<ContactObject> _contacts;
-        private SortedObservableCollection<ContactObject> _filteredContacts;
 
         public SortedObservableCollection<ContactObject> Contacts
         {
-            get
-            {
-                return _contacts;
-            }
+            get { return _contacts; }
             private set
             {
                 _contacts = value;
@@ -90,13 +93,19 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
         }
 
-        private string _filter;
+        public SortedObservableCollection<string> IndexReference
+        {
+            get { return _indexReference; }
+            private set
+            {
+                _indexReference = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string Filter
         {
-            get
-            {
-                return _filter ?? String.Empty;
-            }
+            get { return _filter ?? String.Empty; }
             set
             {
                 _filter = value;
@@ -104,18 +113,19 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
         }
 
+        public bool FilterUsesContains { set; get; }
+
         public SortedObservableCollection<ContactObject> FilteredContacts
         {
-            get
-            {
-                return _filteredContacts;
-            }
+            get { return _filteredContacts; }
             private set
             {
                 _filteredContacts = value;
                 OnPropertyChanged();
             }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void SyncDownContacts()
         {
@@ -132,7 +142,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
             catch (SmartStoreException)
             {
-                SyncDownContacts();
+                // log here
             }
         }
 
@@ -171,9 +181,9 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             if (contact == null) return;
             try
             {
-                var querySpec = QuerySpec.BuildExactQuerySpec(ContactSoup, Constants.Id, contact.ObjectId, 1);
-                var returned = _store.Query(querySpec, 0);
-                var item = returned.Count > 0 ? returned[0].ToObject<JObject>() : new JObject();
+                QuerySpec querySpec = QuerySpec.BuildExactQuerySpec(ContactSoup, Constants.Id, contact.ObjectId, 1);
+                JArray returned = _store.Query(querySpec, 0);
+                JObject item = returned.Count > 0 ? returned[0].ToObject<JObject>() : new JObject();
                 item[ContactObject.FirstNameField] = contact.FirstName;
                 item[ContactObject.LastNameField] = contact.LastName;
                 item[Constants.NameField] = contact.FirstName + contact.LastName;
@@ -186,7 +196,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                 item[SyncManager.LocallyUpdated] = !isCreated;
                 item[SyncManager.LocallyCreated] = isCreated;
                 item[SyncManager.LocallyDeleted] = false;
-                if (isCreated)
+                if (isCreated && item[Constants.Attributes.ToLower()] == null)
                 {
                     item[Constants.Id] = "local_" + SmartStore.CurrentTimeMillis;
                     contact.ObjectId = item[Constants.Id].Value<string>();
@@ -211,11 +221,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private async void UpdateContact(ContactObject obj)
         {
             if (obj == null) return;
-            var core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            await Task.Delay(10).ContinueWith(async a =>
-            {
-                await RemoveContact(obj);
-            });
+            CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
+            await Task.Delay(10).ContinueWith(async a => { await RemoveContact(obj); });
             await Task.Delay(10).ContinueWith(a =>
             {
                 core.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -229,7 +236,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private async Task<bool> RemoveContact(ContactObject obj)
         {
             bool result = false;
-            var core = CoreApplication.MainView.CoreWindow.Dispatcher;
+            CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
             await core.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 result = Contacts.Remove(obj);
@@ -262,61 +269,70 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
 
         private async void RemoveDeleted()
         {
-            var core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            var todelete = Contacts.Select(n => n).Where(n => n.Deleted).ToList();
+            CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
+            List<ContactObject> todelete = Contacts.Select(n => n).Where(n => n.Deleted).ToList();
             for (int index = 0; index < todelete.Count; index++)
             {
-                var delete = todelete[index];
+                ContactObject delete = todelete[index];
                 await Task.Delay(10).ContinueWith(async a => { await RemoveContact(delete); });
             }
         }
 
         private async void ResetUpdated()
         {
-            var core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            var updated = Contacts.Select(n => n).Where(n => n.UpdatedOrCreated).ToList();
+            CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
+            List<ContactObject> updated = Contacts.Select(n => n).Where(n => n.UpdatedOrCreated).ToList();
             for (int index = 0; index < updated.Count; index++)
             {
-                var update = updated[index];
+                ContactObject update = updated[index];
                 update.UpdatedOrCreated = false;
                 update.Deleted = false;
                 UpdateContact(update);
             }
         }
 
-        private void LoadDataFromSmartStore()
+        private async void LoadDataFromSmartStore()
         {
             if (!_store.HasSoup(ContactSoup))
                 return;
             QuerySpec querySpec = QuerySpec.BuildAllQuerySpec(ContactSoup, ContactObject.LastNameField,
                 QuerySpec.SqlOrder.ASC,
                 Limit);
-
+            CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
             JArray results = _store.Query(querySpec, 0);
             if (results == null) return;
-            var contacts = (from contact in results
-                            let model = new ContactObject(contact.Value<JObject>())
-                            select model).ToArray();
+            ContactObject[] contacts = (from contact in results
+                let model = new ContactObject(contact.Value<JObject>())
+                select model).ToArray();
+            var references = (from contact in contacts let first = contact.ContactName[0].ToString().ToLower() group contact by first into g select g.Key).ToArray();
+            await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Clear());
+            for (int i = 0, max = references.Length; i < max; i++)
+            {
+                await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Add(references[i]));
+            }
             for (int i = 0, max = contacts.Length; i < max; i++)
             {
-                var t = contacts[i];
+                ContactObject t = contacts[i];
                 UpdateContact(t);
             }
             RunFilter();
+            if (ContactsSynced != null)
+            {
+                ContactsSynced(this, new PropertyChangedEventArgs("Contacts"));
+            }
         }
 
-        private async void RunFilter()
+        public async void RunFilter()
         {
-            var contacts = Contacts.ToList();
+            List<ContactObject> contacts = _contacts.ToList();
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             await core.RunAsync(CoreDispatcherPriority.Normal, () => FilteredContacts.Clear());
             if (String.IsNullOrWhiteSpace(_filter))
             {
-
                 await core.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    foreach (var contact in contacts)
+                    foreach (ContactObject contact in contacts)
                     {
                         FilteredContacts.Add(contact);
                     }
@@ -324,20 +340,29 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
 
                 return;
             }
-            var filtered =
-                contacts.Where(
-                    contact => !String.IsNullOrEmpty(contact.ContactName) && contact.ContactName.Contains(_filter))
-                    .ToList();
+            List<ContactObject> filtered;
+            if (FilterUsesContains)
+            {
+                filtered =
+                    contacts.Where(
+                        contact => !String.IsNullOrEmpty(contact.ContactName) && contact.ContactName.Contains(_filter))
+                        .ToList();
+            }
+            else
+            {
+                filtered =
+                   contacts.Where(
+                       contact => !String.IsNullOrEmpty(contact.ContactName) && contact.ContactName.StartsWith(_filter, StringComparison.CurrentCultureIgnoreCase))
+                       .ToList();
+            }
             await core.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                foreach (var contact in filtered)
+                foreach (ContactObject contact in filtered)
                 {
                     FilteredContacts.Add(contact);
                 }
             });
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

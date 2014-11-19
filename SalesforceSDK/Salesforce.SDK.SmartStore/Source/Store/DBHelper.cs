@@ -47,7 +47,7 @@ namespace Salesforce.SDK.SmartStore.Store
         private const string UpdateStatement = "UPDATE {0} SET {1} WHERE {2}";
         private const string DeleteStatement = "DELETE FROM {0} WHERE {1}";
         private const string DeleteAllStatement = "DELETE FROM {0}";
-        private static Dictionary<string, DBHelper> Instances;
+        private static Dictionary<string, DBHelper> _instances;
 
         #endregion
 
@@ -78,15 +78,15 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static DBHelper GetInstance(string sqliteDBFile)
         {
-            if (Instances == null)
+            if (_instances == null)
             {
-                Instances = new Dictionary<string, DBHelper>();
+                _instances = new Dictionary<string, DBHelper>();
             }
             DBHelper instance;
-            if (!Instances.TryGetValue(sqliteDBFile, out instance))
+            if (!_instances.TryGetValue(sqliteDBFile, out instance))
             {
                 instance = new DBHelper(sqliteDBFile);
-                Instances.Add(sqliteDBFile, instance);
+                _instances.Add(sqliteDBFile, instance);
             }
             return instance;
         }
@@ -356,7 +356,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public void DeleteDatabase(string databaseFile)
         {
-            Instances.Remove(DatabasePath);
+            _instances.Remove(DatabasePath);
             SQLConnection.Dispose();
         }
 
