@@ -109,7 +109,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static long CurrentTimeMillis
         {
-            get { return (long)((DateTime.UtcNow - Jan1st1970).TotalMilliseconds); }
+            get { return (long) ((DateTime.UtcNow - Jan1st1970).TotalMilliseconds); }
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
                 // First get a table name
                 String soupTableName = null;
-                var soupMapValues = new Dictionary<string, object> { { SoupNameCol, soupName } };
+                var soupMapValues = new Dictionary<string, object> {{SoupNameCol, soupName}};
                 DBHelper db = DBHelper.GetInstance(DatabasePath);
                 try
                 {
@@ -322,7 +322,9 @@ namespace Salesforce.SDK.SmartStore.Store
                     throw new SmartStoreException("Soup: " + soupName + " does not exist");
                 }
                 Dictionary<string, IndexSpec> mapAllSpecs = IndexSpec.MapForIndexSpecs(GetSoupIndexSpecs(soupName));
-                IndexSpec[] indexSpecs = (from indexPath in indexPaths where mapAllSpecs.ContainsKey(indexPath) select mapAllSpecs[indexPath]).ToArray();
+                IndexSpec[] indexSpecs =
+                    (from indexPath in indexPaths where mapAllSpecs.ContainsKey(indexPath) select mapAllSpecs[indexPath])
+                        .ToArray();
                 if (indexSpecs.Length == 0)
                 {
                     return; // nothing to do
@@ -333,7 +335,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
 
                 using (
-                    SQLiteStatement stmt = db.Query(soupTableName, new[] { IdCol, SoupCol }, String.Empty, String.Empty,
+                    SQLiteStatement stmt = db.Query(soupTableName, new[] {IdCol, SoupCol}, String.Empty, String.Empty,
                         String.Empty))
                 {
                     if (stmt.DataCount > 0)
@@ -357,7 +359,8 @@ namespace Salesforce.SDK.SmartStore.Store
                                 }
                                 catch (JsonException e)
                                 {
-                                    Debug.WriteLine("SmartStore.ReIndexSoup: Could not parse soup element " + soupEntryId +
+                                    Debug.WriteLine("SmartStore.ReIndexSoup: Could not parse soup element " +
+                                                    soupEntryId +
                                                     "\n" + e.Message);
                                 }
                             } while (stmt.Step() == SQLiteResult.ROW);
@@ -410,7 +413,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 db.BeginTransaction();
                 try
                 {
-                    db.Delete(soupTableName, null);
+                    db.Delete(soupName);
                 }
                 finally
                 {
@@ -433,7 +436,7 @@ namespace Salesforce.SDK.SmartStore.Store
         }
 
         /// <summary>
-        ///     Destroy a soup; cleanup of all entries in the sup index map table and drops the soup table.
+        ///     Destroy a soup; cleanup of all entries in the soup index map table and drops the soup table.
         /// </summary>
         /// <param name="soupName"></param>
         public void DropSoup(string soupName)
@@ -444,9 +447,9 @@ namespace Salesforce.SDK.SmartStore.Store
                 string soupTableName = db.GetSoupTableName(soupName);
                 if (!String.IsNullOrWhiteSpace(soupTableName))
                 {
-                    var result = db.Execute("DROP TABLE IF EXISTS " + soupTableName);
+                    SQLiteResult result = db.Execute("DROP TABLE IF EXISTS " + soupTableName);
                     bool success = result == SQLiteResult.DONE;
-                    var soupDrop = new Dictionary<string, object> { { SoupNameCol, soupName } };
+                    var soupDrop = new Dictionary<string, object> {{SoupNameCol, soupName}};
                     try
                     {
                         db.BeginTransaction();
@@ -494,7 +497,7 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 var soupNames = new List<string>();
                 DBHelper db = DBHelper.GetInstance(DatabasePath);
-                using (SQLiteStatement stmt = db.Query(SoupNamesTable, new[] { SoupNameCol }, String.Empty, String.Empty,
+                using (SQLiteStatement stmt = db.Query(SoupNamesTable, new[] {SoupNameCol}, String.Empty, String.Empty,
                     String.Empty))
                 {
                     if (stmt.DataCount > 0)
@@ -522,7 +525,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 QuerySpec.SmartQueryType qt = querySpec.QueryType;
                 var results = new JArray();
                 string sql = ConvertSmartSql(querySpec.SmartSql);
-                int offsetRows = querySpec.PageSize * pageIndex;
+                int offsetRows = querySpec.PageSize*pageIndex;
                 int numberRows = querySpec.PageSize;
                 string limit = offsetRows + "," + numberRows;
 
@@ -614,9 +617,9 @@ namespace Salesforce.SDK.SmartStore.Store
                 else
                 {
                     object raw = GetObject(statement, i);
-                    long value;
                     if (raw != null)
                     {
+                        long value;
                         if (long.TryParse(raw.ToString(), out value))
                         {
                             row.Add(new JValue(value));
@@ -639,6 +642,34 @@ namespace Salesforce.SDK.SmartStore.Store
             return row;
         }
 
+        public bool Delete(string soupName, long[] soupEntryIds, Boolean handleTx)
+        {
+            lock (smartlock)
+            {
+                bool success = false;
+                DBHelper db = DBHelper.GetInstance(DatabasePath);
+                string soupTableName = db.GetSoupTableName(soupName);
+                if (String.IsNullOrWhiteSpace(soupTableName))
+                    throw new SmartStoreException("Soup: " + soupName + " does not exist");
+                if (handleTx)
+                {
+                    db.BeginTransaction();
+                }
+                try
+                {
+                    success = db.Delete(soupTableName, GetSoupEntryIdsPredicate(soupEntryIds));
+                }
+                finally
+                {
+                    if (handleTx)
+                    {
+                        db.CommitTransaction();
+                    }
+                }
+                return success;
+            }
+        }
+
         private void ProjectIndexedPaths(JObject soupElt, Dictionary<string, object> contentValues, IndexSpec indexSpec)
         {
             object value = Project(soupElt, indexSpec.Path);
@@ -648,15 +679,15 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 contentValues = new Dictionary<string, object>();
             }
-            if (SmartStoreType.SmartInteger.Equals(indexSpec.SmartType))
+            if (SmartStoreType.SmartInteger.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, Int32.Parse(value.ToString()));
             }
-            else if (SmartStoreType.SmartString.Equals(indexSpec.SmartType))
+            else if (SmartStoreType.SmartString.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, value.ToString());
             }
-            else if (SmartStoreType.SmartFloating.Equals(indexSpec.SmartType))
+            else if (SmartStoreType.SmartFloating.ColumnType.Equals(indexSpec.SmartType.ColumnType))
             {
                 contentValues.Add(indexSpec.ColumnName, Double.Parse(value.ToString()));
             }
@@ -684,8 +715,8 @@ namespace Salesforce.SDK.SmartStore.Store
                 long now = CurrentTimeMillis;
                 long soupEntryId = db.GetNextId(soupTableName);
 
-                soupElt.Add(SoupEntryId, soupEntryId);
-                soupElt.Add(SoupLastModifiedDate, now);
+                soupElt[SoupEntryId] = soupEntryId;
+                soupElt[SoupLastModifiedDate] = now;
                 var contentValues = new Dictionary<string, object>
                 {
                     {IdCol, soupEntryId},
@@ -740,17 +771,17 @@ namespace Salesforce.SDK.SmartStore.Store
                 if (SoupEntryId.Equals(externalIdPath, StringComparison.CurrentCultureIgnoreCase))
                 {
                     JToken entryIdToken;
-                    if (!soupElt.TryGetValue(SoupEntryId, out entryIdToken))
-                    {
-                        object externalIdObj = Project(soupElt, externalIdPath);
-                        if (externalIdObj != null)
-                        {
-                            entryId = LookupSoupEntryId(soupName, externalIdPath, externalIdObj.ToString());
-                        }
-                    }
-                    else
+                    if (soupElt.TryGetValue(SoupEntryId, out entryIdToken))
                     {
                         entryId = entryIdToken.Value<long>();
+                    }
+                }
+                else
+                {
+                    object externalIdObj = Project(soupElt, externalIdPath);
+                    if (externalIdObj != null)
+                    {
+                        entryId = LookupSoupEntryId(soupName, externalIdPath, externalIdObj.ToString());
                     }
                 }
                 if (entryId != -1)
@@ -772,7 +803,7 @@ namespace Salesforce.SDK.SmartStore.Store
                     throw new SmartStoreException("Soup: " + soupName + " does not exist");
                 }
                 string columnName = db.GetColumnNameForPath(soupName, fieldPath);
-                using (SQLiteStatement statement = db.Query(soupTableName, new[] { IdCol }, String.Empty, String.Empty,
+                using (SQLiteStatement statement = db.Query(soupTableName, new[] {IdCol}, String.Empty, String.Empty,
                     columnName + " = ?", fieldValue))
                 {
                     if (statement.DataCount > 1)
@@ -801,9 +832,23 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 IndexSpec[] indexSpecs = db.GetIndexSpecs(soupName);
                 long now = CurrentTimeMillis;
+                if (soupElt[SoupEntryId] == null)
+                {
+                    soupElt.Add(SoupEntryId, soupEntryId);
+                }
+                else
+                {
+                    soupElt[SoupEntryId] = soupEntryId;
+                }
+                if (soupElt[SoupLastModifiedDate] == null)
+                {
+                    soupElt.Add(SoupLastModifiedDate, now);
+                }
+                else
+                {
+                    soupElt[SoupLastModifiedDate] = now;
+                }
 
-                soupElt.Add(SoupEntryId, soupEntryId);
-                soupElt.Add(SoupLastModifiedDate, now);
 
                 var contentValues = new Dictionary<string, object>
                 {
@@ -846,7 +891,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     throw new SmartStoreException("Soup: " + soupName + " does not exist");
                 }
-                using (SQLiteStatement statement = db.Query(soupTableName, new[] { SoupCol }, String.Empty, String.Empty,
+                using (SQLiteStatement statement = db.Query(soupTableName, new[] {SoupCol}, String.Empty, String.Empty,
                     GetSoupEntryIdsPredicate(soupEntryIds)))
                 {
                     if (statement.DataCount > 0)
@@ -877,13 +922,13 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 return soup;
             }
-            string[] pathElements = path.Split(new[] { "[.]" }, StringSplitOptions.None);
+            string[] pathElements = path.Split(new[] {"[.]"}, StringSplitOptions.None);
             object o = soup;
             foreach (string pathElement in pathElements)
             {
                 if (o != null)
                 {
-                    o = ((JObject)o).SelectToken(pathElement, false);
+                    o = ((JObject) o).SelectToken(pathElement, false);
                 }
             }
             return o;

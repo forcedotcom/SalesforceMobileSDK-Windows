@@ -25,7 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Navigation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.Sample.NativeSmartStoreSample.utilities;
@@ -33,11 +37,7 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Native;
 using Salesforce.SDK.Rest;
-using System;
-using Windows.UI.Xaml;
 using Account = Salesforce.Sample.NativeSmartStoreSample.utilities.Account;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 

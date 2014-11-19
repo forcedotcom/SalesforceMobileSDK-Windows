@@ -37,12 +37,12 @@ namespace Salesforce.Sample.RestExplorer.Shared
         /// </summary>
         public override string ClientId
         {
-            get { return "3MVG9ytVT1SanXDkvbx5XRMc.mVU3633YHCdPbP3DsFj53GLlB0la25M3BQjpAA1HsP3lXmjKSssihnQpKu9x"; }
+            get { return "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa"; }
         }
 
         public override string CallbackUrl
         {
-            get { return "sfdc:///axm/detect/oauth/done"; }
+            get { return "testsfdc:///mobilesdk/detect/oauth/done"; }
         }
 
         public override string[] Scopes

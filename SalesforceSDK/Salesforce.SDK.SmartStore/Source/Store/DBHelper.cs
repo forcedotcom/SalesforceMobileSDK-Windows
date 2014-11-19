@@ -38,7 +38,6 @@ namespace Salesforce.SDK.SmartStore.Store
     {
         #region Statics
 
-        private static Dictionary<string, DBHelper> Instances;
         // Some queries
         private const string CountSelect = "SELECT count(*) FROM {0} {1}";
         private const string SeqSelect = "SELECT seq FROM SQLITE_SEQUENCE WHERE name = ?";
@@ -47,14 +46,14 @@ namespace Salesforce.SDK.SmartStore.Store
         private const string InsertStatement = "INSERT INTO {0} ({1}) VALUES ({2});";
         private const string UpdateStatement = "UPDATE {0} SET {1} WHERE {2}";
         private const string DeleteStatement = "DELETE FROM {0} WHERE {1}";
+        private const string DeleteAllStatement = "DELETE FROM {0}";
+        private static Dictionary<string, DBHelper> _instances;
 
         #endregion
 
         #region DBHelper properties
 
         private readonly string DatabasePath;
-
-        private SQLiteConnection SQLConnection;
 
         /// <summary>
         /// </summary>
@@ -64,6 +63,8 @@ namespace Salesforce.SDK.SmartStore.Store
         ///     Cache of soup name to soup table names
         /// </summary>
         private readonly Dictionary<string, string> SoupNameToTableNamesMap;
+
+        private SQLiteConnection SQLConnection;
 
         #endregion
 
@@ -77,15 +78,15 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static DBHelper GetInstance(string sqliteDBFile)
         {
-            if (Instances == null)
+            if (_instances == null)
             {
-                Instances = new Dictionary<string, DBHelper>();
+                _instances = new Dictionary<string, DBHelper>();
             }
             DBHelper instance;
-            if (!Instances.TryGetValue(sqliteDBFile, out instance))
+            if (!_instances.TryGetValue(sqliteDBFile, out instance))
             {
                 instance = new DBHelper(sqliteDBFile);
-                Instances.Add(sqliteDBFile, instance);
+                _instances.Add(sqliteDBFile, instance);
             }
             return instance;
         }
@@ -128,13 +129,18 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public long GetNextId(string tableName)
         {
-            using (var prog = SQLConnection.Prepare((SeqSelect)))
+            using (ISQLiteStatement prog = SQLConnection.Prepare((SeqSelect)))
             {
                 prog.Bind(1, tableName);
                 SQLiteResult result = prog.Step();
+                long data = 0;
+                if (prog.DataCount > 0)
+                {
+                     data = prog.GetInteger(0);
+                }
                 prog.Dispose();
-                return SQLConnection.LastInsertRowId() + 1;
-            }    
+                return data + 1;
+            }
         }
 
         public SQLiteStatement CountQuery(string table, string whereClause, params string[] args)
@@ -163,7 +169,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public long CountRawCountQuery(string countSql, params string[] args)
         {
-            using (var prog = SQLConnection.Prepare((countSql)))
+            using (ISQLiteStatement prog = SQLConnection.Prepare((countSql)))
             {
                 if (args != null)
                 {
@@ -177,7 +183,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     return prog.GetInteger(0);
                 }
-            }        
+            }
             return 0;
         }
 
@@ -240,18 +246,19 @@ namespace Salesforce.SDK.SmartStore.Store
             string sql = String.Format(InsertStatement,
                 table,
                 columns,
-                valueBindingString.ToString());
+                valueBindingString);
             using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
             {
                 int count = 1;
-                foreach (var key in contentValues.Keys)
+                foreach (string key in contentValues.Keys)
                 {
                     stmt.Bind(count, contentValues[key]);
                     count++;
                 }
-                stmt.Step();
+                var result = stmt.Step();
             }
-            return SQLConnection.LastInsertRowId();
+            long insertId = SQLConnection.LastInsertRowId();
+            return insertId;
         }
 
         public bool Update(string table, Dictionary<string, object> contentValues, string whereClause,
@@ -270,7 +277,7 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 entries += " = ?";
             }
-            string sql = String.Format(InsertStatement,
+            string sql = String.Format(UpdateStatement,
                 table,
                 entries,
                 whereClause);
@@ -290,8 +297,8 @@ namespace Salesforce.SDK.SmartStore.Store
                         place++;
                     }
                 }
-
-                return stmt.Step() == SQLiteResult.DONE;
+                var result = stmt.Step();
+                return result == SQLiteResult.DONE;
             }
         }
 
@@ -322,9 +329,34 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
+        public bool Delete(string table, string whereClause)
+        {
+            if (String.IsNullOrWhiteSpace(table) || String.IsNullOrWhiteSpace(whereClause))
+            {
+                throw new InvalidOperationException("Must specify a table and provide where clause to delete");
+            }
+            string sql = String.Format(DeleteStatement,
+                table,
+                whereClause);
+            using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
+            {
+                var result = stmt.Step();
+                return result == SQLiteResult.DONE;
+            }
+        }
+
+        public bool Delete(string table)
+        {
+            string sql = String.Format(DeleteAllStatement, table);
+            using (ISQLiteStatement stmt = SQLConnection.Prepare(sql))
+            {
+                return stmt.Step() == SQLiteResult.DONE;
+            }
+        }
+
         public void DeleteDatabase(string databaseFile)
         {
-            Instances.Remove(DatabasePath);
+            _instances.Remove(DatabasePath);
             SQLConnection.Dispose();
         }
 
@@ -344,15 +376,17 @@ namespace Salesforce.SDK.SmartStore.Store
 
         protected string GetSoupTableNameFromDb(string soupName)
         {
-            using (SQLiteStatement stmt = Query(SmartStore.SoupNamesTable, new[] { SmartStore.IdCol }, String.Empty, String.Empty,
-                SmartStore.SoupNamePredicate, soupName))
+            using (
+                SQLiteStatement stmt = Query(SmartStore.SoupNamesTable, new[] { SmartStore.IdCol }, String.Empty,
+                    String.Empty,
+                    SmartStore.SoupNamePredicate, soupName))
             {
-                 if (stmt.DataCount == 0)
+                if (stmt.DataCount == 0)
                 {
                     return null;
                 }
                 return SmartStore.GetSoupTableName(stmt.GetInteger(SmartStore.IdCol));
-            }      
+            }
         }
 
         internal void ResetConnection()
@@ -401,7 +435,7 @@ namespace Salesforce.SDK.SmartStore.Store
         protected IndexSpec[] GetIndexSpecsFromDb(String soupName)
         {
             SQLiteStatement statement = Query(SmartStore.SoupIndexMapTable,
-                new[] {SmartStore.PathCol, SmartStore.ColumnNameCol, SmartStore.ColumnTypeCol}, null,
+                new[] { SmartStore.PathCol, SmartStore.ColumnNameCol, SmartStore.ColumnTypeCol }, null,
                 null, SmartStore.SoupNamePredicate, soupName);
 
             if (statement.DataCount < 1)

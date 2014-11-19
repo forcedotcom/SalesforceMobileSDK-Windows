@@ -25,9 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using Windows.UI;
 using Salesforce.SDK.Source.Settings;
-using System;
 
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {
@@ -42,7 +42,7 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         /// </summary>
         public override string ClientId
         {
-            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
+            get { return "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa"; }
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         /// </summary>
         public override string CallbackUrl
         {
-            get { return "sfdc:///axm/detect/oauth/done"; }
+            get { return "testsfdc:///mobilesdk/detect/oauth/done"; }
         }
 
         /// <summary>

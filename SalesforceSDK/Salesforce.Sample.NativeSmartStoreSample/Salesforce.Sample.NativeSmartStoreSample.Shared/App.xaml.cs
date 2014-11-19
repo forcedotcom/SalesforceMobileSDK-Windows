@@ -1,11 +1,11 @@
-﻿using Salesforce.SDK.App;
-using Salesforce.SDK.Source.Settings;
+﻿// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+
 using Salesforce.Sample.NativeSmartStoreSample.Shared.Pages;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Security;
 using System;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Source.Security;
-
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {

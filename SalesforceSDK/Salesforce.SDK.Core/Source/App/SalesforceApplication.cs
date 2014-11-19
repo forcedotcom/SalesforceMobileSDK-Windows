@@ -193,12 +193,6 @@ namespace Salesforce.SDK.App
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-#if DEBUG
-            if (Debugger.IsAttached)
-            {
-                DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
     }

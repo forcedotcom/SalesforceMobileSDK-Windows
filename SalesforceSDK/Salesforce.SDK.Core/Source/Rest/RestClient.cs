@@ -26,7 +26,6 @@
  */
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Salesforce.SDK.Net;
@@ -63,6 +62,11 @@ namespace Salesforce.SDK.Rest
             get { return _accessToken; }
         }
 
+        public async Task<RestResponse> SendAsync(HttpMethod method, string url)
+        {
+            return await SendAsync(new RestRequest(method, url));
+        }
+
         public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
         {
             RestResponse result = await SendAsync(request).ConfigureAwait(false);
@@ -81,11 +85,7 @@ namespace Salesforce.SDK.Rest
         private async Task<HttpCall> Send(RestRequest request, bool retryInvalidToken)
         {
             string url = _instanceUrl + request.Path;
-            var headers = new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
-            if (request.AdditionalHeaders != null)
-            {
-                headers.Headers.Concat(request.AdditionalHeaders);
-            }
+            var headers = request.AdditionalHeaders != null ? new HttpCallHeaders(_accessToken, request.AdditionalHeaders) : new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
 
             HttpCall call =
                 await

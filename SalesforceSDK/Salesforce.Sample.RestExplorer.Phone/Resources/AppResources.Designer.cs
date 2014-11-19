@@ -9,7 +9,6 @@
 //------------------------------------------------------------------------------
 
 namespace Salesforce.Sample.RestExplorer.Phone.Resources {
-    using System;
     using System.Reflection;
     
     

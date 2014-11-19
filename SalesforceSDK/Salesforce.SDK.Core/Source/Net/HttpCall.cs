@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Web.Http;
+using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
 using Salesforce.SDK.Utilities;
@@ -107,7 +108,11 @@ namespace Salesforce.SDK.Net
         public HttpCall(HttpMethod method, HttpCallHeaders headers, string url, string requestBody,
             ContentTypeValues contentType)
         {
-            WebClient = new HttpClient();
+            var httpBaseFilter = new HttpBaseProtocolFilter
+            {
+                AllowUI = false
+            };
+            WebClient = new HttpClient(httpBaseFilter);
             Method = method;
             Headers = headers;
             Url = url;
@@ -290,7 +295,16 @@ namespace Salesforce.SDK.Net
                         break;
                 }
             }
-            HttpResponseMessage message = await WebClient.SendRequestAsync(req);
+            HttpResponseMessage message;
+            try
+            {
+               message = await WebClient.SendRequestAsync(req);
+            }
+            catch (Exception)
+            {
+
+                message = null;
+            }
             HandleMessageResponse(message);
             return this;
         }

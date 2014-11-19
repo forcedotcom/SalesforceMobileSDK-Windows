@@ -58,6 +58,7 @@
     <Compile Include="Source\Hybrid\StreamUriResolver.cs" />
     <Compile Include="Source\Native\NativeMainPage.cs" />
     <Compile Include="Source\Net\HttpCall.cs" />
+    <Compile Include="Source\Rest\ApiVersionStrings.cs" />
     <Compile Include="Source\Rest\ClientManager.cs" />
     <Compile Include="Source\Rest\RestClient.cs" />
     <Compile Include="Source\Rest\RestRequest.cs" />
