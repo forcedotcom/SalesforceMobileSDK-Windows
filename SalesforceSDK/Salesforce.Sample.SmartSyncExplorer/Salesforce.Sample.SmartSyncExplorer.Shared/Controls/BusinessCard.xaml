@@ -9,17 +9,16 @@
     d:DesignHeight="230"
     d:DesignWidth="400">
 
-    <Canvas>
-        <Rectangle Fill="Black" Opacity="0.2" Width="390" Height="230" Margin="0 5 0 0" Canvas.ZIndex="0" Canvas.Left="5"/>
-        <Border BorderBrush="#33000000" BorderThickness="1">
-        <Grid Height="228" Width="400">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="4*" />
-            </Grid.ColumnDefinitions>
+    <Viewbox Stretch="UniformToFill"  StretchDirection="Both">
+        <Border BorderBrush="#33000000" BorderThickness="1" Height="230" Width="400">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="4*" />
+                </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0">
-                <Border.Background>DeepSkyBlue</Border.Background>
+                <Border Grid.Column="0">
+                    <Border.Background>DeepSkyBlue</Border.Background>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="3*" />
@@ -53,35 +52,35 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-            <Border Grid.Column="1">
-                <Border.Background>White</Border.Background>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="3*" />
-                        <RowDefinition Height="2*" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock x:Name="ContactNameBlock" Text="{Binding ContactName}"
-                                   Style="{StaticResource SubheaderTextBlockStyle}" Foreground="Black" />
-                        <TextBlock x:Name="ContactTitleDeptBlock" Text="{Binding TitleDept}" Foreground="Black" />
-                    </StackPanel>
-                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
-                        <Border Background="LightSkyBlue" Height="30">
-                            <TextBlock x:Name="PhoneBlock" Text="{Binding Phone}" FontSize="14" TextAlignment="Left"
+                <Border Grid.Column="1">
+                    <Border.Background>White</Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*" />
+                            <RowDefinition Height="2*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="ContactNameBlock" Text="{Binding ContactName}"
+                                   FontSize="16" Foreground="Black" />
+                            <TextBlock x:Name="ContactTitleDeptBlock" Text="{Binding TitleDept}" Foreground="Black" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                            <Border Background="LightSkyBlue" Height="30">
+                                <TextBlock x:Name="PhoneBlock" Text="{Binding Phone}" FontSize="14" TextAlignment="Left"
                                        VerticalAlignment="Center" Padding="5" Foreground="Black" />
-                        </Border>
-                        <Border Background="DeepSkyBlue" Height="30">
-                            <TextBlock x:Name="EmailBlock" Text="{Binding Email}" FontSize="14" TextAlignment="Left"
+                            </Border>
+                            <Border Background="DeepSkyBlue" Height="30">
+                                <TextBlock x:Name="EmailBlock" Text="{Binding Email}" FontSize="14" TextAlignment="Left"
                                        VerticalAlignment="Center" Padding="5" Foreground="Black" />
-                        </Border>
-                        <Border Background="LightSkyBlue" Height="30">
-                            <TextBlock x:Name="AddressBlock" Text="{Binding Address}" FontSize="14"
+                            </Border>
+                            <Border Background="LightSkyBlue" Height="30">
+                                <TextBlock x:Name="AddressBlock" Text="{Binding Address}" FontSize="14"
                                        TextAlignment="Left" Foreground="Black" Padding="5" VerticalAlignment="Center" />
-                        </Border>
-                    </StackPanel>
-                </Grid>
-            </Border>
-        </Grid>
-    </Border>
-    </Canvas>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Viewbox>
 </UserControl>

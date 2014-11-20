@@ -112,5 +112,10 @@ namespace Salesforce.Sample.SmartSyncExplorer.Controls
                 SyncStatusIcon = value.SyncStatus;
             }
         }
+
+        public int RowSize
+        {
+            get { return 30; }
+        }
     }
 }
