@@ -36,6 +36,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Newtonsoft.Json.Linq;
 using Salesforce.Sample.SmartSyncExplorer.Annotations;
+using Salesforce.Sample.SmartSyncExplorer.Shared.Pages;
 using Salesforce.Sample.SmartSyncExplorer.utilities;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.SmartStore.Store;
@@ -109,7 +110,6 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             set
             {
                 _filter = value;
-                RunFilter();
             }
         }
 
@@ -222,7 +222,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         {
             if (obj == null) return;
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            await Task.Delay(10).ContinueWith(async a => { await RemoveContact(obj); });
+            //await Task.Delay(10).ContinueWith(async a => await RemoveContact(obj));
             await Task.Delay(10).ContinueWith(a =>
             {
                 core.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -251,7 +251,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             _store.ResetDatabase();
         }
 
-        private async void HandleSyncUpdate(SyncState sync)
+        private void HandleSyncUpdate(SyncState sync)
         {
             if (SyncState.SyncStatusTypes.Done != sync.Status) return;
             switch (sync.SyncType)
@@ -285,8 +285,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             for (int index = 0; index < updated.Count; index++)
             {
                 ContactObject update = updated[index];
-                update.UpdatedOrCreated = false;
-                update.Deleted = false;
+                await core.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    update.UpdatedOrCreated = false;
+                    update.Deleted = false;
+                });
                 UpdateContact(update);
             }
         }
@@ -308,18 +311,19 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Clear());
             for (int i = 0, max = references.Length; i < max; i++)
             {
-                await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Add(references[i]));
+                var closure = i;
+                await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Add(references[closure]));
             }
             for (int i = 0, max = contacts.Length; i < max; i++)
             {
                 ContactObject t = contacts[i];
                 UpdateContact(t);
             }
-            RunFilter();
             if (ContactsSynced != null)
             {
                 ContactsSynced(this, new PropertyChangedEventArgs("Contacts"));
             }
+            await core.RunAsync(CoreDispatcherPriority.Normal, () => MainPage.MainPageReference.UpdateTable());
         }
 
         public async void RunFilter()
@@ -345,7 +349,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             {
                 filtered =
                     contacts.Where(
-                        contact => !String.IsNullOrEmpty(contact.ContactName) && contact.ContactName.Contains(_filter))
+                        contact => !String.IsNullOrEmpty(contact.ContactName) && contact.ContactName.ToLower().Contains(_filter.ToLower()))
                         .ToList();
             }
             else

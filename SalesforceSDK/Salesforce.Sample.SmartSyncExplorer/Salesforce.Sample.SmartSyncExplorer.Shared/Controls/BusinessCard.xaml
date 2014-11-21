@@ -29,7 +29,7 @@
                                 <TextBlock x:Name="SyncBlock" HorizontalAlignment="Stretch"
                                        Padding="10" 
                                        TextAlignment="Center" 
-                                       Text="{Binding SyncStatus}"
+                                       Text="{Binding SyncStatus, Mode=TwoWay}"
                                        FontSize="25"
                                        FontFamily="Segoe UI Symbol"
                                        Foreground="Black" />
@@ -60,21 +60,21 @@
                             <RowDefinition Height="2*" />
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock x:Name="ContactNameBlock" Text="{Binding ContactName}"
+                            <TextBlock x:Name="ContactNameBlock" Text="{Binding ContactName, Mode=TwoWay}"
                                    FontSize="16" Foreground="Black" />
-                            <TextBlock x:Name="ContactTitleDeptBlock" Text="{Binding TitleDept}" Foreground="Black" />
+                            <TextBlock x:Name="ContactTitleDeptBlock" Text="{Binding TitleDept, Mode=TwoWay}" Foreground="Black" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" VerticalAlignment="Center">
                             <Border Background="LightSkyBlue" Height="30">
-                                <TextBlock x:Name="PhoneBlock" Text="{Binding Phone}" FontSize="14" TextAlignment="Left"
+                                <TextBlock x:Name="PhoneBlock" Text="{Binding Phone, Mode=TwoWay}" FontSize="14" TextAlignment="Left"
                                        VerticalAlignment="Center" Padding="5" Foreground="Black" />
                             </Border>
                             <Border Background="DeepSkyBlue" Height="30">
-                                <TextBlock x:Name="EmailBlock" Text="{Binding Email}" FontSize="14" TextAlignment="Left"
+                                <TextBlock x:Name="EmailBlock" Text="{Binding Email, Mode=TwoWay}" FontSize="14" TextAlignment="Left"
                                        VerticalAlignment="Center" Padding="5" Foreground="Black" />
                             </Border>
                             <Border Background="LightSkyBlue" Height="30">
-                                <TextBlock x:Name="AddressBlock" Text="{Binding Address}" FontSize="14"
+                                <TextBlock x:Name="AddressBlock" Text="{Binding Address, Mode=TwoWay}" FontSize="14"
                                        TextAlignment="Left" Foreground="Black" Padding="5" VerticalAlignment="Center" />
                             </Border>
                         </StackPanel>

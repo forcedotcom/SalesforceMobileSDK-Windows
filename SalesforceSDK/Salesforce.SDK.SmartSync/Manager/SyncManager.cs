@@ -288,7 +288,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 else if (HttpStatusCode.NotFound == response.StatusCode)
                 {
                     _smartStore.Delete(sync.SoupName,
-                            new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, true);
+                            new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, false);
                 }
 
                 int progress = (i + 1)*100/totalSize;

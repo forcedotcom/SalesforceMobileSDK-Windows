@@ -123,6 +123,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             }
         }
 
+        public void UpdateTable()
+        {
+            ContactsTable.UpdateLayout();
+        }
+
         private void Synchronize(object sender, RoutedEventArgs e)
         {
             try
@@ -158,16 +163,10 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         void FilterBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var text = FilterBox.Text;
-            MainPage.ContactsDataModel.FilterUsesContains = true;
+            ContactsDataModel.FilterUsesContains = true;
             ContactsDataModel.Filter = text;
-            if (String.IsNullOrEmpty(text))
-            {
-                ContactsTable.ItemsSource = ContactsDataModel.Contacts;
-            }
-            else
-            {
-                ContactsTable.ItemsSource = ContactsDataModel.FilteredContacts;
-            }
+            ContactsDataModel.RunFilter();
+            ContactsTable.ItemsSource = String.IsNullOrEmpty(text) ? ContactsDataModel.Contacts : ContactsDataModel.FilteredContacts;
         }
 
         private void ContactsTable_OnItemClick(object sender, ItemClickEventArgs e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Salesforce.Sample.SmartSyncExplorer.utilities
 {
@@ -7,15 +8,21 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
     {
         protected override void InsertItem(int index, T item)
         {
-            if (this.Count == 0)
+            lock (Items)
             {
-                base.InsertItem(0, item);
-                return;
+                if (this.Count == 0)
+                {
+                    base.InsertItem(0, item);
+                    return;
+                }
+                if (base.Contains(item))
+                {
+                    Remove(item);
+                }
+                index = Compare(item, 0, this.Count - 1);
+
+                base.InsertItem(index, item);
             }
-
-            index = Compare(item, 0, this.Count - 1);
-
-            base.InsertItem(index, item);
         }
 
         private int Compare(T item, int lowIndex, int highIndex)

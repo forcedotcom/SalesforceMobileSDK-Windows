@@ -133,6 +133,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             }
         }
 
+        public void UpdateTable()
+        {
+            ContactsTable.UpdateLayout();
+        }
+
         private void CreateContact(object sender, RoutedEventArgs e)
         {
             EditCardPanel.DeleteVisible(false);
@@ -160,6 +165,12 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             {
                 ContactsTable.ItemsSource = ContactsDataModel.FilteredContacts;
             }
+            ContactsDataModel.RunFilter();
+        }
+
+        private void ClearSearch(object sender, RoutedEventArgs e)
+        {
+            ContactsDataModel.Filter = String.Empty;
         }
 
         private void ContactsTable_OnItemClick(object sender, ItemClickEventArgs e)
