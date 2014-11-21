@@ -46,6 +46,7 @@
                                TextAlignment="Center" />
                     <TextBox x:Name="HostAddress"
                              DataContext="address"
+                             MaxLength="2048"
                              PlaceholderText="{Binding Converter={StaticResource Localize}}"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
@@ -60,6 +61,7 @@
                     </TextBox>
                     <TextBox x:Name="HostName"
                              DataContext="name"
+                             MaxLength="2048"
                              PlaceholderText="{Binding Converter={StaticResource Localize}}"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>

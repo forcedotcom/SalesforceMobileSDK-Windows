@@ -51,6 +51,7 @@
                            TextAlignment="Center" />
                 <StackPanel Margin="5 0 5 15">
                     <TextBox x:Name="HostAddress"
+                             MaxLength="2048"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
                             <DataTemplate>
@@ -63,6 +64,7 @@
                         </TextBox.HeaderTemplate>
                     </TextBox>
                     <TextBox x:Name="HostName"
+                             MaxLength="2048"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
                             <DataTemplate>

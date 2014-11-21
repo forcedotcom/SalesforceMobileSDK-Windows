@@ -299,13 +299,13 @@ namespace Salesforce.SDK.Net
             try
             {
                message = await WebClient.SendRequestAsync(req);
+               HandleMessageResponse(message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                HttpCallErrorException = ex;
                 message = null;
-            }
-            HandleMessageResponse(message);
+            } 
             return this;
         }
 
@@ -319,7 +319,6 @@ namespace Salesforce.SDK.Net
             catch (Exception ex)
             {
                 HttpCallErrorException = ex;
-                // response = (HttpWebResponse) ex.Response;
             }
 
             if (response != null)

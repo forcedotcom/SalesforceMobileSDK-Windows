@@ -26,16 +26,17 @@
  */
 
 using System;
-using System.Runtime.Serialization;
-using Windows.ApplicationModel.Contacts;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Newtonsoft.Json.Linq;
+using Salesforce.Sample.SmartSyncExplorer.Annotations;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
 using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.Sample.SmartSyncExplorer.utilities
 {
-    public class ContactObject : SalesforceObject, IComparable, IComparable<ContactObject>
+    public class ContactObject : SalesforceObject, IComparable, IComparable<ContactObject>, INotifyPropertyChanged
     {
         public const string FirstNameField = "FirstName";
         public const string LastNameField = "LastName";
@@ -44,9 +45,6 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
         public const string EmailField = "Email";
         public const string DepartmentField = "Department";
         public const string AddressField = "MailingStreet";
-        public readonly string Synced = '\u2601'.ToString();
-        public readonly string Unsynced = '\uE104'.ToString();
-        public readonly string ToDelete = '\uE107'.ToString();
 
         public static readonly string[] ContactFields =
         {
@@ -54,40 +52,118 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             PhoneField, EmailField, DepartmentField, AddressField
         };
 
-        public ContactObject(JObject data)
-            : base(data)
+        public readonly string Synced = '\u2601'.ToString();
+        public readonly string ToDelete = '\uE107'.ToString();
+        public readonly string Unsynced = '\uE104'.ToString();
+
+
+        private bool _updatedOrChanged;
+        private bool _deleted;
+        private string _firstName;
+        private string _lastName;
+        private string _title;
+        private string _phone;
+        private string _email;
+        private string _department;
+        private string _address;
+
+        public bool UpdatedOrCreated
         {
-            ObjectType = Constants.Contact;
-            ObjectId = data.ExtractValue<string>(Constants.Id);
-            FirstName = data.ExtractValue<string>(FirstNameField);
-            LastName = data.ExtractValue<string>(LastNameField);
-            Name = FirstName + " " + LastName;
-            UpdatedOrCreated =
-                data.ExtractValue<bool>(SyncManager.LocallyUpdated) ||
-                                        data.ExtractValue<bool>(SyncManager.LocallyCreated);
-            Deleted = data.ExtractValue<bool>(SyncManager.LocallyDeleted);
-            Title = data.ExtractValue<string>(TitleField);
-            Phone = data.ExtractValue<string>(PhoneField);
-            Email = data.ExtractValue<string>(EmailField);
-            Department = data.ExtractValue<string>(DepartmentField);
-            Address = data.ExtractValue<string>(AddressField);
+            set
+            {
+                _updatedOrChanged = value;
+                OnPropertyChanged();
+                OnPropertyChanged("SyncStatus");
+            }
+            get { return _updatedOrChanged; }
         }
 
-        public bool UpdatedOrCreated { set; get; }
-        public bool Deleted { set; get; }
+        public bool Deleted
+        {
+            set
+            {
+                _deleted = value;
+                OnPropertyChanged();
+                OnPropertyChanged("SyncStatus");
+            }
+            get { return _deleted; }
+        }
 
         public bool IsLocallyModified
         {
             get { return UpdatedOrCreated || Deleted; }
         }
 
-        public string FirstName { set; get; }
-        public string LastName { set; get; }
-        public string Title { set; get; }
-        public string Phone { set; get; }
-        public string Email { set; get; }
-        public string Department { set; get; }
-        public string Address { set; get; }
+        public string FirstName
+        {
+            set
+            {
+                _firstName = value;
+                OnPropertyChanged();
+            }
+            get { return _firstName; }
+        }
+
+        public string LastName
+        {
+            set
+            {
+                _lastName = value;
+                OnPropertyChanged();
+            }
+            get
+            {
+                return _lastName;
+            }
+        }
+
+        public string Title
+        {
+            set
+            {
+                _title = value;
+                OnPropertyChanged();
+            }
+            get { return _title; }
+        }
+        public string Phone
+        {
+            set
+            {
+                _phone = value;
+                OnPropertyChanged();
+            }
+            get { return _phone; }
+        }
+        public string Email
+        {
+            set
+            {
+                _email = value;
+                OnPropertyChanged();
+            }
+            get { return _email; }
+        }
+
+        public string Department
+        {
+            set
+            {
+                _department = value;
+                OnPropertyChanged();
+            }
+            get { return _department; }
+        }
+
+        public string Address
+        {
+            set
+            {
+                _address = value;
+                OnPropertyChanged();
+            }
+            get { return _address; }
+        }
 
         public ContactObject Self
         {
@@ -102,21 +178,22 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
                 {
                     return Unsynced;
                 }
-                else if (Deleted)
+                if (Deleted)
                 {
                     return ToDelete;
                 }
-                else
-                {
-                    return Synced;
-                }
+                return Synced;
             }
         }
 
         public string ContactName
         {
+            set
+            {
+                Name = value;
+                OnPropertyChanged();
+            }
             get { return Name; }
-            set { Name = value; }
         }
 
         public string TitleDept
@@ -133,18 +210,40 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             }
         }
 
+        public ContactObject(JObject data)
+            : base(data)
+        {
+            ObjectType = Constants.Contact;
+            ObjectId = data.ExtractValue<string>(Constants.Id);
+            FirstName = data.ExtractValue<string>(FirstNameField);
+            LastName = data.ExtractValue<string>(LastNameField);
+            Name = FirstName + " " + LastName;
+            UpdatedOrCreated =
+                data.ExtractValue<bool>(SyncManager.LocallyUpdated) ||
+                data.ExtractValue<bool>(SyncManager.LocallyCreated);
+            Deleted = data.ExtractValue<bool>(SyncManager.LocallyDeleted);
+            Title = data.ExtractValue<string>(TitleField);
+            Phone = data.ExtractValue<string>(PhoneField);
+            Email = data.ExtractValue<string>(EmailField);
+            Department = data.ExtractValue<string>(DepartmentField);
+            Address = data.ExtractValue<string>(AddressField);
+        }
+
         public int CompareTo(object obj)
         {
             return Compare(obj);
         }
+
         public int CompareTo(ContactObject other)
         {
             return Compare(other);
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         private int Compare(object other)
         {
-            var item1 = this;
+            ContactObject item1 = this;
             var item2 = other as ContactObject;
             if (item2 == null)
                 return -1;
@@ -155,6 +254,13 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
                 retVal += 2;
             retVal += String.Compare(item1.ContactName, item2.ContactName, StringComparison.CurrentCultureIgnoreCase);
             return retVal;
+        }
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

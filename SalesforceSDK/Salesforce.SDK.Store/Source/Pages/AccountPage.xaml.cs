@@ -240,6 +240,14 @@ namespace Salesforce.SDK.Source.Pages
         {
             string hname = HostName.Text;
             string haddress = HostAddress.Text;
+            if (String.IsNullOrWhiteSpace(haddress))
+            {
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(hname))
+            {
+                hname = haddress;
+            }
             var server = new ServerSetting
             {
                 ServerHost = haddress,
