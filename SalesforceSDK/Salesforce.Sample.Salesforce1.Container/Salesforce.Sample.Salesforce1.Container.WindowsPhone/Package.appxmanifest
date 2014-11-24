@@ -12,7 +12,37 @@
     <OSMaxVersionTested>6.3.1</OSMaxVersionTested>
   </Prerequisites>
   <Resources>
-    <Resource Language="x-generate" />
+    <!--NOTE: x-generate does not automatically detect languages that are in a referenced assembly, this
+    sample app really only gets its strings from the Salesforce.SDK.Core assembly, so we will explicitly say
+    which languages we support here.  Most apps should just use x-generate for language detection since
+    they will have other string resources and x-generate will detect the proper languages.-->
+    <!--<Resource Language="x-generate" />-->
+    <Resource Language="cs-CZ" />
+    <Resource Language="da-DK" />
+    <Resource Language="de-DE" />
+    <Resource Language="el-GR" />
+    <Resource Language="en-us" />
+    <Resource Language="es-ES" />
+    <Resource Language="fi-FI" />
+    <Resource Language="fr-FR" />
+    <Resource Language="hu-HU" />
+    <Resource Language="id-ID" />
+    <Resource Language="it-IT" />
+    <Resource Language="ja-JP" />
+    <Resource Language="ko-KR" />
+    <Resource Language="nb-NO" />
+    <Resource Language="nl-NL" />
+    <Resource Language="pl-PL" />
+    <Resource Language="pt-BR" />
+    <Resource Language="ro-RO" />
+    <Resource Language="ru-RU" />
+    <Resource Language="sv-SE" />
+    <Resource Language="th-TH" />
+    <Resource Language="tr-TR" />
+    <Resource Language="uk-UA" />
+    <Resource Language="vi-VN" />
+    <Resource Language="zh-CN" />
+    <Resource Language="zh-TW" />
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Salesforce.Sample.Salesforce1.Container.WindowsPhone.App">
