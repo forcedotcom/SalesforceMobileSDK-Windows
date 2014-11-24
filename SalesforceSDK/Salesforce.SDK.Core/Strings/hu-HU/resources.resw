@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="account" xml:space="preserve">
+    <value>Fiók</value>
+  </data>
+  <data name="address" xml:space="preserve">
+    <value>Cím</value>
+  </data>
+  <data name="add_connection" xml:space="preserve">
+    <value>Kapcsolat hozzáadása</value>
+  </data>
+  <data name="application_title" xml:space="preserve">
+    <value>Salesforce</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+  <data name="choose_connection" xml:space="preserve">
+    <value>Kapcsolat kiválasztása</value>
+  </data>
+  <data name="connection_server" xml:space="preserve">
+    <value>Kapcsolatszerver</value>
+  </data>
+  <data name="continue" xml:space="preserve">
+    <value>Folytatás</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>Név</value>
+  </data>
+  <data name="no_accounts" xml:space="preserve">
+    <value>Nem található fiók. A művelet megkezdése előtt hozzon létre egy fiókot.</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="select_account" xml:space="preserve">
+    <value>Ügyfél kiválasztása</value>
+  </data>
+  <data name="new_connection" xml:space="preserve">
+    <value>Új kapcsolat</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>Kijelentkezés</value>
+  </data>
+  <data name="logout_prompt" xml:space="preserve">
+    <value>Biztos, hogy kijelentkezik?</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>nem</value>
+  </data>
+  <data name="passcode_confirm" xml:space="preserve">
+    <value>Erősítse meg mobiltelefonos Salesforce-kódját</value>
+  </data>
+  <data name="passcode_create_security" xml:space="preserve">
+    <value>A fokozott biztonság érdekében hozzon létre egy biztonsági kódot. A kódot olyan esetben használhatja a Salesforce-ba való belépéshez, amikor a rendszer időtúllépés esetén inaktivitás miatt lezárja a munkamenetet.</value>
+  </data>
+  <data name="passcode_create_title" xml:space="preserve">
+    <value>Hozzon létre egy Salesforce-kódot</value>
+  </data>
+  <data name="passcode_enter_code_desc" xml:space="preserve">
+    <value>Írja be mobiltelefonos Salesforce-kódját</value>
+  </data>
+  <data name="passcode_enter_code_title" xml:space="preserve">
+    <value>Írja be Salesforce-kódját</value>
+  </data>
+  <data name="passcode_final_attempt" xml:space="preserve">
+    <value>Utolsó próbálkozás a biztonsági kód megadására</value>
+  </data>
+  <data name="passcode_forgot_passcode" xml:space="preserve">
+    <value>Elfelejtette biztonsági kódját?</value>
+  </data>
+  <data name="passcode_incorrect" xml:space="preserve">
+    <value>A beírt biztonsági kód helytelen. Próbálkozzon újra. {0} próbálkozási lehetősége maradt.</value>
+  </data>
+  <data name="passcode_length" xml:space="preserve">
+    <value>A biztonsági kódnak legalább {0} karakterből kell állnia.</value>
+  </data>
+  <data name="passcode_reenter" xml:space="preserve">
+    <value>Írja be ismét Salesforce-kódját</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>igen</value>
+  </data>
+  <data name="passcode" xml:space="preserve">
+    <value>Biztonsági kód</value>
+  </data>
+  <data name="passcode_must_match" xml:space="preserve">
+    <value>A beírt biztonsági kódoknak egyezniük kell.</value>
+  </data>
+  <data name="passcode_logout" xml:space="preserve">
+    <value>Biztos, hogy kijelentkezik?</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>Hozzáadás</value>
+  </data>
+  <data name="login_to_salesforce" xml:space="preserve">
+    <value>Bejelentkezés a Salesforce.com rendszerbe</value>
+  </data>
+  <data name="logging_in" xml:space="preserve">
+    <value>Bejelentkezés a Salesforce.com rendszerbe...</value>
+  </data>
+  <data name="generic_authentication_error" xml:space="preserve">
+    <value>Hitelesítési hiba. Próbálkozzon újra.</value>
+  </data>
+  <data name="generic_error" xml:space="preserve">
+    <value>Hiba történt, próbálkozzon újra.</value>
+  </data>
+  <data name="address_label" xml:space="preserve">
+    <value>Állomásnév (pl. login.salesforce.com)</value>
+  </data>
+  <data name="host_label" xml:space="preserve">
+    <value>Címke</value>
+  </data>
+</root>

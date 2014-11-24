@@ -1,0 +1,231 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="account" xml:space="preserve">
+    <value>[Ȧƈƈǿŭƞŧ 鶱ςǋǈǈẛǋ]</value>
+  </data>
+  <data name="address" xml:space="preserve">
+    <value>[Ȧḓḓřḗşş 靐ǲϵΰſǋϐ]</value>
+  </data>
+  <data name="add_connection" xml:space="preserve">
+    <value>[Ȧḓḓ Ƈǿƞƞḗƈŧīǿƞ ϱϐΰ ǋΐϱϱẛϑıϖ]</value>
+  </data>
+  <data name="application_title" xml:space="preserve">
+    <value>[Şȧŀḗşƒǿřƈḗ ǅǲǈẛıΰ衋ǅΐϖ]</value>
+  </data>
+  <data name="cancel" xml:space="preserve">
+    <value>[Ƈȧƞƈḗŀ ΰΐǲςǅΰ]</value>
+  </data>
+  <data name="choose_connection" xml:space="preserve">
+    <value>[Ƈħǿǿşḗ Ƈǿƞƞḗƈŧīǿƞ ϐΰ鶱ΐΐΐ ϐΰǅϖΐ]</value>
+  </data>
+  <data name="connection_server" xml:space="preserve">
+    <value>[Ƈǿƞƞḗƈŧīǿƞ Şḗřṽḗř 鶱衋ϑẛϰǋǈΐıϵ ΰ]</value>
+  </data>
+  <data name="continue" xml:space="preserve">
+    <value>[Ƈǿƞŧīƞŭḗ ς鶱衋ϰΰ靐ϵ衋]</value>
+  </data>
+  <data name="name" xml:space="preserve">
+    <value>[Ƞȧḿḗ ϰϰ鶱ϱ]</value>
+  </data>
+  <data name="no_accounts" xml:space="preserve">
+    <value>[Şǿřřẏ, ƞǿ ȧƈƈǿŭƞŧş ƒǿŭƞḓ. Ŧǿ şŧȧřŧ, ƥŀḗȧşḗ ȧḓḓ ȧƞ ȧƈƈǿŭƞŧ. 衋ΐϕıΰǲ ǋ]</value>
+  </data>
+  <data name="ok" xml:space="preserve">
+    <value>[Ǿķ ϐẛ]</value>
+  </data>
+  <data name="select_account" xml:space="preserve">
+    <value>[Şḗŀḗƈŧ Ȧƈƈǿŭƞŧ ϕ靐ſſϰǲ ſǈΐẛϐ]</value>
+  </data>
+  <data name="new_connection" xml:space="preserve">
+    <value>[Ƞḗẇ Ƈǿƞƞḗƈŧīǿƞ ϐı靐 鶱ϕςϑΐϱſϐ]</value>
+  </data>
+  <data name="logout" xml:space="preserve">
+    <value>[Ŀǿɠǿŭŧ ϕϵǲϱςǈ]</value>
+  </data>
+  <data name="logout_prompt" xml:space="preserve">
+    <value>[Ȧřḗ ẏǿŭ şŭřḗ ẏǿŭ ẇȧƞŧ ŧǿ ŀǿɠǿŭŧ? ǋǲǅ ıǈǲ ẛϐϵ]</value>
+  </data>
+  <data name="no" xml:space="preserve">
+    <value>[ƞǿ 靐ϖ]</value>
+  </data>
+  <data name="passcode_confirm" xml:space="preserve">
+    <value>[Ƈǿƞƒīřḿ ẏǿŭř ḿǿƀīŀḗ ƥȧşşƈǿḓḗ ƒǿř Şȧŀḗşƒǿřƈḗ ϕẛ鶱ϵſςǈ ǅǋ]</value>
+  </data>
+  <data name="passcode_create_security" xml:space="preserve">
+    <value>[Ƒǿř īƞƈřḗȧşḗḓ şḗƈŭřīŧẏ, ƥŀḗȧşḗ ƈřḗȧŧḗ ȧ ƥȧşşƈǿḓḗ ŧħȧŧ ẏǿŭ ẇīŀŀ ŭşḗ ŧǿ ȧƈƈḗşş Şȧŀḗşƒǿřƈḗ ẇħḗƞ ŧħḗ şḗşşīǿƞ ħȧş ŧīḿḗḓ ǿŭŧ ḓŭḗ ŧǿ īƞȧƈŧīṽīŧẏ. 衋ϵϕ ẛϕǋıı衋ΐ靐ϱ 鶱鶱ϖıΰΰ靐ǋǋ]</value>
+  </data>
+  <data name="passcode_create_title" xml:space="preserve">
+    <value>[Ƈřḗȧŧḗ Şȧŀḗşƒǿřƈḗ ƥȧşşƈǿḓḗ ϱΐ鶱ϖǈ鶱 ΰǋ鶱ǈ]</value>
+  </data>
+  <data name="passcode_enter_code_desc" xml:space="preserve">
+    <value>[Ḗƞŧḗř ẏǿŭř ḿǿƀīŀḗ ƥȧşşƈǿḓḗ ƒǿř Şȧŀḗşƒǿřƈḗ ΐϕıϖΐ 鶱ϰϐẛ]</value>
+  </data>
+  <data name="passcode_enter_code_title" xml:space="preserve">
+    <value>[Ḗƞŧḗř Şȧŀḗşƒǿřƈḗ Ƥȧşşƈǿḓḗ ϖϖϕϖǋ ǋΐẛϵϐ]</value>
+  </data>
+  <data name="passcode_final_attempt" xml:space="preserve">
+    <value>[Ƒīƞȧŀ ƥȧşşƈǿḓḗ ȧŧŧḗḿƥŧ 靐ǋςςΐ ẛǲǲϰϐ]</value>
+  </data>
+  <data name="passcode_forgot_passcode" xml:space="preserve">
+    <value>[Ƒǿřɠǿŧ Ƥȧşşƈǿḓḗ? ǅǅϰϖϐϵ 衋靐ΰϕ]</value>
+  </data>
+  <data name="passcode_incorrect" xml:space="preserve">
+    <value>[Ŧħḗ ƥȧşşƈǿḓḗ ẏǿŭ ḗƞŧḗřḗḓ īş īƞƈǿřřḗƈŧ. Ƥŀḗȧşḗ ŧřẏ ȧɠȧīƞ. Ẏǿŭ ħȧṽḗ {0} ȧŧŧḗḿƥŧş řḗḿȧīƞīƞɠ. ſǅǈ ϵǅΰſſϐǋǋ ς]</value>
+  </data>
+  <data name="passcode_length" xml:space="preserve">
+    <value>[Ŧħḗ ƥȧşşƈǿḓḗ ḿŭşŧ ƀḗ ȧŧ ŀḗȧşŧ {0} ƈħȧřȧƈŧḗřş ŀǿƞɠ. ςϱϱ ǲẛſ]</value>
+  </data>
+  <data name="passcode_reenter" xml:space="preserve">
+    <value>[Řḗ-ḗƞŧḗř ẏǿŭř Şȧŀḗƒǿřƈḗ ƥȧşşƈǿḓḗ ǲǲ鶱ſǅϰϱΰ ςı]</value>
+  </data>
+  <data name="yes" xml:space="preserve">
+    <value>[ẏḗş ǅΰı]</value>
+  </data>
+  <data name="passcode" xml:space="preserve">
+    <value>[Ƥȧşşƈǿḓḗ ςϱϵΰ衋衋ǲǈ]</value>
+  </data>
+  <data name="passcode_must_match" xml:space="preserve">
+    <value>[Ŧħḗ ƥȧşşƈǿḓḗş ẏǿŭ ḗƞŧḗř ḿŭşŧ ḿȧŧƈħ. ſẛΐ ϵϕςϱϵ衋ϕ]</value>
+  </data>
+  <data name="passcode_logout" xml:space="preserve">
+    <value>[Ȧřḗ ẏǿŭ şŭřḗ ẏǿŭ ẇȧƞŧ ŧǿ ŀǿɠǿŭŧ? ẛẛϐ ϖıς ǈ鶱ǅ]</value>
+  </data>
+  <data name="add" xml:space="preserve">
+    <value>[Ȧḓḓ ſǲǋ]</value>
+  </data>
+  <data name="login_to_salesforce" xml:space="preserve">
+    <value>[Ŀǿɠīƞ ŧǿ Şȧŀḗşƒǿřƈḗ.ƈǿḿ ϵ靐ſϱ衋 ǋϕ ǅϑ]</value>
+  </data>
+  <data name="logging_in" xml:space="preserve">
+    <value>[Ŀǿɠɠīƞɠ īƞŧǿ Şȧŀḗşƒǿřƈḗ.ƈǿḿ ſǋǲϰǈςΐ ϵς]</value>
+  </data>
+  <data name="generic_authentication_error" xml:space="preserve">
+    <value>[Ȧŭŧħḗƞŧīƈȧŧīǿƞ ḗřřǿř. Ƥŀḗȧşḗ ŧřẏ ȧɠȧīƞ. ſǈǲǅϑſſǅǲϑ]</value>
+  </data>
+  <data name="generic_error" xml:space="preserve">
+    <value>[Ȧƞ ḗřřǿř ħȧş ǿƈƈŭřřḗḓ, ƥŀḗȧşḗ ŧřẏ ȧɠȧīƞ. ǋǅ ϱǲſϱϱ ϵ]</value>
+  </data>
+  <data name="address_label" xml:space="preserve">
+    <value>[Ħǿşŧ (Ḗẋȧḿƥŀḗ: ŀǿɠīƞ.şȧŀḗşƒǿřƈḗ.ƈǿḿ) ẛ衋ǈı ΰǲǅǋΰ]</value>
+  </data>
+  <data name="host_label" xml:space="preserve">
+    <value>[Ŀȧƀḗŀ ǈςΐ鶱ẛ]</value>
+  </data>
+</root>

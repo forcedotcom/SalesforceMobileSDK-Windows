@@ -79,10 +79,88 @@
         </Folder>
       </Folder>
       <Folder Name="Strings" TargetFolderName="Strings">
-        <Folder Name="en" TargetFolderName="en">
+        <Folder Name="cs-CZ" TargetFolderName="cs-CZ">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="da-DK" TargetFolderName="da-DK">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="de-DE" TargetFolderName="de-DE">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="el-GR" TargetFolderName="el-GR">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="en-us" TargetFolderName="en-us">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="es-ES" TargetFolderName="es-ES">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="fi-FI" TargetFolderName="fi-FI">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="fr-FR" TargetFolderName="fr-FR">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="hu-HU" TargetFolderName="hu-HU">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="id-ID" TargetFolderName="id-ID">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="it-IT" TargetFolderName="it-IT">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="ja-JP" TargetFolderName="ja-JP">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="ko-KR" TargetFolderName="ko-KR">
           <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
         </Folder>
         <ProjectItem ReplaceParameters="true" TargetFileName="LocalizedStrings.cs">LocalizedStrings.cs</ProjectItem>
+        <Folder Name="nb-NO" TargetFolderName="nb-NO">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="nl-NL" TargetFolderName="nl-NL">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="pl-PL" TargetFolderName="pl-PL">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="pt-BR" TargetFolderName="pt-BR">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="qps-ploc" TargetFolderName="qps-ploc">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="ro-RO" TargetFolderName="ro-RO">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="ru-RU" TargetFolderName="ru-RU">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="sv-SE" TargetFolderName="sv-SE">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="th-TH" TargetFolderName="th-TH">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="tr-TR" TargetFolderName="tr-TR">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="uk-UA" TargetFolderName="uk-UA">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="vi-VN" TargetFolderName="vi-VN">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="zh-CN" TargetFolderName="zh-CN">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <Folder Name="zh-TW" TargetFolderName="zh-TW">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
       </Folder>
     </Project>
   </TemplateContent>

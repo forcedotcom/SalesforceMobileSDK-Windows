@@ -10,6 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK</RootNamespace>
     <AssemblyName>Salesforce.SDK.Core</AssemblyName>
+    <DefaultLanguage>en-us</DefaultLanguage>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile32</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -73,9 +74,6 @@
     <Compile Include="Strings\LocalizedStrings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en\resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\servers.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +87,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <PRIResource Include="Strings\zh-TW\resources.resw" />
+    <PRIResource Include="Strings\zh-CN\resources.resw" />
+    <PRIResource Include="Strings\vi-VN\resources.resw" />
+    <PRIResource Include="Strings\uk-UA\resources.resw" />
+    <PRIResource Include="Strings\tr-TR\resources.resw" />
+    <PRIResource Include="Strings\th-TH\resources.resw" />
+    <PRIResource Include="Strings\sv-SE\resources.resw" />
+    <PRIResource Include="Strings\ru-RU\resources.resw" />
+    <PRIResource Include="Strings\ro-RO\resources.resw" />
+    <PRIResource Include="Strings\qps-ploc\resources.resw" />
+    <PRIResource Include="Strings\pt-BR\resources.resw" />
+    <PRIResource Include="Strings\pl-PL\resources.resw" />
+    <PRIResource Include="Strings\nl-NL\resources.resw" />
+    <PRIResource Include="Strings\nb-NO\resources.resw" />
+    <PRIResource Include="Strings\ko-KR\resources.resw" />
+    <PRIResource Include="Strings\ja-JP\resources.resw" />
+    <PRIResource Include="Strings\it-IT\resources.resw" />
+    <PRIResource Include="Strings\id-ID\resources.resw" />
+    <PRIResource Include="Strings\hu-HU\resources.resw" />
+    <PRIResource Include="Strings\fr-FR\resources.resw" />
+    <PRIResource Include="Strings\fi-FI\resources.resw" />
+    <PRIResource Include="Strings\es-ES\resources.resw" />
+    <PRIResource Include="Strings\en-us\resources.resw" />
+    <PRIResource Include="Strings\el-GR\resources.resw" />
+    <PRIResource Include="Strings\de-DE\resources.resw" />
+    <PRIResource Include="Strings\da-DK\resources.resw" />
+    <PRIResource Include="Strings\cs-CZ\resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Source\Auth\PincodeDialog.xaml">
