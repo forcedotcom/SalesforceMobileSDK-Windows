@@ -150,9 +150,19 @@ namespace Salesforce.SDK.Auth
             {
                 PasswordCredential account = _vault.Retrieve(creds.Resource, creds.UserName);
                 if (String.IsNullOrWhiteSpace(account.Password))
-                    _vault.Remove(creds);
+                    _vault.Remove(account);
                 else
-                    return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                {
+                    try
+                    {
+                        return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                    }
+                    catch (Exception)
+                    {
+                        // if we can't decrypt remove the account
+                        _vault.Remove(account);
+                    }
+                }
             }
             return null;
         }
@@ -186,8 +196,19 @@ namespace Salesforce.SDK.Auth
                     if (String.IsNullOrWhiteSpace(account.Password))
                         _vault.Remove(next);
                     else
-                        accounts.Add(next.UserName,
-                            JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                    {
+                        try
+                        {
+                            accounts.Add(next.UserName,
+                           JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                        }
+                        catch (Exception)
+                        {
+                            // if we can't decrypt remove the account
+                           _vault.Remove(next);
+                        }
+                       
+                    }
                 }
             }
             return accounts;
@@ -206,10 +227,18 @@ namespace Salesforce.SDK.Auth
                 foreach (PasswordCredential next in creds)
                 {
                     PasswordCredential vaultAccount = _vault.Retrieve(next.Resource, next.UserName);
-                    var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
-                    if (id.Equals(account.UserId))
+                    try
                     {
-                        _vault.Remove(next);
+                        var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
+                        if (id.Equals(account.UserId))
+                        {
+                            _vault.Remove(next);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // if we can't decrypt remove the account
+                       _vault.Remove(next);
                     }
                 }
             }

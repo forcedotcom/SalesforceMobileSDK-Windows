@@ -97,9 +97,6 @@ namespace Salesforce.SDK.Source.Security
                     case "0100": // Processor 
                         normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
-                    case "0500": // Audio Adapter 
-                        normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
-                        break;
                     case "0900": // System BIOS 
                         normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;

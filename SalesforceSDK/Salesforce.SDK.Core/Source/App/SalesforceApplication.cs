@@ -159,6 +159,7 @@ namespace Salesforce.SDK.App
             if (GlobalClientManager == null || reset)
             {
                 ServerConfiguration = InitializeConfig();
+                ServerConfiguration.SaveConfig();
                 GlobalClientManager = new ClientManager();
             }
         }
