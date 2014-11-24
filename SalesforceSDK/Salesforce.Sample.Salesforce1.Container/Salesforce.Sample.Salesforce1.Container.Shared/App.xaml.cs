@@ -33,6 +33,7 @@ using Salesforce.Sample.Salesforce1.Container.Settings;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Strings;
 
 namespace Salesforce.Sample.Salesforce1.Container
 {
@@ -48,6 +49,9 @@ namespace Salesforce.Sample.Salesforce1.Container
         public App()
         {
             InitializeComponent();
+
+            // Inject our own resources into SDK
+            LocalizedStrings.SetResourceLocation("MobileSDK");
         }
 
         /// <summary>
