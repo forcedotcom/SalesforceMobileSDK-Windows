@@ -108,7 +108,7 @@ namespace Salesforce.SDK.Source.Settings
 
         #endregion
 
-        public SalesforceConfig()
+        protected SalesforceConfig()
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             var configJson = settings.Values[ConfigSettings] as string;
@@ -190,7 +190,16 @@ namespace Salesforce.SDK.Source.Settings
             var configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
-            return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+            }
+            catch (Exception)
+            {
+                // couldn't decrypt config...
+                settings.Values[ConfigSettings] = String.Empty;
+                return null;
+            }
         }
     }
 }
