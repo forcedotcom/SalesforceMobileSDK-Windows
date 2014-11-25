@@ -123,6 +123,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             {
                 _title = value;
                 OnPropertyChanged();
+                OnPropertyChanged("TitleDept");
             }
             get { return _title; }
         }
@@ -151,6 +152,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             {
                 _department = value;
                 OnPropertyChanged();
+                OnPropertyChanged("TitleDept");
             }
             get { return _department; }
         }
