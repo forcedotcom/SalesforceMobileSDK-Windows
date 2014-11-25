@@ -55,7 +55,7 @@
                 <StackPanel>
                     <Border Background="LightSkyBlue">
                         <TextBox x:Name="ContactNameBox" Text="{Binding Name}" Foreground="Black" Height="30"
-                             PlaceholderText="Contact Name" Background="Transparent" BorderThickness="0" />
+                             PlaceholderText="Contact Name (First and Last)" Background="Transparent" BorderThickness="0" />
                     </Border>
                     <Border Background="DeepSkyBlue">
                         <TextBox x:Name="TitleBox" Text="{Binding TitleDept}" Foreground="Black" PlaceholderText="Title"

@@ -17,7 +17,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
                 }
                 if (base.Contains(item))
                 {
-                    Remove(item);
+                    var dupes = (from i in Items where i.Equals(item) select i).ToList();
+                    foreach (var n in dupes)
+                    {
+                        Remove(n);
+                    }
                 }
                 index = Compare(item, 0, this.Count - 1);
 
