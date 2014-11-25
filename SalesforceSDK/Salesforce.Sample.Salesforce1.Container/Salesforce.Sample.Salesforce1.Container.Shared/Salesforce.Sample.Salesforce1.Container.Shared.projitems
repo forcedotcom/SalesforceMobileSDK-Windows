@@ -31,4 +31,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\en\MobileSDK.resw" />
+    <PRIResource Include="$(MSBuildThisFileDirectory)Strings\es\MobileSDK.resw" />
+  </ItemGroup>
 </Project>

@@ -33,6 +33,48 @@ namespace Salesforce.SDK.Strings
 {
     public class LocalizedStrings : IValueConverter
     {
+        private static string _customResourcesLocation = string.Empty;
+        private static bool _useCustomResources = false;
+
+        //Lazy initialize these ResourceLoader objects because they can only be initialized
+        //on UI thread. If someone calls any of our static methods these will get initialized
+        //if they aren't lazy.
+        private static readonly Lazy<ResourceLoader> SdkResourceLoader =
+            new Lazy<ResourceLoader>(() => ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources"));
+        private static readonly Lazy<ResourceLoader> CustomResourceLoader =
+            new Lazy<ResourceLoader>(() => ResourceLoader.GetForCurrentView(_customResourcesLocation));
+
+        public static string GetString(string resourceName)
+        {
+            if (_useCustomResources)
+            {
+                var returnString = CustomResourceLoader.Value.GetString(resourceName);
+
+                // only use custom string if it was defined, otherwise fall through to SDK default english string
+                if (!string.IsNullOrWhiteSpace(returnString))
+                {
+                    return returnString;
+                }
+            }
+
+            return SdkResourceLoader.Value.GetString(resourceName);
+        }
+
+        /// <summary>
+        /// Sets the location for resource files. If you are consuming this SDK and you want to localize
+        /// strings that are used in this SDK then you can use this method to point to your own RESW files.
+        /// You can see the label names by looking at the en-us/resources.resw file.  See the
+        /// Salesforce.Salesforce1.Container sample to see how this can be used.
+        /// </summary>
+        /// <param name="resourceLocation">The path to the resource file, of pattern '[assembly name no extension]/[resource file name]'.</param>
+        public static void SetResourceLocation(string resourceLocation)
+        {
+            _customResourcesLocation = resourceLocation;
+            _useCustomResources = true;
+        }
+
+        #region IValueConverter Implementation
+
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             return GetString(value as string);
@@ -43,10 +85,6 @@ namespace Salesforce.SDK.Strings
             throw new NotImplementedException();
         }
 
-        public static string GetString(string resourceName)
-        {
-            ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
-            return loader.GetString(resourceName);
-        }
+        #endregion //IValueConverter Implementation
     }
 }
