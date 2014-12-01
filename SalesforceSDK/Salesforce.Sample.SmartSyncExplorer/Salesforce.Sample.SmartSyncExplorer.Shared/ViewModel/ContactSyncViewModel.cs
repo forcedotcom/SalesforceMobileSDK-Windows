@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -70,7 +71,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private SortedObservableCollection<ContactObject> _contacts;
         private string _filter;
         private SortedObservableCollection<ContactObject> _filteredContacts;
-        private SortedObservableCollection<string> _indexReference;
+        private ObservableCollection<string> _indexReference;
 
         public ContactSyncViewModel()
         {
@@ -81,7 +82,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             _syncManager = SyncManager.GetInstance(account);
             Contacts = new SortedObservableCollection<ContactObject>();
             FilteredContacts = new SortedObservableCollection<ContactObject>();
-            IndexReference = new SortedObservableCollection<string>();
+            IndexReference = new ObservableCollection<string>();
         }
 
         public SortedObservableCollection<ContactObject> Contacts
@@ -94,7 +95,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
         }
 
-        public SortedObservableCollection<string> IndexReference
+        public ObservableCollection<string> IndexReference
         {
             get { return _indexReference; }
             private set
@@ -186,7 +187,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                 JObject item = returned.Count > 0 ? returned[0].ToObject<JObject>() : new JObject();
                 item[ContactObject.FirstNameField] = contact.FirstName;
                 item[ContactObject.LastNameField] = contact.LastName;
-                item[Constants.NameField] = contact.FirstName + contact.LastName;
+                item[Constants.NameField] = contact.ContactName;
                 item[ContactObject.TitleField] = contact.Title;
                 item[ContactObject.DepartmentField] = contact.Department;
                 item[ContactObject.PhoneField] = contact.Phone;
@@ -307,8 +308,9 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             ContactObject[] contacts = (from contact in results
                 let model = new ContactObject(contact.Value<JObject>())
                 select model).ToArray();
-            var references = (from contact in contacts let first = contact.ContactName[0].ToString().ToLower() group contact by first into g select g.Key).ToArray();
+            var references = (from contact in contacts let first = contact.ContactName[0].ToString().ToLower() group contact by first into g orderby g.Key select g.Key).ToArray();
             await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Clear());
+            await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Add("all"));
             for (int i = 0, max = references.Length; i < max; i++)
             {
                 var closure = i;

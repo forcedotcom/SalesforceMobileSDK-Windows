@@ -1,7 +1,9 @@
-﻿using Windows.UI.Xaml;
+﻿using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+using Microsoft.VisualBasic.CompilerServices;
 using Salesforce.Sample.SmartSyncExplorer.Shared.Pages;
 
 namespace Salesforce.Sample.SmartSyncExplorer.Controls
@@ -25,7 +27,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.Controls
         private void ReferenceClick(object sender, RoutedEventArgs e)
         {
             MainPage.ContactsDataModel.FilterUsesContains = false;
-            MainPage.ContactsDataModel.Filter = ReferenceName.Text.Trim();
+            var searchText = ReferenceName.Text.Trim();
+            MainPage.ContactsDataModel.Filter = "all".Equals(searchText, StringComparison.CurrentCultureIgnoreCase) ? String.Empty : searchText;
             MainPage.MainPageReference.ZoomIn();
             MainPage.ContactsDataModel.RunFilter();
         }
