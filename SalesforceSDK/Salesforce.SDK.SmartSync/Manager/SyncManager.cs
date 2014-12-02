@@ -93,7 +93,11 @@ namespace Salesforce.SDK.SmartSync.Manager
                 SyncManager instance = null;
                 if (_instances != null)
                 {
-                    if (_instances.TryGetValue(uniqueId, out instance)) return instance;
+                    if (_instances.TryGetValue(uniqueId, out instance))
+                    {
+                        SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
+                        return instance;
+                    }
                     instance = new SyncManager(account, communityId);
                     _instances.Add(uniqueId, instance);
                 }
@@ -103,6 +107,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     instance = new SyncManager(account, communityId);
                     _instances.Add(uniqueId, instance);
                 }
+                SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
                 return instance;
             }
         }
@@ -176,20 +181,18 @@ namespace Salesforce.SDK.SmartSync.Manager
             return sync;
         }
 
-        private void RunSync(SyncState sync, Action<SyncState> callback)
+        private async void RunSync(SyncState sync, Action<SyncState> callback)
         {
             UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, -1 /* don't change */, callback);
-            Task.Run(() =>
-            {
-                try
+           try
                 {
                     switch (sync.SyncType)
                     {
                         case SyncState.SyncTypes.SyncDown:
-                            SyncDown(sync, callback);
+                            await SyncDown(sync, callback);
                             break;
                         case SyncState.SyncTypes.SyncUp:
-                            SyncUp(sync, callback);
+                            await SyncUp(sync, callback);
                             break;
                     }
                     UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, -1 /* don't change */, callback);
@@ -199,17 +202,18 @@ namespace Salesforce.SDK.SmartSync.Manager
                     Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
                     UpdateSync(sync, SyncState.SyncStatusTypes.Failed, -1 /* don't change */, -1 /* don't change */, callback);
                 }
-            });
         }
 
-        private async void SyncUp(SyncState sync, Action<SyncState> callback)
+        private async Task<int> SyncUp(SyncState sync, Action<SyncState> callback)
         {
             if (sync == null)
                 throw new SmartStoreException("SyncState sync was null");
             QuerySpec querySpec = QuerySpec.BuildExactQuerySpec(sync.SoupName, Local, "True", 2000);
             JArray records = _smartStore.Query(querySpec, 0);
             int totalSize = records.Count;
+            int progress = 0;
             UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
+            _smartStore.Database.BeginTransaction();
             for (int i = 0; i < totalSize; i++)
             {
                 var record = records[i].Value<JObject>();
@@ -278,7 +282,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     if (SyncAction.Delete == action)
                     {
                         _smartStore.Delete(sync.SoupName,
-                            new[] {record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId)}, true);
+                            new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, false);
                     }
                     else
                     {
@@ -291,31 +295,34 @@ namespace Salesforce.SDK.SmartSync.Manager
                             new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, false);
                 }
 
-                int progress = (i + 1)*100/totalSize;
+                progress = (i + 1)*100/totalSize;
                 if (progress < 100)
                 {
                     UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, -1 /* don't change */, callback);
                 }
             }
+            _smartStore.Database.CommitTransaction();
+            return progress;
         }
 
-        private void SyncDown(SyncState sync, Action<SyncState> callback)
+        private async Task<bool> SyncDown(SyncState sync, Action<SyncState> callback)
         {
             switch (sync.Target.QueryType)
             {
                 case SyncTarget.QueryTypes.Mru:
-                    SyncDownMru(sync, callback);
+                    await SyncDownMru(sync, callback);
                     break;
                 case SyncTarget.QueryTypes.Soql:
-                    SyncDownSoql(sync, callback);
+                    await SyncDownSoql(sync, callback);
                     break;
                 case SyncTarget.QueryTypes.Sosl:
-                    SyncDownSosl(sync, callback);
+                    await SyncDownSosl(sync, callback);
                     break;
             }
+            return true;
         }
 
-        private async void SyncDownMru(SyncState sync, Action<SyncState> callback)
+        private async Task<int> SyncDownMru(SyncState sync, Action<SyncState> callback)
         {
             SyncTarget target = sync.Target;
             // Get recent items ids from server
@@ -344,9 +351,10 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 SaveRecordsToSmartStore(sync.SoupName, records);
             }
+            return totalSize;
         }
 
-        private async void SyncDownSoql(SyncState sync, Action<SyncState> callback)
+        private async Task<bool> SyncDownSoql(SyncState sync, Action<SyncState> callback)
         {
             string soupName = sync.SoupName;
             SyncTarget target = sync.Target;
@@ -362,7 +370,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             catch (Exception)
             {
                 UpdateSync(sync, SyncState.SyncStatusTypes.Failed, 0, -1, callback);
-                return;
+                return false;
             }
             JObject responseJson = response.AsJObject;
 
@@ -390,9 +398,10 @@ namespace Salesforce.SDK.SmartSync.Manager
                     ? null
                     : _restClient.SendAsync(HttpMethod.Get, nextRecordsUrl).Result.AsJObject;
             } while (responseJson != null);
+            return true;
         }
 
-        private async void SyncDownSosl(SyncState sync, Action<SyncState> callback)
+        private async Task<int> SyncDownSosl(SyncState sync, Action<SyncState> callback)
         {
             SyncTarget target = sync.Target;
             RestRequest request = RestRequest.GetRequestForSearch(_apiVersion, target.Query);
@@ -410,6 +419,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 SaveRecordsToSmartStore(sync.SoupName, records);
             }
+            return totalSize;
         }
 
         private static List<T> Pluck<T>(IEnumerable<JToken> jArray, string key)

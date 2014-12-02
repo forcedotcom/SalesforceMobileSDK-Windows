@@ -81,7 +81,8 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return _vault.FindAllByResource(resource);
+                var list = _vault.RetrieveAll();
+                return (from item in list where resource.Equals(item.Resource) select item);
             }
             catch (Exception)
             {
@@ -94,7 +95,12 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return _vault.Retrieve(resource, userName);
+                var list = SafeRetrieveResource(resource);
+                var passwordCredentials = list as IList<PasswordCredential> ?? list.ToList();
+                if (passwordCredentials.Any())
+                {
+                    return passwordCredentials.FirstOrDefault(n => userName.Equals(n.UserName));
+                }
             }
             catch (Exception)
             {

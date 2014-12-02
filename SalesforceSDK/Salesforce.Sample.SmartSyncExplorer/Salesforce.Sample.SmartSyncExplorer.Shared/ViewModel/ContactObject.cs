@@ -100,6 +100,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             {
                 _firstName = value;
                 OnPropertyChanged();
+                OnPropertyChanged("ContactName");
             }
             get { return _firstName; }
         }
@@ -110,6 +111,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             {
                 _lastName = value;
                 OnPropertyChanged();
+                OnPropertyChanged("ContactName");
             }
             get
             {
@@ -219,7 +221,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
             ObjectId = data.ExtractValue<string>(Constants.Id);
             FirstName = data.ExtractValue<string>(FirstNameField);
             LastName = data.ExtractValue<string>(LastNameField);
-            Name = FirstName + " " + LastName;
+            ContactName = data.ExtractValue<string>(Constants.NameField);
+            if (String.IsNullOrEmpty(ContactName))
+            {
+                ContactName = (FirstName + " " + LastName).Trim();
+            }
             UpdatedOrCreated =
                 data.ExtractValue<bool>(SyncManager.LocallyUpdated) ||
                 data.ExtractValue<bool>(SyncManager.LocallyCreated);

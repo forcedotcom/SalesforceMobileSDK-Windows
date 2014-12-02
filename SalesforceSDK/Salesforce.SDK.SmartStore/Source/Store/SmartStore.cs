@@ -751,7 +751,7 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             lock (smartlock)
             {
-                return Upsert(soupName, soupElt, externalIdPath, true);
+                return Upsert(soupName, soupElt, externalIdPath, false);
             }
         }
 
