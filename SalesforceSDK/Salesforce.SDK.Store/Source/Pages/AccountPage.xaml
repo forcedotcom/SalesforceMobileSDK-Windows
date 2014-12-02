@@ -52,6 +52,7 @@
                 <StackPanel Margin="5 0 5 15">
                     <TextBox x:Name="HostAddress"
                              MaxLength="2048"
+                             InputScope="Url"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>
                             <DataTemplate>
