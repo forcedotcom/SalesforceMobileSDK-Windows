@@ -35,6 +35,13 @@ namespace Salesforce.SDK.Utilities
     {
         private static readonly Regex QUERY_PARAMS = new Regex(@"[?|&](\w+)=([^?|^&]+)");
 
+        /// <summary>
+        /// Parses out parameters from a query string.
+        /// </summary>
+        /// <remarks>If the query string does not start with a '?' or '&' then the
+        /// first parameter will get skipped so make sure your query string starts with '?'.</remarks>
+        /// <param name="queryString">The query string to parse.</param>
+        /// <returns>A dictionary of parameter names and values.</returns>
         public static Dictionary<string, string> ParseQueryString(this string queryString)
         {
             Match match = QUERY_PARAMS.Match(queryString);
