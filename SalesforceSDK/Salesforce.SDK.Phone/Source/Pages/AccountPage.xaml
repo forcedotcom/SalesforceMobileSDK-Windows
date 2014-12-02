@@ -47,6 +47,7 @@
                     <TextBox x:Name="HostAddress"
                              DataContext="address"
                              MaxLength="2048"
+                             InputScope="Url"
                              PlaceholderText="{Binding Converter={StaticResource Localize}}"
                              HorizontalAlignment="Stretch">
                         <TextBox.HeaderTemplate>

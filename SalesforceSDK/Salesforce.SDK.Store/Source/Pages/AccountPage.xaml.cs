@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
@@ -201,8 +202,23 @@ namespace Salesforce.SDK.Source.Pages
             var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
-            WebAuthenticationResult webAuthenticationResult =
-                await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+            WebAuthenticationResult webAuthenticationResult;
+
+            try
+            {
+                webAuthenticationResult =
+                    await
+                        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+            }
+            // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
+            // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
+            // should just swallow that exception
+            catch (FileNotFoundException fex)
+            {
+                SetupAccountPage();
+                return;
+            }
+
             if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webAuthenticationResult.ResponseData);
