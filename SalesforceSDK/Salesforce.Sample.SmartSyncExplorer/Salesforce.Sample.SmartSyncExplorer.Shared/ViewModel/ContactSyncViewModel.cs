@@ -154,6 +154,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
 
         public void SyncUpContacts()
         {
+            RegisterSoup();
             SyncOptions options = SyncOptions.OptionsForSyncUp(ContactObject.ContactFields.ToList());
             _syncManager.SyncUp(options, ContactSoup, HandleSyncUpdate);
         }

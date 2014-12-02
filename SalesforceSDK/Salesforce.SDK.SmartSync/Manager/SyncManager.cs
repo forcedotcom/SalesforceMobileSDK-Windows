@@ -93,7 +93,11 @@ namespace Salesforce.SDK.SmartSync.Manager
                 SyncManager instance = null;
                 if (_instances != null)
                 {
-                    if (_instances.TryGetValue(uniqueId, out instance)) return instance;
+                    if (_instances.TryGetValue(uniqueId, out instance))
+                    {
+                        SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
+                        return instance;
+                    }
                     instance = new SyncManager(account, communityId);
                     _instances.Add(uniqueId, instance);
                 }
@@ -103,6 +107,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     instance = new SyncManager(account, communityId);
                     _instances.Add(uniqueId, instance);
                 }
+                SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
                 return instance;
             }
         }
