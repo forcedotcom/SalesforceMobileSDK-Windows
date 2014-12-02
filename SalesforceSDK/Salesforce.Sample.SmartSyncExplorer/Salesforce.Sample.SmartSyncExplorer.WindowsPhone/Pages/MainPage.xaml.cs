@@ -57,7 +57,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         public static MainPage MainPageReference { private set; get; }
         private bool _firstSync;
 
-        protected async override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Account account = AccountManager.GetAccount();
             MainPageReference = this;
@@ -66,8 +66,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             if (account != null)
             {
                 ContactsDataModel = new ContactSyncViewModel();
-                ContactsDataModel.SyncDownContacts();
                 ContactsDataModel.ContactsSynced += ContactsDataModel_ContactsSynced;
+                ContactsDataModel.LoadDataFromSmartStore();
                 ContactsTable.ItemsSource = ContactsDataModel.Contacts;
                 IndexTable.ItemsSource = ContactsDataModel.IndexReference;
                 ContactsDataModel.Filter = String.Empty;

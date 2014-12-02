@@ -27,12 +27,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
 using Salesforce.SDK.Utilities;
+using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
 
 namespace Salesforce.SDK.Net
 {
@@ -110,8 +112,12 @@ namespace Salesforce.SDK.Net
         {
             var httpBaseFilter = new HttpBaseProtocolFilter
             {
-                AllowUI = false
+                AllowUI = false,
+                AllowAutoRedirect = true,
+                AutomaticDecompression = true
             };
+            httpBaseFilter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
+            httpBaseFilter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache;
             WebClient = new HttpClient(httpBaseFilter);
             Method = method;
             Headers = headers;
@@ -271,17 +277,15 @@ namespace Salesforce.SDK.Net
             // Setting header
             if (Headers != null)
             {
-                HttpRequestHeaderCollection headers = req.Headers;
                 if (Headers.Authorization != null)
                 {
-                    headers.Authorization = Headers.Authorization;
+                    req.Headers.Authorization = Headers.Authorization;
                 }
                 foreach (var item in Headers.Headers)
                 {
-                    headers[item.Key] = item.Value;
+                    req.Headers[item.Key] = item.Value;
                 }
             }
-
             if (!String.IsNullOrWhiteSpace(RequestBody))
             {
                 switch (ContentType)

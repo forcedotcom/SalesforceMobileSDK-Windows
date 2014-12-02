@@ -213,6 +213,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             int totalSize = records.Count;
             int progress = 0;
             UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
+            _smartStore.Database.BeginTransaction();
             for (int i = 0; i < totalSize; i++)
             {
                 var record = records[i].Value<JObject>();
@@ -281,7 +282,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     if (SyncAction.Delete == action)
                     {
                         _smartStore.Delete(sync.SoupName,
-                            new[] {record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId)}, true);
+                            new[] { record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId) }, false);
                     }
                     else
                     {
@@ -300,6 +301,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, -1 /* don't change */, callback);
                 }
             }
+            _smartStore.Database.CommitTransaction();
             return progress;
         }
 

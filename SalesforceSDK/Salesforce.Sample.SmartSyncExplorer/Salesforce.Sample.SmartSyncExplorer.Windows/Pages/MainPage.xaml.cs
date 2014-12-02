@@ -68,7 +68,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             if (account != null)
             {
                 ContactsDataModel = new ContactSyncViewModel();
-                ContactsDataModel.SyncDownContacts();
+                ContactsDataModel.ContactsSynced += ContactsDataModel_ContactsSynced;
+                ContactsDataModel.LoadDataFromSmartStore();
                 ContactsTable.ItemsSource = ContactsDataModel.Contacts;
                 IndexTable.ItemsSource = ContactsDataModel.IndexReference;
                 ContactsDataModel.Filter = String.Empty;
@@ -76,6 +77,15 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             else
             {
                 base.OnNavigatedTo(e);
+            }
+        }
+
+        void ContactsDataModel_ContactsSynced(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (_firstSync && ContactsDataModel.Contacts.Count == 0)
+            {
+                _firstSync = false;
+                ContactsDataModel.SyncDownContacts();
             }
         }
 

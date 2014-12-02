@@ -191,7 +191,7 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <param name="store"></param>
         public void Save(SmartStore.Store.SmartStore store)
         {
-            store.Update(Constants.SyncsSoup, AsJson(), Id, true);
+            store.Update(Constants.SyncsSoup, AsJson(), Id, false);
         }
     }
 }

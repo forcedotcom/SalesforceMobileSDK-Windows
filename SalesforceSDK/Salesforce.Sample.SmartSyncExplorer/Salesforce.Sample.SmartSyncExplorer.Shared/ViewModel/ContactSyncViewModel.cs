@@ -159,7 +159,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             _syncManager.SyncUp(options, ContactSoup, HandleSyncUpdate);
         }
 
-        public void DeleteObject(ContactObject contact)
+        public async void DeleteObject(ContactObject contact)
         {
             if (contact == null) return;
             try
@@ -170,7 +170,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                 item[SyncManager.LocallyDeleted] = true;
                 _store.Upsert(ContactSoup, item);
                 contact.Deleted = true;
-                UpdateContact(contact);
+                await UpdateContact(contact);
             }
             catch (Exception)
             {
@@ -178,7 +178,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
         }
 
-        public void SaveContact(ContactObject contact, bool isCreated)
+        public async void SaveContact(ContactObject contact, bool isCreated)
         {
             if (contact == null) return;
             try
@@ -212,7 +212,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                     _store.Upsert(ContactSoup, item);
                 }
                 contact.UpdatedOrCreated = true;
-                UpdateContact(contact);
+                await UpdateContact(contact);
             }
             catch (Exception)
             {
@@ -220,19 +220,17 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             }
         }
 
-        private async void UpdateContact(ContactObject obj)
+        private async Task<bool> UpdateContact(ContactObject obj)
         {
-            if (obj == null) return;
+            if (obj == null) return false;
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
             //await Task.Delay(10).ContinueWith(async a => await RemoveContact(obj));
-            await Task.Delay(10).ContinueWith(a =>
+            await core.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                core.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    Contacts.Add(obj);
-                    OnPropertyChanged("Contacts");
-                });
+                Contacts.Add(obj);
+                OnPropertyChanged("Contacts");
             });
+            return true;
         }
 
         private async Task<bool> RemoveContact(ContactObject obj)
@@ -292,20 +290,35 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                     update.UpdatedOrCreated = false;
                     update.Deleted = false;
                 });
-                UpdateContact(update);
+                await UpdateContact(update);
             }
         }
 
-        private async void LoadDataFromSmartStore()
+        private void NotifyContactsSynced()
+        {
+            if (ContactsSynced != null)
+                {
+                    ContactsSynced(this, new PropertyChangedEventArgs("Contacts"));
+                }
+        }
+
+        public async void LoadDataFromSmartStore()
         {
             if (!_store.HasSoup(ContactSoup))
+            {
+                NotifyContactsSynced();
                 return;
+            }
             QuerySpec querySpec = QuerySpec.BuildAllQuerySpec(ContactSoup, ContactObject.LastNameField,
                 QuerySpec.SqlOrder.ASC,
                 Limit);
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
             JArray results = _store.Query(querySpec, 0);
-            if (results == null) return;
+            if (results == null)
+            {
+                NotifyContactsSynced(); 
+                return;
+            }
             ContactObject[] contacts = (from contact in results
                 let model = new ContactObject(contact.Value<JObject>())
                 select model).ToArray();
@@ -320,12 +333,9 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
             for (int i = 0, max = contacts.Length; i < max; i++)
             {
                 ContactObject t = contacts[i];
-                UpdateContact(t);
+                await UpdateContact(t);
             }
-            if (ContactsSynced != null)
-            {
-                ContactsSynced(this, new PropertyChangedEventArgs("Contacts"));
-            }
+            NotifyContactsSynced();
             await core.RunAsync(CoreDispatcherPriority.Normal, () => MainPage.MainPageReference.UpdateTable());
         }
 
