@@ -34,5 +34,9 @@ namespace Salesforce.SDK.SmartStore.Store
         public SmartStoreException(string message) : base(message)
         {
         }
+
+        public SmartStoreException(string message, Exception inner) : base(message, inner)
+        {         
+        }
     }
 }

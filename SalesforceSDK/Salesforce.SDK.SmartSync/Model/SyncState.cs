@@ -29,6 +29,7 @@ using System;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartStore.Store;
 using Salesforce.SDK.SmartSync.Util;
+using SQLitePCL;
 
 namespace Salesforce.SDK.SmartSync.Model
 {
@@ -191,7 +192,16 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <param name="store"></param>
         public void Save(SmartStore.Store.SmartStore store)
         {
-            store.Update(Constants.SyncsSoup, AsJson(), Id, false);
+            try
+            {
+                store.Update(Constants.SyncsSoup, AsJson(), Id, false);
+            }
+            catch (SQLiteException sqe)
+            {
+                var se = new SmartStoreException("SqliteError occurred ", sqe);
+                throw se;
+            }
+
         }
     }
 }
