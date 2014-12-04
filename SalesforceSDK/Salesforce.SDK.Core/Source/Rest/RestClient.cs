@@ -101,7 +101,7 @@ namespace Salesforce.SDK.Rest
             {
                 if (retryInvalidToken && _accessTokenProvider != null)
                 {
-                    string newAccessToken = _accessTokenProvider().Result;
+                    string newAccessToken = await _accessTokenProvider();
                     if (newAccessToken != null)
                     {
                         _accessToken = newAccessToken;

@@ -153,13 +153,13 @@ namespace Salesforce.SDK.Source.Settings
         ///     in the account creation UI.  If there is only a single server, and new connections is disabled, add account will
         ///     immediately go to oauth.
         /// </summary>
-        protected void SetupServers()
+        protected async void SetupServers()
         {
             String xml;
             try
             {
                 Task<String> task = Task.Run(() => ConfigHelper.ReadFileFromApplication(ServerFilePath));
-                xml = task.Result;
+                xml = await task;
             }
             catch (Exception)
             {

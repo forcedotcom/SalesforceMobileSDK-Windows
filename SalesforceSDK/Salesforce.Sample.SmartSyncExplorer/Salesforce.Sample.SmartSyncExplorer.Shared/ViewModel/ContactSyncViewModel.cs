@@ -50,7 +50,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
     public sealed class ContactSyncViewModel : INotifyPropertyChanged
     {
         public const string ContactSoup = "contacts";
-        public const int Limit = 1000;
+        public const int Limit = 4000;
         private static readonly object _syncLock = new object();
         public event PropertyChangedEventHandler ContactsSynced;
 

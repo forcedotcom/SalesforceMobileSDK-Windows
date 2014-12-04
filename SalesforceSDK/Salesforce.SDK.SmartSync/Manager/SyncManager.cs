@@ -394,9 +394,15 @@ namespace Salesforce.SDK.SmartSync.Manager
 
                 // Fetch next records if any
                 var nextRecordsUrl = responseJson.ExtractValue<string>(Constants.NextRecordsUrl);
-                responseJson = String.IsNullOrWhiteSpace(nextRecordsUrl)
-                    ? null
-                    : _restClient.SendAsync(HttpMethod.Get, nextRecordsUrl).Result.AsJObject;
+                responseJson = null;
+                if (!String.IsNullOrWhiteSpace(nextRecordsUrl))
+                {
+                    var result = await _restClient.SendAsync(HttpMethod.Get, nextRecordsUrl);
+                    if (result != null)
+                    {
+                        responseJson = result.AsJObject;
+                    }
+                }
             } while (responseJson != null);
             return true;
         }
@@ -448,7 +454,15 @@ namespace Salesforce.SDK.SmartSync.Manager
             sync.Status = status;
             if (progress != -1) sync.Progress = progress;
             if (totalSize != -1) sync.TotalSize = totalSize;
-            sync.Save(_smartStore);
+            try
+            {
+                sync.Save(_smartStore);
+            }
+            catch (SmartStoreException)
+            {    
+                sync.Status = SyncState.SyncStatusTypes.Failed;
+            }
+
             if (callback == null) return;
             callback(sync);
         }
