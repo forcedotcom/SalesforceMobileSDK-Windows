@@ -272,7 +272,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 {
                     if (SyncAction.Create == action)
                     {
-                        record[Constants.Id] = response.AsJObject[Constants.Id];
+                        record[Constants.Id] = response.AsJObject[SmartStore.Store.SmartStore.IdCol].Value<string>();
                     }
                     record[Local] = false;
                     record[LocallyCreated] = false;
@@ -286,7 +286,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     }
                     else
                     {
-                        _smartStore.Update(sync.SoupName, record, record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId), false);
+                        _smartStore.Update(sync.SoupName, record, record[SmartStore.Store.SmartStore.SoupEntryId].Value<long>(), false);
                     }
                 }
                 else if (HttpStatusCode.NotFound == response.StatusCode)

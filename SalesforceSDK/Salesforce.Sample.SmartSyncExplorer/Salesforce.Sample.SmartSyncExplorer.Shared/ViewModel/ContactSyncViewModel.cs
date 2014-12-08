@@ -222,9 +222,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
 
         private async Task<bool> UpdateContact(ContactObject obj)
         {
-            if (obj == null) return false;
+            if (obj == null || String.IsNullOrWhiteSpace(obj.ObjectId)) return false;
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            //await Task.Delay(10).ContinueWith(async a => await RemoveContact(obj));
             await core.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Contacts.Add(obj);
@@ -262,7 +261,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                     SyncDownContacts();
                     break;
                 case SyncState.SyncTypes.SyncDown:
-                    LoadDataFromSmartStore();
+                    LoadDataFromSmartStore(false);
                     break;
             }
         }
@@ -270,11 +269,11 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private async void RemoveDeleted()
         {
             CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
-            List<ContactObject> todelete = Contacts.Select(n => n).Where(n => n.Deleted).ToList();
-            for (int index = 0; index < todelete.Count; index++)
+            List<ContactObject> todelete = Contacts.Select(n => n).Where(n => n.IsLocallyModified || n.ObjectId.Contains("local")).ToList();
+            foreach (var delete in todelete)
             {
-                ContactObject delete = todelete[index];
-                await Task.Delay(10).ContinueWith(async a => { await RemoveContact(delete); });
+                ContactObject delete1 = delete;
+                await Task.Delay(10).ContinueWith(async a => await RemoveContact(delete1));
             }
         }
 
@@ -302,7 +301,12 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                 }
         }
 
-        public async void LoadDataFromSmartStore()
+        public void LoadDataFromSmartStore()
+        {
+            LoadDataFromSmartStore(true);
+        }
+
+        public async void LoadDataFromSmartStore(bool includeEdit)
         {
             if (!_store.HasSoup(ContactSoup))
             {
@@ -319,9 +323,22 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                 NotifyContactsSynced(); 
                 return;
             }
-            ContactObject[] contacts = (from contact in results
-                let model = new ContactObject(contact.Value<JObject>())
-                select model).ToArray();
+            ContactObject[] contacts;
+
+            if (includeEdit)
+            {
+                contacts = (from contact in results
+                    let model = new ContactObject(contact.Value<JObject>())
+                    select model).ToArray();
+            }
+            else
+            {
+                contacts = (from contact in results
+                            let model = new ContactObject(contact.Value<JObject>())
+                            where !model.ObjectId.Contains("local")
+                            orderby model.ContactName
+                            select model).ToArray();
+            }
             var references = (from contact in contacts let first = contact.ContactName[0].ToString().ToLower() group contact by first into g orderby g.Key select g.Key).ToArray();
             await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Clear());
             await core.RunAsync(CoreDispatcherPriority.Normal, () => IndexReference.Add("all"));
