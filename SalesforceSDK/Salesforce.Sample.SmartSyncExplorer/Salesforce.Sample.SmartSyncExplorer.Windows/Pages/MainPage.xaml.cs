@@ -26,6 +26,7 @@
  */
 
 using System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -75,6 +76,13 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             {
                 base.OnNavigatedTo(e);
             }
+            TitleBlock.Loaded += TitleBlock_Loaded;
+        }
+
+        void TitleBlock_Loaded(object sender, RoutedEventArgs e)
+        {
+            TitleBlock.Loaded -= TitleBlock_Loaded;
+            DisplayProgressFlyout("Loading Contacts...");
         }
 
         void ContactsDataModel_ContactsSynced(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -83,6 +91,10 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
             {
                 _firstSync = false;
                 ContactsDataModel.SyncDownContacts();
+            }
+            else
+            {
+                MessageFlyout.Hide();
             }
         }
 
@@ -100,7 +112,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         private void DisplayProgressFlyout(string text)
         {
             MessageContent.Text = text;
-            MessageFlyout.ShowAt(ContactsTable);
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => MessageFlyout.ShowAt(TitleBlock));
         }
 
         public void ZoomIn()
@@ -123,6 +135,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
 
         private void Synchronize(object sender, RoutedEventArgs e)
         {
+            DisplayProgressFlyout("Synchronizing Data...");
             try
             {
                 ContactsDataModel.SyncUpContacts();

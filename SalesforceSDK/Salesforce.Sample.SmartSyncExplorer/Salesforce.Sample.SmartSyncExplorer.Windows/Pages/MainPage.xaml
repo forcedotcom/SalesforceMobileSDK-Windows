@@ -11,12 +11,19 @@
     <UserControl.Resources>
         <sfdcStrings:LocalizedStrings x:Key="Localize" />
         <Flyout x:Name="MessageFlyout"
-                Placement="Bottom">
-            <StackPanel HorizontalAlignment="Stretch">
+                Placement="Full">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType="FlyoutPresenter">
+                    <Setter Property="ScrollViewer.ZoomMode" Value="Enabled"/>
+                    <Setter Property="MinHeight" Value="100"/>
+                    <Setter Property="MinWidth" Value="600"/>
+                    <Setter Property="MaxHeight" Value="100"/>
+                    <Setter Property="MaxWidth" Value="600"/>
+                </Style>
+                </Flyout.FlyoutPresenterStyle>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock x:Name="MessageContent"
-                           Grid.Row="1"
                            Margin="5 0 5 15"
-                           HorizontalAlignment="Stretch"
                            TextWrapping="Wrap"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" />
