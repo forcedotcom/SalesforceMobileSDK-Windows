@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
@@ -139,6 +140,7 @@ namespace Salesforce.SDK.Source.Settings
                 }
                 else
                 {
+                    server.CanDelete = Visibility.Visible;
                     ServerList.Add(server);
                 }
                 SaveConfig();
@@ -179,7 +181,8 @@ namespace Salesforce.SDK.Source.Settings
                 select new ServerSetting
                 {
                     ServerName = (string) query.Attribute("name"),
-                    ServerHost = (string) query.Attribute("url")
+                    ServerHost = (string) query.Attribute("url"),
+                    CanDelete = Visibility.Collapsed
                 };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }

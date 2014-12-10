@@ -25,45 +25,47 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using Windows.UI.Xaml;
-using Newtonsoft.Json;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
-namespace Salesforce.SDK.Source.Settings
+namespace Salesforce.SDK.Native
 {
-    public class ServerSetting
+    public sealed partial class ServerControl : UserControl
     {
-        public const string HttpsScheme = "https://";
-        private string _serverHost;
-        private string _serverName;
 
-        [JsonProperty]
-        public string ServerName
+        public event RoutedEventHandler Delete;
+        public event RoutedEventHandler Click;
+
+        public ServerControl()
         {
-            set { _serverName = value.Trim(); }
-            get { return _serverName; }
+            this.InitializeComponent();
         }
 
-        [JsonProperty]
-        public string ServerHost
+        private void Clicked(object sender, RoutedEventArgs e)
         {
-            set
+            var args = e as TappedRoutedEventArgs;
+            if (args != null)
             {
-                _serverHost = value.Trim();
-                if (!Uri.IsWellFormedUriString(_serverHost, UriKind.Absolute))
-                {
-                    _serverHost = HttpsScheme + _serverHost;
-                }
+                args.Handled = true;
             }
-            get { return _serverHost; }
+            if (Click != null)
+            {
+                Click(this, e);
+            }
         }
 
-        [JsonProperty]
-        public Visibility CanDelete { set; get; }
-
-        public override string ToString()
+        private void DeleteClicked(object sender, RoutedEventArgs e)
         {
-            return ServerName + " - " + ServerHost;
+            var args = e as TappedRoutedEventArgs;
+            if (args != null)
+            {
+                args.Handled = true;
+            }
+            if (Delete != null)
+            {
+                Delete(this, e);
+            }
         }
     }
 }
