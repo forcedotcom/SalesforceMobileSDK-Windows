@@ -273,9 +273,15 @@ namespace Salesforce.SDK.Source.Pages
             StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
         }
 
-        private void ListboxServers_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClickServer(object sender, RoutedEventArgs e)
         {
             StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+        }
+
+        private void DeleteServer(object sender, RoutedEventArgs e)
+        {
+            SalesforceApplication.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
+            SalesforceApplication.ServerConfiguration.SaveConfig();
         }
 
         private void addAccount_Click(object sender, RoutedEventArgs e)

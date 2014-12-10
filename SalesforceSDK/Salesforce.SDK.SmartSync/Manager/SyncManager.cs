@@ -62,22 +62,12 @@ namespace Salesforce.SDK.SmartSync.Manager
         }
 
         /// <summary>
-        ///     Returns the instance of this class associated with this user.
-        /// </summary>
-        /// <param name="account"></param>
-        /// <returns></returns>
-        public static SyncManager GetInstance(Account account)
-        {
-            return GetInstance(account, null);
-        }
-
-        /// <summary>
         ///     Returns the instance of this class associated with this user and community.
         /// </summary>
         /// <param name="account"></param>
         /// <param name="communityId"></param>
         /// <returns></returns>
-        public static SyncManager GetInstance(Account account, string communityId)
+        public static SyncManager GetInstance(Account account, string communityId = null)
         {
             if (account == null)
             {
@@ -113,20 +103,11 @@ namespace Salesforce.SDK.SmartSync.Manager
         }
 
         /// <summary>
-        ///     Resets the Sync manager associated with this user.
-        /// </summary>
-        /// <param name="account"></param>
-        public static void Reset(Account account)
-        {
-            Reset(account, null);
-        }
-
-        /// <summary>
         ///     Resets the Sync manager associated with this user and community.
         /// </summary>
         /// <param name="account"></param>
         /// <param name="communityId"></param>
-        public static void Reset(Account account, string communityId)
+        public static void Reset(Account account, string communityId = null)
         {
             if (account == null)
             {

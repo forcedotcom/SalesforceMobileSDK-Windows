@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:strings="using:Salesforce.SDK.Strings"
+    xmlns:native="using:Salesforce.SDK.Native"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -22,8 +23,18 @@
 
                 <ListBox x:Name="ListboxServers"
                          SelectionMode="Single"
-                         Margin="5 0 5 25" 
-                         SelectionChanged="ListboxServers_OnSelectionChanged" />
+                         Margin="5 0 5 25">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <native:ServerControl Delete="DeleteServer" Click="ClickServer"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"
                             Width="Auto">
