@@ -61,11 +61,10 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
             get { return new string[] { "api", "web" }; }
         }
 
-        public override Color LoginBackgroundColor
+        public override Color? LoginBackgroundColor
         {
             get { return Colors.DarkSeaGreen; }
         }
-
 
         public override string ApplicationTitle
         {

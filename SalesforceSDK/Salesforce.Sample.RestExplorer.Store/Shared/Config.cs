@@ -50,7 +50,7 @@ namespace Salesforce.Sample.RestExplorer.Shared
             get { return new[] {"api"}; }
         }
 
-        public override Windows.UI.Color LoginBackgroundColor
+        public override Windows.UI.Color? LoginBackgroundColor
         {
             get { return Colors.DarkOrange; }
         }

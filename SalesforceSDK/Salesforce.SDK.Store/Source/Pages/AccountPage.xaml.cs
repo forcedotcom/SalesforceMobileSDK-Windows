@@ -31,6 +31,7 @@ using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -113,10 +114,28 @@ namespace Salesforce.SDK.Source.Pages
                     ApplicationLogo.Margin = padding;
                 }
             }
-            var background = new SolidColorBrush(config.LoginBackgroundColor);
-            PageRoot.Background = background;
-            // ServerFlyoutPanel.Background = background;
-            //  AddServerFlyoutPanel.Background = background;
+
+            // set background from config
+            if (config.LoginBackgroundColor != null)
+            {
+                var background = new SolidColorBrush((Color) config.LoginBackgroundColor);
+                PageRoot.Background = background;
+                // ServerFlyoutPanel.Background = background;
+                //  AddServerFlyoutPanel.Background = background;
+            }
+
+            // set foreground from config
+            if (config.LoginForegroundColor != null)
+            {
+                var foreground = new SolidColorBrush((Color) config.LoginForegroundColor);
+                Foreground = foreground;
+                ApplicationTitle.Foreground = foreground;
+                LoginToSalesforce.Foreground = foreground;
+                LoginToSalesforce.BorderBrush = foreground;
+                ChooseConnection.Foreground = foreground;
+                ChooseConnection.BorderBrush = foreground;
+            }
+
             if (Accounts == null || Accounts.Length == 0)
             {
                 _currentState = SingleUserViewState;
@@ -207,13 +226,12 @@ namespace Salesforce.SDK.Source.Pages
             try
             {
                 webAuthenticationResult =
-                    await
-                        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+                    await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             }
             // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
             // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
             // should just swallow that exception
-            catch (FileNotFoundException fex)
+            catch (FileNotFoundException)
             {
                 SetupAccountPage();
                 return;
