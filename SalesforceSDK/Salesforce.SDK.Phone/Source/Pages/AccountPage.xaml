@@ -27,6 +27,8 @@
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"></Setter>
+                            <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}"></Setter>
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
@@ -66,7 +68,8 @@
                                 <TextBlock
                                     DataContext="address_label"
                                     Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
+                                    Loaded="textBlockInTemplate_Loaded"
+                                    Opacity=".8"
                                     Margin="10 0 0 0" />
                             </DataTemplate>
                         </TextBox.HeaderTemplate>
@@ -81,7 +84,8 @@
                                 <TextBlock
                                     DataContext="host_label"
                                     Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
+                                    Loaded="textBlockInTemplate_Loaded"
+                                    Opacity=".8"
                                     Margin="10 0 0 0" />
                             </DataTemplate>
                         </TextBox.HeaderTemplate>

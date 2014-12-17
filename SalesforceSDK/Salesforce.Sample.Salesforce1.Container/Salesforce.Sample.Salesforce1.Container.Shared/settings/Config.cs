@@ -53,6 +53,11 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
             get { return Colors.DeepSkyBlue; }
         }
 
+        public override Color LoginForegroundColor
+        {
+            get { return Colors.White; }
+        }
+
         private readonly Uri _loginLogo = new Uri("ms-appx:///Assets/salesforceLogo.png");
         
         public override Uri LoginBackgroundLogo

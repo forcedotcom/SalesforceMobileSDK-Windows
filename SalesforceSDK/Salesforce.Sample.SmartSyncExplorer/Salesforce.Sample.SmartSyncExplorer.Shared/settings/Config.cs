@@ -68,6 +68,10 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared
             get { return Colors.MediumTurquoise; }
         }
 
+        public override Color LoginForegroundColor
+        {
+            get { return Colors.White; }
+        }
 
         public override string ApplicationTitle
         {

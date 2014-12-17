@@ -143,10 +143,30 @@ namespace Salesforce.SDK.Source.Pages
                     ApplicationLogo.Margin = padding;
                 }
             }
+
+            // set background from config
             var background = new SolidColorBrush(config.LoginBackgroundColor);
             Background = background;
             ServerFlyoutPanel.Background = background;
             AddServerFlyoutPanel.Background = background;
+
+            // set foreground from config
+            var foreground = new SolidColorBrush(config.LoginForegroundColor);
+            Foreground = foreground;
+            ApplicationTitle.Foreground = foreground;
+            LoginToSalesforce.Foreground = foreground;
+            LoginToSalesforce.BorderBrush = foreground;
+            ChooseConnection.Foreground = foreground;
+            ChooseConnection.BorderBrush = foreground;
+            AddServerFlyoutLabel.Foreground = foreground;
+            AddCustomHostBtn.Foreground = foreground;
+            AddCustomHostBtn.BorderBrush = foreground;
+            CancelCustomHostBtn.Foreground = foreground;
+            CancelCustomHostBtn.BorderBrush = foreground;
+            ServerFlyoutLabel.Foreground = foreground;
+            AddConnection.Foreground = foreground;
+            AddConnection.BorderBrush = foreground;
+
             if (Accounts == null || Accounts.Length == 0)
             {
                 _currentState = SingleUserViewState;
@@ -311,6 +331,13 @@ namespace Salesforce.SDK.Source.Pages
         private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
         {
             MessageFlyout.Hide();
+        }
+
+        private void textBlockInTemplate_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb != null)
+                tb.Foreground = this.Foreground;
         }
     }
 }

@@ -55,6 +55,11 @@ namespace Salesforce.Sample.RestExplorer.Shared
             get { return Colors.DarkOrange; }
         }
 
+        public override Color LoginForegroundColor
+        {
+            get { return Colors.White; }
+        }
+
         public override System.Uri LoginBackgroundLogo
         {
             get { return null; }

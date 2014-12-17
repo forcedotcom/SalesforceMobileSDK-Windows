@@ -103,6 +103,8 @@ namespace Salesforce.SDK.Source.Settings
 
         public abstract Color LoginBackgroundColor { get; }
 
+        public abstract Color LoginForegroundColor { get; }
+
         public abstract Uri LoginBackgroundLogo { get; }
 
         public abstract string ApplicationTitle { get; }

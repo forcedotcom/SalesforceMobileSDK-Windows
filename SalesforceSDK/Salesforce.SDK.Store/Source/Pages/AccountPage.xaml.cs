@@ -115,6 +115,8 @@ namespace Salesforce.SDK.Source.Pages
             }
             var background = new SolidColorBrush(config.LoginBackgroundColor);
             PageRoot.Background = background;
+            var foreground = new SolidColorBrush(config.LoginForegroundColor);
+            Foreground = foreground;
             // ServerFlyoutPanel.Background = background;
             //  AddServerFlyoutPanel.Background = background;
             if (Accounts == null || Accounts.Length == 0)
@@ -207,13 +209,12 @@ namespace Salesforce.SDK.Source.Pages
             try
             {
                 webAuthenticationResult =
-                    await
-                        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+                    await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             }
             // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
             // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
             // should just swallow that exception
-            catch (FileNotFoundException fex)
+            catch (FileNotFoundException)
             {
                 SetupAccountPage();
                 return;

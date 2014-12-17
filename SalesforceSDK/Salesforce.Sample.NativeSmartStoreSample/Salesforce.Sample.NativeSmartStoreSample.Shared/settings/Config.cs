@@ -66,6 +66,10 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
             get { return Colors.DarkSeaGreen; }
         }
 
+        public override Color LoginForegroundColor
+        {
+            get { return Colors.White; }
+        }
 
         public override string ApplicationTitle
         {
