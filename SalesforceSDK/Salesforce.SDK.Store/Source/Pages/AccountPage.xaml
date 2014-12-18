@@ -128,7 +128,7 @@
         </Flyout>
     </UserControl.Resources>
 
-    <Grid x:Name="PageRoot">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" x:Name="PageRoot">
         <StackPanel Background="Transparent" x:Name="Container" VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock x:Name="ApplicationTitle"
                    DataContext="application_title"

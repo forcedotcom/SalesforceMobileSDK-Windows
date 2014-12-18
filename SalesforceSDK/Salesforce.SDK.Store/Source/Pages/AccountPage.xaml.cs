@@ -120,6 +120,7 @@ namespace Salesforce.SDK.Source.Pages
             {
                 var background = new SolidColorBrush((Color) config.LoginBackgroundColor);
                 PageRoot.Background = background;
+                Background = background;
                 // ServerFlyoutPanel.Background = background;
                 //  AddServerFlyoutPanel.Background = background;
             }
