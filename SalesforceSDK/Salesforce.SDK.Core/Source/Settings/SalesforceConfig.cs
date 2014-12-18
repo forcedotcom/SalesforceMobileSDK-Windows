@@ -101,7 +101,9 @@ namespace Salesforce.SDK.Source.Settings
         /// </summary>
         public abstract string[] Scopes { get; }
 
-        public abstract Color LoginBackgroundColor { get; }
+        public virtual Color? LoginBackgroundColor { get { return null; } }
+
+        public virtual Color? LoginForegroundColor { get { return null; } }
 
         public abstract Uri LoginBackgroundLogo { get; }
 
