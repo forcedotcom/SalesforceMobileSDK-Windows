@@ -48,7 +48,7 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
             get { return new[] { "web", "api" }; }
         }
 
-        public override Color LoginBackgroundColor
+        public override Color? LoginBackgroundColor
         {
             get { return Colors.DeepSkyBlue; }
         }
