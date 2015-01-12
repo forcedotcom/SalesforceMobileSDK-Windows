@@ -63,17 +63,19 @@ namespace Salesforce.SDK.SmartSync.Model
                 }
             }
             RawData = rawData;
+            _hashcode = ObjectId.GetHashCode();
+            _hashcode ^= rawData.GetHashCode() + _hashcode * 37;
         }
 
         public string ObjectType { set; get; }
         public string Name { set; get; }
         public string ObjectId { set; get; }
-        public JObject RawData { set; get; }
+        public JObject RawData { private set; get; } 
+        private readonly int _hashcode;
 
         public override string ToString()
         {
-            return String.Format("name: [{0}], objectId: [{1}], type: [{2}], rawData: [{3}]", Name, ObjectId, ObjectType,
-                RawData);
+            return String.Format("name: [{0}], objectId: [{1}], type: [{2}]", Name, ObjectId, ObjectType);
         }
 
         public override bool Equals(object obj)
@@ -83,15 +85,15 @@ namespace Salesforce.SDK.SmartSync.Model
                 return false;
             }
             var salesforceObject = obj as SalesforceObject;
-            if (ObjectId == null || salesforceObject.ObjectId == null || !ObjectId.Equals(salesforceObject.ObjectId))
+            if (ObjectId == null || !ObjectId.Equals(salesforceObject.ObjectId))
             {
                 return false;
             }
-            if (Name == null || salesforceObject.Name == null || !Name.Equals(salesforceObject.Name))
+            if (Name == null  || !Name.Equals(salesforceObject.Name))
             {
                 return false;
             }
-            if (ObjectType == null || salesforceObject.ObjectType == null ||
+            if (ObjectType == null ||
                 !ObjectType.Equals(salesforceObject.ObjectType))
             {
                 return false;
@@ -101,9 +103,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public override int GetHashCode()
         {
-            int result = ObjectId.GetHashCode();
-            result ^= RawData.GetHashCode() + result*37;
-            return result;
+            return _hashcode;
         }
     }
 }
