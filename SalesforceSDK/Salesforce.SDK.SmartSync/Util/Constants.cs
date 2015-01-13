@@ -45,15 +45,13 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string Attributes = "Attributes";
         public const string RecentlyViewed = "RecentlyViewed";
         public const string Records = "records";
-        public const string Lid = "id"; // lower case id in create response
         public const string SobjectType = "attributes.type";
         public const string NextRecordsUrl = "nextRecordsUrl";
         public const string TotalSize = "totalSize";
         public const string RecentItems = "recentItems";
 
-        /**
-         * Salesforce object types.
-         */
+        #region Salesforce object types.
+
         public const string Account = "Account";
         public const string Lead = "Lead";
         public const string Case = "Case";
@@ -67,9 +65,10 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string Content = "ContentDocument";
         public const string ContentVersion = "ContentVersion";
 
-        /**
-         * Salesforce object type field constants.
-         */
+        #endregion
+
+        #region Salesforce object type field constants.
+
         public const string KeyprefixField = "keyPrefix";
         public const string NameField = "name";
         public const string LabelField = "label";
@@ -82,23 +81,42 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string NetworkidField = "NetworkId";
         public const string NetworkscopeField = "NetworkScope";
 
-        /**
-         * Salesforce object layout column field constants.
-         */
+        #endregion
+
+        #region Metadata Manager constants
+
+        public const string MruCacheType = "recent_objects";
+        public const string MetadataCacheType = "metadata";
+        public const string LayoutCacheType = "layout";
+        public const string SmartScopesCacheKey = "smart_scopes";
+        public const string MruByObjectTypeCacheKey = "mru_for_%s";
+        public const string AllObjectsCacheKey = "all_objects";
+        public const string ObjectByTypeCacheKey = "object_info_%s";
+        public const string ObjectLayoutByTypeCacheKey = "object_layout_%s";
+
+        // Other constants.
+        public const string RECORD_TYPE_GLOBAL = "global";
+        public const string RECENTLY_VIEWED = "RecentlyViewed";
+
+        #endregion
+
+        #region Salesforce object layout column field constants.
+
         public const string LayoutNameField = "name";
         public const string LayoutFieldField = "field";
         public const string LayoutFormatField = "format";
         public const string LayoutLabelField = "label";
 
-        /**
-         * Salesforce object type layout field constants.
-         */
+        #endregion
+
+        #region Salesforce object type layout field constants.
+
         public const string LayoutLimitsField = "limitRows";
         public const string LayoutColumnsField = "searchColumns";
 
-        /**
-         * SyncState, SyncOptions, Status constants
-         */
+        #endregion
+
+        #region SyncState, SyncOptions, Status constants
 
         public const string SyncsSoup = "syncs_soup";
         public const string SyncType = "type";
@@ -114,9 +132,10 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string Query = "query";
         public const string Fieldlist = "fieldlist";
         public const string SObjectType = "sobjectType";
-        /**
-         * Helper static methods
-         */
+
+        #endregion
+
+        #region Static Methods
 
         public static string GenerateAccountCommunityId(Account account, string communityId)
         {
@@ -125,7 +144,7 @@ namespace Salesforce.SDK.SmartSync.Util
                 throw new SmartStoreException("Account cannot be null");
             }
             string uniqueId;
-            if (Salesforce.SDK.Auth.Account.InternalCommunityId.Equals(communityId))
+            if (Auth.Account.InternalCommunityId.Equals(communityId))
             {
                 communityId = null;
             }
@@ -160,5 +179,7 @@ namespace Salesforce.SDK.SmartSync.Util
             }
             return default(T);
         }
+
+        #endregion
     }
 }

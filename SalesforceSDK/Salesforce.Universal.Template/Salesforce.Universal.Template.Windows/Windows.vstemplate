@@ -25,6 +25,7 @@
 				<ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
 			</Folder>
 			<ProjectItem ReplaceParameters="true" TargetFileName="Package.appxmanifest">Package.appxmanifest</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
 			<ProjectItem ReplaceParameters="false" TargetFileName="$ext_projectname$.Windows_TemporaryKey.pfx" BlendDoNotCreate="true">Salesforce.Universal.Template.Windows_TemporaryKey.pfx</ProjectItem>
 		</Project>
 	</TemplateContent>

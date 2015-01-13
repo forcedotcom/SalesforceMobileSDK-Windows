@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Manager\CacheManager.cs" />
+    <Compile Include="Manager\MetadataManager.cs" />
     <Compile Include="Manager\SOQLBuilder.cs" />
     <Compile Include="Manager\SOSLBuilder.cs" />
     <Compile Include="Manager\SOSLReturningBuilder.cs" />
