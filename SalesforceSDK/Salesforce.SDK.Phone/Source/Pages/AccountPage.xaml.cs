@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Resources;
@@ -265,7 +266,15 @@ namespace Salesforce.SDK.Source.Pages
             _addServerFlyoutShowing = true;
             HostName.Text = "";
             HostAddress.Text = "";
-            AddServerFlyout.ShowAt(ApplicationTitle);
+            try
+            {
+                AddServerFlyout.ShowAt(ApplicationTitle);
+            }
+            catch (ArgumentException)
+            {
+                Debug.WriteLine("Error displaying connection flyout");
+            }
+            
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)

@@ -35,6 +35,13 @@ namespace Salesforce.SDK.SmartSync.Model
 {
     public class SyncState
     {
+        public enum MergeModeOptions
+        {
+            None,
+            Overwrite,
+            LeaveIfChanged
+        }
+
         public enum SyncStatusTypes
         {
             New,
@@ -57,6 +64,14 @@ namespace Salesforce.SDK.SmartSync.Model
         public SyncStatusTypes Status { set; get; }
         public int Progress { set; get; }
         public int TotalSize { set; get; }
+
+        public MergeModeOptions MergeMode
+        {
+            get
+            {
+                return (Options != null && Options.MergeMode != MergeModeOptions.None ? Options.MergeMode : MergeModeOptions.None);
+            }
+        }
 
         /// <summary>
         ///     Create syncs soup if needed.
@@ -90,7 +105,7 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
-            var upserted = store.Upsert(Constants.SyncsSoup, sync);
+            JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
             {
                 return FromJson(upserted);
@@ -117,7 +132,7 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1}
             };
-            var upserted = store.Upsert(Constants.SyncsSoup, sync);
+            JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
             {
                 return FromJson(upserted);
@@ -201,7 +216,6 @@ namespace Salesforce.SDK.SmartSync.Model
                 var se = new SmartStoreException("SqliteError occurred ", sqe);
                 throw se;
             }
-
         }
     }
 }

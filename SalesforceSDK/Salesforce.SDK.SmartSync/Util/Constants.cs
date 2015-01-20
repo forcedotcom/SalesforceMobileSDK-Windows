@@ -40,6 +40,7 @@ namespace Salesforce.SDK.SmartSync.Util
     {
         public const string NullString = "null";
         public const string Id = "Id";
+        public const string Lid = "id";
         public const string Name = "Name";
         public const string Type = "Type";
         public const string Attributes = "Attributes";
@@ -95,8 +96,7 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string ObjectLayoutByTypeCacheKey = "object_layout_%s";
 
         // Other constants.
-        public const string RECORD_TYPE_GLOBAL = "global";
-        public const string RECENTLY_VIEWED = "RecentlyViewed";
+        public const string RecordTypeGlobal = "global";
 
         #endregion
 
@@ -127,6 +127,7 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string SyncProgress = "progress";
         public const string SyncTotalSize = "totalSize";
         public const string SyncAsString = "syncAsString";
+        public const string MergeMode = "mergeMode";
         public const string FieldList = "fieldlist";
         public const string QueryType = "type";
         public const string Query = "query";

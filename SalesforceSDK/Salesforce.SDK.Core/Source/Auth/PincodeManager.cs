@@ -49,7 +49,7 @@ namespace Salesforce.SDK.Auth
             IdleTimer.Tick += IdleTimer_Tick;
         }
 
-        internal static string GenerateEncryptedPincode(string pincode)
+        private static string GenerateEncryptedPincode(string pincode)
         {
             HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
             IBuffer buff = CryptographicBuffer.ConvertStringToBinary(pincode, BinaryStringEncoding.Utf8);
@@ -214,7 +214,7 @@ namespace Salesforce.SDK.Auth
         public static async void LaunchPincodeScreen()
         {
             var frame = Window.Current.Content as Frame;
-            if (frame != null && !(typeof (PincodeDialog).Equals(frame.SourcePageType)))
+            if (frame != null && typeof (PincodeDialog) != frame.SourcePageType)
             {
                 await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
@@ -264,14 +264,17 @@ namespace Salesforce.SDK.Auth
         {
             if (IsPincodeSet())
             {
-                MobilePolicy policy = GetMobilePolicy();
-                IdleTimer.Interval = TimeSpan.FromMinutes(policy.ScreenLockTimeout);
-                if (IdleTimer.IsEnabled)
+                var policy = GetMobilePolicy();
+                if (policy != null)
                 {
-                    IdleTimer.Stop();
+                    IdleTimer.Interval = TimeSpan.FromMinutes(policy.ScreenLockTimeout);
+                    if (IdleTimer.IsEnabled)
+                    {
+                        IdleTimer.Stop();
+                    }
+                    SavePinTimer();
+                    IdleTimer.Start();
                 }
-                SavePinTimer();
-                IdleTimer.Start();
             }
         }
 
