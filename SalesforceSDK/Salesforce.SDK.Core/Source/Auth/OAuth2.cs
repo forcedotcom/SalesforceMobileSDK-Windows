@@ -242,7 +242,7 @@ namespace Salesforce.SDK.Auth
 
             // Args
             string[] args = {loginOptions.DisplayType, loginOptions.ClientId, loginOptions.CallbackUrl, scopeStr};
-            string[] urlEncodedArgs = args.Select(WebUtility.UrlEncode).ToArray();
+            object[] urlEncodedArgs = args.Select(WebUtility.UrlEncode).ToArray();
 
             // Authorization url
             string authorizationUrl =
@@ -385,11 +385,19 @@ namespace Salesforce.SDK.Auth
                     var loginUri = new Uri(ComputeAuthorizationUrl(loginOptions));
                     var myFilter = new HttpBaseProtocolFilter();
                     HttpCookieManager cookieManager = myFilter.CookieManager;
-                    HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
-                    foreach (HttpCookie cookie in cookies)
+                    try
                     {
-                        cookieManager.DeleteCookie(cookie);
+                        HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
+                        foreach (HttpCookie cookie in cookies)
+                        {
+                            cookieManager.DeleteCookie(cookie);
+                        }
                     }
+                    catch (ArgumentException)
+                    {
+                        Debug.WriteLine("Error clearing cookies");
+                    }
+                   
                 });
             }
         }
