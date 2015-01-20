@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartSync.Util;
@@ -38,14 +39,25 @@ namespace Salesforce.SDK.SmartSync.Model
             FieldList = fieldList;
         }
 
+        private SyncOptions(List<string> fieldList, SyncState.MergeModeOptions mergeMode) : this(fieldList)
+        {
+            MergeMode = mergeMode;
+        }
+
+        public SyncState.MergeModeOptions MergeMode { private set; get; }
+
         public List<string> FieldList { private set; get; }
 
         public static SyncOptions FromJson(JObject options)
         {
             if (options == null)
                 return null;
+            var mergeModeStr = options.ExtractValue<string>(Constants.MergeMode);
+            var mergeMode = String.IsNullOrWhiteSpace(mergeModeStr)
+                ? SyncState.MergeModeOptions.None
+                : (SyncState.MergeModeOptions) Enum.Parse(typeof (SyncState.MergeModeOptions), mergeModeStr);
             var array = options.ExtractValue<JArray>(Constants.FieldList);
-            return new SyncOptions(array.ToObject<List<string>>());
+            return new SyncOptions(array.ToObject<List<string>>(), mergeMode);
         }
 
         public static SyncOptions OptionsForSyncUp(List<string> fieldList)
@@ -53,9 +65,15 @@ namespace Salesforce.SDK.SmartSync.Model
             return new SyncOptions(fieldList);
         }
 
+        public static SyncOptions OptionsForSyncDown(SyncState.MergeModeOptions mergeMode)
+        {
+            return new SyncOptions(null, mergeMode);
+        }
+
         public JObject AsJson()
         {
             var options = new JObject {{Constants.FieldList, new JArray(FieldList)}};
+            if (MergeMode != SyncState.MergeModeOptions.None) options.Add(Constants.MergeMode, MergeMode.ToString());
             return options;
         }
     }
