@@ -121,7 +121,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="packages.config" />
     <None Include="Salesforce.Sample.SmartSyncExplorer.Windows_TemporaryKey.pfx" />
     <None Include="salesforce_windowsstore_testkey.pfx" />
   </ItemGroup>
@@ -132,9 +131,6 @@
     <Content Include="Assets\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL">
       <HintPath>..\..\packages\SQLitePCL.3.8.5.1\lib\netcore451\SQLitePCL.dll</HintPath>
     </Reference>

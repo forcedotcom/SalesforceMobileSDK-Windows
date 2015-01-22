@@ -112,9 +112,6 @@
     <Content Include="Assets\WideLogo.scale-240.png" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="SQLitePCL">
       <HintPath>..\..\packages\SQLitePCL.3.8.5.1\lib\wpa81\SQLitePCL.dll</HintPath>
     </Reference>
