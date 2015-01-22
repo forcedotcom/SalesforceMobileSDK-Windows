@@ -31,6 +31,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Salesforce.SDK.Auth;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.App
 {
@@ -41,13 +42,7 @@ namespace Salesforce.SDK.App
             // nothing special to do here
         }
 
-        /// <summary>
-        ///     Invoked when the application is launched normally by the end user.  Other entry points
-        ///     will be used when the application is launched to open a specific file, to display
-        ///     search results, and so forth.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        public async void OnLaunched(LaunchActivatedEventArgs e)
+        private Frame CreateRootFrame()
         {
             var rootFrame = Window.Current.Content as Frame;
 
@@ -61,23 +56,46 @@ namespace Salesforce.SDK.App
                 // TODO: change this value to a cache size that is appropriate for your application
                 rootFrame.CacheSize = 1;
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    // Restore the saved session state only when appropriate
-                    try
-                    {
-                        await SuspensionManager.RestoreAsync();
-                    }
-                    catch (SuspensionManagerException)
-                    {
-                        //Something went wrong restoring state.
-                        //Assume there is no state and continue
-                    }
-                }
+                SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
+
+            return rootFrame;
+        }
+
+        private async Task RestoreStatus(ApplicationExecutionState previousExecutionState)
+        {
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (previousExecutionState == ApplicationExecutionState.Terminated)
+            {
+                // Restore the saved session state only when appropriate
+                try
+                {
+                    await SuspensionManager.RestoreAsync();
+                }
+                catch (SuspensionManagerException)
+                {
+                    //Something went wrong restoring state.
+                    //Assume there is no state and continue
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Invoked when the application is launched normally by the end user.  Other entry points
+        ///     will be used when the application is launched to open a specific file, to display
+        ///     search results, and so forth.
+        /// </summary>
+        /// <remarks>This method ensures that Window.Current.Content is set to a valid Frame.</remarks>
+        /// <remarks>This method calls Window.Current.Activate.</remarks>
+        /// <param name="e">Details about the launch request and process.</param>
+        public async void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            var rootFrame = CreateRootFrame();
+            await RestoreStatus(e.PreviousExecutionState);
 
             if (rootFrame.Content == null)
             {
@@ -96,17 +114,9 @@ namespace Salesforce.SDK.App
 
         public async void OnActivated(IActivatedEventArgs args)
         {
-            if (ApplicationExecutionState.Terminated.Equals(args.PreviousExecutionState))
-            {
-                try
-                {
-                    await SuspensionManager.RestoreAsync();
-                }
-                catch (SuspensionManagerException)
-                {
-                    // Assume there is no state and continue
-                }
-            }
+            CreateRootFrame();
+            await RestoreStatus(args.PreviousExecutionState);
+
             PincodeManager.TriggerBackgroundedPinTimer();
         }
 

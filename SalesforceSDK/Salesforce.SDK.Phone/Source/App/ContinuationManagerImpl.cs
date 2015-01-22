@@ -122,7 +122,7 @@ public class ContinuationManagerImpl
     }
 
     /// <summary>
-    ///     Marks the contination data as 'stale', meaning that it is probably no longer of
+    ///     Marks the continuation data as 'stale', meaning that it is probably no longer of
     ///     any use. Called when the app is suspended (to ensure future activations don't appear
     ///     to be for the same continuation) and whenever the continuation data is retrieved
     ///     (so that it isn't retrieved on subsequent navigations)
