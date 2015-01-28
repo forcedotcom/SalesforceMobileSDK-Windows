@@ -50,6 +50,7 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string NextRecordsUrl = "nextRecordsUrl";
         public const string TotalSize = "totalSize";
         public const string RecentItems = "recentItems";
+        public const string SystemModstamp = "SystemModstamp";
 
         #region Salesforce object types.
 
@@ -126,6 +127,7 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string SyncStatus = "status";
         public const string SyncProgress = "progress";
         public const string SyncTotalSize = "totalSize";
+        public const string SyncMaxTimeStamp = "maxTimeStamp";
         public const string SyncAsString = "syncAsString";
         public const string MergeMode = "mergeMode";
         public const string FieldList = "fieldlist";

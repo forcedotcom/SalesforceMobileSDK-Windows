@@ -72,6 +72,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         private string _filter;
         private SortedObservableCollection<ContactObject> _filteredContacts;
         private ObservableCollection<string> _indexReference;
+        private long syncId = -1;
 
         public ContactSyncViewModel()
         {
@@ -131,19 +132,28 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         public void SyncDownContacts()
         {
             RegisterSoup();
-            string soqlQuery =
-                SOQLBuilder.GetInstanceWithFields(ContactObject.ContactFields)
-                    .From(Constants.Contact)
-                    .Limit(Limit)
-                    .Build();
-            SyncTarget target = SyncTarget.TargetForSOQLSyncDown(soqlQuery);
-            try
+            if (syncId == -1)
             {
-                _syncManager.SyncDown(target, ContactSoup, HandleSyncUpdate);
+                string soqlQuery =
+                    SOQLBuilder.GetInstanceWithFields(ContactObject.ContactFields)
+                        .From(Constants.Contact)
+                        .Limit(Limit)
+                        .Build();
+                SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
+                SyncTarget target = SyncTarget.TargetForSOQLSyncDown(soqlQuery);
+                try
+                {
+                    SyncState sync = _syncManager.SyncDown(target, ContactSoup, HandleSyncUpdate);
+                    syncId = sync.Id;
+                }
+                catch (SmartStoreException)
+                {
+                    // log here
+                }
             }
-            catch (SmartStoreException)
+            else
             {
-                // log here
+                _syncManager.ReSync(syncId, HandleSyncUpdate);
             }
         }
 

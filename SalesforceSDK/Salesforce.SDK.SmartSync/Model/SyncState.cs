@@ -64,6 +64,7 @@ namespace Salesforce.SDK.SmartSync.Model
         public SyncStatusTypes Status { set; get; }
         public int Progress { set; get; }
         public int TotalSize { set; get; }
+        public long MaxTimeStamp { set; get; }
 
         public MergeModeOptions MergeMode
         {
@@ -103,7 +104,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncSoupName, soupName},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
-                {Constants.SyncTotalSize, -1}
+                {Constants.SyncTotalSize, -1},
+                {Constants.SyncMaxTimeStamp, -1}
             };
             JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
@@ -130,7 +132,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncOptions, options.AsJson()},
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
-                {Constants.SyncTotalSize, -1}
+                {Constants.SyncTotalSize, -1},
+                {Constants.SyncMaxTimeStamp, -1}
             };
             JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
@@ -160,7 +163,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 SyncType = (SyncTypes) Enum.Parse(typeof (SyncTypes), sync.ExtractValue<string>(Constants.SyncType)),
                 Status =
                     (SyncStatusTypes)
-                        Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus))
+                        Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus)),
+                MaxTimeStamp = sync.ExtractValue<long>(Constants.SyncMaxTimeStamp)
             };
             return state;
         }
@@ -194,7 +198,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncSoupName, SoupName},
                 {Constants.SyncStatus, Status.ToString()},
                 {Constants.SyncProgress, Progress},
-                {Constants.SyncTotalSize, TotalSize}
+                {Constants.SyncTotalSize, TotalSize},
+                {Constants.SyncMaxTimeStamp, MaxTimeStamp}
             };
             if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJson());
             if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJson());
