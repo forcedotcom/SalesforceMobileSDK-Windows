@@ -42,7 +42,7 @@
                             DataContext="add_connection"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
-                            Width="150"
+                            Width="Auto"
                             Click="addConnection_Click"
                             HorizontalAlignment="Center" />
                 </StackPanel>
@@ -90,19 +90,19 @@
                     </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
+                    <Button x:Name="AddCustomHostBtn"
+                            DataContext="add"
+                            Content="{Binding Converter={StaticResource Localize}}"
+                            Margin="10 0 10 0"
+                            Width="Auto"
+                            Click="addCustomHostBtn_Click"
+                            HorizontalAlignment="Center" />
                     <Button x:Name="CancelCustomHostBtn"
                             DataContext="cancel"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
-                            Width="90"
+                            Width="Auto"
                             Click="cancelCustomHostBtn_Click"
-                            HorizontalAlignment="Center" />
-                    <Button x:Name="AddCustomHostBtn"
-                            DataContext="ok"
-                            Content="{Binding Converter={StaticResource Localize}}"
-                            Margin="10 0 10 0"
-                            Width="90"
-                            Click="addCustomHostBtn_Click"
                             HorizontalAlignment="Center" />
                 </StackPanel>
             </StackPanel>
