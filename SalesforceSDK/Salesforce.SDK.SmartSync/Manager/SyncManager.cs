@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
@@ -44,11 +45,13 @@ namespace Salesforce.SDK.SmartSync.Manager
     public class SyncManager
     {
         public const int PageSize = 2000;
-
+        private const int UnchangedSync = -1;
         public const string Local = "__local__";
         public const string LocallyCreated = "__locally_created__";
         public const string LocallyUpdated = "__locally_updated__";
         public const string LocallyDeleted = "__locally_deleted__";
+        private const string TimestampFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
         private readonly string _apiVersion;
@@ -164,9 +167,33 @@ namespace Salesforce.SDK.SmartSync.Manager
             return sync;
         }
 
+        public SyncState ReSync(long syncId, Action<SyncState> callback)
+        {
+            SyncState sync = SyncState.ById(_smartStore, syncId);
+            if (sync == null)
+            {
+                throw new SmartStoreException("Cannot run ReSync:" + syncId + ": no sync found");
+            }
+            if (sync.SyncType != SyncState.SyncTypes.SyncDown)
+            {
+                throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong type: " + sync.SyncType);
+            }
+            if (sync.Target.QueryType != SyncTarget.QueryTypes.Soql)
+            {
+                throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong query type: " +
+                                              sync.Target.QueryType);
+            }
+            if (sync.Status != SyncState.SyncStatusTypes.Done)
+            {
+                throw new SmartStoreException("Cannot run ReSync:" + syncId + ": not done: " + sync.Status);
+            }
+            RunSync(sync, callback);
+            return sync;
+        }
+
         private async void RunSync(SyncState sync, Action<SyncState> callback)
         {
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, -1 /* don't change */, callback);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
             try
             {
                 switch (sync.SyncType)
@@ -178,13 +205,12 @@ namespace Salesforce.SDK.SmartSync.Manager
                         SyncUp(sync, callback);
                         break;
                 }
-                UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, -1 /* don't change */, callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, callback);
             }
             catch (Exception)
             {
                 Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, -1 /* don't change */, -1 /* don't change */,
-                    callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, UnchangedSync, callback);
             }
         }
 
@@ -194,15 +220,19 @@ namespace Salesforce.SDK.SmartSync.Manager
                 throw new SmartStoreException("SyncState sync was null");
             HashSet<string> dirtyRecordIds = GetDirtyRecordIds(sync.SoupName, SmartStore.Store.SmartStore.SoupEntryId);
             int totalSize = dirtyRecordIds.Count;
-            int i = 0;
-            foreach (var record in dirtyRecordIds.Select(id => _smartStore.Retrieve(sync.SoupName, long.Parse(id))[0].ToObject<JObject>()))
+            sync.TotalSize = totalSize;
+            const int i = 0;
+            foreach (
+                JObject record in
+                    dirtyRecordIds.Select(
+                        id => _smartStore.Retrieve(sync.SoupName, long.Parse(id))[0].ToObject<JObject>()))
             {
                 await SyncUpOneRecord(sync.SoupName, sync.Options.FieldList, record);
 
-                var progress = (i + 1)*100/totalSize;
+                int progress = (i + 1)*100/totalSize;
                 if (progress < 100)
                 {
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, -1 /* don't change */, callback);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, progress, callback);
                 }
             }
         }
@@ -230,7 +260,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             var fields = new Dictionary<string, object>();
             if (SyncAction.Create == action || SyncAction.Update == action)
             {
-                foreach (var fieldName in fieldList.Where(fieldName => !Constants.Id.Equals(fieldName, StringComparison.CurrentCulture)))
+                foreach (
+                    string fieldName in
+                        fieldList.Where(fieldName => !Constants.Id.Equals(fieldName, StringComparison.CurrentCulture)))
                 {
                     fields.Add(fieldName, record[fieldName]);
                 }
@@ -255,7 +287,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
             // don't continue if not successful
             if (!response.Success) return false;
-            
+
             // delete or update the record
             if (SyncAction.Create == action)
             {
@@ -299,16 +331,16 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private async Task<int> SyncDownMru(SyncState sync, Action<SyncState> callback)
         {
-            var target = sync.Target;
+            SyncTarget target = sync.Target;
             // Get recent items ids from server
-            var mergeMode = sync.MergeMode;
-            var request = RestRequest.GetRequestForMetadata(_apiVersion, target.ObjectType);
-            var response = await _restClient.SendAsync(request);
-            var recentItems = Pluck<string>(response.AsJObject.ExtractValue<JArray>(Constants.RecentItems),
+            SyncState.MergeModeOptions mergeMode = sync.MergeMode;
+            RestRequest request = RestRequest.GetRequestForMetadata(_apiVersion, target.ObjectType);
+            RestResponse response = await _restClient.SendAsync(request);
+            List<string> recentItems = Pluck<string>(response.AsJObject.ExtractValue<JArray>(Constants.RecentItems),
                 Constants.Id);
 
             // Building SOQL query to get requested at
-            var soql =
+            string soql =
                 SOQLBuilder.GetInstanceWithFields(target.FieldList.ToArray())
                     .From(target.ObjectType)
                     .Where("Id IN ('" + String.Join("', '", recentItems) + "')")
@@ -317,12 +349,12 @@ namespace Salesforce.SDK.SmartSync.Manager
             // Get recent items attributes from server
             request = RestRequest.GetRequestForQuery(_apiVersion, soql);
             response = await _restClient.SendAsync(request);
-            var responseJson = response.AsJObject;
+            JObject responseJson = response.AsJObject;
             var records = responseJson.ExtractValue<JArray>(Constants.Records);
-            var totalSize = records.Count;
-
+            int totalSize = records.Count;
+            sync.TotalSize = totalSize;
             // Save to smartstore
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
             if (totalSize > 0)
             {
                 SaveRecordsToSmartStore(sync.SoupName, records, sync.MergeMode);
@@ -335,6 +367,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             string soupName = sync.SoupName;
             SyncTarget target = sync.Target;
             string query = target.Query;
+            long maxTimeStamp = sync.MaxTimeStamp;
+            query = AddFilterForReSync(query, maxTimeStamp);
             RestRequest request = RestRequest.GetRequestForQuery(_apiVersion, query);
 
             // Call server
@@ -345,14 +379,15 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
             catch (Exception)
             {
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, 0, -1, callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, UnchangedSync, callback);
                 return false;
             }
             JObject responseJson = response.AsJObject;
 
             int countSaved = 0;
             var totalSize = responseJson.ExtractValue<int>(Constants.TotalSize);
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
+            sync.TotalSize = totalSize;
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
 
             do
             {
@@ -360,12 +395,12 @@ namespace Salesforce.SDK.SmartSync.Manager
                 // Save to smartstore
                 SaveRecordsToSmartStore(soupName, records, sync.MergeMode);
                 countSaved += records.Count;
-
+                maxTimeStamp = Math.Max(maxTimeStamp, GetMaxTimeStamp(records));
                 // Update sync status
+                sync.MaxTimeStamp = maxTimeStamp;
                 if (countSaved < totalSize)
                 {
-                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved*100/totalSize, -1 /* don't change */,
-                        callback);
+                    UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved*100/totalSize, callback);
                 }
 
 
@@ -395,9 +430,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             // Parse response
             JArray records = response.AsJArray;
             int totalSize = records.Count;
-
+            sync.TotalSize = totalSize;
             // Save to smartstore
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, totalSize, callback);
+            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
             if (totalSize > 0)
             {
                 SaveRecordsToSmartStore(sync.SoupName, records, sync.MergeMode);
@@ -430,7 +465,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         private HashSet<string> ToSet(JArray jsonArray)
         {
             var set = new HashSet<String>();
-            var list = jsonArray.Select(t => t.ToObject<JArray>()[0].Value<string>()).ToList();
+            List<string> list = jsonArray.Select(t => t.ToObject<JArray>()[0].Value<string>()).ToList();
             set.UnionWith(list);
             return set;
         }
@@ -446,7 +481,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 idsToSkip = GetDirtyRecordIds(soupName, Constants.Id);
             }
 
-            foreach (var record in records.Select(t => t.ToObject<JObject>()))
+            foreach (JObject record in records.Select(t => t.ToObject<JObject>()))
             {
                 // Skip if LeaveIfChanged and id is in dirty list
                 if (idsToSkip != null && SyncState.MergeModeOptions.LeaveIfChanged == mergeMode)
@@ -468,25 +503,88 @@ namespace Salesforce.SDK.SmartSync.Manager
             _smartStore.Database.CommitTransaction();
         }
 
-        private void UpdateSync(SyncState sync, SyncState.SyncStatusTypes status, int progress, int totalSize,
+        private void UpdateSync(SyncState sync, SyncState.SyncStatusTypes status, int progress,
             Action<SyncState> callback)
         {
             if (sync == null)
                 return;
             sync.Status = status;
-            if (progress != -1) sync.Progress = progress;
-            if (totalSize != -1) sync.TotalSize = totalSize;
-            try
+            if (progress != UnchangedSync)
             {
-                sync.Save(_smartStore);
+                sync.Progress = progress;
             }
-            catch (SmartStoreException)
+            sync.Save(_smartStore);
+            if (callback != null)
             {
-                sync.Status = SyncState.SyncStatusTypes.Failed;
+                callback(sync);
             }
+        }
 
-            if (callback == null) return;
-            callback(sync);
+        private string AddFilterForReSync(string query, long maxTimeStamp)
+        {
+            if (maxTimeStamp != UnchangedSync)
+            {
+                string extraPredicate = Constants.SystemModstamp + " > " +
+                                        new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
+                if (query.Contains(" where "))
+                {
+                    var reg = new Regex("( where )");
+                    query = reg.Replace(query, "$1 where " + extraPredicate + " and ", 1);
+                }
+                else
+                {
+                    string pred = "$1 where " + extraPredicate;
+                    var reg = new Regex("( from[ ]+[^ ]*)");
+                    query = reg.Replace(query, pred, 1);
+                }
+            }
+            return query;
+        }
+
+        private long GetMaxTimeStamp(JArray jArray)
+        {
+            long maxTimeStamp = UnchangedSync;
+            foreach (JToken t in jArray)
+            {
+                var jObj = t.ToObject<JObject>();
+                if (jObj != null)
+                {
+                    var timeStampStr = jObj.ExtractValue<string>(Constants.SystemModstamp);
+                    if (String.IsNullOrWhiteSpace(timeStampStr))
+                    {
+                        maxTimeStamp = UnchangedSync;
+                        break;
+                    }
+                    try
+                    {
+                        long timeStamp = DateTime.Parse(timeStampStr).Ticks;
+                        maxTimeStamp = Math.Max(timeStamp, maxTimeStamp);
+                    }
+                    catch (Exception)
+                    {
+                        Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse systemModstamp");
+                        maxTimeStamp = UnchangedSync;
+                        break;
+                    }
+                }
+            }
+            return maxTimeStamp;
+        }
+
+        private string ReplaceFirst(string text, string search, string replace)
+        {
+            if (String.IsNullOrWhiteSpace(text) ||
+                String.IsNullOrWhiteSpace(search) ||
+                String.IsNullOrWhiteSpace(replace))
+            {
+                return text;
+            }
+            int pos = text.IndexOf(search, StringComparison.CurrentCulture);
+            if (pos < 0)
+            {
+                return text;
+            }
+            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
         }
 
         private enum SyncAction
