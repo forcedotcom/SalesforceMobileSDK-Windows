@@ -193,6 +193,7 @@ namespace Salesforce.SDK.Source.Pages
             AccountsList.ItemsSource = Accounts;
             ServerFlyout.Opening += ServerFlyout_Opening;
             ServerFlyout.Closed += ServerFlyout_Closed;
+            AddServerFlyout.Opened += AddServerFlyout_Opened;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
@@ -209,6 +210,18 @@ namespace Salesforce.SDK.Source.Pages
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
                 PincodeManager.LaunchPincodeScreen();
+            }
+        }
+
+        private void AddServerFlyout_Opened(object sender, object e)
+        {
+            if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) < 0)
+            {
+                AddCustomHostBtn.Width = CancelCustomHostBtn.ActualWidth;
+            }
+            else if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) > 0)
+            {
+                CancelCustomHostBtn.Width = AddCustomHostBtn.ActualWidth;
             }
         }
 
