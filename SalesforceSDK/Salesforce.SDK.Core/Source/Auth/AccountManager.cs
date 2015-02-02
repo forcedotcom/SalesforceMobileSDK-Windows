@@ -25,8 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Rest;
@@ -112,9 +115,15 @@ namespace Salesforce.SDK.Auth
             account.CommunityUrl = authResponse.CommunityUrl;
             var cm = new ClientManager();
             cm.PeekRestClient();
-            IdentityResponse identity =
-                await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
-
+            IdentityResponse identity = null;
+            try
+            {
+                identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+            }
+            catch (JsonException)
+            {
+                Debug.WriteLine("Error retrieving account identity");
+            }
             if (identity != null)
             {
                 account.UserId = identity.UserId;
