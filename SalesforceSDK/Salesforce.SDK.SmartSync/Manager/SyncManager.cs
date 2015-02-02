@@ -33,7 +33,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartStore.Store;
@@ -61,7 +60,16 @@ namespace Salesforce.SDK.SmartSync.Manager
         private SyncManager(Account account, string communityId)
         {
             _smartStore = new SmartStore.Store.SmartStore();
-            _restClient = SalesforceApplication.GlobalClientManager.GetRestClient();
+            _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
+                async () =>
+                {
+                    account = AccountManager.GetAccount();
+                    AuthResponse authResponse =
+                        await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
+                    account.AccessToken = authResponse.AccessToken;
+                    return account.AccessToken;
+                }
+                );
             _apiVersion = ApiVersionStrings.VersionNumber;
             SyncState.SetupSyncsSoupIfNeeded(_smartStore);
         }
@@ -191,7 +199,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             return sync;
         }
 
-        private async void RunSync(SyncState sync, Action<SyncState> callback)
+        public async void RunSync(SyncState sync, Action<SyncState> callback)
         {
             UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
             try
@@ -202,7 +210,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                         await SyncDown(sync, callback);
                         break;
                     case SyncState.SyncTypes.SyncUp:
-                        SyncUp(sync, callback);
+                        await SyncUp(sync, callback);
                         break;
                 }
                 UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, callback);
@@ -214,7 +222,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        private async void SyncUp(SyncState sync, Action<SyncState> callback)
+        private async Task SyncUp(SyncState sync, Action<SyncState> callback)
         {
             if (sync == null)
                 throw new SmartStoreException("SyncState sync was null");

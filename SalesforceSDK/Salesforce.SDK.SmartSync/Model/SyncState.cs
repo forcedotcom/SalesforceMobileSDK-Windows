@@ -93,9 +93,10 @@ namespace Salesforce.SDK.SmartSync.Model
         /// </summary>
         /// <param name="store"></param>
         /// <param name="target"></param>
+        /// <param name="options"></param>
         /// <param name="soupName"></param>
         /// <returns></returns>
-        public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncTarget target, string soupName)
+        public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncTarget target, string soupName, SyncOptions options = null)
         {
             var sync = new JObject
             {
@@ -107,6 +108,10 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncTotalSize, -1},
                 {Constants.SyncMaxTimeStamp, -1}
             };
+            if (options != null)
+            {
+                sync[Constants.SyncOptions] = options.AsJson();
+            }
             JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
             {
