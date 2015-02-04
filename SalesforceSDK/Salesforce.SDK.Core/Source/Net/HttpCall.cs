@@ -304,7 +304,7 @@ namespace Salesforce.SDK.Net
                 CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
                 await core.RunAsync(CoreDispatcherPriority.Normal, async () => await GenerateOsString());
                 var packageVersion = Package.Current.Id.Version;
-                var packageVersionString = packageVersion.Major + "." + packageVersion.Major + "." +
+                var packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                            packageVersion.Build;
                 UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(), packageVersionString, "native", UserAgentHeader);
             }
