@@ -27,8 +27,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
@@ -95,7 +100,7 @@ namespace Salesforce.SDK.Net
         /// Use this property to retrieve the user agent.
         /// </summary>
         public static string UserAgentHeader { private set; get; }
-        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 {0}";
+        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 ({0}/{1} {2}) {3}";
         private readonly ContentTypeValues _contentType;
         private readonly HttpCallHeaders _headers;
         private readonly HttpMethod _method;
@@ -298,7 +303,10 @@ namespace Salesforce.SDK.Net
             {
                 CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
                 await core.RunAsync(CoreDispatcherPriority.Normal, async () => await GenerateOsString());
-                UserAgentHeader = String.Format(UserAgentHeaderFormat, UserAgentHeader);
+                var packageVersion = Package.Current.Id.Version;
+                var packageVersionString = packageVersion.Major + "." + packageVersion.Major + "." +
+                                           packageVersion.Build;
+                UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(), packageVersionString, "native", UserAgentHeader);
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -346,6 +354,31 @@ namespace Salesforce.SDK.Net
                 _statusCodeValue = response.StatusCode;
                 response.Dispose();
             }
+        }
+
+        /// <summary>
+        /// There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through parsing the AppxManifest.xml at runtime and retrieving the displayname.
+        /// If this fails we return the package.id.name instead, allowing the app to still be identified.
+        /// </summary>
+        /// <returns></returns>
+        private static async Task<string> GetApplicationDisplayName()
+        {
+            string displayName = String.Empty;
+            try
+            {
+                StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+                string manifestXml = await FileIO.ReadTextAsync(file);
+                XDocument doc = XDocument.Parse(manifestXml);
+                XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
+                displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
+                        select name.Value).First();
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Error retrieving application name; using package id name instead");
+                displayName = Package.Current.Id.Name;
+            }
+            return displayName;
         }
 
         /// <summary>
