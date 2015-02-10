@@ -109,7 +109,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static long CurrentTimeMillis
         {
-            get { return (long) ((DateTime.UtcNow - Jan1st1970).TotalMilliseconds); }
+            get { return (long) DateTime.UtcNow.Ticks; }
         }
 
         /// <summary>
