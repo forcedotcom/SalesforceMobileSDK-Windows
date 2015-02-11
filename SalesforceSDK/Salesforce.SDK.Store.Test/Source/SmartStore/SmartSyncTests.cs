@@ -129,14 +129,14 @@ namespace Salesforce.SDK.SmartStore.Store
             TrySyncDown(SyncState.MergeModeOptions.Overwrite);
 
             // make local changes
-            var idToNamesLocallyUpdated = MakeSomeLocalChanges();
+            Dictionary<string, string> idToNamesLocallyUpdated = MakeSomeLocalChanges();
 
             // sync down again with MergeModeOptions.LeaveIfChanged
             TrySyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
 
             // check db, verify overwrite did not occur
             var idToNamesExpected = new Dictionary<string, string>(_idToNames);
-            foreach (var next in idToNamesLocallyUpdated.Keys)
+            foreach (string next in idToNamesLocallyUpdated.Keys)
             {
                 idToNamesExpected[next] = idToNamesLocallyUpdated[next];
             }
@@ -155,13 +155,14 @@ namespace Salesforce.SDK.SmartStore.Store
             long syncId = TrySyncDown(SyncState.MergeModeOptions.Overwrite);
 
             // Check sync time stamp
-            var sync = _syncManager.GetSyncStatus(syncId);
+            SyncState sync = _syncManager.GetSyncStatus(syncId);
             long maxTimeStamp = sync.MaxTimeStamp;
             Assert.IsTrue(maxTimeStamp > 0, "Wrong time stamp");
 
-            var allIds = _idToNames.Keys.ToArray();
-            var ids = new string[] { allIds[0], allIds[2] };
-            var idToNamesLocallyUpdated = ids.ToDictionary(id => id, id => _idToNames[id] + "_updated");
+            string[] allIds = _idToNames.Keys.ToArray();
+            var ids = new[] {allIds[0], allIds[2]};
+            Dictionary<string, string> idToNamesLocallyUpdated = ids.ToDictionary(id => id,
+                id => _idToNames[id] + "_updated");
             await UpdateAccountsOnServer(idToNamesLocallyUpdated);
 
             // resync
@@ -176,7 +177,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
             // check db
             Dictionary<string, string> updatedAllIds = _idToNames;
-            foreach (var next in idToNamesLocallyUpdated.Keys)
+            foreach (string next in idToNamesLocallyUpdated.Keys)
             {
                 updatedAllIds[next] = idToNamesLocallyUpdated[next];
             }
@@ -192,28 +193,30 @@ namespace Salesforce.SDK.SmartStore.Store
             TrySyncDown(SyncState.MergeModeOptions.Overwrite);
 
             // make local changes
-            var idToNamesLocallyUpdated = MakeSomeLocalChanges();
+            Dictionary<string, string> idToNamesLocallyUpdated = MakeSomeLocalChanges();
 
             // sync up
             TrySyncUp(3);
 
             // check that the db doesn't show entries as locally modified anymore
-            var ids = idToNamesLocallyUpdated.Keys;
-            var idsClause = "('" + String.Join("', '", ids) + "')";
-            QuerySpec smartStoreQuery = QuerySpec.BuildSmartQuerySpec("SELECT {accounts:_soup} FROM {accounts} WHERE {accounts:Id} IN " + idsClause, ids.Count);
-            var accountsFromDb = _smartStore.Query(smartStoreQuery, 0);
-            foreach (var row in accountsFromDb.Select(row => row.ToObject<JArray>()))
+            Dictionary<string, string>.KeyCollection ids = idToNamesLocallyUpdated.Keys;
+            string idsClause = "('" + String.Join("', '", ids) + "')";
+            QuerySpec smartStoreQuery =
+                QuerySpec.BuildSmartQuerySpec(
+                    "SELECT {accounts:_soup} FROM {accounts} WHERE {accounts:Id} IN " + idsClause, ids.Count);
+            JArray accountsFromDb = _smartStore.Query(smartStoreQuery, 0);
+            foreach (JArray row in accountsFromDb.Select(row => row.ToObject<JArray>()))
             {
                 var soupElt = row[0].ToObject<JObject>();
                 Assert.AreEqual(false, soupElt.ExtractValue<bool>(SyncManager.Local), "Wrong local flag");
                 Assert.AreEqual(false, soupElt.ExtractValue<bool>(SyncManager.LocallyUpdated), "Wrong local flag");
             }
-            var soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
+            string soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
             RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
             RestResponse response = await _restClient.SendAsync(request);
             var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
             var idToNamesFromServer = new JObject();
-            foreach (var rowToken in records)
+            foreach (JToken rowToken in records)
             {
                 var row = rowToken.ToObject<JObject>();
                 idToNamesFromServer[row.ExtractValue<string>(Constants.Id)] = row.ExtractValue<string>(Constants.Name);
@@ -221,10 +224,88 @@ namespace Salesforce.SDK.SmartStore.Store
             Assert.IsTrue(JToken.DeepEquals(JObject.FromObject(idToNamesLocallyUpdated), idToNamesFromServer));
         }
 
-        private long TrySyncUp(int numberOfChanges)
+        [TestMethod]
+        public async Task TestSyncUpWithLocallyUpdatedRecordsWithoutOverwrite()
+        {
+            TrySyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
+
+            Dictionary<string, string> idToNamesLocallyUpdated = MakeSomeLocalChanges();
+
+            var idToNamesRemotelyUpdated = new Dictionary<string, string>();
+            foreach (string id in idToNamesLocallyUpdated.Keys)
+            {
+                idToNamesRemotelyUpdated[id] = idToNamesLocallyUpdated[id] + "_updated_again";
+            }
+            await UpdateAccountsOnServer(idToNamesRemotelyUpdated);
+
+            // sync up
+            TrySyncUp(3, SyncState.MergeModeOptions.LeaveIfChanged);
+
+            String idsClause = "('" + String.Join("', '", idToNamesRemotelyUpdated.Keys) + "')";
+            QuerySpec smartStoreQuery =
+                QuerySpec.BuildSmartQuerySpec(
+                    "SELECT {accounts:_soup} FROM {accounts} WHERE {accounts:Id} IN " + idsClause,
+                    idToNamesRemotelyUpdated.Keys.Count);
+            JArray accountsFromDb = _smartStore.Query(smartStoreQuery, 0);
+            foreach (JToken token in accountsFromDb)
+            {
+                var row = token.ToObject<JArray>();
+                var soupElt = row[0].ToObject<JObject>();
+                Assert.IsTrue(soupElt.ExtractValue<bool>(SyncManager.Local), "Wrong local flag");
+                Assert.IsTrue(soupElt.ExtractValue<bool>(SyncManager.LocallyUpdated), "Wrong local flag");
+            }
+
+            // check server
+            String soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
+            RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
+            var idToNamesFromServer = new JObject();
+            RestResponse response = await _restClient.SendAsync(request);
+            var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
+            foreach (JToken token in records)
+            {
+                var row = token.ToObject<JObject>();
+                idToNamesFromServer[row.ExtractValue<string>(Constants.Id)] = row.ExtractValue<string>(Constants.Name);
+            }
+            Assert.IsTrue(JToken.DeepEquals(JObject.FromObject(idToNamesRemotelyUpdated), idToNamesFromServer));
+        }
+
+        [TestMethod]
+        public async Task TestSyncUpWithLocallyDeletedRecordsWithoutOverwrite()
+        {
+            TrySyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
+            string[] allIds = _idToNames.Keys.ToArray();
+            string[] idsLocallyDeleted = {allIds[0], allIds[1], allIds[2]};
+            DeleteAccountsLocally(idsLocallyDeleted);
+
+            var idToNamesRemotelyDeleted = new Dictionary<string, string>();
+            foreach (string id in idsLocallyDeleted)
+            {
+                idToNamesRemotelyDeleted[id] = _idToNames[id] + "_updated";
+            }
+            await UpdateAccountsOnServer(idToNamesRemotelyDeleted);
+
+            TrySyncUp(3, SyncState.MergeModeOptions.LeaveIfChanged);
+            String idsClause = "('" + String.Join("', '", idsLocallyDeleted) + "')";
+            QuerySpec smartStoreQuery =
+                QuerySpec.BuildSmartQuerySpec(
+                    "SELECT {accounts:_soup}, {accounts:Name} FROM {accounts} WHERE {accounts:Id} IN " + idsClause,
+                    idsLocallyDeleted.Count());
+            JArray accountsFromDb = _smartStore.Query(smartStoreQuery, 0);
+            Assert.IsTrue(accountsFromDb.Count == 3, "3 accounts should have been returned by smartstore");
+
+            // check server
+            String soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
+            RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
+            RestResponse response = await _restClient.SendAsync(request);
+            var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
+            Assert.AreEqual(records.Count, 3, "3 accounts should have been returned from server");
+        }
+
+        private long TrySyncUp(int numberOfChanges,
+            SyncState.MergeModeOptions mergeMode = SyncState.MergeModeOptions.Overwrite)
         {
             // Create sync
-            SyncOptions options = SyncOptions.OptionsForSyncUp(new List<string>(new String[] { Constants.Name }));
+            SyncOptions options = SyncOptions.OptionsForSyncUp(new List<string>(new[] {Constants.Name}), mergeMode);
             SyncState sync = SyncState.CreateSyncUp(_smartStore, options, AccountsSoup);
             long syncId = sync.Id;
             CheckStatus(sync, SyncState.SyncTypes.SyncUp, syncId, SyncState.SyncStatusTypes.New, 0, -1);
@@ -242,6 +323,7 @@ namespace Salesforce.SDK.SmartStore.Store
             }
             return syncId;
         }
+
         private long TrySyncDown(SyncState.MergeModeOptions mergeMode)
         {
             // Ids clause
@@ -397,9 +479,9 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
-        private void DeleteAccountsLocally(Dictionary<String, String> idsLocallyDeleted)
+        private void DeleteAccountsLocally(IEnumerable<string> idsLocallyDeleted)
         {
-            foreach (string id in idsLocallyDeleted.Keys)
+            foreach (string id in idsLocallyDeleted)
             {
                 var account =
                     _smartStore.Retrieve(AccountsSoup, _smartStore.LookupSoupEntryId(AccountsSoup, Constants.Id, id))[0]
@@ -460,9 +542,10 @@ namespace Salesforce.SDK.SmartStore.Store
 
         private Dictionary<string, string> MakeSomeLocalChanges()
         {
-            var allIds = _idToNames.Keys.ToArray();
-            var ids = new string[] {allIds[0], allIds[1], allIds[2]};
-            var idToNamesLocallyUpdated = ids.ToDictionary(id => id, id => _idToNames[id] + "_updated");
+            string[] allIds = _idToNames.Keys.ToArray();
+            var ids = new[] {allIds[0], allIds[1], allIds[2]};
+            Dictionary<string, string> idToNamesLocallyUpdated = ids.ToDictionary(id => id,
+                id => _idToNames[id] + "_updated");
             UpdateAccountsLocally(idToNamesLocallyUpdated);
             return idToNamesLocallyUpdated;
         }

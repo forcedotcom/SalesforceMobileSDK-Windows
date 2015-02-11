@@ -60,9 +60,9 @@ namespace Salesforce.SDK.SmartSync.Model
             return new SyncOptions(array.ToObject<List<string>>(), mergeMode);
         }
 
-        public static SyncOptions OptionsForSyncUp(List<string> fieldList)
+        public static SyncOptions OptionsForSyncUp(List<string> fieldList, SyncState.MergeModeOptions mergeMode = SyncState.MergeModeOptions.Overwrite)
         {
-            return new SyncOptions(fieldList);
+            return new SyncOptions(fieldList, mergeMode);
         }
 
         public static SyncOptions OptionsForSyncDown(SyncState.MergeModeOptions mergeMode)

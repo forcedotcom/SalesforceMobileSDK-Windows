@@ -51,6 +51,7 @@ namespace Salesforce.SDK.SmartSync.Util
         public const string TotalSize = "totalSize";
         public const string RecentItems = "recentItems";
         public const string SystemModstamp = "SystemModstamp";
+        public const string LastModifiedDate = "LastModifiedDate";
 
         #region Salesforce object types.
 

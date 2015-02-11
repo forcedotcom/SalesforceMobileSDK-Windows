@@ -44,12 +44,11 @@ namespace Salesforce.SDK.SmartSync.Manager
     public class SyncManager
     {
         public const int PageSize = 2000;
-        private const int UnchangedSync = -1;
+        private const int Unchanged = -1;
         public const string Local = "__local__";
         public const string LocallyCreated = "__locally_created__";
         public const string LocallyUpdated = "__locally_updated__";
         public const string LocallyDeleted = "__locally_deleted__";
-        private const string TimestampFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
@@ -218,7 +217,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             catch (Exception)
             {
                 Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, UnchangedSync, callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, Unchanged, callback);
             }
         }
 
@@ -235,7 +234,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     dirtyRecordIds.Select(
                         id => _smartStore.Retrieve(sync.SoupName, long.Parse(id))[0].ToObject<JObject>()))
             {
-                await SyncUpOneRecord(sync.SoupName, sync.Options.FieldList, record);
+                await SyncUpOneRecord(sync.SoupName, sync.Options.FieldList, record, sync.MergeMode);
 
                 int progress = (i + 1)*100/totalSize;
                 if (progress < 100)
@@ -245,7 +244,37 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        private async Task<bool> SyncUpOneRecord(string soupName, List<string> fieldList, JObject record)
+        private async Task<bool> IsNewerThanServer(string objectType, string objectId, long lastModifiedDate)
+        {
+            long serverLastModified;
+            
+            // build query
+            var builder = SOQLBuilder.GetInstanceWithFields(Constants.LastModifiedDate);
+            builder.From(objectType);
+            builder.Where(Constants.Id + " = '" + objectId + "'");
+            var query = builder.Build();
+
+            // make async call
+            var lastModResponse = await _restClient.SendAsync(RestRequest.GetRequestForQuery(_apiVersion, query));
+
+            // validation of response
+            if (lastModResponse == null || !lastModResponse.Success) return false;
+            var responseJson = lastModResponse.AsJObject;
+            if (responseJson == null) return false;
+            
+            // obtain records list
+            var records = responseJson.ExtractValue<JArray>("records");
+            if (records == null || records.Count <= 0) return false;
+            var obj = records[0].ToObject<JObject>();
+            if (obj == null) return false;
+            
+            // check if LastModifiedDate exists
+            DateTime lastModified = obj.ExtractValue<DateTime>(Constants.LastModifiedDate);
+            serverLastModified = lastModified.Ticks;
+            return serverLastModified <= lastModifiedDate;
+        }
+
+        private async Task<bool> SyncUpOneRecord(string soupName, List<string> fieldList, JObject record, SyncState.MergeModeOptions mergeMode)
         {
             var action = SyncAction.None;
             if (record.ExtractValue<bool>(LocallyDeleted))
@@ -264,6 +293,18 @@ namespace Salesforce.SDK.SmartSync.Manager
 
             string objectType = SmartStore.Store.SmartStore.Project(record, Constants.SobjectType).ToString();
             var objectId = record.ExtractValue<string>(Constants.Id);
+            long lastModifiedDate = record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupLastModifiedDate);
+
+            /*
+             * Check if we're attempting to update a record that has been updated on the server after the client update.
+             * If merge mode passed in tells us to leave the record alone, we will do nothing and return here.
+             */
+            if (SyncState.MergeModeOptions.LeaveIfChanged == mergeMode &&
+                (action == SyncAction.Update || action == SyncAction.Delete))
+            {
+                var isNewer = await IsNewerThanServer(objectType, objectId, lastModifiedDate);
+                if (isNewer) return true;
+            }
 
             var fields = new Dictionary<string, object>();
             if (SyncAction.Create == action || SyncAction.Update == action)
@@ -387,7 +428,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
             catch (Exception)
             {
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, UnchangedSync, callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, Unchanged, callback);
                 return false;
             }
             JObject responseJson = response.AsJObject;
@@ -517,7 +558,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (sync == null)
                 return;
             sync.Status = status;
-            if (progress != UnchangedSync)
+            if (progress != Unchanged)
             {
                 sync.Progress = progress;
             }
@@ -530,7 +571,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private string AddFilterForReSync(string query, long maxTimeStamp)
         {
-            if (maxTimeStamp != UnchangedSync)
+            if (maxTimeStamp != Unchanged)
             {
                 string extraPredicate = Constants.SystemModstamp + " > " +
                                         new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
@@ -551,7 +592,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private long GetMaxTimeStamp(JArray jArray)
         {
-            long maxTimeStamp = UnchangedSync;
+            long maxTimeStamp = Unchanged;
             foreach (JToken t in jArray)
             {
                 var jObj = t.ToObject<JObject>();
@@ -560,18 +601,18 @@ namespace Salesforce.SDK.SmartSync.Manager
                     var timeStampStr = jObj.ExtractValue<string>(Constants.SystemModstamp);
                     if (String.IsNullOrWhiteSpace(timeStampStr))
                     {
-                        maxTimeStamp = UnchangedSync;
+                        maxTimeStamp = Unchanged;
                         break;
                     }
                     try
                     {
-                        long timeStamp = DateTime.Parse(timeStampStr).Ticks;
+                        long timeStamp = DateTime.Parse(timeStampStr).Ticks / TimeSpan.TicksPerMillisecond;
                         maxTimeStamp = Math.Max(timeStamp, maxTimeStamp);
                     }
                     catch (Exception)
                     {
                         Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse systemModstamp");
-                        maxTimeStamp = UnchangedSync;
+                        maxTimeStamp = Unchanged;
                         break;
                     }
                 }

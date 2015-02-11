@@ -27,14 +27,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
+using Windows.Storage;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
+using Salesforce.SDK.Rest;
 using Salesforce.SDK.Utilities;
-using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
 
 namespace Salesforce.SDK.Net
 {
@@ -89,15 +96,20 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public class HttpCall
     {
-        private readonly ContentTypeValues ContentType;
-        private readonly HttpCallHeaders Headers;
-        private readonly HttpMethod Method;
-        private readonly string RequestBody;
-        private readonly string Url;
-        private readonly HttpClient WebClient;
-        private Exception HttpCallErrorException;
-        private string ResponseBodyText;
-        private HttpStatusCode StatusCodeValue;
+        /// <summary>
+        /// Use this property to retrieve the user agent.
+        /// </summary>
+        public static string UserAgentHeader { private set; get; }
+        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 ({0}/{1} {2}) {3}";
+        private readonly ContentTypeValues _contentType;
+        private readonly HttpCallHeaders _headers;
+        private readonly HttpMethod _method;
+        private readonly string _requestBody;
+        private readonly string _url;
+        private readonly HttpClient _webClient;
+        private Exception _httpCallErrorException;
+        private string _responseBodyText;
+        private HttpStatusCode _statusCodeValue;
 
         /// <summary>
         ///     Constructor for HttpCall
@@ -118,12 +130,12 @@ namespace Salesforce.SDK.Net
             };
             httpBaseFilter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
             httpBaseFilter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache;
-            WebClient = new HttpClient(httpBaseFilter);
-            Method = method;
-            Headers = headers;
-            Url = url;
-            RequestBody = requestBody;
-            ContentType = contentType;
+            _webClient = new HttpClient(httpBaseFilter);
+            _method = method;
+            _headers = headers;
+            _url = url;
+            _requestBody = requestBody;
+            _contentType = contentType;
         }
 
         /// <summary>
@@ -131,7 +143,7 @@ namespace Salesforce.SDK.Net
         /// </summary>
         public bool Executed
         {
-            get { return (ResponseBodyText != null || HttpCallErrorException != null); }
+            get { return (_responseBodyText != null || _httpCallErrorException != null); }
         }
 
         /// <summary>
@@ -142,7 +154,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return HttpCallErrorException == null;
+                return _httpCallErrorException == null;
             }
         }
 
@@ -154,7 +166,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return HttpCallErrorException;
+                return _httpCallErrorException;
             }
         }
 
@@ -163,7 +175,7 @@ namespace Salesforce.SDK.Net
         /// </summary>
         public bool HasResponse
         {
-            get { return ResponseBodyText != null; }
+            get { return _responseBodyText != null; }
         }
 
         /// <summary>
@@ -174,7 +186,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return ResponseBodyText;
+                return _responseBodyText;
             }
         }
 
@@ -186,7 +198,7 @@ namespace Salesforce.SDK.Net
             get
             {
                 CheckExecuted();
-                return StatusCodeValue;
+                return _statusCodeValue;
             }
         }
 
@@ -273,43 +285,54 @@ namespace Salesforce.SDK.Net
             {
                 throw new InvalidOperationException("A HttpCall can only be executed once");
             }
-            var req = new HttpRequestMessage(Method, new Uri(Url));
+            var req = new HttpRequestMessage(_method, new Uri(_url));
             // Setting header
-            if (Headers != null)
+            if (_headers != null)
             {
-                if (Headers.Authorization != null)
+                if (_headers.Authorization != null)
                 {
-                    req.Headers.Authorization = Headers.Authorization;
+                    req.Headers.Authorization = _headers.Authorization;
                 }
-                foreach (var item in Headers.Headers)
+                foreach (var item in _headers.Headers)
                 {
                     req.Headers[item.Key] = item.Value;
                 }
             }
-            if (!String.IsNullOrWhiteSpace(RequestBody))
+            // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
+            if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                switch (ContentType)
+                CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
+                await core.RunAsync(CoreDispatcherPriority.Normal, async () => await GenerateOsString());
+                var packageVersion = Package.Current.Id.Version;
+                var packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                           packageVersion.Build;
+                UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(), packageVersionString, "native", UserAgentHeader);
+            }
+            req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
+            if (!String.IsNullOrWhiteSpace(_requestBody))
+            {
+                switch (_contentType)
                 {
                     case ContentTypeValues.FormUrlEncoded:
-                        req.Content = new HttpFormUrlEncodedContent(RequestBody.ParseQueryString());
+                        req.Content = new HttpFormUrlEncodedContent(_requestBody.ParseQueryString());
                         break;
                     default:
-                        req.Content = new HttpStringContent(RequestBody);
-                        req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(ContentType.MimeType());
+                        req.Content = new HttpStringContent(_requestBody);
+                        req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(_contentType.MimeType());
                         break;
                 }
             }
             HttpResponseMessage message;
             try
             {
-               message = await WebClient.SendRequestAsync(req);
-               HandleMessageResponse(message);
+                message = await _webClient.SendRequestAsync(req);
+                HandleMessageResponse(message);
             }
             catch (Exception ex)
             {
-                HttpCallErrorException = ex;
+                _httpCallErrorException = ex;
                 message = null;
-            } 
+            }
             return this;
         }
 
@@ -322,15 +345,71 @@ namespace Salesforce.SDK.Net
             }
             catch (Exception ex)
             {
-                HttpCallErrorException = ex;
+                _httpCallErrorException = ex;
             }
 
             if (response != null)
             {
-                ResponseBodyText = await response.Content.ReadAsStringAsync();
-                StatusCodeValue = response.StatusCode;
+                _responseBodyText = await response.Content.ReadAsStringAsync();
+                _statusCodeValue = response.StatusCode;
                 response.Dispose();
             }
+        }
+
+        /// <summary>
+        /// There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through parsing the AppxManifest.xml at runtime and retrieving the displayname.
+        /// If this fails we return the package.id.name instead, allowing the app to still be identified.
+        /// </summary>
+        /// <returns></returns>
+        private static async Task<string> GetApplicationDisplayName()
+        {
+            string displayName = String.Empty;
+            try
+            {
+                StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+                string manifestXml = await FileIO.ReadTextAsync(file);
+                XDocument doc = XDocument.Parse(manifestXml);
+                XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
+                displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
+                        select name.Value).First();
+            }
+            catch (Exception)
+            {
+                Debug.WriteLine("Error retrieving application name; using package id name instead");
+                displayName = Package.Current.Id.Name;
+            }
+            return displayName;
+        }
+
+        /// <summary>
+        /// This method generates the user agent string for the current device.
+        /// </summary>
+        /// <returns></returns>
+        private static Task<string> GenerateOsString()
+        {
+            var t = new TaskCompletionSource<string>();
+            var w = new WebView();
+            w.NavigateToString("<html />");
+            NotifyEventHandler h = null;
+            h = (s, e) =>
+            {
+                try
+                {
+                    UserAgentHeader = e.Value;
+                }
+                catch (Exception ex)
+                {
+                    t.SetException(ex);
+                }
+                finally
+                {
+                    /* release */
+                    w.ScriptNotify -= h;
+                }
+            };
+            w.ScriptNotify += h;
+            w.InvokeScript("execScript", new[] {"window.external.notify(navigator.appVersion); "});
+            return t.Task;
         }
     }
 }
