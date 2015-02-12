@@ -2,7 +2,7 @@
 <package >
   <metadata minClientVersion="2.8">
     <id>Salesforce.SDK.Core</id>
-    <version>0.8.2-beta</version>
+    <version>3.1.1-beta</version>
     <title>Salesforce.SDK.Core</title>
     <authors>Salesforce.com</authors>
     <owners></owners>

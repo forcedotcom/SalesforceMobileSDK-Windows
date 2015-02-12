@@ -60,7 +60,7 @@ namespace $safeprojectname$
             get { return new string[] { $scopes$ }; }
         }
 
-        public override Color LoginBackgroundColor
+        public override Windows.UI.Color? LoginBackgroundColor
         {
             get { return Colors.DeepSkyBlue; }
         }
