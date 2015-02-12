@@ -36,6 +36,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.App
 {
@@ -50,13 +51,7 @@ namespace Salesforce.SDK.App
             HardwareButtons.BackPressed += HardwareButtons_BackPressed;
         }
 
-        /// <summary>
-        ///     Invoked when the application is launched normally by the end user.  Other entry points
-        ///     will be used when the application is launched to open a specific file, to display
-        ///     search results, and so forth.
-        /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        public async void OnLaunched(LaunchActivatedEventArgs e)
+        private Frame CreateRootFrame()
         {
             var rootFrame = Window.Current.Content as Frame;
 
@@ -67,18 +62,23 @@ namespace Salesforce.SDK.App
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
 
-                //Associate the frame with a SuspensionManager key                                
-                SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
-
                 // TODO: change this value to a cache size that is appropriate for your application
                 rootFrame.CacheSize = 1;
 
+                SuspensionManager.RegisterFrame(rootFrame, "AppFrame");
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
 
-            if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            return rootFrame;
+        }
+
+        private async Task RestoreStatus(ApplicationExecutionState previousExecutionState)
+        {
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (previousExecutionState == ApplicationExecutionState.Terminated)
             {
                 // Restore the saved session state only when appropriate
                 try
@@ -91,6 +91,20 @@ namespace Salesforce.SDK.App
                     //Assume there is no state and continue
                 }
             }
+        }
+
+        /// <summary>
+        ///     Invoked when the application is launched normally by the end user.  Other entry points
+        ///     will be used when the application is launched to open a specific file, to display
+        ///     search results, and so forth.
+        /// </summary>
+        /// <remarks>This method ensures that Window.Current.Content is set to a valid Frame.</remarks>
+        /// <remarks>This method calls Window.Current.Activate.</remarks>
+        /// <param name="e">Details about the launch request and process.</param>
+        public async void OnLaunched(LaunchActivatedEventArgs e)
+        {
+            var rootFrame = CreateRootFrame();
+            await RestoreStatus(e.PreviousExecutionState);
 
             if (rootFrame.Content == null)
             {
@@ -122,18 +136,10 @@ namespace Salesforce.SDK.App
 
         public async void OnActivated(IActivatedEventArgs args)
         {
-            if (ApplicationExecutionState.Terminated.Equals(args.PreviousExecutionState))
-            {
-                try
-                {
-                    await SuspensionManager.RestoreAsync();
-                    ContinuationManager.MarkAsStale();
-                }
-                catch (SuspensionManagerException e)
-                {
-                    Debug.WriteLine("Exception during OnActivated, " + e.StackTrace);
-                }
-            }
+            CreateRootFrame();
+            await RestoreStatus(args.PreviousExecutionState);
+            if(args.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                ContinuationManager.MarkAsStale();
 
             PincodeManager.TriggerBackgroundedPinTimer();
             if (args is IContinuationActivatedEventArgs)
