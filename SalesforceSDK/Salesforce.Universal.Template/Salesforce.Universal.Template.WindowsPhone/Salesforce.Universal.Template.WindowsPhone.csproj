@@ -103,10 +103,10 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Core">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.0.8.2-beta\lib\wpa\Salesforce.SDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.1.1-beta\lib\wpa\Salesforce.SDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Phone">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.0.8.2-beta\lib\wpa\Salesforce.SDK.Phone.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.1.1-beta\lib\wpa\Salesforce.SDK.Phone.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">

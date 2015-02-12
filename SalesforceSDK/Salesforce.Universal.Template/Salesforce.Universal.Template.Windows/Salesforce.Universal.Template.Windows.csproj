@@ -124,10 +124,10 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Core">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.0.8.2-beta\lib\win\Salesforce.SDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.1.1-beta\lib\win\Salesforce.SDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Store">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.0.8.2-beta\lib\win\Salesforce.SDK.Store.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.1.1-beta\lib\win\Salesforce.SDK.Store.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
