@@ -131,7 +131,7 @@
                    HorizontalAlignment="Center"
                    Margin="5 0 5 20"
                    Style="{StaticResource HeaderTextBlockStyle}" />
-            <ItemsControl x:Name="ApplicationLogo" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" AutomationProperties.Name="Salesforce1">
+            <ItemsControl x:Name="ApplicationLogo" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel/>
@@ -139,7 +139,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding}"/>
+                        <Image Source="{Binding}" AutomationProperties.Name="{Binding Text, ElementName=ApplicationTitle}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

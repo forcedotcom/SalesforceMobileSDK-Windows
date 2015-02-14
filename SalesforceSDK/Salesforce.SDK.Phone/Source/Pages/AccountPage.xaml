@@ -126,7 +126,7 @@
                    Text="{Binding Converter={StaticResource Localize}}"
                    Margin="5"
                    Style="{StaticResource HeaderTextBlockStyle}" />
-        <ItemsControl x:Name="ApplicationLogo" AutomationProperties.Name="Salesforce1">
+        <ItemsControl x:Name="ApplicationLogo">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
@@ -134,7 +134,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding}"/>
+                    <Image Source="{Binding}" AutomationProperties.Name="{Binding Text, ElementName=ApplicationTitle}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
