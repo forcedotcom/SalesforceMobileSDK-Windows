@@ -61,32 +61,26 @@
                            Style="{StaticResource SubheaderTextBlockStyle}"
                            TextAlignment="Center" />
                 <StackPanel Margin="5 0 5 15">
+                    <TextBlock Name="lbl_HostAddress"
+                               DataContext="address_label"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Foreground="DimGray"
+                               Margin="10 0 0 0"/>
                     <TextBox x:Name="HostAddress"
                              MaxLength="2048"
                              InputScope="Url"
-                             HorizontalAlignment="Stretch">
-                        <TextBox.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    DataContext="address_label"
-                                    Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
-                                    Margin="10 0 0 0" />
-                            </DataTemplate>
-                        </TextBox.HeaderTemplate>
+                             HorizontalAlignment="Stretch"
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostAddress}">
                     </TextBox>
+                    <TextBlock Name="lbl_HostName"
+                               DataContext="host_label"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Foreground="DimGray"
+                               Margin="10 0 0 0"/>
                     <TextBox x:Name="HostName"
                              MaxLength="2048"
-                             HorizontalAlignment="Stretch">
-                        <TextBox.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    DataContext="host_label"
-                                    Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
-                                    Margin="10 0 0 0" />
-                            </DataTemplate>
-                        </TextBox.HeaderTemplate>
+                             HorizontalAlignment="Stretch"
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostName}">            
                     </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
@@ -145,7 +139,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding}"/>
+                        <Image Source="{Binding}" AutomationProperties.Name="{Binding Text, ElementName=ApplicationTitle}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
