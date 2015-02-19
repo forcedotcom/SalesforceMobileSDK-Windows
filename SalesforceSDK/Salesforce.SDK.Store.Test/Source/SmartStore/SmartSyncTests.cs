@@ -314,7 +314,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
             _syncCheck = 0;
             _numberOfChanges = numberOfChanges;
-            DateTime end = DateTime.Now.AddSeconds(20);
+            DateTime end = DateTime.Now.AddSeconds(60);
             _syncManager.RunSync(sync, HandleSyncUpCheck);
             while (_syncCheck < 1)
             {
@@ -331,7 +331,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
             // Create sync
             SyncTarget target =
-                SyncTarget.TargetForSOQLSyncDown("SELECT Id, Name, SystemModstamp FROM Account WHERE Id IN " +
+                SoqlSyncTarget.TargetForSOQLSyncDown("SELECT Id, Name, " + Constants.LastModifiedDate + " FROM Account WHERE Id IN " +
                                                  idsClause);
             SyncOptions options = SyncOptions.OptionsForSyncDown(mergeMode);
             SyncState sync = SyncState.CreateSyncDown(_smartStore, target, AccountsSoup, options);
@@ -340,7 +340,7 @@ namespace Salesforce.SDK.SmartStore.Store
             // Run sync
             _syncCheck = 0;
             _syncManager.RunSync(sync, HandleSyncDownCheck);
-            DateTime end = DateTime.Now.AddSeconds(20);
+            DateTime end = DateTime.Now.AddSeconds(60);
             while (_syncCheck < 3)
             {
                 if (DateTime.Now > end)
@@ -351,7 +351,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         private void HandleSyncUpCheck(SyncState sync)
         {
-            if (sync.Progress == 100)
+            if (sync.Progress == 100 || sync.Status == SyncState.SyncStatusTypes.Failed )
                 _syncCheck = 1;
             switch (_syncCheck)
             {

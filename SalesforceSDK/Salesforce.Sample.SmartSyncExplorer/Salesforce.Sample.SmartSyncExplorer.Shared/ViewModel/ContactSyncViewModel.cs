@@ -140,7 +140,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                         .Limit(Limit)
                         .Build();
                 SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-                SyncTarget target = SyncTarget.TargetForSOQLSyncDown(soqlQuery);
+                SyncTarget target = SoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
                 try
                 {
                     SyncState sync = _syncManager.SyncDown(target, ContactSoup, HandleSyncUpdate);
