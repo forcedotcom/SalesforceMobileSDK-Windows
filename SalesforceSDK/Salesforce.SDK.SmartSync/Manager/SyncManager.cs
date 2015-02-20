@@ -31,7 +31,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
@@ -52,7 +51,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
-        private readonly string _apiVersion;
+        public readonly string ApiVersion;
         private readonly RestClient _restClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
 
@@ -69,7 +68,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     return account.AccessToken;
                 }
                 );
-            _apiVersion = ApiVersionStrings.VersionNumber;
+            ApiVersion = ApiVersionStrings.VersionNumber;
             SyncState.SetupSyncsSoupIfNeeded(_smartStore);
         }
 
@@ -214,7 +213,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 }
                 UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, callback);
             }
-            catch (Exception)
+            catch (Exception fail)
             {
                 Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
                 UpdateSync(sync, SyncState.SyncStatusTypes.Failed, Unchanged, callback);
@@ -247,34 +246,36 @@ namespace Salesforce.SDK.SmartSync.Manager
         private async Task<bool> IsNewerThanServer(string objectType, string objectId, long lastModifiedDate)
         {
             long serverLastModified;
-            
+
             // build query
-            var builder = SOQLBuilder.GetInstanceWithFields(Constants.LastModifiedDate);
+            SOQLBuilder builder = SOQLBuilder.GetInstanceWithFields(Constants.LastModifiedDate);
             builder.From(objectType);
             builder.Where(Constants.Id + " = '" + objectId + "'");
-            var query = builder.Build();
+            string query = builder.Build();
 
             // make async call
-            var lastModResponse = await _restClient.SendAsync(RestRequest.GetRequestForQuery(_apiVersion, query));
+            RestResponse lastModResponse =
+                await _restClient.SendAsync(RestRequest.GetRequestForQuery(ApiVersion, query));
 
             // validation of response
             if (lastModResponse == null || !lastModResponse.Success) return false;
-            var responseJson = lastModResponse.AsJObject;
+            JObject responseJson = lastModResponse.AsJObject;
             if (responseJson == null) return false;
-            
+
             // obtain records list
             var records = responseJson.ExtractValue<JArray>("records");
             if (records == null || records.Count <= 0) return false;
             var obj = records[0].ToObject<JObject>();
             if (obj == null) return false;
-            
+
             // check if LastModifiedDate exists
-            DateTime lastModified = obj.ExtractValue<DateTime>(Constants.LastModifiedDate);
+            var lastModified = obj.ExtractValue<DateTime>(Constants.LastModifiedDate);
             serverLastModified = lastModified.Ticks;
             return serverLastModified <= lastModifiedDate;
         }
 
-        private async Task<bool> SyncUpOneRecord(string soupName, List<string> fieldList, JObject record, SyncState.MergeModeOptions mergeMode)
+        private async Task<bool> SyncUpOneRecord(string soupName, List<string> fieldList, JObject record,
+            SyncState.MergeModeOptions mergeMode)
         {
             var action = SyncAction.None;
             if (record.ExtractValue<bool>(LocallyDeleted))
@@ -293,7 +294,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
             string objectType = SmartStore.Store.SmartStore.Project(record, Constants.SobjectType).ToString();
             var objectId = record.ExtractValue<string>(Constants.Id);
-            long lastModifiedDate = record.ExtractValue<long>(SmartStore.Store.SmartStore.SoupLastModifiedDate);
+            var lastModifiedDate = record.ExtractValue<DateTime>(Constants.LastModifiedDate).Ticks;
 
             /*
              * Check if we're attempting to update a record that has been updated on the server after the client update.
@@ -302,8 +303,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (SyncState.MergeModeOptions.LeaveIfChanged == mergeMode &&
                 (action == SyncAction.Update || action == SyncAction.Delete))
             {
-                var isNewer = await IsNewerThanServer(objectType, objectId, lastModifiedDate);
-                if (isNewer) return true;
+                bool isNewer = await IsNewerThanServer(objectType, objectId, lastModifiedDate);
+                if (!isNewer) return true;
             }
 
             var fields = new Dictionary<string, object>();
@@ -311,7 +312,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 foreach (
                     string fieldName in
-                        fieldList.Where(fieldName => !Constants.Id.Equals(fieldName, StringComparison.CurrentCulture)))
+                        fieldList.Where(fieldName => !Constants.Id.Equals(fieldName, StringComparison.CurrentCulture) &&
+                            !Constants.LastModifiedDate.Equals(fieldName, StringComparison.CurrentCulture) &&
+                            !Constants.SystemModstamp.Equals(fieldName, StringComparison.CurrentCulture)))
                 {
                     fields.Add(fieldName, record[fieldName]);
                 }
@@ -322,13 +325,13 @@ namespace Salesforce.SDK.SmartSync.Manager
             switch (action)
             {
                 case SyncAction.Create:
-                    request = RestRequest.GetRequestForCreate(_apiVersion, objectType, fields);
+                    request = RestRequest.GetRequestForCreate(ApiVersion, objectType, fields);
                     break;
                 case SyncAction.Delete:
-                    request = RestRequest.GetRequestForDelete(_apiVersion, objectType, objectId);
+                    request = RestRequest.GetRequestForDelete(ApiVersion, objectType, objectId);
                     break;
                 case SyncAction.Update:
-                    request = RestRequest.GetRequestForUpdate(_apiVersion, objectType, objectId, fields);
+                    request = RestRequest.GetRequestForUpdate(ApiVersion, objectType, objectId, fields);
                     break;
             }
 
@@ -363,131 +366,28 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private async Task<bool> SyncDown(SyncState sync, Action<SyncState> callback)
         {
-            switch (sync.Target.QueryType)
-            {
-                case SyncTarget.QueryTypes.Mru:
-                    await SyncDownMru(sync, callback);
-                    break;
-                case SyncTarget.QueryTypes.Soql:
-                    await SyncDownSoql(sync, callback);
-                    break;
-                case SyncTarget.QueryTypes.Sosl:
-                    await SyncDownSosl(sync, callback);
-                    break;
-            }
-            return true;
-        }
-
-        private async Task<int> SyncDownMru(SyncState sync, Action<SyncState> callback)
-        {
             SyncTarget target = sync.Target;
-            // Get recent items ids from server
-            SyncState.MergeModeOptions mergeMode = sync.MergeMode;
-            RestRequest request = RestRequest.GetRequestForMetadata(_apiVersion, target.ObjectType);
-            RestResponse response = await _restClient.SendAsync(request);
-            List<string> recentItems = Pluck<string>(response.AsJObject.ExtractValue<JArray>(Constants.RecentItems),
-                Constants.Id);
-
-            // Building SOQL query to get requested at
-            string soql =
-                SOQLBuilder.GetInstanceWithFields(target.FieldList.ToArray())
-                    .From(target.ObjectType)
-                    .Where("Id IN ('" + String.Join("', '", recentItems) + "')")
-                    .Build();
-
-            // Get recent items attributes from server
-            request = RestRequest.GetRequestForQuery(_apiVersion, soql);
-            response = await _restClient.SendAsync(request);
-            JObject responseJson = response.AsJObject;
-            var records = responseJson.ExtractValue<JArray>(Constants.Records);
-            int totalSize = records.Count;
+            long maxTimeStamp = sync.MaxTimeStamp;
+            JArray records = await target.StartFetch(this, sync.MaxTimeStamp);
+            int countSaved = 0;
+            int totalSize = target.TotalSize;
             sync.TotalSize = totalSize;
-            // Save to smartstore
             UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
-            if (totalSize > 0)
+            while (records != null)
             {
                 SaveRecordsToSmartStore(sync.SoupName, records, sync.MergeMode);
-            }
-            return totalSize;
-        }
-
-        private async Task<bool> SyncDownSoql(SyncState sync, Action<SyncState> callback)
-        {
-            string soupName = sync.SoupName;
-            SyncTarget target = sync.Target;
-            string query = target.Query;
-            long maxTimeStamp = sync.MaxTimeStamp;
-            query = AddFilterForReSync(query, maxTimeStamp);
-            RestRequest request = RestRequest.GetRequestForQuery(_apiVersion, query);
-
-            // Call server
-            RestResponse response;
-            try
-            {
-                response = await _restClient.SendAsync(request);
-            }
-            catch (Exception)
-            {
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, Unchanged, callback);
-                return false;
-            }
-            JObject responseJson = response.AsJObject;
-
-            int countSaved = 0;
-            var totalSize = responseJson.ExtractValue<int>(Constants.TotalSize);
-            sync.TotalSize = totalSize;
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
-
-            do
-            {
-                var records = responseJson.ExtractValue<JArray>(Constants.Records);
-                // Save to smartstore
-                SaveRecordsToSmartStore(soupName, records, sync.MergeMode);
                 countSaved += records.Count;
                 maxTimeStamp = Math.Max(maxTimeStamp, GetMaxTimeStamp(records));
-                // Update sync status
-                sync.MaxTimeStamp = maxTimeStamp;
                 if (countSaved < totalSize)
                 {
                     UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved*100/totalSize, callback);
                 }
-
-
-                // Fetch next records if any
-                var nextRecordsUrl = responseJson.ExtractValue<string>(Constants.NextRecordsUrl);
-                responseJson = null;
-                if (!String.IsNullOrWhiteSpace(nextRecordsUrl))
-                {
-                    RestResponse result = await _restClient.SendAsync(HttpMethod.Get, nextRecordsUrl);
-                    if (result != null)
-                    {
-                        responseJson = result.AsJObject;
-                    }
-                }
-            } while (responseJson != null);
+                records = await target.ContinueFetch(this);
+            }
+            sync.MaxTimeStamp = maxTimeStamp;
             return true;
         }
 
-        private async Task<int> SyncDownSosl(SyncState sync, Action<SyncState> callback)
-        {
-            SyncTarget target = sync.Target;
-            RestRequest request = RestRequest.GetRequestForSearch(_apiVersion, target.Query);
-
-            // Call server
-            RestResponse response = await _restClient.SendAsync(request);
-
-            // Parse response
-            JArray records = response.AsJArray;
-            int totalSize = records.Count;
-            sync.TotalSize = totalSize;
-            // Save to smartstore
-            UpdateSync(sync, SyncState.SyncStatusTypes.Running, 0, callback);
-            if (totalSize > 0)
-            {
-                SaveRecordsToSmartStore(sync.SoupName, records, sync.MergeMode);
-            }
-            return totalSize;
-        }
 
         private HashSet<string> GetDirtyRecordIds(string soupName, string idField)
         {
@@ -506,7 +406,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             return idsToSkip;
         }
 
-        private static List<T> Pluck<T>(IEnumerable<JToken> jArray, string key)
+        public static List<T> Pluck<T>(IEnumerable<JToken> jArray, string key)
         {
             return jArray.Select(t => t.ToObject<JObject>().Value<T>(key)).ToList();
         }
@@ -569,11 +469,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        private string AddFilterForReSync(string query, long maxTimeStamp)
+        public static string AddFilterForReSync(string query, long maxTimeStamp)
         {
             if (maxTimeStamp != Unchanged)
             {
-                string extraPredicate = Constants.SystemModstamp + " > " +
+                string extraPredicate = Constants.LastModifiedDate + " > " +
                                         new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
                 if (query.Contains(" where "))
                 {
@@ -590,6 +490,11 @@ namespace Salesforce.SDK.SmartSync.Manager
             return query;
         }
 
+        public async Task<RestResponse> SendRestRequest(RestRequest request)
+        {
+            return await _restClient.SendAsync(request);
+        }
+
         private long GetMaxTimeStamp(JArray jArray)
         {
             long maxTimeStamp = Unchanged;
@@ -598,20 +503,20 @@ namespace Salesforce.SDK.SmartSync.Manager
                 var jObj = t.ToObject<JObject>();
                 if (jObj != null)
                 {
-                    var timeStampStr = jObj.ExtractValue<string>(Constants.SystemModstamp);
-                    if (String.IsNullOrWhiteSpace(timeStampStr))
+                    var date = jObj.ExtractValue<DateTime>(Constants.LastModifiedDate);
+                    if (date == null)
                     {
                         maxTimeStamp = Unchanged;
                         break;
                     }
                     try
                     {
-                        long timeStamp = DateTime.Parse(timeStampStr).Ticks / TimeSpan.TicksPerMillisecond;
+                        long timeStamp = date.Ticks;
                         maxTimeStamp = Math.Max(timeStamp, maxTimeStamp);
                     }
                     catch (Exception)
                     {
-                        Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse systemModstamp");
+                        Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse LastModifiedDate");
                         maxTimeStamp = Unchanged;
                         break;
                     }

@@ -27,7 +27,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.SmartStore.Store;
+using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.SmartSync.Model
@@ -35,28 +39,21 @@ namespace Salesforce.SDK.SmartSync.Model
     /// <summary>
     ///     Target for sync u i.e. set of objects to download from server
     /// </summary>
-    public class SyncTarget
+    public abstract class SyncTarget
     {
         public enum QueryTypes
         {
             Mru,
             Sosl,
-            Soql
+            Soql,
+            Custom
         }
 
-        private SyncTarget(QueryTypes queryType, string query, List<string> fieldList, string objectType)
-        {
-            QueryType = queryType;
-            Query = query;
-            FieldList = fieldList;
-            ObjectType = objectType;
-        }
+        public const string WindowsImpl = "windowsImpl";
+        public const string WindowsImplType = "windowsImplType";
 
-
-        public QueryTypes QueryType { private set; get; }
-        public string Query { private set; get; }
-        public List<string> FieldList { private set; get; }
-        public string ObjectType { private set; get; }
+        public QueryTypes QueryType { internal set; get; }
+        public int TotalSize { internal set; get; } // set during fetch
 
         /// <summary>
         ///     Build SyncTarget from json
@@ -68,58 +65,50 @@ namespace Salesforce.SDK.SmartSync.Model
             if (target == null) return null;
             var tempTarget = target.ExtractValue<string>(Constants.QueryType);
             var queryType = (QueryTypes) Enum.Parse(typeof (QueryTypes), tempTarget);
-            var query = target.ExtractValue<string>(Constants.Query);
-            var jFieldList = target.ExtractValue<JArray>(Constants.FieldList);
-            var fieldList = new List<string>();
-            if (jFieldList != null)
+            switch (queryType)
             {
-                fieldList = jFieldList.ToObject<List<string>>();
+                case QueryTypes.Mru:
+                    return MruSyncTarget.FromJson(target);
+                case QueryTypes.Soql:
+                    return SoqlSyncTarget.FromJson(target);
+                case QueryTypes.Sosl:
+                    return SoslSyncTarget.FromJson(target);
+                default:
+                    JToken impl;
+                    if (target.TryGetValue(WindowsImpl, out impl))
+                    {
+                        JToken implType;
+                        if (target.TryGetValue(WindowsImplType, out implType))
+                        {
+                            try
+                            {
+                                Assembly assembly = Assembly.Load(new AssemblyName(impl.ToObject<string>()));
+                                Type type = assembly.GetType(implType.ToObject<string>());
+                                if (type.GetTypeInfo().IsSubclassOf(typeof (SyncTarget)))
+                                {
+                                    MethodInfo method = type.GetTypeInfo().GetDeclaredMethod("FromJson");
+                                    return (SyncTarget) method.Invoke(type, new object[] {target});
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                throw new SmartStoreException("Invalid SyncTarget");
+                            }
+                        }
+                    }
+                    break;
             }
-            var objectType = target.ExtractValue<string>(Constants.SObjectType);
-            return new SyncTarget(queryType, query, fieldList, objectType);
+            throw new SmartStoreException("Could not generate SyncTarget from json target");
         }
 
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
-        public JObject AsJson()
-        {
-            var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
-            if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
-            if (FieldList != null) target.Add(Constants.FieldList, new JArray(FieldList));
-            if (!String.IsNullOrWhiteSpace(ObjectType)) target.Add(Constants.SObjectType, ObjectType);
-            return target;
-        }
+        public abstract JObject AsJson();
 
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public static SyncTarget TargetForSOQLSyncDown(string soql)
-        {
-            return new SyncTarget(QueryTypes.Soql, soql, null, null);
-        }
+        public abstract Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp);
 
-        /// <summary>
-        ///     Build SyncTarget for sosl target
-        /// </summary>
-        /// <param name="sosl"></param>
-        /// <returns></returns>
-        public static SyncTarget TargetForSOSLSyncDown(string sosl)
-        {
-            return new SyncTarget(QueryTypes.Sosl, sosl, null, null);
-        }
+        public abstract Task<JArray> ContinueFetch(SyncManager syncManager);
 
-        /// <summary>
-        ///     Build SyncTarget for mru target
-        /// </summary>
-        /// <param name="objectType"></param>
-        /// <param name="fieldList"></param>
-        /// <returns></returns>
-        public static SyncTarget TargetForMRUSyncDown(string objectType, List<string> fieldList)
-        {
-            return new SyncTarget(QueryTypes.Mru, null, fieldList, objectType);
-        }
     }
 }

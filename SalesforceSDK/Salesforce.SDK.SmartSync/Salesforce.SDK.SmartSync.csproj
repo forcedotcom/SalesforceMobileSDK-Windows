@@ -49,10 +49,13 @@
     <Compile Include="Manager\SOSLBuilder.cs" />
     <Compile Include="Manager\SOSLReturningBuilder.cs" />
     <Compile Include="Manager\SyncManager.cs" />
+    <Compile Include="Model\MruSyncTarget.cs" />
     <Compile Include="Model\SalesforceObject.cs" />
     <Compile Include="Model\SalesforceObjectLayoutColumn.cs" />
     <Compile Include="Model\SalesforceObjectType.cs" />
     <Compile Include="Model\SalesforceObjectTypeLayout.cs" />
+    <Compile Include="Model\SoqlSyncTarget.cs" />
+    <Compile Include="Model\SoslSyncTarget.cs" />
     <Compile Include="Model\SyncOptions.cs" />
     <Compile Include="Model\SyncState.cs" />
     <Compile Include="Model\SyncTarget.cs" />
