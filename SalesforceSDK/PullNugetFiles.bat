@@ -21,7 +21,7 @@ xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\ARM\%mode%\Salesforce.SDK.* %wpa%
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\x86\%mode%\Salesforce.SDK.* %wpa%\x86
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\ARM\%mode%\Salesforce.SDK.* %win%\ARM
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x86\%mode%\Salesforce.SDK.* %win%\x86
-xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x64\%mode%\Salesforce.SDK.* %win%\x86
+xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x64\%mode%\Salesforce.SDK.* %win%\x64
 
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\ARM\%mode%\Salesforce.SDK.* %libwpa%
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\ARM\%mode%\Salesforce.SDK.* %libwin%
@@ -30,7 +30,7 @@ xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\ARM\%mode%\*.xbf %wpa%\ARM\Salesf
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\x86\%mode%\*.xbf %wpa%\x86\Salesforce.SDK.Phone\
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\ARM\%mode%\*.xbf %win%\ARM\Salesforce.SDK.Store\
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x86\%mode%\*.xbf %win%\x86\Salesforce.SDK.Store\
-xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x64\%mode%\*.xbf %win%\x86\Salesforce.SDK.Store\
+xcopy /s /y %basepath%Salesforce.SDK.Store\bin\x86\%mode%\*.xbf %win%\x64\Salesforce.SDK.Store\
 
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\ARM\%mode%\*.xr.xml %wpa%\ARM\Salesforce.SDK.Phone\
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\x86\%mode%\*.xr.xml %wpa%\x86\Salesforce.SDK.Phone\
