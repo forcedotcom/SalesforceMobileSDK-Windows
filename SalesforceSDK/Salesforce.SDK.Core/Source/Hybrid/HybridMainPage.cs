@@ -118,6 +118,8 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn called");
+
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
             {
@@ -159,6 +161,8 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded called");
+
             // Local
             if (_bootConfig.IsLocal)
             {
@@ -207,6 +211,9 @@ namespace Salesforce.SDK.Hybrid
                 new Uri(
                     OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType, _client.AccessToken,
                         _bootConfig.StartPage), UriKind.Absolute);
+
+            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadRemoteStartPage - uri = {0}",
+                                                     uri.OriginalString));
             LoadUri(uri);
         }
 
@@ -217,6 +224,9 @@ namespace Salesforce.SDK.Hybrid
         {
             WebView browser = GetWebView();
             Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
+
+            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadLocalStartPage - uri = {0}",
+                                                     url.OriginalString));
 
             // Pass the resolver object to the navigate call.
             browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
@@ -303,6 +313,8 @@ namespace Salesforce.SDK.Hybrid
 
         private void RefreshSession(SalesforceOAuthPlugin plugin)
         {
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - Making a REST call to refresh session");
+
             // Cheap REST call to refresh session
             _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
             {
@@ -310,10 +322,15 @@ namespace Salesforce.SDK.Hybrid
                 {
                     if (!response.Success)
                     {
+                        SalesforceApplication.SendToCustomLogger(
+                            string.Format("HybridMainPage.RefreshSession - Error = {0}", response.Error.ToString()));
+
                         plugin.OnAuthenticateError(response.Error.Message);
                     }
                     else
                     {
+                        SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - refresh successful");
+
                         plugin.OnAuthenticateSuccess(GetJSONCredentials());
                     }
                 }
@@ -355,6 +372,7 @@ namespace Salesforce.SDK.Hybrid
 
         private void Log(string p)
         {
+            SalesforceApplication.SendToCustomLogger(p);
             Debug.WriteLine("PhoneHybridMainPage:" + p);
         }
     }

@@ -83,12 +83,28 @@ namespace Salesforce.SDK.Source.Pages
         public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
         {
             WebAuthenticationResult webResult = args.WebAuthenticationResult;
+
+            string logMsg = String.Format("AccountPage.ContinueWebAuthentication - WebAuthenticationResult: Status={0}", webResult.ResponseStatus);
+            if (webResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+                logMsg += string.Format(", ErrorDetail={0}", webResult.ResponseErrorDetail);
+
+            SalesforceApplication.SendToCustomLogger(logMsg);
+
             if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webResult.ResponseData);
                 if (!responseUri.Query.Contains("error="))
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+
+                    logMsg =
+                        string.Format(
+                            "AccountPage.ContinueWebAuthentication - AuthResponse: IdentityUrl={0} , InstanceUrl={1} , IssuedAt={2} , CommunityId={3} , CommunityUrl={4}",
+                            authResponse.IdentityUrl, authResponse.InstanceUrl, authResponse.IssuedAt,
+                            authResponse.CommunityId, authResponse.CommunityUrl);
+
+                    SalesforceApplication.SendToCustomLogger(logMsg);
+
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(SalesforceConfig.LoginOptions, authResponse);
                 }
                 else
@@ -265,11 +281,22 @@ namespace Salesforce.SDK.Source.Pages
             {
                 var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
                 var callbackUri = new Uri(loginOptions.CallbackUrl);
+
+                string logMsg =
+                    String.Format(
+                        "AccountPage.StartLoginFlow - Calling WebAuthenticationBroker.AuthenticateAndContinue, loginUri={0}, callbackUri={1}",
+                        loginUri.OriginalString, callbackUri.OriginalString);
+
+                SalesforceApplication.SendToCustomLogger(logMsg);
+
                 WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null,
                     WebAuthenticationOptions.None);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SalesforceApplication.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured");
+                SalesforceApplication.SendToCustomLogger(ex, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
+
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
         }

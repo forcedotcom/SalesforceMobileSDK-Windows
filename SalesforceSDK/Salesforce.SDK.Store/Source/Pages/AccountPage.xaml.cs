@@ -236,11 +236,25 @@ namespace Salesforce.SDK.Source.Pages
             var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
             WebAuthenticationResult webAuthenticationResult;
+            string logMsg;
 
             try
             {
+                logMsg =
+                    String.Format(
+                        "AccountPage.DoAuthFlow - Calling WebAuthenticationBroker.AuthenticateAsync, loginUri={0}, callbackUri={1}",
+                        loginUri.OriginalString, callbackUri.OriginalString);
+
+                SalesforceApplication.SendToCustomLogger(logMsg);
+
                 webAuthenticationResult =
                     await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+
+                logMsg = String.Format("AccountPage.DoAuthFlow - WebAuthenticationResult: Status={0}", webAuthenticationResult.ResponseStatus);
+                if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+                    logMsg += string.Format(", ErrorDetail={0}", webAuthenticationResult.ResponseErrorDetail);
+
+                SalesforceApplication.SendToCustomLogger(logMsg);
             }
             // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
             // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
@@ -263,6 +277,15 @@ namespace Salesforce.SDK.Source.Pages
                 else
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+
+                    logMsg =
+                        string.Format(
+                            "AccountPage.DoAuthFlow - AuthResponse: IdentityUrl={0} , InstanceUrl={1} , IssuedAt={2} , CommunityId={3} , CommunityUrl={4}",
+                            authResponse.IdentityUrl, authResponse.InstanceUrl, authResponse.IssuedAt,
+                            authResponse.CommunityId, authResponse.CommunityUrl);
+
+                    SalesforceApplication.SendToCustomLogger(logMsg);
+                    
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
             }

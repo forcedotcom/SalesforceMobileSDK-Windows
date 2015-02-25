@@ -42,8 +42,6 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         ///     Bring up the WebAuthenticationBroker
         /// </summary>
-        /// <param name="loginOptions"></param>
-        /// <param name="clientLoginPage"></param>
         public async void StartLoginFlow()
         {
             var frame = Window.Current.Content as Frame;
@@ -66,10 +64,13 @@ namespace Salesforce.SDK.Auth
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
             if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {
+                SalesforceApplication.SendToCustomLogger("AuthHelper.EndLoginFlow - Launching Pincode Screen");
                 PincodeManager.LaunchPincodeScreen();
             }
             else
             {
+                SalesforceApplication.SendToCustomLogger(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
+                    SalesforceApplication.RootApplicationPage));
                 frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
         }

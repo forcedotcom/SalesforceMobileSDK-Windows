@@ -26,7 +26,6 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -39,6 +38,7 @@ using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Settings;
+using Windows.Foundation.Diagnostics;
 
 #if WINDOWS_PHONE_APP
 using Windows.Phone.UI.Input;
@@ -168,12 +168,18 @@ namespace Salesforce.SDK.App
         {
             try
             {
+                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshAuthToken");
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
+
+                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshCookies");
                 OAuth2.RefreshCookies();
+
+                SendToCustomLogger("SalesforceApplication.RefreshToken - done");
             }
-            catch (WebException)
+            catch (WebException ex)
             {
-                // todo: add logging here
+                SendToCustomLogger("SalesforceApplication.RefreshToken - Exception occurred when refreshing token:");
+                SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
 

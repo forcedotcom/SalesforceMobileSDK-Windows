@@ -35,7 +35,6 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         ///     Kicks off ogin flow
         /// </summary>
-        /// <param name="loginOptions"></param>
         void StartLoginFlow();
 
         /// <summary>

@@ -324,9 +324,19 @@ namespace Salesforce.SDK.Auth
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
                     AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+
+                    string logMsg =
+                        string.Format(
+                            "OAuth2.RefreshAuthToken - AuthResponse: IdentityUrl={0} , InstanceUrl={1} , IssuedAt={2} , CommunityId={3} , CommunityUrl={4}",
+                            response.IdentityUrl, response.InstanceUrl, response.IssuedAt,
+                            response.CommunityId, response.CommunityUrl);
+
+                    App.SalesforceApplication.SendToCustomLogger(logMsg);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshAuthToken - Exception occurred when refreshing token:");
+                    App.SalesforceApplication.SendToCustomLogger(ex, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                 }
             }
@@ -352,6 +362,9 @@ namespace Salesforce.SDK.Auth
 
             // Execute post
             HttpCall result = await c.Execute().ConfigureAwait(false);
+
+            App.SalesforceApplication.SendToCustomLogger(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode));
+
             return result.StatusCode == HttpStatusCode.Ok;
         }
 
@@ -373,6 +386,7 @@ namespace Salesforce.SDK.Auth
                 var web = new WebView();
                 web.NavigateWithHttpRequestMessage(httpRequestMessage);
             }
+            App.SalesforceApplication.SendToCustomLogger("OAuth.RefreshCookies - done");
         }
 
         public static async void ClearCookies(LoginOptions loginOptions)
@@ -392,9 +406,12 @@ namespace Salesforce.SDK.Auth
                         {
                             cookieManager.DeleteCookie(cookie);
                         }
+                        App.SalesforceApplication.SendToCustomLogger("OAuth2.ClearCookies - done");
                     }
-                    catch (ArgumentException)
+                    catch (ArgumentException ex)
                     {
+                        App.SalesforceApplication.SendToCustomLogger("OAuth2.ClearCookies - Exception occurred when clearing cookies:");
+                        App.SalesforceApplication.SendToCustomLogger(ex, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
                         Debug.WriteLine("Error clearing cookies");
                     }
                    
