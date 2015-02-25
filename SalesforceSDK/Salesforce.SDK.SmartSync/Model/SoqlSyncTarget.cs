@@ -40,15 +40,15 @@ namespace Salesforce.SDK.SmartSync.Model
     /// </summary>
     public class SoqlSyncTarget : SyncTarget
     {
-        private SoqlSyncTarget(string query)
+        protected SoqlSyncTarget(string query)
         {
             QueryType = QueryTypes.Soql;
             Query = query;
         }
 
 
-        private string Query { set; get; }
-        private string NextRecordsUrl { set; get; }
+        public string Query { protected set; get; }
+        public string NextRecordsUrl { protected set; get; }
 
         /// <summary>
         ///     Build SyncTarget from json
@@ -75,7 +75,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public override async Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)
         {
-            string queryToRun = maxTimeStamp > 0 ? SyncManager.AddFilterForReSync(Query, maxTimeStamp) : Query;
+            string queryToRun = maxTimeStamp > 0 ? AddFilterForReSync(Query, maxTimeStamp) : Query;
             RestRequest request = RestRequest.GetRequestForQuery(syncManager.ApiVersion, queryToRun);
             RestResponse response = await syncManager.SendRestRequest(request);
             JObject responseJson = response.AsJObject;

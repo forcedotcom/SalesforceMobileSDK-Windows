@@ -43,7 +43,7 @@ namespace Salesforce.SDK.SmartSync.Manager
     public class SyncManager
     {
         public const int PageSize = 2000;
-        private const int Unchanged = -1;
+        public const int Unchanged = -1;
         public const string Local = "__local__";
         public const string LocallyCreated = "__locally_created__";
         public const string LocallyUpdated = "__locally_updated__";
@@ -52,13 +52,13 @@ namespace Salesforce.SDK.SmartSync.Manager
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
         public readonly string ApiVersion;
-        private readonly RestClient _restClient;
+        public readonly RestClient RestClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
 
         private SyncManager(Account account, string communityId)
         {
             _smartStore = new SmartStore.Store.SmartStore();
-            _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
+            RestClient = new RestClient(account.InstanceUrl, account.AccessToken,
                 async () =>
                 {
                     account = AccountManager.GetAccount();
@@ -255,7 +255,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
             // make async call
             RestResponse lastModResponse =
-                await _restClient.SendAsync(RestRequest.GetRequestForQuery(ApiVersion, query));
+                await RestClient.SendAsync(RestRequest.GetRequestForQuery(ApiVersion, query));
 
             // validation of response
             if (lastModResponse == null || !lastModResponse.Success) return false;
@@ -335,7 +335,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     break;
             }
 
-            RestResponse response = await _restClient.SendAsync(request);
+            RestResponse response = await RestClient.SendAsync(request);
 
             // don't continue if not successful
             if (!response.Success) return false;
@@ -469,30 +469,9 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        public static string AddFilterForReSync(string query, long maxTimeStamp)
-        {
-            if (maxTimeStamp != Unchanged)
-            {
-                string extraPredicate = Constants.LastModifiedDate + " > " +
-                                        new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
-                if (query.Contains(" where "))
-                {
-                    var reg = new Regex("( where )");
-                    query = reg.Replace(query, "$1 where " + extraPredicate + " and ", 1);
-                }
-                else
-                {
-                    string pred = "$1 where " + extraPredicate;
-                    var reg = new Regex("( from[ ]+[^ ]*)");
-                    query = reg.Replace(query, pred, 1);
-                }
-            }
-            return query;
-        }
-
         public async Task<RestResponse> SendRestRequest(RestRequest request)
         {
-            return await _restClient.SendAsync(request);
+            return await RestClient.SendAsync(request);
         }
 
         private long GetMaxTimeStamp(JArray jArray)
