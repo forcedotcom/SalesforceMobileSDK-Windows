@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -118,7 +118,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn called");
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn entered");
 
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
@@ -161,7 +161,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded called");
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded entered");
 
             // Local
             if (_bootConfig.IsLocal)
@@ -207,12 +207,14 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadRemoteStartPage()
         {
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.LoadRemoteStartPage - calling ComputeFrontDoorUrl()");
+
             var uri =
                 new Uri(
                     OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType, _client.AccessToken,
                         _bootConfig.StartPage), UriKind.Absolute);
 
-            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadRemoteStartPage - uri = {0}",
+            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadRemoteStartPage - calling LoadUri() with uri={0}",
                                                      uri.OriginalString));
             LoadUri(uri);
         }
@@ -225,8 +227,9 @@ namespace Salesforce.SDK.Hybrid
             WebView browser = GetWebView();
             Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
 
-            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadLocalStartPage - uri = {0}",
-                                                     url.OriginalString));
+            SalesforceApplication.SendToCustomLogger(
+                string.Format("HybridMainPage.LoadLocalStartPage - calling NavigateToLocalStreamUri() with uri={0}",
+                    url.OriginalString));
 
             // Pass the resolver object to the navigate call.
             browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
