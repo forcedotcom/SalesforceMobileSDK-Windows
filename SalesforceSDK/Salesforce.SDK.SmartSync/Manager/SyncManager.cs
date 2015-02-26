@@ -151,10 +151,11 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <param name="target"></param>
         /// <param name="soupName"></param>
         /// <param name="callback"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
-        public SyncState SyncDown(SyncTarget target, string soupName, Action<SyncState> callback)
+        public SyncState SyncDown(SyncTarget target, string soupName, Action<SyncState> callback, SyncOptions options = null)
         {
-            SyncState sync = SyncState.CreateSyncDown(_smartStore, target, soupName);
+            SyncState sync = SyncState.CreateSyncDown(_smartStore, target, soupName, options);
             RunSync(sync, callback);
             return sync;
         }
