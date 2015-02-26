@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -178,7 +178,6 @@ namespace Salesforce.SDK.App
             }
             catch (WebException ex)
             {
-                SendToCustomLogger("SalesforceApplication.RefreshToken - Exception occurred when refreshing token:");
                 SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
