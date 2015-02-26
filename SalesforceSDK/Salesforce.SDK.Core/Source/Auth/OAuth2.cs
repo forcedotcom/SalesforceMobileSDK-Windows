@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -320,18 +320,19 @@ namespace Salesforce.SDK.Auth
             {
                 try
                 {
+                    App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshAuthToken - calling RefreshAuthTokenRequest()");
                     AuthResponse response =
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
-                    AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
 
-                    string logMsg =
+                    App.SalesforceApplication.SendToCustomLogger(
                         string.Format(
                             "OAuth2.RefreshAuthToken - AuthResponse: IdentityUrl={0} , InstanceUrl={1} , IssuedAt={2} , CommunityId={3} , CommunityUrl={4}",
                             response.IdentityUrl, response.InstanceUrl, response.IssuedAt,
-                            response.CommunityId, response.CommunityUrl);
+                            response.CommunityId, response.CommunityUrl));
 
-                    App.SalesforceApplication.SendToCustomLogger(logMsg);
+                    App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshAuthToken - calling PersistCredentials()");
+                    AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                 }
                 catch (Exception ex)
                 {
@@ -351,6 +352,8 @@ namespace Salesforce.SDK.Auth
         /// <returns>true if successful</returns>
         public static async Task<bool> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
         {
+            App.SalesforceApplication.SendToCustomLogger("OAuth2.RevokeAuthToken - Attempting to reoke auth token");
+
             // Args
             string argsStr = string.Format(OauthRevokeQueryString, new[] {WebUtility.UrlEncode(refreshToken)});
 
@@ -370,6 +373,7 @@ namespace Salesforce.SDK.Auth
 
         public static void RefreshCookies()
         {
+            App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshCookies - calling GetAccount()");
             Account account = AccountManager.GetAccount();
             if (account != null)
             {
@@ -384,6 +388,7 @@ namespace Salesforce.SDK.Auth
                 filter.CookieManager.SetCookie(instance, false);
                 var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, instanceUri);
                 var web = new WebView();
+                App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshCookies - calling NavigateWithHttpRequestMessage()");
                 web.NavigateWithHttpRequestMessage(httpRequestMessage);
             }
             App.SalesforceApplication.SendToCustomLogger("OAuth.RefreshCookies - done");
@@ -396,16 +401,24 @@ namespace Salesforce.SDK.Auth
             {
                 await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
+                    App.SalesforceApplication.SendToCustomLogger("OAuth2.ClearCookies - calling ComputeAuthorizationUrl()");
                     var loginUri = new Uri(ComputeAuthorizationUrl(loginOptions));
                     var myFilter = new HttpBaseProtocolFilter();
                     HttpCookieManager cookieManager = myFilter.CookieManager;
                     try
                     {
+                        App.SalesforceApplication.SendToCustomLogger("OAuth2.ClearCookies - calling GetCookies()");
                         HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
+
+                        App.SalesforceApplication.SendToCustomLogger(
+                            string.Format("OAuth2.ClearCookies - {0} cookies retrieved, calling DeleteCookie on all of them (if any)",
+                                (cookies != null) ? cookies.Count : 0));
+
                         foreach (HttpCookie cookie in cookies)
                         {
                             cookieManager.DeleteCookie(cookie);
                         }
+
                         App.SalesforceApplication.SendToCustomLogger("OAuth2.ClearCookies - done");
                     }
                     catch (ArgumentException ex)
