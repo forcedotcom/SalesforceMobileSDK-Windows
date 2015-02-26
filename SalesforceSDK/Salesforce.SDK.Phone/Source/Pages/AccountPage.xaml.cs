@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -84,7 +84,7 @@ namespace Salesforce.SDK.Source.Pages
         {
             WebAuthenticationResult webResult = args.WebAuthenticationResult;
 
-            string logMsg = String.Format("AccountPage.ContinueWebAuthentication - WebAuthenticationResult: Status={0}", webResult.ResponseStatus);
+            var logMsg = String.Format("AccountPage.ContinueWebAuthentication - WebAuthenticationResult: Status={0}", webResult.ResponseStatus);
             if (webResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 logMsg += string.Format(", ErrorDetail={0}", webResult.ResponseErrorDetail);
 
@@ -105,6 +105,7 @@ namespace Salesforce.SDK.Source.Pages
 
                     SalesforceApplication.SendToCustomLogger(logMsg);
 
+                    SalesforceApplication.SendToCustomLogger("AccountPage.ContinueWebAuthentication - calling EndLoginFlow()");
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(SalesforceConfig.LoginOptions, authResponse);
                 }
                 else
@@ -282,13 +283,14 @@ namespace Salesforce.SDK.Source.Pages
                 var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
                 var callbackUri = new Uri(loginOptions.CallbackUrl);
 
-                string logMsg =
+                var logMsg =
                     String.Format(
                         "AccountPage.StartLoginFlow - Calling WebAuthenticationBroker.AuthenticateAndContinue, loginUri={0}, callbackUri={1}",
                         loginUri.OriginalString, callbackUri.OriginalString);
 
                 SalesforceApplication.SendToCustomLogger(logMsg);
 
+                SalesforceApplication.SendToCustomLogger("AccountPage.StartLoginFlow - calling AuthenticateAndContinue()");
                 WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null,
                     WebAuthenticationOptions.None);
             }
