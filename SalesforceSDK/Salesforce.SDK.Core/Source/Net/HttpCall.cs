@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
@@ -36,6 +37,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
@@ -304,13 +306,7 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
-                await core.RunAsync(CoreDispatcherPriority.Normal, GenerateOsString);
-                PackageVersion packageVersion = Package.Current.Id.Version;
-                string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
-                                              packageVersion.Build;
-                UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
-                    packageVersionString, "native", UserAgentHeader);
+                await GenerateUserAgentHeader();
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -387,24 +383,30 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        ///     This method generates the user agent string for the current device.
+        /// This method generates the user agent string for the current device.
+        /// This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the UserAgentHeader will not be set.
         /// </summary>
         /// <returns></returns>
-        private static void GenerateOsString()
+        private static async Task GenerateUserAgentHeader()
         {
-            var t = new TaskCompletionSource<string>();
+            var pageCompleted = new TaskCompletionSource<string>();
             var webView = new WebView();
             NotifyEventHandler scriptHandler = null;
             TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> loadHandler = null;
-            scriptHandler = (s, e) =>
+            scriptHandler = async (s, e) =>
             {
                 try
                 {
-                    UserAgentHeader = e.Value;
+                    PackageVersion packageVersion = Package.Current.Id.Version;
+                    string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                                  packageVersion.Build;
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
+                    packageVersionString, "native", e.Value);
+                    pageCompleted.TrySetResult(UserAgentHeader);
                 }
                 catch (Exception ex)
                 {
-                    t.SetException(ex);
+                    pageCompleted.SetException(ex);
                 }
                 finally
                 {
@@ -421,9 +423,18 @@ namespace Salesforce.SDK.Net
                     await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.appVersion); "});
                 }
             };
+            DateTime endTime = DateTime.Now.AddSeconds(10);
             webView.ScriptNotify += scriptHandler;
             webView.NavigationCompleted += loadHandler;
             webView.NavigateToString("<html />");
+            while (pageCompleted.Task.Status != TaskStatus.RanToCompletion)
+            {
+                await Task.Delay(10);
+                if (DateTime.Now >= endTime)
+                {
+                    pageCompleted.TrySetResult("failed to create userAgent");
+                }
+            }
         }
     }
 }
