@@ -168,16 +168,17 @@ namespace Salesforce.SDK.App
         {
             try
             {
-                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshAuthToken");
+                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshAuthToken", LoggingLevel.Verbose);
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
 
-                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshCookies");
+                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshCookies", LoggingLevel.Verbose);
                 OAuth2.RefreshCookies();
 
-                SendToCustomLogger("SalesforceApplication.RefreshToken - done");
+                SendToCustomLogger("SalesforceApplication.RefreshToken - done", LoggingLevel.Verbose);
             }
             catch (WebException ex)
             {
+                SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
                 SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
