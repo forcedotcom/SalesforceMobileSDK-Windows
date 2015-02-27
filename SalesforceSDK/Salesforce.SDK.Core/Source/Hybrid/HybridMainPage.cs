@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Newtonsoft.Json;
@@ -118,7 +119,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn entered");
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn called", LoggingLevel.Verbose);
 
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
@@ -161,7 +162,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded entered");
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded called", LoggingLevel.Verbose);
 
             // Local
             if (_bootConfig.IsLocal)
@@ -207,15 +208,10 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadRemoteStartPage()
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.LoadRemoteStartPage - calling ComputeFrontDoorUrl()");
-
             var uri =
                 new Uri(
                     OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType, _client.AccessToken,
                         _bootConfig.StartPage), UriKind.Absolute);
-
-            SalesforceApplication.SendToCustomLogger(string.Format("HybridMainPage.LoadRemoteStartPage - calling LoadUri() with uri={0}",
-                                                     uri.OriginalString));
             LoadUri(uri);
         }
 
@@ -226,10 +222,6 @@ namespace Salesforce.SDK.Hybrid
         {
             WebView browser = GetWebView();
             Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
-
-            SalesforceApplication.SendToCustomLogger(
-                string.Format("HybridMainPage.LoadLocalStartPage - calling NavigateToLocalStreamUri() with uri={0}",
-                    url.OriginalString));
 
             // Pass the resolver object to the navigate call.
             browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
@@ -316,7 +308,7 @@ namespace Salesforce.SDK.Hybrid
 
         private void RefreshSession(SalesforceOAuthPlugin plugin)
         {
-            SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - Making a REST call to refresh session");
+            SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - Making a REST call to refresh session", LoggingLevel.Verbose);
 
             // Cheap REST call to refresh session
             _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
@@ -326,13 +318,13 @@ namespace Salesforce.SDK.Hybrid
                     if (!response.Success)
                     {
                         SalesforceApplication.SendToCustomLogger(
-                            string.Format("HybridMainPage.RefreshSession - Error = {0}", response.Error.ToString()));
+                            string.Format("HybridMainPage.RefreshSession - Error = {0}", response.Error.ToString()), LoggingLevel.Verbose);
 
                         plugin.OnAuthenticateError(response.Error.Message);
                     }
                     else
                     {
-                        SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - refresh successful");
+                        SalesforceApplication.SendToCustomLogger("HybridMainPage.RefreshSession - refresh successful", LoggingLevel.Verbose);
 
                         plugin.OnAuthenticateSuccess(GetJSONCredentials());
                     }
@@ -375,7 +367,7 @@ namespace Salesforce.SDK.Hybrid
 
         private void Log(string p)
         {
-            SalesforceApplication.SendToCustomLogger(p);
+            SalesforceApplication.SendToCustomLogger(p, LoggingLevel.Verbose);
             Debug.WriteLine("PhoneHybridMainPage:" + p);
         }
     }
