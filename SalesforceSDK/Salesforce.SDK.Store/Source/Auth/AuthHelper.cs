@@ -31,6 +31,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Pages;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Auth
 {
@@ -64,13 +65,13 @@ namespace Salesforce.SDK.Auth
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
             if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {
-                SalesforceApplication.SendToCustomLogger("AuthHelper.EndLoginFlow - Launching Pincode Screen");
+                SalesforceApplication.SendToCustomLogger("AuthHelper.EndLoginFlow - Launching Pincode Screen", LoggingLevel.Information);
                 PincodeManager.LaunchPincodeScreen();
             }
             else
             {
                 SalesforceApplication.SendToCustomLogger(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
-                    SalesforceApplication.RootApplicationPage));
+                                                         SalesforceApplication.RootApplicationPage), LoggingLevel.Information);
                 frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
         }
