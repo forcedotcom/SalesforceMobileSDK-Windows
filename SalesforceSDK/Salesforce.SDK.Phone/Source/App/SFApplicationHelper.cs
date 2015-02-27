@@ -37,6 +37,7 @@ using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.App
 {
@@ -148,13 +149,13 @@ namespace Salesforce.SDK.App
                 ContinuationManager.MarkAsStale();
                 try
                 {
-                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Calling ContinuationManager.Continue");
+                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Calling ContinuationManager.Continue", LoggingLevel.Verbose);
                     ContinuationManager.Continue(continueEvents);
                 }
                 catch (InvalidOperationException e)
                 {
-                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Exception while continuing");
-                    SalesforceApplication.SendToCustomLogger(e, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
+                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Exception when calling ContinuationManager.Continue", LoggingLevel.Critical);
+                    SalesforceApplication.SendToCustomLogger(e, LoggingLevel.Critical);
                     Debug.WriteLine("Exception while continuing, " + e.StackTrace);
                 }
             }
