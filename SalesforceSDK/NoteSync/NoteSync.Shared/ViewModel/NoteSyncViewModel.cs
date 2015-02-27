@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
@@ -139,28 +140,21 @@ namespace NoteSync.ViewModel
         public void SyncDownNotes()
         {
             RegisterSoup();
-            if (syncId == -1)
-            {
-                string soqlQuery =
+            string soqlQuery =
                     SOQLBuilder.GetInstanceWithFields(NoteObject.NoteFields)
                         .From(NoteObject.NoteSObjectType)
                         .Limit(Limit)
                         .Build();
-                SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-                SyncTarget target = ContentSoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
-                try
-                {
-                    SyncState sync = _syncManager.SyncDown(target, NotesSoup, HandleSyncUpdate, options);
-                    syncId = sync.Id;
-                }
-                catch (SmartStoreException)
-                {
-                    // log here
-                }
-            }
-            else
+            SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
+            SyncTarget target = ContentSoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
+            try
             {
-                _syncManager.ReSync(syncId, HandleSyncUpdate);
+                SyncState sync = _syncManager.SyncDown(target, NotesSoup, HandleSyncUpdate, options);
+                syncId = sync.Id;
+            }
+            catch (SmartStoreException)
+            {
+                // log here
             }
         }
 
@@ -322,7 +316,7 @@ namespace NoteSync.ViewModel
                 JObject item = returned.Count > 0 ? returned[0].ToObject<JObject>() : new JObject();
 
                 item[NoteObject.TitleField] = note.Title;
-                item[NoteObject.ContentField] = note.Content;
+                item[NoteObject.ContentField] = Convert.ToBase64String(Encoding.UTF8.GetBytes(note.Content));
                 item[SyncManager.Local] = true;
                 item[SyncManager.LocallyUpdated] = !isCreated;
                 item[SyncManager.LocallyCreated] = isCreated;

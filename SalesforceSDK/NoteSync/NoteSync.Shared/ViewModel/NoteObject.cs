@@ -27,7 +27,9 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
@@ -84,7 +86,8 @@ namespace NoteSync.ViewModel
         {
             set
             {
-                _content = value;
+                var str = Convert.FromBase64String(value);
+                _content = Encoding.UTF8.GetString(str, 0, str.Length);
                 OnPropertyChanged();
                 OnPropertyChanged("Content");
             }
