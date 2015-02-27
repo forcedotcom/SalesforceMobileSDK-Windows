@@ -217,7 +217,7 @@ namespace Salesforce.SDK.App
             }
         }
 
-        public static void SendToCustomLogger(object param, LoggingLevel level = LoggingLevel.Information)
+        public static void SendToCustomLogger(object param, LoggingLevel level)
         {
             if (_customLoggerAction != null)
             {
