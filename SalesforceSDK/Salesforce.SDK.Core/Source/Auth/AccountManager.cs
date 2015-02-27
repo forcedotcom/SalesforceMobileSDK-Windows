@@ -25,9 +25,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
@@ -45,19 +47,18 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         public static void DeleteAccount()
         {
-            var account = GetAccount();
-            SalesforceApplication.SendToCustomLogger("AccountManager.DeleteAccount - calling DeletePersistedCredentials()");
+            Account account = GetAccount();
             AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials(account.UserName, account.UserId);
-            SalesforceApplication.SendToCustomLogger("AccountManager.DeleteAccount - done");
+            SalesforceApplication.SendToCustomLogger("AccountManager.DeleteAccount - account deleted", LoggingLevel.Verbose);
         }
 
         public static Dictionary<string, Account> GetAccounts()
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.GetAccounts - calling RetrievePersistedCredentials()");
-            var accounts = AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
+            Dictionary<string, Account> accounts = AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
+
             SalesforceApplication.SendToCustomLogger(
                 string.Format("AccountManager.GetAccounts - Done. Total number of accounts retrieved = {0}",
-                (accounts != null) ? accounts.Count : 0));
+                (accounts != null) ? accounts.Count : 0), LoggingLevel.Verbose);
 
             return accounts;
         }
@@ -68,9 +69,8 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static Account GetAccount()
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.GetAccount - calling RetrieveCurrentAccount()");
-            var account = AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
-            SalesforceApplication.SendToCustomLogger("AccountManager.GetAccount - done");
+            Account account = AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
+            SalesforceApplication.SendToCustomLogger("AccountManager.GetAccount - retrieved current account", LoggingLevel.Verbose);
             return account;
         }
 
@@ -78,45 +78,44 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling SavePinTimer()");
+                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - save pin timer", LoggingLevel.Verbose);
                 PincodeManager.SavePinTimer();
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling PersistCredentials()");
+                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - persist credentials", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling PeekRestClient()");
+                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - peek client", LoggingLevel.Verbose);
                 RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling ClearCookies()");
+                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - clear cookies", LoggingLevel.Verbose);
                     OAuth2.ClearCookies(account.GetLoginOptions());
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling CallIdentityService()");
+                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - call identity service", LoggingLevel.Verbose);
                     IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
                     if (identity != null)
                     {
                         account.UserId = identity.UserId;
                         account.UserName = identity.UserName;
                         account.Policy = identity.MobilePolicy;
-                        SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling PersistCredentials()");
+                        SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - persist credentials", LoggingLevel.Verbose);
                         AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - calling RefreshCookies()");
+                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - refresh cookies", LoggingLevel.Verbose);
                     OAuth2.RefreshCookies();
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true");
+                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
-            SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false");
+            SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
             return false;
         }
 
         public static void WipeAccounts()
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - calling DeletePersistedCredentials()");
+            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - delete persisted credentials", LoggingLevel.Verbose);
             AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials();
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - calling WipePincode()");
+            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - wipe pincode", LoggingLevel.Verbose);
             PincodeManager.WipePincode();
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - calling SwitchAccount()");
+            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - switch account", LoggingLevel.Verbose);
             SwitchAccount();
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - done");
         }
 
         public static void SwitchAccount()
@@ -131,25 +130,25 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - creating new account object");
+            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
             account.CommunityId = authResponse.CommunityId;
             account.CommunityUrl = authResponse.CommunityUrl;
             var cm = new ClientManager();
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - calling PeekRestClient()");
+            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - peek client", LoggingLevel.Verbose);
             cm.PeekRestClient();
             IdentityResponse identity = null;
             try
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - calling CallIdentityService()");
+                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - call identity service", LoggingLevel.Verbose);
                 identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
             }
             catch (JsonException ex)
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:");
-                SalesforceApplication.SendToCustomLogger(ex, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
+                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:", LoggingLevel.Critical);
+                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
             }
             if (identity != null)
@@ -157,10 +156,10 @@ namespace Salesforce.SDK.Auth
                 account.UserId = identity.UserId;
                 account.UserName = identity.UserName;
                 account.Policy = identity.MobilePolicy;
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - calling PersistCredentials()");
+                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - persist credentials", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - done");
+            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
             return account;
         }
     }
