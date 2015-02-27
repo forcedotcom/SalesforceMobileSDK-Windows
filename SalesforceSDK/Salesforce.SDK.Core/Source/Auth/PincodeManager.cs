@@ -26,6 +26,7 @@
  */
 using System;
 using System.Diagnostics;
+using Windows.Foundation.Diagnostics;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -52,21 +53,11 @@ namespace Salesforce.SDK.Auth
         private static string GenerateEncryptedPincode(string pincode)
         {
             HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - calling ConvertStringToBinary()");
             IBuffer buff = CryptographicBuffer.ConvertStringToBinary(pincode, BinaryStringEncoding.Utf8);
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - calling HashData()");
             IBuffer hashed = alg.HashData(buff);
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - calling EncodeToHexString()");
             string res = CryptographicBuffer.EncodeToHexString(hashed);
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - calling Encrypt()");
-            res = Encryptor.Encrypt(res);
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - done");
-            return res;
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GenerateEncryptedPincode - Pincode generated, now encrypting and returning it", LoggingLevel.Verbose);
+            return Encryptor.Encrypt(res);
         }
 
         /// <summary>
@@ -76,23 +67,21 @@ namespace Salesforce.SDK.Auth
         /// <returns>True if pincode matches</returns>
         public static bool ValidatePincode(string pincode)
         {
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.ValidatePincode - calling GenerateEncryptedPincode()");
             string compare = GenerateEncryptedPincode(pincode);
             try
             {
-                App.SalesforceApplication.SendToCustomLogger("PincodeManager.ValidatePincode - calling RetrievePincode()");
                 string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
                 var policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
                 bool result = compare.Equals(Encryptor.Decrypt(policy.PincodeHash, pincode));
 
-                App.SalesforceApplication.SendToCustomLogger(string.Format("PincodeManager.ValidatePincode - result = {0}", result));
+                App.SalesforceApplication.SendToCustomLogger(string.Format("PincodeManager.ValidatePincode - result = {0}", result), LoggingLevel.Verbose);
 
                 return result;
             }
             catch (Exception ex)
             {
-                App.SalesforceApplication.SendToCustomLogger("PincodeManager.ValidatePincode - Exception occurred when validating pincode:");
-                App.SalesforceApplication.SendToCustomLogger(ex, Windows.Foundation.Diagnostics.LoggingLevel.Critical);
+                App.SalesforceApplication.SendToCustomLogger("PincodeManager.ValidatePincode - Exception occurred when validating pincode:", LoggingLevel.Critical);
+                App.SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error validating pincode");
             }
 
@@ -105,14 +94,13 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         private static MobilePolicy GetMobilePolicy()
         {
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - calling RetrievePincode()");
             string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
             if (retrieved != null)
             {
-                App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - calling DeserializeObject() and returning retrieved policy");
+                App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - returning retrieved policy", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
             }
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - No policy found, returning null");
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - No policy found, returning null", LoggingLevel.Verbose);
             return null;
         }
 
@@ -123,7 +111,6 @@ namespace Salesforce.SDK.Auth
         /// <param name="pincode"></param>
         public static void StorePincode(MobilePolicy policy, string pincode)
         {
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.StorePincode - calling GenerateEncryptedPincode()");
             string hashed = GenerateEncryptedPincode(pincode);
             var mobilePolicy = new MobilePolicy
             {
@@ -131,9 +118,8 @@ namespace Salesforce.SDK.Auth
                 PinLength = policy.PinLength,
                 PincodeHash = Encryptor.Encrypt(hashed, pincode)
             };
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.StorePincode - calling PersistPincode()");
             AuthStorageHelper.GetAuthStorageHelper().PersistPincode(mobilePolicy);
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.StorePincode - done");
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.StorePincode - Pincode stored", LoggingLevel.Verbose);
         }
 
         /// <summary>
@@ -142,13 +128,10 @@ namespace Salesforce.SDK.Auth
         public static void WipePincode()
         {
             AuthStorageHelper auth = AuthStorageHelper.GetAuthStorageHelper();
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.WipePincode - calling DeletePincode()");
             auth.DeletePincode();
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.WipePincode - calling DeleteData() on PinBackgroundedTimeKey");
             auth.DeleteData(PinBackgroundedTimeKey);
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.WipePincode - calling DeleteData() on PincodeRequired");
             auth.DeleteData(PincodeRequired);
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.WipePincode - done");
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.WipePincode - Pincode wiped", LoggingLevel.Verbose);
         }
 
         /// <summary>
@@ -157,9 +140,10 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static bool IsPincodeSet()
         {
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeSet - calling RetrievePincode()");
-            var result = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode() != null;
-            App.SalesforceApplication.SendToCustomLogger(string.Format("PincodeManager.IsPincodeSet - result = {0}", result));
+            bool result = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode() != null;
+
+            App.SalesforceApplication.SendToCustomLogger(string.Format("PincodeManager.IsPincodeSet - result = {0}", result), LoggingLevel.Verbose);
+
             return result;
         }
 
@@ -170,23 +154,18 @@ namespace Salesforce.SDK.Auth
         public static bool IsPincodeRequired()
         {
             AuthStorageHelper auth = AuthStorageHelper.GetAuthStorageHelper();
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - calling RetrieveData()");
             // a flag is set if the timer was exceeded at some point. Automatically return true if the flag is set.
             bool required = auth.RetrieveData(PincodeRequired) != null;
             if (required)
             {
-                App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is required");
+                App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
                 return true;
             }
-
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - calling IsPincodeSet()");
             if (IsPincodeSet())
             {
                 MobilePolicy policy = GetMobilePolicy();
                 if (policy != null)
                 {
-                    App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - calling RetrieveData()");
                     string time = auth.RetrieveData(PinBackgroundedTimeKey);
                     if (time != null)
                     {
@@ -197,16 +176,15 @@ namespace Salesforce.SDK.Auth
                         {
                             // flag that requires pincode to be entered in the future. Until the flag is deleted a pincode will be required.
                             auth.PersistData(true, PincodeRequired, time);
-                            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is required");
+                            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
                             return true;
                         }
                     }
                 }
             }
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - calling DeleteData()");
             // We aren't requiring pincode, so remove the flag.
             auth.DeleteData(PincodeRequired);
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is not required");
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.IsPincodeRequired - Pincode is not required", LoggingLevel.Verbose);
             return false;
         }
 
