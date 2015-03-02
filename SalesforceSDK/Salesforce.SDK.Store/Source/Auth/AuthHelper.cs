@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -65,7 +65,6 @@ namespace Salesforce.SDK.Auth
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
             if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
             {
-                SalesforceApplication.SendToCustomLogger("AuthHelper.EndLoginFlow - Launching Pincode Screen", LoggingLevel.Information);
                 PincodeManager.LaunchPincodeScreen();
             }
             else

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -295,6 +295,8 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
+            App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
+
             // Args
             string argsStr = string.Format(OauthRefreshQueryString, new[] {loginOptions.ClientId, refreshToken});
 
@@ -321,8 +323,6 @@ namespace Salesforce.SDK.Auth
             {
                 try
                 {
-                    App.SalesforceApplication.SendToCustomLogger("OAuth2.RefreshAuthToken - calling RefreshAuthTokenRequest", LoggingLevel.Verbose);
-
                     AuthResponse response =
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
@@ -365,6 +365,7 @@ namespace Salesforce.SDK.Auth
 
         public static void RefreshCookies()
         {
+            App.SalesforceApplication.SendToCustomLogger("OAuth.RefreshCookies - attempting at refreshing cookies", LoggingLevel.Verbose);
             Account account = AccountManager.GetAccount();
             if (account != null)
             {
@@ -396,6 +397,7 @@ namespace Salesforce.SDK.Auth
                     HttpCookieManager cookieManager = myFilter.CookieManager;
                     try
                     {
+                        App.SalesforceApplication.SendToCustomLogger("OAuth.ClearCookies - attempting at clearing cookies", LoggingLevel.Verbose);
                         HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
                         foreach (HttpCookie cookie in cookies)
                         {
@@ -422,6 +424,8 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
+            App.SalesforceApplication.SendToCustomLogger("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
+
             // Auth header
             var headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
             // Get
@@ -437,7 +441,13 @@ namespace Salesforce.SDK.Auth
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
+                App.SalesforceApplication.SendToCustomLogger("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<IdentityResponse>(response.AsString);
+            }
+            else
+            {
+                App.SalesforceApplication.SendToCustomLogger("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
+                App.SalesforceApplication.SendToCustomLogger(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;
         }

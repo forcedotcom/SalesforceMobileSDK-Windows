@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -30,7 +30,6 @@ using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation.Diagnostics;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -169,13 +168,8 @@ namespace Salesforce.SDK.App
         {
             try
             {
-                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshAuthToken", LoggingLevel.Verbose);
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
-
-                SendToCustomLogger("SalesforceApplication.RefreshToken - calling OAuth2.RefreshCookies", LoggingLevel.Verbose);
                 OAuth2.RefreshCookies();
-
-                SendToCustomLogger("SalesforceApplication.RefreshToken - done", LoggingLevel.Verbose);
             }
             catch (WebException ex)
             {

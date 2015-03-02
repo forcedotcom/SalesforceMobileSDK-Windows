@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -240,7 +240,8 @@ namespace Salesforce.SDK.Source.Pages
 
             try
             {
-                SalesforceApplication.SendToCustomLogger("AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
+                SalesforceApplication.SendToCustomLogger(
+                    "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
                     await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);

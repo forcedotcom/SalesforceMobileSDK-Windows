@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -100,7 +100,7 @@ namespace Salesforce.SDK.Auth
                 App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - returning retrieved policy", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
             }
-            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - No policy found, returning null", LoggingLevel.Verbose);
+            App.SalesforceApplication.SendToCustomLogger("PincodeManager.GetMobilePolicy - No policy found", LoggingLevel.Verbose);
             return null;
         }
 
@@ -203,6 +203,7 @@ namespace Salesforce.SDK.Auth
             Account account = AccountManager.GetAccount();
             if (account != null && policy != null && policy.ScreenLockTimeout > 0)
             {
+                App.SalesforceApplication.SendToCustomLogger("PincodeManager.SavePinTimer - saving pin timer", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper()
                     .PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
             }
@@ -237,6 +238,7 @@ namespace Salesforce.SDK.Auth
             {
                 await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
+                    App.SalesforceApplication.SendToCustomLogger("PincodeManager.LaunchPincodeScreen - Launching Pincode Screen", LoggingLevel.Information);
                     Account account = AccountManager.GetAccount();
                     if (account != null)
                     {

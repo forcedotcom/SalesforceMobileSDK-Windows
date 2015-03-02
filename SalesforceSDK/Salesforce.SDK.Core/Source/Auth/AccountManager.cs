@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2013, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -25,7 +25,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -49,18 +48,11 @@ namespace Salesforce.SDK.Auth
         {
             Account account = GetAccount();
             AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials(account.UserName, account.UserId);
-            SalesforceApplication.SendToCustomLogger("AccountManager.DeleteAccount - account deleted", LoggingLevel.Verbose);
         }
 
         public static Dictionary<string, Account> GetAccounts()
         {
-            Dictionary<string, Account> accounts = AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
-
-            SalesforceApplication.SendToCustomLogger(
-                string.Format("AccountManager.GetAccounts - Done. Total number of accounts retrieved = {0}",
-                (accounts != null) ? accounts.Count : 0), LoggingLevel.Verbose);
-
-            return accounts;
+            return AuthStorageHelper.GetAuthStorageHelper().RetrievePersistedCredentials();
         }
 
         /// <summary>
@@ -70,7 +62,6 @@ namespace Salesforce.SDK.Auth
         public static Account GetAccount()
         {
             Account account = AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
-            SalesforceApplication.SendToCustomLogger("AccountManager.GetAccount - retrieved current account", LoggingLevel.Verbose);
             return account;
         }
 
@@ -78,27 +69,20 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - save pin timer", LoggingLevel.Verbose);
                 PincodeManager.SavePinTimer();
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - persist credentials", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
-                SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - peek client", LoggingLevel.Verbose);
                 RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - clear cookies", LoggingLevel.Verbose);
                     OAuth2.ClearCookies(account.GetLoginOptions());
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - call identity service", LoggingLevel.Verbose);
                     IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
                     if (identity != null)
                     {
                         account.UserId = identity.UserId;
                         account.UserName = identity.UserName;
                         account.Policy = identity.MobilePolicy;
-                        SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - persist credentials", LoggingLevel.Verbose);
                         AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - refresh cookies", LoggingLevel.Verbose);
                     OAuth2.RefreshCookies();
                     SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
                     return true;
@@ -110,11 +94,8 @@ namespace Salesforce.SDK.Auth
 
         public static void WipeAccounts()
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - delete persisted credentials", LoggingLevel.Verbose);
             AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials();
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - wipe pincode", LoggingLevel.Verbose);
             PincodeManager.WipePincode();
-            SalesforceApplication.SendToCustomLogger("AccountManager.WipeAccounts - switch account", LoggingLevel.Verbose);
             SwitchAccount();
         }
 
@@ -137,17 +118,17 @@ namespace Salesforce.SDK.Auth
             account.CommunityId = authResponse.CommunityId;
             account.CommunityUrl = authResponse.CommunityUrl;
             var cm = new ClientManager();
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - peek client", LoggingLevel.Verbose);
             cm.PeekRestClient();
             IdentityResponse identity = null;
             try
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - call identity service", LoggingLevel.Verbose);
                 identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
             }
             catch (JsonException ex)
             {
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:", LoggingLevel.Critical);
+                SalesforceApplication.SendToCustomLogger(
+                    "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
+                    LoggingLevel.Critical);
                 SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
             }
@@ -156,7 +137,6 @@ namespace Salesforce.SDK.Auth
                 account.UserId = identity.UserId;
                 account.UserName = identity.UserName;
                 account.Policy = identity.MobilePolicy;
-                SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - persist credentials", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
             SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
