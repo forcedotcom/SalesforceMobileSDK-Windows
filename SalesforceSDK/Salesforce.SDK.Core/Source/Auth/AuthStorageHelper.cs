@@ -86,7 +86,7 @@ namespace Salesforce.SDK.Auth
                 SalesforceApplication.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveResource - Attempting to retrieve resource {0}",
-                        resource), LoggingLevel.Critical);
+                        resource), LoggingLevel.Verbose);
 
                 var list = _vault.RetrieveAll();
                 return (from item in list where resource.Equals(item.Resource) select item);
@@ -114,7 +114,7 @@ namespace Salesforce.SDK.Auth
                 SalesforceApplication.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user Resource={0}  UserName={1}",
-                        resource, userName), LoggingLevel.Critical);
+                        resource, userName), LoggingLevel.Verbose);
 
                 var passwordCredentials = list as IList<PasswordCredential> ?? list.ToList();
                 if (passwordCredentials.Any())
@@ -143,7 +143,7 @@ namespace Salesforce.SDK.Auth
                 SalesforceApplication.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user {0}",
-                        userName), LoggingLevel.Critical);
+                        userName), LoggingLevel.Verbose);
 
                 return _vault.FindAllByUserName(userName);
             }

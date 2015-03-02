@@ -61,8 +61,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static Account GetAccount()
         {
-            Account account = AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
-            return account;
+            return AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
         }
 
         public static async Task<bool> SwitchToAccount(Account account)
