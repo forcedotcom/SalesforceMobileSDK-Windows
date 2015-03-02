@@ -29,18 +29,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
-using Salesforce.SDK.Rest;
 using Salesforce.SDK.Utilities;
 
 namespace Salesforce.SDK.Net
@@ -52,6 +54,7 @@ namespace Salesforce.SDK.Net
     {
         FormUrlEncoded,
         Json,
+        Xml,
         None
     }
 
@@ -83,7 +86,8 @@ namespace Salesforce.SDK.Net
                     return "application/json";
                 case ContentTypeValues.FormUrlEncoded:
                     return "application/x-www-form-urlencoded";
-                case ContentTypeValues.None:
+                case ContentTypeValues.Xml:
+                    return "text/xml";
                 default:
                     return null;
             }
@@ -96,10 +100,6 @@ namespace Salesforce.SDK.Net
     /// </summary>
     public class HttpCall
     {
-        /// <summary>
-        /// Use this property to retrieve the user agent.
-        /// </summary>
-        public static string UserAgentHeader { private set; get; }
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 ({0}/{1} {2}) {3}";
         private readonly ContentTypeValues _contentType;
         private readonly HttpCallHeaders _headers;
@@ -137,6 +137,11 @@ namespace Salesforce.SDK.Net
             _requestBody = requestBody;
             _contentType = contentType;
         }
+
+        /// <summary>
+        ///     Use this property to retrieve the user agent.
+        /// </summary>
+        public static string UserAgentHeader { private set; get; }
 
         /// <summary>
         ///     True if HTTP request has been executed
@@ -301,12 +306,7 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                CoreDispatcher core = CoreApplication.MainView.CoreWindow.Dispatcher;
-                await core.RunAsync(CoreDispatcherPriority.Normal, async () => await GenerateOsString());
-                var packageVersion = Package.Current.Id.Version;
-                var packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
-                                           packageVersion.Build;
-                UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(), packageVersionString, "native", UserAgentHeader);
+                await GenerateUserAgentHeader();
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -357,8 +357,9 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        /// There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through parsing the AppxManifest.xml at runtime and retrieving the displayname.
-        /// If this fails we return the package.id.name instead, allowing the app to still be identified.
+        ///     There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through
+        ///     parsing the AppxManifest.xml at runtime and retrieving the displayname.
+        ///     If this fails we return the package.id.name instead, allowing the app to still be identified.
         /// </summary>
         /// <returns></returns>
         private static async Task<string> GetApplicationDisplayName()
@@ -371,7 +372,7 @@ namespace Salesforce.SDK.Net
                 XDocument doc = XDocument.Parse(manifestXml);
                 XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
                 displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
-                        select name.Value).First();
+                    select name.Value).First();
             }
             catch (Exception)
             {
@@ -383,33 +384,57 @@ namespace Salesforce.SDK.Net
 
         /// <summary>
         /// This method generates the user agent string for the current device.
+        /// This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the UserAgentHeader will not be set.
         /// </summary>
         /// <returns></returns>
-        private static Task<string> GenerateOsString()
+        private static async Task GenerateUserAgentHeader()
         {
-            var t = new TaskCompletionSource<string>();
-            var w = new WebView();
-            w.NavigateToString("<html />");
-            NotifyEventHandler h = null;
-            h = (s, e) =>
+            var pageCompleted = new TaskCompletionSource<string>();
+            var webView = new WebView();
+            NotifyEventHandler scriptHandler = null;
+            TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> loadHandler = null;
+            scriptHandler = async (s, e) =>
             {
                 try
                 {
-                    UserAgentHeader = e.Value;
+                    PackageVersion packageVersion = Package.Current.Id.Version;
+                    string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                                  packageVersion.Build;
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
+                    packageVersionString, "native", e.Value);
+                    pageCompleted.TrySetResult(UserAgentHeader);
                 }
                 catch (Exception ex)
                 {
-                    t.SetException(ex);
+                    pageCompleted.SetException(ex);
                 }
                 finally
                 {
                     /* release */
-                    w.ScriptNotify -= h;
+                    webView.ScriptNotify -= scriptHandler;
+                    webView.NavigationCompleted -= loadHandler;
                 }
             };
-            w.ScriptNotify += h;
-            w.InvokeScript("execScript", new[] {"window.external.notify(navigator.appVersion); "});
-            return t.Task;
+            loadHandler = async (web, e) =>
+            {
+                var view = web as WebView;
+                if (view != null)
+                {
+                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.appVersion); "});
+                }
+            };
+            DateTime endTime = DateTime.Now.AddSeconds(10);
+            webView.ScriptNotify += scriptHandler;
+            webView.NavigationCompleted += loadHandler;
+            webView.NavigateToString("<html />");
+            while (pageCompleted.Task.Status != TaskStatus.RanToCompletion)
+            {
+                await Task.Delay(10);
+                if (DateTime.Now >= endTime)
+                {
+                    pageCompleted.TrySetResult("failed to create userAgent");
+                }
+            }
         }
     }
 }

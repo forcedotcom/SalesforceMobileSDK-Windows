@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartStore.Store;
@@ -52,8 +53,8 @@ namespace Salesforce.SDK.SmartSync.Model
         public const string WindowsImpl = "windowsImpl";
         public const string WindowsImplType = "windowsImplType";
 
-        public QueryTypes QueryType { internal set; get; }
-        public int TotalSize { internal set; get; } // set during fetch
+        public QueryTypes QueryType { protected set; get; }
+        public int TotalSize { protected set; get; } // set during fetch
 
         /// <summary>
         ///     Build SyncTarget from json
@@ -99,6 +100,27 @@ namespace Salesforce.SDK.SmartSync.Model
                     break;
             }
             throw new SmartStoreException("Could not generate SyncTarget from json target");
+        }
+
+        public static string AddFilterForReSync(string query, long maxTimeStamp)
+        {
+            if (maxTimeStamp != SyncManager.Unchanged)
+            {
+                string extraPredicate = Constants.LastModifiedDate + " > " +
+                                        new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
+                if (query.Contains(" where "))
+                {
+                    var reg = new Regex("( where )");
+                    query = reg.Replace(query, "$1 where " + extraPredicate + " and ", 1);
+                }
+                else
+                {
+                    string pred = "$1 where " + extraPredicate;
+                    var reg = new Regex("( from[ ]+[^ ]*)");
+                    query = reg.Replace(query, pred, 1);
+                }
+            }
+            return query;
         }
 
         /// <summary>

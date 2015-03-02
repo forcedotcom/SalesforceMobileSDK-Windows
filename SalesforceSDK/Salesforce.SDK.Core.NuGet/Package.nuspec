@@ -2,15 +2,18 @@
 <package >
   <metadata minClientVersion="2.8">
     <id>Salesforce.SDK.Core</id>
-    <version>3.1.1-beta</version>
+    <version>3.1.2-beta</version>
     <title>Salesforce.SDK.Core</title>
     <authors>Salesforce.com</authors>
     <owners></owners>
     <description>
       This is a pre-release version and is not yet final.
-      The Salesforce SDK Core package is necessary for writing Salesforce applications on Windows.  It contains the base features for OAuth, security, account management, and more. Support for windows and windows phone 8.1 runtime included.
+
+      The Salesforce SDK Core package is necessary for writing Salesforce applications on Windows. It contains the base features for OAuth, security, account management, and more. Support for windows and windows phone 8.1 runtime included.
+
       Source: https://github.com/forcedotcom/SalesforceMobileSDK-Windows/tree/unstable
-      Installation: 
+
+      Please follow the steps in https://github.com/forcedotcom/SalesforceMobileSDK-Windows/blob/unstable/README.md to install. You will need to use the template included in github in order to make use of this package initially; there are some setup steps that are needed that the template provides.
     </description>
     <releaseNotes>
     </releaseNotes>
