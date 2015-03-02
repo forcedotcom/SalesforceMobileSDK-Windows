@@ -30,6 +30,7 @@ using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation.Diagnostics;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -195,5 +196,29 @@ namespace Salesforce.SDK.App
         {
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
+
+        #region Exposing custom logging provider to core SDK
+
+        // Using the following set of methods/fields we can expose a custom logging provider to core SDK.
+
+        private static Action<object, LoggingLevel> _customLoggerAction;
+
+        public static void SetCustomLoggerAction(Action<object, LoggingLevel> action)
+        {
+            if (action != null)
+            {
+                _customLoggerAction = action;
+            }
+        }
+
+        public static void SendToCustomLogger(object param, LoggingLevel level = LoggingLevel.Information)
+        {
+            if (_customLoggerAction != null)
+            {
+                _customLoggerAction(param, level);
+            }
+        }
+
+        #endregion
     }
 }
