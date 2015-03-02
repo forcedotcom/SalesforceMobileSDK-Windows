@@ -25,10 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
@@ -61,7 +61,8 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static Account GetAccount()
         {
-            return AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
+            Account account = AuthStorageHelper.GetAuthStorageHelper().RetrieveCurrentAccount();
+            return account;
         }
 
         public static async Task<bool> SwitchToAccount(Account account)
@@ -83,9 +84,11 @@ namespace Salesforce.SDK.Auth
                         AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
                     OAuth2.RefreshCookies();
+                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
+            SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
             return false;
         }
 
@@ -108,6 +111,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
+            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
@@ -120,8 +124,12 @@ namespace Salesforce.SDK.Auth
             {
                 identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
             }
-            catch (JsonException)
+            catch (JsonException ex)
             {
+                SalesforceApplication.SendToCustomLogger(
+                    "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
+                    LoggingLevel.Critical);
+                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
             }
             if (identity != null)
@@ -131,6 +139,7 @@ namespace Salesforce.SDK.Auth
                 account.Policy = identity.MobilePolicy;
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
+            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
             return account;
         }
     }
