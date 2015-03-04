@@ -89,7 +89,7 @@ namespace Salesforce.SDK.Source.Pages
             if (webResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
                 logMsg += string.Format(", ErrorDetail={0}", webResult.ResponseErrorDetail);
 
-            SalesforceApplication.SendToCustomLogger(logMsg, LoggingLevel.Verbose);
+            PlatformAdapter.SendToCustomLogger(logMsg, LoggingLevel.Verbose);
 
             if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
@@ -278,8 +278,8 @@ namespace Salesforce.SDK.Source.Pages
             }
             catch (Exception ex)
             {
-                SalesforceApplication.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
-                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
 
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }

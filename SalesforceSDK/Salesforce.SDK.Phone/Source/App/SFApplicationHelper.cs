@@ -149,13 +149,13 @@ namespace Salesforce.SDK.App
                 ContinuationManager.MarkAsStale();
                 try
                 {
-                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Calling ContinuationManager.Continue", LoggingLevel.Verbose);
+                    PlatformAdapter.SendToCustomLogger("SFApplicationHelper.OnActivated - Calling ContinuationManager.Continue", LoggingLevel.Verbose);
                     ContinuationManager.Continue(continueEvents);
                 }
                 catch (InvalidOperationException e)
                 {
-                    SalesforceApplication.SendToCustomLogger("SFApplicationHelper.OnActivated - Exception when calling ContinuationManager.Continue", LoggingLevel.Critical);
-                    SalesforceApplication.SendToCustomLogger(e, LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger("SFApplicationHelper.OnActivated - Exception when calling ContinuationManager.Continue", LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger(e, LoggingLevel.Critical);
                     Debug.WriteLine("Exception while continuing, " + e.StackTrace);
                 }
             }
