@@ -173,8 +173,8 @@ namespace Salesforce.SDK.App
             }
             catch (WebException ex)
             {
-                SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
-                SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
 
@@ -197,29 +197,5 @@ namespace Salesforce.SDK.App
         {
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
-
-        #region Exposing custom logging provider to core SDK
-
-        // Using the following set of methods/fields we can expose a custom logging provider to core SDK.
-
-        private static Action<object, LoggingLevel> _customLoggerAction;
-
-        public static void SetCustomLoggerAction(Action<object, LoggingLevel> action)
-        {
-            if (action != null)
-            {
-                _customLoggerAction = action;
-            }
-        }
-
-        public static void SendToCustomLogger(object param, LoggingLevel level)
-        {
-            if (_customLoggerAction != null)
-            {
-                _customLoggerAction(param, level);
-            }
-        }
-
-        #endregion
     }
 }

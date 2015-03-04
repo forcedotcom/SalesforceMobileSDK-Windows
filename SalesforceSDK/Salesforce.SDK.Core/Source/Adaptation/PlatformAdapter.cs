@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Adaptation
 {
@@ -113,5 +114,30 @@ namespace Salesforce.SDK.Adaptation
                 return null;
             }
         }
+
+
+        #region Exposing custom logging provider to core SDK
+
+        // Using the following set of methods/fields we can expose a custom logging provider to core SDK.
+
+        private static Action<object, LoggingLevel> _customLoggerAction = null;
+
+        public static void SetCustomLoggerAction(Action<object, LoggingLevel> action)
+        {
+            if (action != null)
+            {
+                _customLoggerAction = action;
+            }
+        }
+
+        public static void SendToCustomLogger(object param, LoggingLevel level)
+        {
+            if (_customLoggerAction != null)
+            {
+                _customLoggerAction(param, level);
+            }
+        }
+
+        #endregion
     }
 }
