@@ -63,11 +63,7 @@ namespace Salesforce.SDK.SmartStore.Store
         [ClassInitialize]
         public static async Task TestSetup(TestContext context)
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "mypassword",
-                Salt = "mysalt"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var options = new LoginOptions(TestCredentials.LoginUrl, TestCredentials.ClientId, TestCallbackUrl, "mobile",
                 TestScopes);

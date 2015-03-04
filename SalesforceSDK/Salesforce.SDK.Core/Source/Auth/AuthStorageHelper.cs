@@ -48,6 +48,7 @@ namespace Salesforce.SDK.Auth
         private const string PasswordVaultCurrentAccount = "Salesforce Account";
         private const string PasswordVaultSecuredData = "Salesforce Secure";
         private const string PasswordVaultPincode = "Salesforce Pincode";
+        private const string PasswordVaultEncryptionSettings = "Salesforce Encryption Settings";
         private const string InstallationStatusKey = "InstallationStatus";
 
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
@@ -417,6 +418,95 @@ namespace Salesforce.SDK.Auth
             if (_persistedData.Values.ContainsKey(key))
             {
                 _persistedData.Values.Remove(key);
+            }
+        }
+
+        internal void PersistEncryptionSettings(string password, string salt, string nonce = null)
+        {
+            DeleteEncryptionSettings();
+            var encryptionSettingsObj = new { Password = password, Salt = salt };
+            var encrpytionSettings = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultEncryptionSettings,
+                JsonConvert.SerializeObject(encryptionSettingsObj));
+            _vault.Add(encrpytionSettings);
+            SalesforceApplication.SendToCustomLogger("AuthStorageHelper.PersistEncryptionSettings - encryption settings added to vault",
+                LoggingLevel.Verbose);
+        }
+
+        internal bool TryRetrieveEncryptionSettings(out string password, out string salt, string nonce = null)
+        {
+            password = null;
+            salt = null;
+            PasswordCredential creds = SafeRetrieveResource(PasswordVaultSecuredData).FirstOrDefault();
+            if (creds != null)
+            {
+                PasswordCredential encrpytionSettings = _vault.Retrieve(PasswordVaultSecuredData, PasswordVaultEncryptionSettings);
+                if (String.IsNullOrWhiteSpace(encrpytionSettings.Password))
+                {
+                    // Failed to deserialize the data, we should clear it out and start over.
+                    SalesforceApplication.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values are corrupt. Assuming bad state and clearing the vault completely",
+                        LoggingLevel.Verbose);
+                    _vault.Remove(encrpytionSettings);
+                    DeletePersistedCredentials();
+                    DeletePincode();
+                }
+                else
+                {
+                    try
+                    {
+                        var encrpytionSettingsObj = JsonConvert.DeserializeObject<dynamic>(encrpytionSettings.Password);
+                        password = encrpytionSettingsObj.Password;
+                        salt = encrpytionSettingsObj.Salt;
+                        SalesforceApplication.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have been retrieved successfully.",
+                        LoggingLevel.Verbose);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Failed to deserialize the data, we should clear it out and start over.
+                        SalesforceApplication.SendToCustomLogger(
+                            "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be deserialized. Assuming bad state and clearing the vault completely",
+                            LoggingLevel.Verbose);
+
+                        SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Warning);
+                        
+                        _vault.Remove(encrpytionSettings);
+                        DeletePersistedCredentials();
+                        DeletePincode();
+                    }
+                }
+
+            }
+            else
+            {
+                var account = RetrieveCurrentAccount();
+                var pincode = RetrievePincode();
+                // If either account or pincode are stored, but the Encryption Settings values can't be retrieved, then we should assume we are in a bad state and clear the vault.
+                if (account != null || pincode != null)
+                {
+                    SalesforceApplication.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be retrieved from vault. Assuming bad state and clearing the vault completely",
+                        LoggingLevel.Verbose);
+                    DeletePersistedCredentials();
+                    DeletePincode();
+                }
+            }
+            SalesforceApplication.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have not yet been saved.",
+                        LoggingLevel.Verbose);
+            return false;
+        }
+
+        internal void DeleteEncryptionSettings()
+        {
+            PasswordCredential encryptionSettings = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultEncryptionSettings);
+            if (encryptionSettings != null)
+            {
+                SalesforceApplication.SendToCustomLogger(
+                    "AuthStorageHelper.DeleteEncryptionSettings - removed encryption settings from vault",
+                    LoggingLevel.Verbose);
+                _vault.Remove(encryptionSettings);
             }
         }
     }

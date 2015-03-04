@@ -39,11 +39,7 @@ namespace Salesforce.SDK.Auth
         [TestInitialize]
         public void Setup()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "mypassword",
-                Salt = "mysalt"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
         }
 
