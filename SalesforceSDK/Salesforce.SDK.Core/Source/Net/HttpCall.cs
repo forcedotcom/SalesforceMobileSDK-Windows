@@ -306,7 +306,17 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                await GenerateUserAgentHeader();
+                TaskCompletionSource<string> task = new TaskCompletionSource<string>();
+                await Task.Run(async () =>
+                {
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                    CoreDispatcherPriority.Normal, async () =>
+                    {
+                        await GenerateUserAgentHeader();
+                        task.SetResult(UserAgentHeader);
+                    });
+                });
+                await task.Task;
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -387,7 +397,7 @@ namespace Salesforce.SDK.Net
         /// This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the UserAgentHeader will not be set.
         /// </summary>
         /// <returns></returns>
-        private static async Task GenerateUserAgentHeader()
+        private static async Task<string> GenerateUserAgentHeader()
         {
             var pageCompleted = new TaskCompletionSource<string>();
             var webView = new WebView();
@@ -435,6 +445,7 @@ namespace Salesforce.SDK.Net
                     pageCompleted.TrySetResult("failed to create userAgent");
                 }
             }
+            return UserAgentHeader;
         }
     }
 }

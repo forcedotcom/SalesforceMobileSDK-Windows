@@ -141,10 +141,10 @@ namespace NoteSync.ViewModel
         {
             RegisterSoup();
             string soqlQuery =
-                    SOQLBuilder.GetInstanceWithFields(NoteObject.NoteFields)
-                        .From(NoteObject.NoteSObjectType)
-                        .Limit(Limit)
-                        .Build();
+                SOQLBuilder.GetInstanceWithFields(NoteObject.NoteFields)
+                    .From(NoteObject.NoteSObjectType)
+                    .Limit(Limit)
+                    .Build();
             SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
             SyncTarget target = ContentSoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
             try
