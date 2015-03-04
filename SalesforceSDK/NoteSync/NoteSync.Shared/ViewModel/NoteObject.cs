@@ -85,7 +85,7 @@ namespace NoteSync.ViewModel
         {
             set
             {
-                var str = Convert.FromBase64String(value);
+                byte[] str = Convert.FromBase64String(value);
                 _content = Encoding.UTF8.GetString(str, 0, str.Length);
                 OnPropertyChanged();
                 OnPropertyChanged("Content");

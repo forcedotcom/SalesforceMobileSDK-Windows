@@ -240,7 +240,7 @@ namespace Salesforce.SDK.Source.Pages
 
             try
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
@@ -268,7 +268,7 @@ namespace Salesforce.SDK.Source.Pages
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
 
-                    SalesforceApplication.SendToCustomLogger("AccountPage.DoAuthFlow - calling EndLoginFlow()", LoggingLevel.Verbose);
+                    PlatformAdapter.SendToCustomLogger("AccountPage.DoAuthFlow - calling EndLoginFlow()", LoggingLevel.Verbose);
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
             }

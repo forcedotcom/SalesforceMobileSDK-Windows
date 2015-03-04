@@ -31,6 +31,7 @@ using System.Linq;
 using Windows.Security.Credentials;
 using Windows.Storage;
 using Newtonsoft.Json;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.App;
@@ -84,7 +85,7 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveResource - Attempting to retrieve resource {0}",
                         resource), LoggingLevel.Verbose);
@@ -94,12 +95,12 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveResource - Exception occured when retrieving vault data for resource {0}",
                         resource), LoggingLevel.Critical);
 
-                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
 
                 Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
             }
@@ -112,7 +113,7 @@ namespace Salesforce.SDK.Auth
             {
                 var list = SafeRetrieveResource(resource);
 
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user Resource={0}  UserName={1}",
                         resource, userName), LoggingLevel.Verbose);
@@ -125,12 +126,12 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for resource {0}",
                         resource), LoggingLevel.Critical);
 
-                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
 
                 Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
             }
@@ -141,7 +142,7 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user {0}",
                         userName), LoggingLevel.Verbose);
@@ -150,12 +151,12 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format(
                         "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for user {0}",
                         userName), LoggingLevel.Critical);
 
-                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
 
                 Debug.WriteLine("Failed to retrieve vault data for user");
             }
@@ -171,7 +172,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
             if (creds != null)
             {
-                SalesforceApplication.SendToCustomLogger("AuthStorageHelper.PersistCredentials - removing existing credential", LoggingLevel.Verbose);
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistCredentials - removing existing credential", LoggingLevel.Verbose);
                 _vault.Remove(creds);
                 IReadOnlyList<PasswordCredential> current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
                 if (current != null)
@@ -188,7 +189,7 @@ namespace Salesforce.SDK.Auth
             var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
                 LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
-            SalesforceApplication.SendToCustomLogger("AuthStorageHelper.PersistCredentials - done adding info to vault", LoggingLevel.Verbose);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistCredentials - done adding info to vault", LoggingLevel.Verbose);
         }
 
         internal Account RetrieveCurrentAccount()
@@ -203,17 +204,17 @@ namespace Salesforce.SDK.Auth
                 {
                     try
                     {
-                        SalesforceApplication.SendToCustomLogger(
+                        PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
                         return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
                     }
                     catch (Exception ex)
                     {
-                        SalesforceApplication.SendToCustomLogger(
+                        PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.RetrieveCurrentAccount - Exception occured when decrypting account, removing account from vault",
                             LoggingLevel.Warning);
 
-                        SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Warning);
+                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
 
                         // if we can't decrypt remove the account
                         _vault.Remove(account);
@@ -246,7 +247,7 @@ namespace Salesforce.SDK.Auth
             var accounts = new Dictionary<string, Account>();
             if (creds != null)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     "AuthStorageHelper.RetrievePersistedCredentials - attempting to get all credentials",
                     LoggingLevel.Verbose);
 
@@ -264,11 +265,11 @@ namespace Salesforce.SDK.Auth
                         }
                         catch (Exception ex)
                         {
-                            SalesforceApplication.SendToCustomLogger(
+                            PlatformAdapter.SendToCustomLogger(
                                 "AuthStorageHelper.RetrievePersistedCredentials - Exception occured when decrypting account, removing account from vault",
                                 LoggingLevel.Warning);
 
-                            SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Warning);
+                            PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
 
                             // if we can't decrypt remove the account
                            _vault.Remove(next);
@@ -278,7 +279,7 @@ namespace Salesforce.SDK.Auth
                 }
             }
 
-            SalesforceApplication.SendToCustomLogger(
+            PlatformAdapter.SendToCustomLogger(
                 string.Format(
                     "AuthStorageHelper.RetrievePersistedCredentials - Done. Total number of accounts retrieved = {0}",
                     accounts.Count), LoggingLevel.Verbose);
@@ -304,7 +305,7 @@ namespace Salesforce.SDK.Auth
                         var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
                         if (id.Equals(account.UserId))
                         {
-                            SalesforceApplication.SendToCustomLogger(
+                            PlatformAdapter.SendToCustomLogger(
                                 string.Format(
                                     "AuthStorageHelper.DeletePersistedCredentials - removing entry from vault for UserName={0}  UserID={1}",
                                     userName, id), LoggingLevel.Verbose);
@@ -314,11 +315,11 @@ namespace Salesforce.SDK.Auth
                     }
                     catch (Exception ex)
                     {
-                        SalesforceApplication.SendToCustomLogger(
+                        PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.DeletePersistedCredentials - Exception occured when decrypting account, removing account from vault",
                             LoggingLevel.Warning);
 
-                        SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Warning);
+                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
 
                         // if we can't decrypt remove the account
                        _vault.Remove(next);
@@ -349,7 +350,7 @@ namespace Salesforce.SDK.Auth
                 }
             }
 
-            SalesforceApplication.SendToCustomLogger(
+            PlatformAdapter.SendToCustomLogger(
                 "AuthStorageHelper.DeletePersistedCredentials - removed all entries from vault", LoggingLevel.Verbose);
         }
 
@@ -359,7 +360,7 @@ namespace Salesforce.SDK.Auth
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
                 JsonConvert.SerializeObject(policy));
             _vault.Add(newPin);
-            SalesforceApplication.SendToCustomLogger("AuthStorageHelper.PersistPincode - pincode added to vault",
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistPincode - pincode added to vault",
                 LoggingLevel.Verbose);
         }
 
@@ -368,7 +369,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     "AuthStorageHelper.RetrievePincode - retrieved pincode from vault",
                     LoggingLevel.Verbose);
                 return pin.Password;
@@ -381,7 +382,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     "AuthStorageHelper.DeletePincode - removed pincode from vault",
                     LoggingLevel.Verbose);
                 _vault.Remove(pin);

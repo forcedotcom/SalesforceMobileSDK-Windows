@@ -124,7 +124,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupCreate()
         {
-            SalesforceApplication.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog for creating a pincode", LoggingLevel.Information);
+            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog for creating a pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
             Description.Text = LocalizedStrings.GetString("passcode_create_security");
             ContentFooter.Visibility = Visibility.Visible;
@@ -138,7 +138,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupLocked()
         {
-            SalesforceApplication.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
+            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
             ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
             Description.Text = "";
@@ -158,7 +158,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupConfirm()
         {
-            SalesforceApplication.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
+            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
             Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Visibility.Collapsed;
@@ -172,7 +172,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Length >= Options.User.Policy.PinLength)
             {
-                SalesforceApplication.SendToCustomLogger("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
+                PlatformAdapter.SendToCustomLogger("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
                 var options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
                 Frame.Navigate(typeof (PincodeDialog), options);
             }
@@ -190,7 +190,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Equals(Options.Passcode))
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     string.Format("PincodeDialog.ConfirmClicked - Pincode matched, going to {0}",
                         SalesforceApplication.RootApplicationPage), LoggingLevel.Verbose);
                 PincodeManager.StorePincode(Options.Policy, Options.Passcode);

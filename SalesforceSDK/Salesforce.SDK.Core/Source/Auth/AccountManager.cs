@@ -83,11 +83,11 @@ namespace Salesforce.SDK.Auth
                         AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
                     OAuth2.RefreshCookies();
-                    SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
+                    PlatformAdapter.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
-            SalesforceApplication.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
+            PlatformAdapter.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
             return false;
         }
 
@@ -110,7 +110,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
+            PlatformAdapter.SendToCustomLogger("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
@@ -125,10 +125,10 @@ namespace Salesforce.SDK.Auth
             }
             catch (JsonException ex)
             {
-                SalesforceApplication.SendToCustomLogger(
+                PlatformAdapter.SendToCustomLogger(
                     "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
                     LoggingLevel.Critical);
-                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
             }
             if (identity != null)
@@ -138,7 +138,7 @@ namespace Salesforce.SDK.Auth
                 account.Policy = identity.MobilePolicy;
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
-            SalesforceApplication.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
+            PlatformAdapter.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
             return account;
         }
     }
