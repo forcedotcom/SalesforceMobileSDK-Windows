@@ -42,6 +42,7 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -239,6 +240,9 @@ namespace Salesforce.SDK.Source.Pages
 
             try
             {
+                SalesforceApplication.SendToCustomLogger(
+                    "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
+
                 webAuthenticationResult =
                     await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             }
@@ -263,6 +267,8 @@ namespace Salesforce.SDK.Source.Pages
                 else
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+
+                    SalesforceApplication.SendToCustomLogger("AccountPage.DoAuthFlow - calling EndLoginFlow()", LoggingLevel.Verbose);
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
             }

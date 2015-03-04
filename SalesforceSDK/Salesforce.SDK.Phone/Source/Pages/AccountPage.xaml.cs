@@ -42,6 +42,7 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -83,6 +84,13 @@ namespace Salesforce.SDK.Source.Pages
         public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
         {
             WebAuthenticationResult webResult = args.WebAuthenticationResult;
+
+            var logMsg = String.Format("AccountPage.ContinueWebAuthentication - WebAuthenticationResult: Status={0}", webResult.ResponseStatus);
+            if (webResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+                logMsg += string.Format(", ErrorDetail={0}", webResult.ResponseErrorDetail);
+
+            SalesforceApplication.SendToCustomLogger(logMsg, LoggingLevel.Verbose);
+
             if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webResult.ResponseData);
@@ -268,8 +276,11 @@ namespace Salesforce.SDK.Source.Pages
                 WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null,
                     WebAuthenticationOptions.None);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                SalesforceApplication.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                SalesforceApplication.SendToCustomLogger(ex, LoggingLevel.Critical);
+
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
         }

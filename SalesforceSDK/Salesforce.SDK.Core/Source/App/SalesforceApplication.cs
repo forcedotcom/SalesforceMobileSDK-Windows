@@ -30,7 +30,6 @@ using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation.Diagnostics;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,6 +38,7 @@ using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Settings;
+using Windows.Foundation.Diagnostics;
 
 #if WINDOWS_PHONE_APP
 using Windows.Phone.UI.Input;
@@ -171,9 +171,10 @@ namespace Salesforce.SDK.App
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
                 OAuth2.RefreshCookies();
             }
-            catch (WebException)
+            catch (WebException ex)
             {
-                // todo: add logging here
+                SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
+                SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
 
@@ -211,7 +212,7 @@ namespace Salesforce.SDK.App
             }
         }
 
-        public static void SendToCustomLogger(object param, LoggingLevel level = LoggingLevel.Information)
+        public static void SendToCustomLogger(object param, LoggingLevel level)
         {
             if (_customLoggerAction != null)
             {
