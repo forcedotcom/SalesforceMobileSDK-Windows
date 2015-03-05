@@ -31,6 +31,15 @@ namespace Salesforce.SDK.Source.Security
 {
     public interface IKeyGenerator
     {
+        string Password
+        {
+            get;
+        }
+
+        string Salt
+        {
+            get;
+        }
         void GenerateKey(string salt, string password, string nonce, out IBuffer keyMaterial, out IBuffer iv);
     }
 }

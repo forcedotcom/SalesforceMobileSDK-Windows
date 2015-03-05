@@ -40,14 +40,12 @@ namespace Salesforce.SDK.Source.Security
             KeyGenerator = keyGenerator;
         }
 
-        public string Password { get; set; }
-        public string Salt { get; set; }
         public string SymmetricAlgorithm { get; private set; }
         public string KeyDerivationAlgorithm { get; private set; }
 
         public void GenerateKey(out IBuffer keyMaterial, out IBuffer iv, string nonce)
         {
-            KeyGenerator.GenerateKey(Password, Salt, nonce, out keyMaterial, out iv);
+            KeyGenerator.GenerateKey(KeyGenerator.Salt, KeyGenerator.Password, nonce, out keyMaterial, out iv);
         }
     }
 }

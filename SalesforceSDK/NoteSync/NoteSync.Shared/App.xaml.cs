@@ -41,11 +41,7 @@ namespace NoteSync.Shared
         /// <returns></returns>
         protected override SalesforceConfig InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "65775192-a513-48c6-820d-0b2ed441719a",
-                Salt = "2a9eefe9-be68-418a-a2ed-29df688e9c5f"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)
