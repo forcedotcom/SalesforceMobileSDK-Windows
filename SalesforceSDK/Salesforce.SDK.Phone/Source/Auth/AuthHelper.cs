@@ -28,8 +28,10 @@ using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Pages;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Auth
 {
@@ -41,7 +43,6 @@ namespace Salesforce.SDK.Auth
         /// <summary>
         ///     Navigate to the /Pages/LoginPage.xaml and load login page in the webview
         /// </summary>
-        /// <param name="loginOptions"></param>
         public async void StartLoginFlow()
         {
             var frame = Window.Current.Content as Frame;
@@ -68,6 +69,8 @@ namespace Salesforce.SDK.Auth
             }
             else
             {
+                PlatformAdapter.SendToCustomLogger(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
+                                                         SalesforceApplication.RootApplicationPage), LoggingLevel.Information);
                 frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
         }

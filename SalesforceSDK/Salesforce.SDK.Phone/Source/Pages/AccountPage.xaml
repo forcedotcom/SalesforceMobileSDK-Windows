@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:strings="using:Salesforce.SDK.Strings"
+    xmlns:native="using:Salesforce.SDK.Native"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -22,8 +23,20 @@
                            TextAlignment="Center" />
                 <ListBox x:Name="ListboxServers"
                          SelectionMode="Single"
-                         FontSize="20"
-                         SelectionChanged="ListboxServers_OnSelectionChanged"/>
+                         FontSize="20">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}"></Setter>
+                            <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}"></Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <native:ServerControl Delete="DeleteServer" Click="ClickServer"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
                     <Button x:Name="AddConnection"
                             DataContext="add_connection"
@@ -44,33 +57,30 @@
                                Margin="5 0 5 15"
                                Style="{StaticResource SubheaderTextBlockStyle}"
                                TextAlignment="Center" />
+                    <TextBlock Name="lbl_HostAddress"
+                               DataContext="address_label"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Opacity=".8"
+                               Margin="10 0 0 0"/>
                     <TextBox x:Name="HostAddress"
                              DataContext="address"
+                             MaxLength="2048"
+                             InputScope="Url"
                              PlaceholderText="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch">
-                        <TextBox.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    DataContext="address_label"
-                                    Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
-                                    Margin="10 0 0 0" />
-                            </DataTemplate>
-                        </TextBox.HeaderTemplate>
+                             HorizontalAlignment="Stretch"
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostAddress}">
                     </TextBox>
+                    <TextBlock Name="lbl_HostName"
+                               DataContext="host_label"
+                               Text="{Binding Converter={StaticResource Localize}}"
+                               Opacity=".8"
+                               Margin="10 0 0 0"/>
                     <TextBox x:Name="HostName"
                              DataContext="name"
+                             MaxLength="2048"
                              PlaceholderText="{Binding Converter={StaticResource Localize}}"
-                             HorizontalAlignment="Stretch">
-                        <TextBox.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    DataContext="host_label"
-                                    Text="{Binding Converter={StaticResource Localize}}"
-                                    Foreground="DimGray"
-                                    Margin="10 0 0 0" />
-                            </DataTemplate>
-                        </TextBox.HeaderTemplate>
+                             HorizontalAlignment="Stretch"
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostName}">
                     </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
@@ -124,7 +134,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Image Source="{Binding}"/>
+                    <Image Source="{Binding}" AutomationProperties.Name="{Binding Text, ElementName=ApplicationTitle}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

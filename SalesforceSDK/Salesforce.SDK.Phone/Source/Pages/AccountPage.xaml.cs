@@ -27,10 +27,12 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -40,6 +42,7 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -81,6 +84,13 @@ namespace Salesforce.SDK.Source.Pages
         public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
         {
             WebAuthenticationResult webResult = args.WebAuthenticationResult;
+
+            var logMsg = String.Format("AccountPage.ContinueWebAuthentication - WebAuthenticationResult: Status={0}", webResult.ResponseStatus);
+            if (webResult.ResponseStatus == WebAuthenticationStatus.ErrorHttp)
+                logMsg += string.Format(", ErrorDetail={0}", webResult.ResponseErrorDetail);
+
+            PlatformAdapter.SendToCustomLogger(logMsg, LoggingLevel.Verbose);
+
             if (webResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webResult.ResponseData);
@@ -143,10 +153,36 @@ namespace Salesforce.SDK.Source.Pages
                     ApplicationLogo.Margin = padding;
                 }
             }
-            var background = new SolidColorBrush(config.LoginBackgroundColor);
-            Background = background;
-            ServerFlyoutPanel.Background = background;
-            AddServerFlyoutPanel.Background = background;
+
+            // set background from config
+            if (config.LoginBackgroundColor != null)
+            {
+                var background = new SolidColorBrush((Color)config.LoginBackgroundColor);
+                Background = background;
+                ServerFlyoutPanel.Background = background;
+                AddServerFlyoutPanel.Background = background;
+            }
+
+            // set foreground from config
+            if (config.LoginForegroundColor != null)
+            {
+                var foreground = new SolidColorBrush((Color) config.LoginForegroundColor);
+                Foreground = foreground;
+                ApplicationTitle.Foreground = foreground;
+                LoginToSalesforce.Foreground = foreground;
+                LoginToSalesforce.BorderBrush = foreground;
+                ChooseConnection.Foreground = foreground;
+                ChooseConnection.BorderBrush = foreground;
+                AddServerFlyoutLabel.Foreground = foreground;
+                AddCustomHostBtn.Foreground = foreground;
+                AddCustomHostBtn.BorderBrush = foreground;
+                CancelCustomHostBtn.Foreground = foreground;
+                CancelCustomHostBtn.BorderBrush = foreground;
+                ServerFlyoutLabel.Foreground = foreground;
+                AddConnection.Foreground = foreground;
+                AddConnection.BorderBrush = foreground;
+            }
+
             if (Accounts == null || Accounts.Length == 0)
             {
                 _currentState = SingleUserViewState;
@@ -165,6 +201,7 @@ namespace Salesforce.SDK.Source.Pages
             AccountsList.ItemsSource = Accounts;
             ServerFlyout.Opening += ServerFlyout_Opening;
             ServerFlyout.Closed += ServerFlyout_Closed;
+            AddServerFlyout.Opened += AddServerFlyout_Opened;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
             AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
@@ -181,6 +218,18 @@ namespace Salesforce.SDK.Source.Pages
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
                 PincodeManager.LaunchPincodeScreen();
+            }
+        }
+
+        private void AddServerFlyout_Opened(object sender, object e)
+        {
+            if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) < 0)
+            {
+                AddCustomHostBtn.Width = CancelCustomHostBtn.ActualWidth;
+            }
+            else if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) > 0)
+            {
+                CancelCustomHostBtn.Width = AddCustomHostBtn.ActualWidth;
             }
         }
 
@@ -227,8 +276,11 @@ namespace Salesforce.SDK.Source.Pages
                 WebAuthenticationBroker.AuthenticateAndContinue(loginUri, callbackUri, null,
                     WebAuthenticationOptions.None);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
         }
@@ -238,13 +290,29 @@ namespace Salesforce.SDK.Source.Pages
             _addServerFlyoutShowing = true;
             HostName.Text = "";
             HostAddress.Text = "";
-            AddServerFlyout.ShowAt(ApplicationTitle);
+            try
+            {
+                AddServerFlyout.ShowAt(ApplicationTitle);
+            }
+            catch (ArgumentException)
+            {
+                Debug.WriteLine("Error displaying connection flyout");
+            }
+            
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
             string hname = HostName.Text;
             string haddress = HostAddress.Text;
+            if (String.IsNullOrWhiteSpace(haddress))
+            {
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(hname))
+            {
+                hname = haddress;
+            }
             var server = new ServerSetting
             {
                 ServerHost = haddress,
@@ -265,9 +333,15 @@ namespace Salesforce.SDK.Source.Pages
             StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
         }
 
-        private void ListboxServers_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClickServer(object sender, RoutedEventArgs e)
         {
             StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+        }
+
+        private void DeleteServer(object sender, RoutedEventArgs e)
+        {
+            SalesforceApplication.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
+            SalesforceApplication.ServerConfiguration.SaveConfig();
         }
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
@@ -297,6 +371,13 @@ namespace Salesforce.SDK.Source.Pages
         private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
         {
             MessageFlyout.Hide();
+        }
+
+        private void textBlockInTemplate_Loaded(object sender, RoutedEventArgs e)
+        {
+            var tb = sender as TextBlock;
+            if (tb != null)
+                tb.Foreground = this.Foreground;
         }
     }
 }

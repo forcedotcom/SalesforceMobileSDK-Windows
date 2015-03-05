@@ -33,17 +33,6 @@
           Salesforce.Universal.Template\Salesforce.Universal.Template.WindowsPhone\WindowsPhone.vstemplate
         </ProjectTemplateLink>
       </SolutionFolder>
-      <SolutionFolder Name="SalesforceSDK">
-        <ProjectTemplateLink ProjectName="Salesforce.SDK.Core">
-          Salesforce.SDK.Core\Core.vstemplate
-        </ProjectTemplateLink>
-        <ProjectTemplateLink ProjectName="Salesforce.SDK.Phone">
-          Salesforce.SDK.Phone\Phone.vstemplate
-        </ProjectTemplateLink>
-        <ProjectTemplateLink ProjectName="Salesforce.SDK.Store">
-          Salesforce.SDK.Store\Store.vstemplate
-        </ProjectTemplateLink>
-      </SolutionFolder>
  		</ProjectCollection>
     <CustomParameters>
       <CustomParameter Name="$ClientID$" Value="clientID"/>

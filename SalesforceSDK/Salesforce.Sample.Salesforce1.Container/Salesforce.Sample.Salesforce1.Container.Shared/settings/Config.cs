@@ -25,9 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using Salesforce.SDK.Source.Settings;
 using System;
 using Windows.UI;
+using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.Salesforce1.Container.Settings
 {
@@ -35,12 +35,12 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
     {
         public override string ClientId
         {
-            get { return "3MVG94DzwlYDSHS7X_sg6NktSIw.TO72dzPDBjGfVmqUpPjXSYVs.hZsvOFH5OU2z6GgyaPE6uEhd4QvRgXge"; }
+            get { return "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa"; }
         }
 
         public override string CallbackUrl
         {
-            get { return "sfdc:///axm/detect/oauth/done"; }
+            get { return "testsfdc:///mobilesdk/detect/oauth/done"; }
         }
 
         public override string[] Scopes
@@ -48,7 +48,7 @@ namespace Salesforce.Sample.Salesforce1.Container.Settings
             get { return new[] { "web", "api" }; }
         }
 
-        public override Color LoginBackgroundColor
+        public override Color? LoginBackgroundColor
         {
             get { return Colors.DeepSkyBlue; }
         }

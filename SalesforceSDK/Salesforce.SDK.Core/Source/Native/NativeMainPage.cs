@@ -61,6 +61,8 @@ namespace Salesforce.SDK.Native
             Account account = AccountManager.GetAccount();
             if (account == null)
             {
+                PlatformAdapter.SendToCustomLogger("NativeMainPage.CheckIfLoginNeeded - account object is null, calling StartLoginFlow",
+                                                          Windows.Foundation.Diagnostics.LoggingLevel.Verbose);
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
         }

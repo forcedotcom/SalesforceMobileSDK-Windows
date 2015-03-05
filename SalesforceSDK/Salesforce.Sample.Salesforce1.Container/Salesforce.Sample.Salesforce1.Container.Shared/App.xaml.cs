@@ -25,14 +25,15 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+
 using System;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.Sample.Salesforce1.Container.Settings;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
-
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+using Salesforce.SDK.Strings;
 
 namespace Salesforce.Sample.Salesforce1.Container
 {
@@ -48,6 +49,9 @@ namespace Salesforce.Sample.Salesforce1.Container
         public App()
         {
             InitializeComponent();
+
+            // Inject our own resources into SDK
+            LocalizedStrings.SetResourceLocation("MobileSDK");
         }
 
         /// <summary>
@@ -62,11 +66,7 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         protected override SalesforceConfig InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "supercalifragilisticexpialidocious",
-                Salt = "friesaresaltyforsure"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)

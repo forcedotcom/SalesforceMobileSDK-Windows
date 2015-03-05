@@ -1,11 +1,11 @@
-﻿using Salesforce.SDK.App;
-using Salesforce.SDK.Source.Settings;
+﻿// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+
 using Salesforce.Sample.NativeSmartStoreSample.Shared.Pages;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Source.Security;
 using System;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Source.Security;
-
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
+using Salesforce.SDK.Source.Settings;
 
 namespace Salesforce.Sample.NativeSmartStoreSample.Shared
 {
@@ -41,11 +41,7 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         /// <returns></returns>
         protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
         {         
-            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "fbeffb40-aac6-4ea5-a4cf-388dccdfc93d",
-                Salt = "9ca01492-e55a-4f30-afe2-a3783462f981"
-            };
+            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             Config config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)

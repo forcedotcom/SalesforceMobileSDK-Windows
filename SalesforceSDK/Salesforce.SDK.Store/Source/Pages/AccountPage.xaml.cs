@@ -27,9 +27,11 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -40,6 +42,7 @@ using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -112,10 +115,29 @@ namespace Salesforce.SDK.Source.Pages
                     ApplicationLogo.Margin = padding;
                 }
             }
-            var background = new SolidColorBrush(config.LoginBackgroundColor);
-            PageRoot.Background = background;
-            // ServerFlyoutPanel.Background = background;
-            //  AddServerFlyoutPanel.Background = background;
+
+            // set background from config
+            if (config.LoginBackgroundColor != null)
+            {
+                var background = new SolidColorBrush((Color) config.LoginBackgroundColor);
+                PageRoot.Background = background;
+                Background = background;
+                // ServerFlyoutPanel.Background = background;
+                //  AddServerFlyoutPanel.Background = background;
+            }
+
+            // set foreground from config
+            if (config.LoginForegroundColor != null)
+            {
+                var foreground = new SolidColorBrush((Color) config.LoginForegroundColor);
+                Foreground = foreground;
+                ApplicationTitle.Foreground = foreground;
+                LoginToSalesforce.Foreground = foreground;
+                LoginToSalesforce.BorderBrush = foreground;
+                ChooseConnection.Foreground = foreground;
+                ChooseConnection.BorderBrush = foreground;
+            }
+
             if (Accounts == null || Accounts.Length == 0)
             {
                 _currentState = SingleUserViewState;
@@ -134,6 +156,7 @@ namespace Salesforce.SDK.Source.Pages
             AccountsList.ItemsSource = Accounts;
             ServerFlyout.Opening += ServerFlyout_Opening;
             ServerFlyout.Closed += ServerFlyout_Closed;
+            AddServerFlyout.Opened += AddServerFlyout_Opened;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
             ListboxServers.SelectedValue = null;
@@ -157,6 +180,18 @@ namespace Salesforce.SDK.Source.Pages
                 {
                     PincodeManager.LaunchPincodeScreen();
                 }
+            }
+        }
+
+        private void AddServerFlyout_Opened(object sender, object e)
+        {
+            if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) < 0)
+            {
+                AddCustomHostBtn.Width = CancelCustomHostBtn.ActualWidth;
+            }
+            else if (AddCustomHostBtn.ActualWidth.CompareTo(CancelCustomHostBtn.ActualWidth) > 0)
+            {
+                CancelCustomHostBtn.Width = AddCustomHostBtn.ActualWidth;
             }
         }
 
@@ -201,8 +236,25 @@ namespace Salesforce.SDK.Source.Pages
             var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
-            WebAuthenticationResult webAuthenticationResult =
-                await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+            WebAuthenticationResult webAuthenticationResult;
+
+            try
+            {
+                PlatformAdapter.SendToCustomLogger(
+                    "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
+
+                webAuthenticationResult =
+                    await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+            }
+            // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
+            // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
+            // should just swallow that exception
+            catch (FileNotFoundException)
+            {
+                SetupAccountPage();
+                return;
+            }
+
             if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var responseUri = new Uri(webAuthenticationResult.ResponseData);
@@ -215,6 +267,8 @@ namespace Salesforce.SDK.Source.Pages
                 else
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
+
+                    PlatformAdapter.SendToCustomLogger("AccountPage.DoAuthFlow - calling EndLoginFlow()", LoggingLevel.Verbose);
                     PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
             }
@@ -240,6 +294,14 @@ namespace Salesforce.SDK.Source.Pages
         {
             string hname = HostName.Text;
             string haddress = HostAddress.Text;
+            if (String.IsNullOrWhiteSpace(haddress))
+            {
+                return;
+            }
+            if (String.IsNullOrWhiteSpace(hname))
+            {
+                hname = haddress;
+            }
             var server = new ServerSetting
             {
                 ServerHost = haddress,
@@ -258,11 +320,6 @@ namespace Salesforce.SDK.Source.Pages
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
         {
             if (ListboxServers.Items != null) StartLoginFlow(ListboxServers.Items[0] as ServerSetting);
-        }
-
-        private void ListboxServers_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
         }
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
@@ -292,6 +349,17 @@ namespace Salesforce.SDK.Source.Pages
         private void CloseMessageButton_OnClick(object sender, RoutedEventArgs e)
         {
             MessageFlyout.Hide();
+        }
+
+        private void ClickServer(object sender, RoutedEventArgs e)
+        {
+            StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+        }
+
+        private void DeleteServer(object sender, RoutedEventArgs e)
+        {
+            SalesforceApplication.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
+            SalesforceApplication.ServerConfiguration.SaveConfig();
         }
     }
 }

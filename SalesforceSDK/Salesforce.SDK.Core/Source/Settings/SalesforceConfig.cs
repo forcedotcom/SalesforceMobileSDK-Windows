@@ -33,7 +33,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Hybrid;
@@ -101,7 +101,9 @@ namespace Salesforce.SDK.Source.Settings
         /// </summary>
         public abstract string[] Scopes { get; }
 
-        public abstract Color LoginBackgroundColor { get; }
+        public virtual Color? LoginBackgroundColor { get { return null; } }
+
+        public virtual Color? LoginForegroundColor { get { return null; } }
 
         public abstract Uri LoginBackgroundLogo { get; }
 
@@ -109,7 +111,7 @@ namespace Salesforce.SDK.Source.Settings
 
         #endregion
 
-        public SalesforceConfig()
+        protected SalesforceConfig()
         {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             var configJson = settings.Values[ConfigSettings] as string;
@@ -140,6 +142,7 @@ namespace Salesforce.SDK.Source.Settings
                 }
                 else
                 {
+                    server.CanDelete = Visibility.Visible;
                     ServerList.Add(server);
                 }
                 SaveConfig();
@@ -154,13 +157,13 @@ namespace Salesforce.SDK.Source.Settings
         ///     in the account creation UI.  If there is only a single server, and new connections is disabled, add account will
         ///     immediately go to oauth.
         /// </summary>
-        protected void SetupServers()
+        protected async void SetupServers()
         {
             String xml;
             try
             {
                 Task<String> task = Task.Run(() => ConfigHelper.ReadFileFromApplication(ServerFilePath));
-                xml = task.Result;
+                xml = await task;
             }
             catch (Exception)
             {
@@ -180,7 +183,8 @@ namespace Salesforce.SDK.Source.Settings
                 select new ServerSetting
                 {
                     ServerName = (string) query.Attribute("name"),
-                    ServerHost = (string) query.Attribute("url")
+                    ServerHost = (string) query.Attribute("url"),
+                    CanDelete = Visibility.Collapsed
                 };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
@@ -191,7 +195,16 @@ namespace Salesforce.SDK.Source.Settings
             var configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
-            return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+            }
+            catch (Exception)
+            {
+                // couldn't decrypt config...
+                settings.Values[ConfigSettings] = String.Empty;
+                return null;
+            }
         }
     }
 }

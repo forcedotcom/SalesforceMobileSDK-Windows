@@ -53,11 +53,14 @@
         </Folder>
         <Folder Name="Native" TargetFolderName="Native">
           <ProjectItem ReplaceParameters="true" TargetFileName="NativeMainPage.cs">NativeMainPage.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ServerControl.xaml">ServerControl.xaml</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ServerControl.xaml.cs">ServerControl.xaml.cs</ProjectItem>
         </Folder>
         <Folder Name="Net" TargetFolderName="Net">
           <ProjectItem ReplaceParameters="true" TargetFileName="HttpCall.cs">HttpCall.cs</ProjectItem>
         </Folder>
         <Folder Name="Rest" TargetFolderName="Rest">
+          <ProjectItem ReplaceParameters="true" TargetFileName="ApiVersionStrings.cs">ApiVersionStrings.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="ClientManager.cs">ClientManager.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="RestClient.cs">RestClient.cs</ProjectItem>
           <ProjectItem ReplaceParameters="true" TargetFileName="RestRequest.cs">RestRequest.cs</ProjectItem>

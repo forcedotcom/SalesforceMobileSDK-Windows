@@ -26,7 +26,10 @@
  */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
+using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Rest;
@@ -80,9 +83,11 @@ namespace Salesforce.SDK.Auth
                         AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                     }
                     OAuth2.RefreshCookies();
+                    PlatformAdapter.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
+            PlatformAdapter.SendToCustomLogger("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
             return false;
         }
 
@@ -105,14 +110,27 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
+            PlatformAdapter.SendToCustomLogger("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
+            account.CommunityId = authResponse.CommunityId;
+            account.CommunityUrl = authResponse.CommunityUrl;
             var cm = new ClientManager();
             cm.PeekRestClient();
-            IdentityResponse identity =
-                await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
-
+            IdentityResponse identity = null;
+            try
+            {
+                identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+            }
+            catch (JsonException ex)
+            {
+                PlatformAdapter.SendToCustomLogger(
+                    "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
+                    LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                Debug.WriteLine("Error retrieving account identity");
+            }
             if (identity != null)
             {
                 account.UserId = identity.UserId;
@@ -120,6 +138,7 @@ namespace Salesforce.SDK.Auth
                 account.Policy = identity.MobilePolicy;
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
             }
+            PlatformAdapter.SendToCustomLogger("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
             return account;
         }
     }

@@ -26,21 +26,22 @@
  */
 
 using System;
+using Windows.UI.Xaml;
 using Newtonsoft.Json;
 
 namespace Salesforce.SDK.Source.Settings
 {
     public class ServerSetting
     {
-        public static readonly string HTTPS_SCHEME = "https://";
-        private string serverHost;
-        private string serverName;
+        public const string HttpsScheme = "https://";
+        private string _serverHost;
+        private string _serverName;
 
         [JsonProperty]
         public string ServerName
         {
-            set { serverName = value.Trim(); }
-            get { return serverName; }
+            set { _serverName = value.Trim(); }
+            get { return _serverName; }
         }
 
         [JsonProperty]
@@ -48,14 +49,17 @@ namespace Salesforce.SDK.Source.Settings
         {
             set
             {
-                serverHost = value.Trim();
-                if (!Uri.IsWellFormedUriString(serverHost, UriKind.Absolute))
+                _serverHost = value.Trim();
+                if (!Uri.IsWellFormedUriString(_serverHost, UriKind.Absolute))
                 {
-                    serverHost = HTTPS_SCHEME + serverHost;
+                    _serverHost = HttpsScheme + _serverHost;
                 }
             }
-            get { return serverHost; }
+            get { return _serverHost; }
         }
+
+        [JsonProperty]
+        public Visibility CanDelete { set; get; }
 
         public override string ToString()
         {

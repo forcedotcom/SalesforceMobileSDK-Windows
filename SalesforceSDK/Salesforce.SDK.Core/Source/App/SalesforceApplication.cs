@@ -26,7 +26,6 @@
  */
 
 using System;
-using System.Diagnostics;
 using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -39,6 +38,7 @@ using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Settings;
+using Windows.Foundation.Diagnostics;
 
 #if WINDOWS_PHONE_APP
 using Windows.Phone.UI.Input;
@@ -159,6 +159,7 @@ namespace Salesforce.SDK.App
             if (GlobalClientManager == null || reset)
             {
                 ServerConfiguration = InitializeConfig();
+                ServerConfiguration.SaveConfig();
                 GlobalClientManager = new ClientManager();
             }
         }
@@ -170,9 +171,10 @@ namespace Salesforce.SDK.App
                 await OAuth2.RefreshAuthToken(AccountManager.GetAccount());
                 OAuth2.RefreshCookies();
             }
-            catch (WebException)
+            catch (WebException ex)
             {
-                // todo: add logging here
+                PlatformAdapter.SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
             }
         }
 
@@ -193,12 +195,6 @@ namespace Salesforce.SDK.App
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-#if DEBUG
-            if (Debugger.IsAttached)
-            {
-                DebugSettings.EnableFrameRateCounter = true;
-            }
-#endif
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
     }

@@ -118,8 +118,8 @@
       <Name>Microsoft Visual C++ 2013 Runtime Package for Windows</Name>
     </SDKReference>
     <SDKReference Include="MSTestFramework, Version=11.0" />
-    <SDKReference Include="SQLite.WinRT81, Version=3.8.6">
-      <Name>SQLite for Windows Runtime %28Windows 8.1%291</Name>
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.7.4">
+      <Name>SQLite for Windows Runtime %28Windows 8.1%29</Name>
     </SDKReference>
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
@@ -132,6 +132,8 @@
     <Compile Include="Source\Rest\RestRequestTest.cs" />
     <Compile Include="Source\SmartStore\SmartStoreTest.cs" />
     <Compile Include="Source\SmartStore\SmartStoreTestLoadTest.cs" />
+    <Compile Include="Source\SmartStore\SmartSyncTests.cs" />
+    <Compile Include="Source\SmartStore\TestCredentials.cs" />
     <Compile Include="Source\TestCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -165,14 +167,19 @@
       <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
       <Name>Salesforce.SDK.SmartStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Salesforce.SDK.SmartSync\Salesforce.SDK.SmartSync.csproj">
+      <Project>{923dcd08-e0af-4214-86b0-86e37851046b}</Project>
+      <Name>Salesforce.SDK.SmartSync</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Salesforce.SDK.Store\Salesforce.SDK.Store.csproj">
       <Project>{a107bcc2-ec81-4a4f-8ea2-aa742afe0f01}</Project>
       <Name>Salesforce.SDK.Store</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\netcore45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SQLitePCL, Version=3.8.5.0, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

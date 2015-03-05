@@ -57,7 +57,11 @@
     <Compile Include="Source\Hybrid\SalesforceOAuthPlugin.cs" />
     <Compile Include="Source\Hybrid\StreamUriResolver.cs" />
     <Compile Include="Source\Native\NativeMainPage.cs" />
+    <Compile Include="Source\Native\ServerControl.xaml.cs">
+      <DependentUpon>ServerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Source\Net\HttpCall.cs" />
+    <Compile Include="Source\Rest\ApiVersionStrings.cs" />
     <Compile Include="Source\Rest\ClientManager.cs" />
     <Compile Include="Source\Rest\RestClient.cs" />
     <Compile Include="Source\Rest\RestRequest.cs" />
@@ -82,18 +86,22 @@
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.6.0.3\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="Source\Auth\PincodeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Source\Native\ServerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

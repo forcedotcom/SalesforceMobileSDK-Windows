@@ -32,6 +32,7 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using Windows.System.Profile;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.Source.Security
 {
@@ -42,6 +43,39 @@ namespace Salesforce.SDK.Source.Security
     /// </summary>
     public sealed class HmacSHA256KeyGenerator : IKeyGenerator
     {
+        private readonly string _password;
+        public string Password
+        {
+            get
+            {
+                return _password;
+            }
+        }
+
+        private readonly string _salt;
+        public string Salt
+        {
+            get
+            {
+                return _salt;
+            }
+        }
+
+        public HmacSHA256KeyGenerator()
+        {
+            string password;
+            string salt;
+
+            var authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
+            if (!authStorageHelper.TryRetrieveEncryptionSettings(out password, out salt))
+            {
+                GenerateRandomPasswordAndSalt(out password, out salt);
+                authStorageHelper.PersistEncryptionSettings(password, salt);
+            }
+            _password = password;
+            _salt = salt;
+        }
+
         public void GenerateKey(string password, string salt, string nonce, out IBuffer keyMaterial, out IBuffer iv)
         {
             IBuffer saltBuffer = CryptographicBuffer.ConvertStringToBinary(salt, BinaryStringEncoding.Utf8);
@@ -97,9 +131,6 @@ namespace Salesforce.SDK.Source.Security
                     case "0100": // Processor 
                         normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
-                    case "0500": // Audio Adapter 
-                        normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
-                        break;
                     case "0900": // System BIOS 
                         normalized.Append(hardwareIdString.Substring(i*8 + 4, 4));
                         break;
@@ -119,6 +150,12 @@ namespace Salesforce.SDK.Source.Security
                 nonce = "";
             }
             return CryptographicBuffer.ConvertStringToBinary(GetDeviceUniqueId() + nonce, BinaryStringEncoding.Utf8);
+        }
+
+        private void GenerateRandomPasswordAndSalt(out string password, out string salt)
+        {
+            password = Guid.NewGuid().ToString();
+            salt = Guid.NewGuid().ToString();
         }
     }
 }

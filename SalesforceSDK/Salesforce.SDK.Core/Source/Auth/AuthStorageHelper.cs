@@ -31,8 +31,11 @@ using System.Linq;
 using Windows.Security.Credentials;
 using Windows.Storage;
 using Newtonsoft.Json;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.App;
+using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Auth
 {
@@ -46,6 +49,7 @@ namespace Salesforce.SDK.Auth
         private const string PasswordVaultCurrentAccount = "Salesforce Account";
         private const string PasswordVaultSecuredData = "Salesforce Secure";
         private const string PasswordVaultPincode = "Salesforce Pincode";
+        private const string PasswordVaultEncryptionSettings = "Salesforce Encryption Settings";
         private const string InstallationStatusKey = "InstallationStatus";
 
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
@@ -81,10 +85,23 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return _vault.FindAllByResource(resource);
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveResource - Attempting to retrieve resource {0}",
+                        resource), LoggingLevel.Verbose);
+
+                var list = _vault.RetrieveAll();
+                return (from item in list where resource.Equals(item.Resource) select item);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveResource - Exception occured when retrieving vault data for resource {0}",
+                        resource), LoggingLevel.Critical);
+
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
                 Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
             }
             return new List<PasswordCredential>();
@@ -94,10 +111,28 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                return _vault.Retrieve(resource, userName);
+                var list = SafeRetrieveResource(resource);
+
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user Resource={0}  UserName={1}",
+                        resource, userName), LoggingLevel.Verbose);
+
+                var passwordCredentials = list as IList<PasswordCredential> ?? list.ToList();
+                if (passwordCredentials.Any())
+                {
+                    return passwordCredentials.FirstOrDefault(n => userName.Equals(n.UserName));
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for resource {0}",
+                        resource), LoggingLevel.Critical);
+
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
                 Debug.WriteLine("Failed to retrieve vault data for resource " + resource);
             }
             return null;
@@ -107,10 +142,22 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user {0}",
+                        userName), LoggingLevel.Verbose);
+
                 return _vault.FindAllByUserName(userName);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                PlatformAdapter.SendToCustomLogger(
+                    string.Format(
+                        "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for user {0}",
+                        userName), LoggingLevel.Critical);
+
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
                 Debug.WriteLine("Failed to retrieve vault data for user");
             }
             return new List<PasswordCredential>();
@@ -125,6 +172,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
             if (creds != null)
             {
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistCredentials - removing existing credential", LoggingLevel.Verbose);
                 _vault.Remove(creds);
                 IReadOnlyList<PasswordCredential> current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
                 if (current != null)
@@ -141,6 +189,7 @@ namespace Salesforce.SDK.Auth
             var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
                 LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistCredentials - done adding info to vault", LoggingLevel.Verbose);
         }
 
         internal Account RetrieveCurrentAccount()
@@ -150,9 +199,27 @@ namespace Salesforce.SDK.Auth
             {
                 PasswordCredential account = _vault.Retrieve(creds.Resource, creds.UserName);
                 if (String.IsNullOrWhiteSpace(account.Password))
-                    _vault.Remove(creds);
+                    _vault.Remove(account);
                 else
-                    return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                {
+                    try
+                    {
+                        PlatformAdapter.SendToCustomLogger(
+                            "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
+                        return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                    }
+                    catch (Exception ex)
+                    {
+                        PlatformAdapter.SendToCustomLogger(
+                            "AuthStorageHelper.RetrieveCurrentAccount - Exception occured when decrypting account, removing account from vault",
+                            LoggingLevel.Warning);
+
+                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
+
+                        // if we can't decrypt remove the account
+                        _vault.Remove(account);
+                    }
+                }
             }
             return null;
         }
@@ -180,16 +247,43 @@ namespace Salesforce.SDK.Auth
             var accounts = new Dictionary<string, Account>();
             if (creds != null)
             {
+                PlatformAdapter.SendToCustomLogger(
+                    "AuthStorageHelper.RetrievePersistedCredentials - attempting to get all credentials",
+                    LoggingLevel.Verbose);
+
                 foreach (PasswordCredential next in creds)
                 {
                     PasswordCredential account = _vault.Retrieve(next.Resource, next.UserName);
                     if (String.IsNullOrWhiteSpace(account.Password))
                         _vault.Remove(next);
                     else
-                        accounts.Add(next.UserName,
-                            JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                    {
+                        try
+                        {
+                            accounts.Add(next.UserName,
+                           JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                        }
+                        catch (Exception ex)
+                        {
+                            PlatformAdapter.SendToCustomLogger(
+                                "AuthStorageHelper.RetrievePersistedCredentials - Exception occured when decrypting account, removing account from vault",
+                                LoggingLevel.Warning);
+
+                            PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
+
+                            // if we can't decrypt remove the account
+                           _vault.Remove(next);
+                        }
+                       
+                    }
                 }
             }
+
+            PlatformAdapter.SendToCustomLogger(
+                string.Format(
+                    "AuthStorageHelper.RetrievePersistedCredentials - Done. Total number of accounts retrieved = {0}",
+                    accounts.Count), LoggingLevel.Verbose);
+
             return accounts;
         }
 
@@ -206,10 +300,29 @@ namespace Salesforce.SDK.Auth
                 foreach (PasswordCredential next in creds)
                 {
                     PasswordCredential vaultAccount = _vault.Retrieve(next.Resource, next.UserName);
-                    var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
-                    if (id.Equals(account.UserId))
+                    try
                     {
-                        _vault.Remove(next);
+                        var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
+                        if (id.Equals(account.UserId))
+                        {
+                            PlatformAdapter.SendToCustomLogger(
+                                string.Format(
+                                    "AuthStorageHelper.DeletePersistedCredentials - removing entry from vault for UserName={0}  UserID={1}",
+                                    userName, id), LoggingLevel.Verbose);
+
+                            _vault.Remove(next);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        PlatformAdapter.SendToCustomLogger(
+                            "AuthStorageHelper.DeletePersistedCredentials - Exception occured when decrypting account, removing account from vault",
+                            LoggingLevel.Warning);
+
+                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
+
+                        // if we can't decrypt remove the account
+                       _vault.Remove(next);
                     }
                 }
             }
@@ -236,6 +349,9 @@ namespace Salesforce.SDK.Auth
                     _vault.Remove(next);
                 }
             }
+
+            PlatformAdapter.SendToCustomLogger(
+                "AuthStorageHelper.DeletePersistedCredentials - removed all entries from vault", LoggingLevel.Verbose);
         }
 
         internal void PersistPincode(MobilePolicy policy)
@@ -244,13 +360,20 @@ namespace Salesforce.SDK.Auth
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
                 JsonConvert.SerializeObject(policy));
             _vault.Add(newPin);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistPincode - pincode added to vault",
+                LoggingLevel.Verbose);
         }
 
         internal string RetrievePincode()
         {
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
+            {
+                PlatformAdapter.SendToCustomLogger(
+                    "AuthStorageHelper.RetrievePincode - retrieved pincode from vault",
+                    LoggingLevel.Verbose);
                 return pin.Password;
+            }
             return null;
         }
 
@@ -259,6 +382,9 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
+                PlatformAdapter.SendToCustomLogger(
+                    "AuthStorageHelper.DeletePincode - removed pincode from vault",
+                    LoggingLevel.Verbose);
                 _vault.Remove(pin);
             }
         }
@@ -293,6 +419,95 @@ namespace Salesforce.SDK.Auth
             if (_persistedData.Values.ContainsKey(key))
             {
                 _persistedData.Values.Remove(key);
+            }
+        }
+
+        internal void PersistEncryptionSettings(string password, string salt)
+        {
+            DeleteEncryptionSettings();
+            var encryptionSettingsObj = new { Password = password, Salt = salt };
+            var encrpytionSettings = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultEncryptionSettings,
+                JsonConvert.SerializeObject(encryptionSettingsObj));
+            _vault.Add(encrpytionSettings);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistEncryptionSettings - encryption settings added to vault",
+                LoggingLevel.Verbose);
+        }
+
+        internal bool TryRetrieveEncryptionSettings(out string password, out string salt)
+        {
+            password = null;
+            salt = null;
+            PasswordCredential creds = SafeRetrieveResource(PasswordVaultSecuredData).FirstOrDefault();
+            if (creds != null)
+            {
+                PasswordCredential encrpytionSettings = _vault.Retrieve(PasswordVaultSecuredData, PasswordVaultEncryptionSettings);
+                if (String.IsNullOrWhiteSpace(encrpytionSettings.Password))
+                {
+                    // Failed to deserialize the data, we should clear it out and start over.
+                    PlatformAdapter.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values are corrupt. Assuming bad state and clearing the vault completely",
+                        LoggingLevel.Warning);
+                    _vault.Remove(encrpytionSettings);
+                    DeletePersistedCredentials();
+                    DeletePincode();
+                }
+                else
+                {
+                    try
+                    {
+                        var encrpytionSettingsObj = JsonConvert.DeserializeObject<dynamic>(encrpytionSettings.Password);
+                        password = encrpytionSettingsObj.Password;
+                        salt = encrpytionSettingsObj.Salt;
+                        PlatformAdapter.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have been retrieved successfully.",
+                        LoggingLevel.Verbose);
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Failed to deserialize the data, we should clear it out and start over.
+                        PlatformAdapter.SendToCustomLogger(
+                            "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be deserialized. Assuming bad state and clearing the vault completely",
+                            LoggingLevel.Warning);
+
+                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
+                        
+                        _vault.Remove(encrpytionSettings);
+                        DeletePersistedCredentials();
+                        DeletePincode();
+                    }
+                }
+
+            }
+            else
+            {
+                var account = RetrieveCurrentAccount();
+                var pincode = RetrievePincode();
+                // If either account or pincode are stored, but the Encryption Settings values can't be retrieved, then we should assume we are in a bad state and clear the vault.
+                if (account != null || pincode != null)
+                {
+                    PlatformAdapter.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be retrieved from vault. Assuming bad state and clearing the vault completely",
+                        LoggingLevel.Verbose);
+                    DeletePersistedCredentials();
+                    DeletePincode();
+                }
+            }
+            PlatformAdapter.SendToCustomLogger(
+                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have not yet been saved.",
+                        LoggingLevel.Verbose);
+            return false;
+        }
+
+        internal void DeleteEncryptionSettings()
+        {
+            PasswordCredential encryptionSettings = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultEncryptionSettings);
+            if (encryptionSettings != null)
+            {
+                PlatformAdapter.SendToCustomLogger(
+                    "AuthStorageHelper.DeleteEncryptionSettings - removed encryption settings from vault",
+                    LoggingLevel.Verbose);
+                _vault.Remove(encryptionSettings);
             }
         }
     }
