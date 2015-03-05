@@ -45,6 +45,7 @@
     <Compile Include="Source\Store\DBHelper.cs" />
     <Compile Include="Source\Store\DBOpenHelper.cs" />
     <Compile Include="Source\Store\IndexSpec.cs" />
+    <Compile Include="Source\Store\ISmartStore.cs" />
     <Compile Include="Source\Store\QuerySpec.cs" />
     <Compile Include="Source\Store\SmartStore.cs" />
     <Compile Include="Source\Store\SmartStoreException.cs" />

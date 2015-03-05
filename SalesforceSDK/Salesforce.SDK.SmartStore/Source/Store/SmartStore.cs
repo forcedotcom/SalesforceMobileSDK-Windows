@@ -41,7 +41,7 @@ using SQLitePCL.Extensions;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
-    public class SmartStore
+    public class SmartStore : ISmartStore
     {
         // Default
         public static readonly int DefaultPageSize = 10;
