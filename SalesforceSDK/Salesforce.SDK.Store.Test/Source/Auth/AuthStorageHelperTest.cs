@@ -36,6 +36,9 @@ namespace Salesforce.SDK.Auth
     [TestClass]
     public class AuthStorageHelperTest
     {
+        private const string Password = "password";
+        private const string Salt = "salt";
+
         [TestInitialize]
         public void Setup()
         {
@@ -63,11 +66,26 @@ namespace Salesforce.SDK.Auth
             MethodInfo persist = auth.GetDeclaredMethod("PersistCredentials");
             MethodInfo delete =
                 auth.GetDeclaredMethods("DeletePersistedCredentials")
-                    .First(method => method.GetParameters().Count() == 1);
+                    .First(method => method.GetParameters().Count() == 2);
             persist.Invoke(authStorageHelper, new object[] {account});
             CheckAccount(account, true);
-            delete.Invoke(authStorageHelper, new object[] {account.UserId});
+            delete.Invoke(authStorageHelper, new object[] { account.UserName, account.UserId });
             CheckAccount(account, false);
+        }
+
+        [TestMethod]
+        public void TestPersistRetrieveDeleteEncryptionSettings()
+        {
+            AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
+            
+            TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
+            MethodInfo persist = auth.GetDeclaredMethod("PersistEncryptionSettings");
+            MethodInfo delete = auth.GetDeclaredMethod("DeleteEncryptionSettings");
+            
+            persist.Invoke(authStorageHelper, new object[] { Password, Salt, null });
+            CheckEncryptionSettings(true);
+            delete.Invoke(authStorageHelper, null);
+            CheckEncryptionSettings(false);
         }
 
         private void CheckAccount(Account expectedAccount, bool exists)
@@ -78,14 +96,14 @@ namespace Salesforce.SDK.Auth
             var accounts = (Dictionary<string, Account>) retrieve.Invoke(authStorageHelper, null);
             if (!exists)
             {
-                Assert.IsFalse(accounts.ContainsKey(expectedAccount.UserId),
-                    "Account " + expectedAccount.UserId + " should not have been found");
+                Assert.IsFalse(accounts.ContainsKey(expectedAccount.UserName),
+                    "Account " + expectedAccount.UserName + " should not have been found");
             }
             else
             {
-                Assert.IsTrue(accounts.ContainsKey(expectedAccount.UserId),
-                    "Account " + expectedAccount.UserId + " should exist");
-                Account account = accounts[expectedAccount.UserId];
+                Assert.IsTrue(accounts.ContainsKey(expectedAccount.UserName),
+                    "Account " + expectedAccount.UserName + " should exist");
+                Account account = accounts[expectedAccount.UserName];
                 Assert.AreEqual(expectedAccount.LoginUrl, account.LoginUrl);
                 Assert.AreEqual(expectedAccount.ClientId, account.ClientId);
                 Assert.AreEqual(expectedAccount.CallbackUrl, account.CallbackUrl);
@@ -93,6 +111,26 @@ namespace Salesforce.SDK.Auth
                 Assert.AreEqual(expectedAccount.InstanceUrl, account.InstanceUrl);
                 Assert.AreEqual(expectedAccount.AccessToken, expectedAccount.AccessToken);
                 Assert.AreEqual(expectedAccount.RefreshToken, expectedAccount.RefreshToken);
+            }
+        }
+
+        private void CheckEncryptionSettings(bool exists)
+        {
+            AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
+            TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
+            MethodInfo tryRetrieve = auth.GetDeclaredMethod("TryRetrieveEncryptionSettings");
+            var parameters = new object[] {null, null, null};
+            var success = (bool)tryRetrieve.Invoke(authStorageHelper, parameters);
+            if (!exists)
+            {
+                Assert.IsFalse(success, "Encryption settings should not exist");
+            }
+            else
+            {
+                Assert.IsTrue(success, "Encryption settings should exist");
+                Assert.AreEqual(Password, parameters[0]);
+                Assert.AreEqual(Salt, parameters[1]);
+
             }
         }
     }
