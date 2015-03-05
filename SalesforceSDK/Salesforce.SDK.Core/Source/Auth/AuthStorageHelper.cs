@@ -422,7 +422,7 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        internal void PersistEncryptionSettings(string password, string salt, string nonce = null)
+        internal void PersistEncryptionSettings(string password, string salt)
         {
             DeleteEncryptionSettings();
             var encryptionSettingsObj = new { Password = password, Salt = salt };
@@ -433,7 +433,7 @@ namespace Salesforce.SDK.Auth
                 LoggingLevel.Verbose);
         }
 
-        internal bool TryRetrieveEncryptionSettings(out string password, out string salt, string nonce = null)
+        internal bool TryRetrieveEncryptionSettings(out string password, out string salt)
         {
             password = null;
             salt = null;
@@ -446,7 +446,7 @@ namespace Salesforce.SDK.Auth
                     // Failed to deserialize the data, we should clear it out and start over.
                     PlatformAdapter.SendToCustomLogger(
                         "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values are corrupt. Assuming bad state and clearing the vault completely",
-                        LoggingLevel.Verbose);
+                        LoggingLevel.Warning);
                     _vault.Remove(encrpytionSettings);
                     DeletePersistedCredentials();
                     DeletePincode();
@@ -468,7 +468,7 @@ namespace Salesforce.SDK.Auth
                         // Failed to deserialize the data, we should clear it out and start over.
                         PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be deserialized. Assuming bad state and clearing the vault completely",
-                            LoggingLevel.Verbose);
+                            LoggingLevel.Warning);
 
                         PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Warning);
                         

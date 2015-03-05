@@ -82,7 +82,7 @@ namespace Salesforce.SDK.Auth
             MethodInfo persist = auth.GetDeclaredMethod("PersistEncryptionSettings");
             MethodInfo delete = auth.GetDeclaredMethod("DeleteEncryptionSettings");
             
-            persist.Invoke(authStorageHelper, new object[] { Password, Salt, null });
+            persist.Invoke(authStorageHelper, new object[] { Password, Salt });
             CheckEncryptionSettings(true);
             delete.Invoke(authStorageHelper, null);
             CheckEncryptionSettings(false);
@@ -119,7 +119,7 @@ namespace Salesforce.SDK.Auth
             AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
             MethodInfo tryRetrieve = auth.GetDeclaredMethod("TryRetrieveEncryptionSettings");
-            var parameters = new object[] {null, null, null};
+            var parameters = new object[] {null, null};
             var success = (bool)tryRetrieve.Invoke(authStorageHelper, parameters);
             if (!exists)
             {
