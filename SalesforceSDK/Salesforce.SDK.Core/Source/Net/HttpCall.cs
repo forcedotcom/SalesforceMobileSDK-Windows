@@ -44,6 +44,7 @@ using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
 using Salesforce.SDK.Utilities;
+using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.Net
 {
@@ -368,21 +369,28 @@ namespace Salesforce.SDK.Net
 
         /// <summary>
         ///     There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through
-        ///     parsing the AppxManifest.xml at runtime and retrieving the displayname.
-        ///     If this fails we return the package.id.name instead, allowing the app to still be identified.
+        ///     the application title set by the consumer. If this fails we return the package.id.name instead, allowing the app to still be identified.
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> GetApplicationDisplayName()
+        private static string GetApplicationDisplayName()
         {
             string displayName = String.Empty;
+
             try
             {
-                StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-                string manifestXml = await FileIO.ReadTextAsync(file);
-                XDocument doc = XDocument.Parse(manifestXml);
-                XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
-                displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
-                    select name.Value).First();
+                var config = SalesforceApplication.ServerConfiguration;
+                if (config == null)
+                {
+                    throw new Exception();
+                }
+                if (config.ApplicationTitle != null)
+                {
+                    displayName = config.ApplicationTitle;
+                }
+                else
+                {
+                    throw new Exception();
+                }
             }
             catch (Exception)
             {
@@ -410,7 +418,7 @@ namespace Salesforce.SDK.Net
                     PackageVersion packageVersion = Package.Current.Id.Version;
                     string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                   packageVersion.Build;
-                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, GetApplicationDisplayName(),
                     packageVersionString, "native", e.Value);
                     pageCompleted.TrySetResult(UserAgentHeader);
                 }
@@ -430,7 +438,7 @@ namespace Salesforce.SDK.Net
                 var view = web as WebView;
                 if (view != null)
                 {
-                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.appVersion); "});
+                    await view.InvokeScriptAsync("eval", new[] { "window.external.notify(navigator.appVersion); " });
                 }
             };
             DateTime endTime = DateTime.Now.AddSeconds(10);
