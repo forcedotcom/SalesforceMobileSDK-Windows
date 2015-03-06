@@ -372,7 +372,7 @@ namespace Salesforce.SDK.Net
         ///     the application title set by the consumer. If this fails we return the package.id.name instead, allowing the app to still be identified.
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> GetApplicationDisplayName()
+        private static async Task<string> GetApplicationDisplayNameAsync()
         {
             string displayName = String.Empty;
 
@@ -425,7 +425,7 @@ namespace Salesforce.SDK.Net
                     PackageVersion packageVersion = Package.Current.Id.Version;
                     string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                   packageVersion.Build;
-                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayNameAsync(),
                     packageVersionString, "native", e.Value);
                     pageCompleted.TrySetResult(UserAgentHeader);
                 }
