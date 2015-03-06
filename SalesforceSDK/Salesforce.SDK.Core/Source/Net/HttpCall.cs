@@ -372,7 +372,7 @@ namespace Salesforce.SDK.Net
         ///     the application title set by the consumer. If this fails we return the package.id.name instead, allowing the app to still be identified.
         /// </summary>
         /// <returns></returns>
-        private static string GetApplicationDisplayName()
+        private static async Task<string> GetApplicationDisplayName()
         {
             string displayName = String.Empty;
 
@@ -383,17 +383,24 @@ namespace Salesforce.SDK.Net
                 {
                     throw new Exception();
                 }
-                if (config.ApplicationTitle != null)
+                if (!String.IsNullOrWhiteSpace(config.ApplicationTitle))
                 {
                     displayName = config.ApplicationTitle;
                 }
                 else
                 {
-                    throw new Exception();
+                    //If no Application title is passed from the consumer of the SDK, fall back to display name from app manifest.
+                    StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+                    string manifestXml = await FileIO.ReadTextAsync(file);
+                    XDocument doc = XDocument.Parse(manifestXml);
+                    XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
+                    displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
+                    select name.Value).First();
                 }
             }
             catch (Exception)
             {
+                //If ApplicationTitle and Display Name both fail, fall back to Package Id
                 Debug.WriteLine("Error retrieving application name; using package id name instead");
                 displayName = Package.Current.Id.Name;
             }
@@ -418,7 +425,7 @@ namespace Salesforce.SDK.Net
                     PackageVersion packageVersion = Package.Current.Id.Version;
                     string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                   packageVersion.Build;
-                    UserAgentHeader = String.Format(UserAgentHeaderFormat, GetApplicationDisplayName(),
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
                     packageVersionString, "native", e.Value);
                     pageCompleted.TrySetResult(UserAgentHeader);
                 }

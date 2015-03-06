@@ -109,6 +109,8 @@ namespace Salesforce.SDK.Source.Settings
 
         public abstract string ApplicationTitle { get; }
 
+        public virtual bool IsApplicationTitleVisible { get { return false; } }
+
         #endregion
 
         protected SalesforceConfig()
