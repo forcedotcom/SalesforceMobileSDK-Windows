@@ -109,7 +109,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public abstract string ApplicationTitle { get; }
 
-        public virtual bool IsApplicationTitleVisible { get { return false; } }
+        public abstract bool IsApplicationTitleVisible { get; }
 
         #endregion
 
