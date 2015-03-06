@@ -75,5 +75,13 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         {
             get { return null; }
         }
+
+        /// <summary>
+        /// Set this propeert to true if you want the Title to show up on start screen of the app.
+        /// </summary>
+        public override bool IsApplicationTitleVisible
+        {
+            get { return true; }
+        }
     }
 }
