@@ -22,8 +22,7 @@
                            Style="{StaticResource SubheaderTextBlockStyle}"
                            TextAlignment="Center" />
                 <ListBox x:Name="ListboxServers"
-                         SelectionMode="Single"
-                         FontSize="20">
+                         SelectionMode="Single">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
@@ -107,7 +106,6 @@
                            Grid.Row="1"
                            Margin="5 0 5 15"
                            HorizontalAlignment="Stretch"
-                           TextWrapping="Wrap"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" />
                 <Button x:Name="CloseMessageButton"
