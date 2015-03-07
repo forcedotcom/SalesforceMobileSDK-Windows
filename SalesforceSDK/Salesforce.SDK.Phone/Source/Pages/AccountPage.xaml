@@ -106,6 +106,7 @@
                            Grid.Row="1"
                            Margin="5 0 5 15"
                            HorizontalAlignment="Stretch"
+                           TextWrapping="Wrap"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" />
                 <Button x:Name="CloseMessageButton"
