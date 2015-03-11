@@ -22,8 +22,7 @@
                            Style="{StaticResource SubheaderTextBlockStyle}"
                            TextAlignment="Center" />
                 <ListBox x:Name="ListboxServers"
-                         SelectionMode="Single"
-                         FontSize="20">
+                         SelectionMode="Single">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
