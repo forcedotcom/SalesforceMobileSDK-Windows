@@ -35,7 +35,7 @@ using SQLitePCL.Extensions;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
-    public class DBHelper : IDisposable
+    public sealed class DBHelper : IDisposable
     {
         #region Statics
 

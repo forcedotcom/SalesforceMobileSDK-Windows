@@ -49,7 +49,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.utilities
         public static readonly string[] ContactFields =
         {
             Constants.Id, FirstNameField, LastNameField, TitleField,
-            PhoneField, EmailField, DepartmentField, AddressField, Constants.SystemModstamp
+            PhoneField, EmailField, DepartmentField, AddressField, Constants.LastModifiedDate
         };
 
         public readonly string Synced = '\u2601'.ToString();

@@ -137,7 +137,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             var fields = _properties.Get<string>("fields");
             if (!String.IsNullOrWhiteSpace(objectName))
             {
-                query.Append(String.Format("(%s", fields));
+                query.Append(String.Format("({0}", fields));
                 var where = _properties.Get<string>("where");
                 if (!String.IsNullOrWhiteSpace(where))
                 {
@@ -160,7 +160,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 if (limit > 0)
                 {
                     query.Append(" limit ");
-                    query.Append(String.Format("%d", limit));
+                    query.Append(String.Format("{0}", limit));
                 }
                 query.Append(")");
             }

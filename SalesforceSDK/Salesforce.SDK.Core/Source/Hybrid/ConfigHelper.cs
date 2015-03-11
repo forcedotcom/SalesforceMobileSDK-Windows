@@ -46,18 +46,13 @@ namespace Salesforce.SDK.Hybrid
         /// <returns></returns>
         public static string ReadConfigFromResource(string path)
         {
-            Assembly assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
-            using (Stream resource = assembly.GetManifestResourceStream(path))
+            var assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
+            var resource = assembly.GetManifestResourceStream(path);
+            if (resource == null) throw new FileNotFoundException("Resource file not found", path);
+            using (var reader = new StreamReader(resource))
             {
-                if (resource != null)
-                {
-                    using (var reader = new StreamReader(resource))
-                    {
-                        return reader.ReadToEnd();
-                    }
-                }
+                return reader.ReadToEnd();
             }
-            throw new FileNotFoundException("Resource file not found", path);
         }
 
         public static async Task<string> ReadFileFromApplication(string path)
