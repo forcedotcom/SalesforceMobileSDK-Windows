@@ -34,6 +34,7 @@ using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Foundation.Diagnostics;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
@@ -41,6 +42,7 @@ using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Utilities;
 using Salesforce.SDK.App;
 
@@ -97,7 +99,7 @@ namespace Salesforce.SDK.Net
     ///     A portable class to send HTTP requests
     ///     HttpCall objects can only be used once
     /// </summary>
-    public class HttpCall
+    public sealed class HttpCall : IDisposable
     {
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 ({0}/{1} {2}) {3}";
         private readonly ContentTypeValues _contentType;
@@ -460,6 +462,21 @@ namespace Salesforce.SDK.Net
                 }
             }
             return UserAgentHeader;
+        }
+
+        public void Dispose()
+        {
+            if (_webClient != null)
+            {
+                try
+                {
+                    _webClient.Dispose();
+                }
+                catch (Exception)
+                {
+                    PlatformAdapter.SendToCustomLogger("HttpCall.Dispose - Error occurred while disposing", LoggingLevel.Warning);
+                }
+            }
         }
     }
 }
