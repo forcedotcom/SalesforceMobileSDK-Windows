@@ -29,7 +29,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
@@ -37,7 +36,6 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
@@ -306,15 +304,15 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                TaskCompletionSource<string> task = new TaskCompletionSource<string>();
+                var task = new TaskCompletionSource<string>();
                 await Task.Run(async () =>
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                    CoreDispatcherPriority.Normal, async () =>
-                    {
-                        await GenerateUserAgentHeader();
-                        task.SetResult(UserAgentHeader);
-                    });
+                        CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await GenerateUserAgentHeader();
+                            task.SetResult(UserAgentHeader);
+                        });
                 });
                 await task.Task;
             }
@@ -393,8 +391,9 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        /// This method generates the user agent string for the current device.
-        /// This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the UserAgentHeader will not be set.
+        ///     This method generates the user agent string for the current device.
+        ///     This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the
+        ///     UserAgentHeader will not be set.
         /// </summary>
         /// <returns></returns>
         private static async Task<string> GenerateUserAgentHeader()
@@ -411,7 +410,7 @@ namespace Salesforce.SDK.Net
                     string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                   packageVersion.Build;
                     UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
-                    packageVersionString, "native", e.Value);
+                        packageVersionString, "native", e.Value);
                     pageCompleted.TrySetResult(UserAgentHeader);
                 }
                 catch (Exception ex)
@@ -427,10 +426,10 @@ namespace Salesforce.SDK.Net
             };
             loadHandler = async (web, e) =>
             {
-                var view = web as WebView;
+                WebView view = web;
                 if (view != null)
                 {
-                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.appVersion); "});
+                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.userAgent); "});
                 }
             };
             DateTime endTime = DateTime.Now.AddSeconds(10);
