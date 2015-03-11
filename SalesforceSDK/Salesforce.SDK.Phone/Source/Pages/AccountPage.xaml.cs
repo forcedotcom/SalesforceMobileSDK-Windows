@@ -129,7 +129,7 @@ namespace Salesforce.SDK.Source.Pages
             ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
             SalesforceConfig config = SalesforceApplication.ServerConfiguration;
             bool titleMissing = true;
-            if (!String.IsNullOrWhiteSpace(config.ApplicationTitle))
+            if (!String.IsNullOrWhiteSpace(config.ApplicationTitle) && config.IsApplicationTitleVisible)
             {
                 ApplicationTitle.Visibility = Visibility.Visible;
                 ApplicationTitle.Text = config.ApplicationTitle;
