@@ -154,8 +154,21 @@ namespace Salesforce.SDK.Source.Security
 
         private void GenerateRandomPasswordAndSalt(out string password, out string salt)
         {
-            password = Guid.NewGuid().ToString();
-            salt = Guid.NewGuid().ToString();
+            password = GenerateRandomEncryptionString();
+            salt = GenerateRandomEncryptionString();
+        }
+
+        // Ensure a truly random string that is good for use in encrpytion.
+        private string GenerateRandomEncryptionString()
+        {
+            // Define the length, in bytes, of the buffer.
+            UInt32 length = 16;
+
+            // Generate random data and copy it to a buffer.
+            IBuffer buffer = CryptographicBuffer.GenerateRandom(length);
+
+            // Encode the buffer to a hexadecimal string.
+            return CryptographicBuffer.EncodeToHexString(buffer);
         }
     }
 }
