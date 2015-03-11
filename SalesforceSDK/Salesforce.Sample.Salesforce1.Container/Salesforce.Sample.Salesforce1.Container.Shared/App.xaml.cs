@@ -66,11 +66,7 @@ namespace Salesforce.Sample.Salesforce1.Container
 
         protected override SalesforceConfig InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "supercalifragilisticexpialidocious",
-                Salt = "friesaresaltyforsure"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)

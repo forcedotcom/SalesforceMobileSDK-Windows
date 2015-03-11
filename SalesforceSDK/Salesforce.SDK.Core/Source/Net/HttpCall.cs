@@ -42,6 +42,7 @@ using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
 using Salesforce.SDK.Utilities;
+using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.Net
 {
@@ -366,24 +367,38 @@ namespace Salesforce.SDK.Net
 
         /// <summary>
         ///     There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through
-        ///     parsing the AppxManifest.xml at runtime and retrieving the displayname.
-        ///     If this fails we return the package.id.name instead, allowing the app to still be identified.
+        ///     the application title set by the consumer. If this fails we return the package.id.name instead, allowing the app to still be identified.
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> GetApplicationDisplayName()
+        private static async Task<string> GetApplicationDisplayNameAsync()
         {
             string displayName = String.Empty;
+
             try
             {
-                StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-                string manifestXml = await FileIO.ReadTextAsync(file);
-                XDocument doc = XDocument.Parse(manifestXml);
-                XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
-                displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
+                var config = SalesforceApplication.ServerConfiguration;
+                if (config == null)
+                {
+                    throw new Exception();
+                }
+                if (!String.IsNullOrWhiteSpace(config.ApplicationTitle))
+                {
+                    displayName = config.ApplicationTitle;
+                }
+                else
+                {
+                    //If no Application title is passed from the consumer of the SDK, fall back to display name from app manifest.
+                    StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
+                    string manifestXml = await FileIO.ReadTextAsync(file);
+                    XDocument doc = XDocument.Parse(manifestXml);
+                    XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
+                    displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
                     select name.Value).First();
+                }
             }
             catch (Exception)
             {
+                //If ApplicationTitle and Display Name both fail, fall back to Package Id
                 Debug.WriteLine("Error retrieving application name; using package id name instead");
                 displayName = Package.Current.Id.Name;
             }
@@ -409,8 +424,8 @@ namespace Salesforce.SDK.Net
                     PackageVersion packageVersion = Package.Current.Id.Version;
                     string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                   packageVersion.Build;
-                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayName(),
-                        packageVersionString, "native", e.Value);
+                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayNameAsync(),
+                    packageVersionString, "native", e.Value);
                     pageCompleted.TrySetResult(UserAgentHeader);
                 }
                 catch (Exception ex)

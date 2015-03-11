@@ -69,11 +69,7 @@ namespace Salesforce.Sample.RestExplorer.Store
 
         protected override SalesforceConfig InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "mypassword",
-                Salt = "mysalt"
-            };
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var config = SalesforceConfig.RetrieveConfig<Config>();
             if (config == null)
