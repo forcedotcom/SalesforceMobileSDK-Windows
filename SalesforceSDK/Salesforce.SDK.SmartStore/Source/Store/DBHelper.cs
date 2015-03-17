@@ -35,7 +35,7 @@ using SQLitePCL.Extensions;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
-    public class DBHelper
+    public sealed class DBHelper : IDisposable
     {
         #region Statics
 
@@ -157,18 +157,21 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                      data = prog.GetInteger(0);
                 }
-                prog.Dispose();
                 return data + 1;
             }
         }
 
-        public SQLiteStatement CountQuery(string table, string whereClause, params string[] args)
+        public SQLiteStatement CountQuery(string table, string whereClause)
         {
             string selectionStr = (whereClause == null ? "" : " WHERE " + whereClause);
-            string sql = String.Format(CountSelect, selectionStr);
+            string sql = String.Format(CountSelect, table, selectionStr);
             var stmt = _sqlConnection.Prepare(sql) as SQLiteStatement;
-            stmt.Step();
-            return stmt;
+            if (stmt != null)
+            {
+                stmt.Step();
+                return stmt;
+            }
+            throw new SmartStoreException("Invalid CountQuery statement");
         }
 
         public SQLiteStatement LimitRawQuery(string sql, string limit, params string[] args)
@@ -182,8 +185,12 @@ namespace Salesforce.SDK.SmartStore.Store
                     stmt.Bind(i + 1, args[i]);
                 }
             }
-            stmt.Step();
-            return stmt;
+            if (stmt != null)
+            {
+                stmt.Step();
+                return stmt;
+            }
+            throw new SmartStoreException("Invalid LimitRawQuery statement");
         }
 
         public long CountRawCountQuery(string countSql, params string[] args)
@@ -494,6 +501,14 @@ namespace Salesforce.SDK.SmartStore.Store
             using (ISQLiteStatement stmt = _sqlConnection.Prepare("Rollback Transaction"))
             {
                 return SQLiteResult.DONE == stmt.Step();
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_sqlConnection != null)
+            {
+                _sqlConnection.Dispose();
             }
         }
     }

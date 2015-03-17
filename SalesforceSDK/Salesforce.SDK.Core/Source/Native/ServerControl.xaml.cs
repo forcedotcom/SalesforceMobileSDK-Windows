@@ -34,7 +34,9 @@ namespace Salesforce.SDK.Native
     public sealed partial class ServerControl : UserControl
     {
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
         public event RoutedEventHandler Delete;
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1009:DeclareEventHandlersCorrectly")]
         public event RoutedEventHandler Click;
 
         public ServerControl()

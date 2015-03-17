@@ -56,6 +56,7 @@ namespace Salesforce.SDK.App
     {
         private static DispatcherTimer TokenRefresher = new DispatcherTimer();
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected SalesforceApplication()
         {
             Suspending += OnSuspending;

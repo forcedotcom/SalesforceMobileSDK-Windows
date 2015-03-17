@@ -809,7 +809,7 @@ namespace Salesforce.SDK.SmartStore.Store
                     if (statement.DataCount > 1)
                     {
                         throw new SmartStoreException(String.Format(
-                            "There are more than one soup elements where {0} is {0}", fieldPath, fieldValue));
+                            "There are more than one soup elements where {0} is {1}", fieldPath, fieldValue));
                     }
                     if (statement.DataCount == 1)
                     {

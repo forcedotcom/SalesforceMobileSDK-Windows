@@ -29,20 +29,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Foundation.Diagnostics;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Utilities;
 using Salesforce.SDK.App;
 
@@ -99,7 +99,7 @@ namespace Salesforce.SDK.Net
     ///     A portable class to send HTTP requests
     ///     HttpCall objects can only be used once
     /// </summary>
-    public class HttpCall
+    public sealed class HttpCall : IDisposable
     {
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/3.1 ({0}/{1} {2}) {3}";
         private readonly ContentTypeValues _contentType;
@@ -307,15 +307,15 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                TaskCompletionSource<string> task = new TaskCompletionSource<string>();
+                var task = new TaskCompletionSource<string>();
                 await Task.Run(async () =>
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                    CoreDispatcherPriority.Normal, async () =>
-                    {
-                        await GenerateUserAgentHeader();
-                        task.SetResult(UserAgentHeader);
-                    });
+                        CoreDispatcherPriority.Normal, async () =>
+                        {
+                            await GenerateUserAgentHeader();
+                            task.SetResult(UserAgentHeader);
+                        });
                 });
                 await task.Task;
             }
@@ -408,8 +408,9 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        /// This method generates the user agent string for the current device.
-        /// This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the UserAgentHeader will not be set.
+        ///     This method generates the user agent string for the current device.
+        ///     This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the
+        ///     UserAgentHeader will not be set.
         /// </summary>
         /// <returns></returns>
         private static async Task<string> GenerateUserAgentHeader()
@@ -442,10 +443,10 @@ namespace Salesforce.SDK.Net
             };
             loadHandler = async (web, e) =>
             {
-                var view = web as WebView;
+                WebView view = web;
                 if (view != null)
                 {
-                    await view.InvokeScriptAsync("eval", new[] { "window.external.notify(navigator.appVersion); " });
+                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.userAgent); "});
                 }
             };
             DateTime endTime = DateTime.Now.AddSeconds(10);
@@ -461,6 +462,21 @@ namespace Salesforce.SDK.Net
                 }
             }
             return UserAgentHeader;
+        }
+
+        public void Dispose()
+        {
+            if (_webClient != null)
+            {
+                try
+                {
+                    _webClient.Dispose();
+                }
+                catch (Exception)
+                {
+                    PlatformAdapter.SendToCustomLogger("HttpCall.Dispose - Error occurred while disposing", LoggingLevel.Warning);
+                }
+            }
         }
     }
 }
