@@ -64,7 +64,7 @@ namespace Salesforce.SDK.Auth
         {
             var frame = Window.Current.Content as Frame;
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
-            if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
+            if (account.Policy != null && (!PincodeManager.IsPincodeSet() || AuthStorageHelper.IsPincodeRequired()))
             {
                 PincodeManager.LaunchPincodeScreen();
             }

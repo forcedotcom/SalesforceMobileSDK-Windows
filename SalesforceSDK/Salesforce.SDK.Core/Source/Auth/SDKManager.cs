@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,55 +25,52 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
-
 using System;
-using Windows.UI.Xaml.Navigation;
-using Salesforce.Sample.Salesforce1.Container.Settings;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Auth;
+using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
-using Salesforce.SDK.Strings;
 
-namespace Salesforce.Sample.Salesforce1.Container
+namespace Salesforce.SDK.Auth
 {
-    /// <summary>
-    ///     Provides application-specific behavior to supplement the default Application class.
-    /// </summary>
-    public sealed partial class App : SalesforceApplication
+    public class SDKManager
     {
-        /// <summary>
-        ///     Initializes the singleton application object.  This is the first line of authored code
-        ///     executed, and as such is the logical equivalent of main() or WinMain().
-        /// </summary>
-        public App()
-        {
-            InitializeComponent();
 
-            // Inject our own resources into SDK
-            LocalizedStrings.SetResourceLocation("MobileSDK");
-        }
 
         /// <summary>
-        ///     Invoked when Navigation to a certain page fails
+        /// The root application page your app should move to after login/pincode. For UI apps only.
         /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        public static Type RootApplicationPage { get; set; }
+
+        /// <summary>
+        ///     The global client manager is provided for ease of accessing clients such as the RestClient.
+        /// </summary>
+        public static ClientManager GlobalClientManager { get; private set; }
+
+        
+
+        /// <summary>
+        ///     The current configuration for the application.
+        /// </summary>
+        public static SalesforceConfig ServerConfiguration { get; private set; }
+
+        public static void ResetClientManager()
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            GlobalClientManager = new ClientManager();
         }
 
-        protected override void InitializeConfig()
+        public static void CreateClientManager(bool reset)
         {
-            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            if (GlobalClientManager != null && !reset) return;
+            GlobalClientManager = new ClientManager();
+        }
+
+        public static T InitializeConfig<T>(EncryptionSettings settings) where T : SalesforceConfig
+        {
+            Encryptor.init(settings);
+            T config = SalesforceConfig.RetrieveConfig<T>() ?? Activator.CreateInstance<T>();
             config.SaveConfig();
-        }
-
-        protected override Type SetRootApplicationPage()
-        {
-            return typeof (MainPage);
+            ServerConfiguration = config;
+            return config;
         }
     }
 }

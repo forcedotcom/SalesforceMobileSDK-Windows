@@ -36,8 +36,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Rest;
-using Salesforce.SDK.Source.Settings;
 using Windows.Foundation.Diagnostics;
 
 #if WINDOWS_PHONE_APP
@@ -60,28 +58,15 @@ namespace Salesforce.SDK.App
         protected SalesforceApplication()
         {
             Suspending += OnSuspending;
-            CreateClientManager(false);
-            RootApplicationPage = SetRootApplicationPage();
+            InitializeConfig();
+            SDKManager.CreateClientManager(false);
+            SDKManager.RootApplicationPage = SetRootApplicationPage();
             TokenRefresher = new DispatcherTimer {Interval = TimeSpan.FromMinutes(3)};
             TokenRefresher.Tick += RefreshToken;
             PlatformAdapter.Resolve<ISFApplicationHelper>().Initialize();
         }
 
-        /// <summary>
-        ///     The global client manager is provided for ease of accessing clients such as the RestClient.
-        /// </summary>
-        public static ClientManager GlobalClientManager { get; private set; }
 
-        /// <summary>
-        ///     Returns the Type of the root page; an assistive property to allow an app to return to root after things such as
-        ///     oauth login.
-        /// </summary>
-        public static Type RootApplicationPage { get; private set; }
-
-        /// <summary>
-        ///     The current configuration for the application.
-        /// </summary>
-        public static SalesforceConfig ServerConfiguration { get; private set; }
 
         /// <summary>
         ///     Use this to initialize your custom SalesforceConfig source, and to set up the Encryptor to use your own app
@@ -98,7 +83,7 @@ namespace Salesforce.SDK.App
         ///     Encryptor.init(settings);
         ///     }
         /// </summary>
-        protected abstract SalesforceConfig InitializeConfig();
+        protected abstract void InitializeConfig();
 
         /// <summary>
         ///     Implement to return the type of the root page to switch to once oauth completes.
@@ -144,24 +129,9 @@ namespace Salesforce.SDK.App
 
         private async void OnNavigationFailed(object sender, NavigationFailedEventArgs args)
         {
-            if (GlobalClientManager != null)
+            if (SDKManager.GlobalClientManager != null)
             {
-                await GlobalClientManager.Logout();
-            }
-        }
-
-        public static void ResetClientManager()
-        {
-            GlobalClientManager = new ClientManager();
-        }
-
-        protected void CreateClientManager(bool reset)
-        {
-            if (GlobalClientManager == null || reset)
-            {
-                ServerConfiguration = InitializeConfig();
-                ServerConfiguration.SaveConfig();
-                GlobalClientManager = new ClientManager();
+                await SDKManager.GlobalClientManager.Logout();
             }
         }
 
