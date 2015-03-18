@@ -215,7 +215,7 @@ namespace Salesforce.SDK.Source.Pages
             SDKManager.ResetClientManager();
             if (SDKManager.GlobalClientManager.PeekRestClient() != null)
             {
-                Frame.Navigate(SalesforceApplication.RootApplicationPage);
+                Frame.Navigate(SDKManager.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
                 PincodeManager.LaunchPincodeScreen();
             }
