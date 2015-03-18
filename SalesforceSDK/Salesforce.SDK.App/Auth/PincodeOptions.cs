@@ -48,5 +48,25 @@ namespace Salesforce.SDK.Auth
         public PincodeScreen Screen { get; private set; }
         public string Passcode { get; private set; }
         public MobilePolicy Policy { get; set; }
+
+        /// <summary>
+        ///     Serialize PincodeOptions object as a JSON string
+        /// </summary>
+        /// <param name="pincodeOptions"></param>
+        /// <returns></returns>
+        public static string ToJson(PincodeOptions pincodeOptions)
+        {
+            return JsonConvert.SerializeObject(pincodeOptions);
+        }
+
+        /// <summary>
+        ///     Deserialize PincodeOptions from a JSON string
+        /// </summary>
+        /// <param name="pincodeOptionsJson"></param>
+        /// <returns></returns>
+        public static PincodeOptions FromJson(string pincodeOptionsJson)
+        {
+            return JsonConvert.DeserializeObject<PincodeOptions>(pincodeOptionsJson);
+        }
     }
 }

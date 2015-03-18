@@ -63,14 +63,20 @@ namespace Salesforce.SDK.Auth
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (e.Parameter != null && !(e.Parameter is PincodeOptions))
+            // start with a default PincodeOptions object
+            Options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, AccountManager.GetAccount(), "");
+            if (e.Parameter != null)
             {
-                Options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, AccountManager.GetAccount(), "");
+                try
+                {
+                    Options = PincodeOptions.FromJson((string)e.Parameter);
+                }
+                catch
+                {
+                    // it is not a valid PincodeOptions object so ignore and keep using the default one
+                }
             }
-            else
-            {
-                Options = e.Parameter as PincodeOptions;
-            }
+
             if (Options != null)
             {
                 switch (Options.Screen)
@@ -174,7 +180,11 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.SendToCustomLogger("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
                 var options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
-                Frame.Navigate(typeof (PincodeDialog), options);
+                // As per MSDN documentation (https://msdn.microsoft.com/en-us/library/windows/apps/hh702394.aspx)
+                // the second param of Frame.Navigate must be a basic type otherwise Suspension manager will crash
+                // when serializing frame's state. So we serialize custom object using Json and pass that as the 
+                // second param to avoid this crash.
+                Frame.Navigate(typeof (PincodeDialog), PincodeOptions.ToJson(options));
             }
             else
             {
@@ -268,7 +278,11 @@ namespace Salesforce.SDK.Auth
             if (PincodeOptions.PincodeScreen.Confirm == Options.Screen)
             {
                 var options = new PincodeOptions(PincodeOptions.PincodeScreen.Create, Options.User, "");
-                Frame.Navigate(typeof (PincodeDialog), options);
+                // As per MSDN documentation (https://msdn.microsoft.com/en-us/library/windows/apps/hh702394.aspx)
+                // the second param of Frame.Navigate must be a basic type otherwise Suspension manager will crash
+                // when serializing frame's state. So we serialize custom object using Json and pass that as the 
+                // second param to avoid this crash.
+                Frame.Navigate(typeof (PincodeDialog), PincodeOptions.ToJson(options));
             }
         }
     }

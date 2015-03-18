@@ -139,7 +139,11 @@ namespace Salesforce.SDK.Auth
                         }
                         if (options != null)
                         {
-                            frame.Navigate(typeof (PincodeDialog), options);
+                            // As per MSDN documentation (https://msdn.microsoft.com/en-us/library/windows/apps/hh702394.aspx)
+                            // the second param of Frame.Navigate must be a basic type otherwise Suspension manager will crash
+                            // when serializing frame's state. So we serialize custom object using Json and pass that as the 
+                            // second param to avoid this crash.
+                            frame.Navigate(typeof (PincodeDialog), PincodeOptions.ToJson(options));
                         }
                     }
                 });
