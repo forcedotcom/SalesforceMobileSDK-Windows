@@ -71,8 +71,8 @@ namespace Salesforce.SDK.Auth
             else
             {
                 PlatformAdapter.SendToCustomLogger(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
-                                                         SalesforceApplication.RootApplicationPage), LoggingLevel.Information);
-                frame.Navigate(SalesforceApplication.RootApplicationPage);
+                                                         SDKManager.RootApplicationPage), LoggingLevel.Information);
+                frame.Navigate(SDKManager.RootApplicationPage);
             }
         }
     }

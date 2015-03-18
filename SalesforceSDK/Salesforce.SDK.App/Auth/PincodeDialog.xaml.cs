@@ -192,10 +192,10 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.SendToCustomLogger(
                     string.Format("PincodeDialog.ConfirmClicked - Pincode matched, going to {0}",
-                        SalesforceApplication.RootApplicationPage), LoggingLevel.Verbose);
+                        SDKManager.RootApplicationPage), LoggingLevel.Verbose);
                 AuthStorageHelper.StorePincode(Options.Policy, Options.Passcode);
                 PincodeManager.Unlock();
-                Frame.Navigate(SalesforceApplication.RootApplicationPage);
+                Frame.Navigate(SDKManager.RootApplicationPage);
             }
             else
             {
@@ -222,7 +222,7 @@ namespace Salesforce.SDK.Auth
                 }
                 else
                 {
-                    Frame.Navigate(SalesforceApplication.RootApplicationPage);
+                    Frame.Navigate(SDKManager.RootApplicationPage);
                 }
             }
             else
