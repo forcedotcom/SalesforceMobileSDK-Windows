@@ -31,7 +31,6 @@ using System.Threading.Tasks;
 using Windows.Foundation.Diagnostics;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Rest;
 
 namespace Salesforce.SDK.Auth
@@ -68,9 +67,9 @@ namespace Salesforce.SDK.Auth
         {
             if (account != null && account.UserId != null)
             {
-                PincodeManager.SavePinTimer();
+                AuthStorageHelper.SavePinTimer();
                 AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
-                RestClient client = SalesforceApplication.GlobalClientManager.PeekRestClient();
+                RestClient client = SDKManager.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
                     OAuth2.ClearCookies(account.GetLoginOptions());
@@ -94,7 +93,7 @@ namespace Salesforce.SDK.Auth
         public static void WipeAccounts()
         {
             AuthStorageHelper.GetAuthStorageHelper().DeletePersistedCredentials();
-            PincodeManager.WipePincode();
+            AuthStorageHelper.WipePincode();
             SwitchAccount();
         }
 

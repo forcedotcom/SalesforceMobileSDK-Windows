@@ -28,13 +28,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Windows.Data.Json;
 using Windows.Security.Credentials;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
-using Salesforce.SDK.App;
 using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Auth
@@ -51,6 +55,8 @@ namespace Salesforce.SDK.Auth
         private const string PasswordVaultPincode = "Salesforce Pincode";
         private const string PasswordVaultEncryptionSettings = "Salesforce Encryption Settings";
         private const string InstallationStatusKey = "InstallationStatus";
+        private const string PinBackgroundedTimeKey = "pintimeKey";
+        private const string PincodeRequired = "pincodeRequired";
 
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
         private readonly ApplicationDataContainer _persistedData;
@@ -354,7 +360,7 @@ namespace Salesforce.SDK.Auth
                 "AuthStorageHelper.DeletePersistedCredentials - removed all entries from vault", LoggingLevel.Verbose);
         }
 
-        internal void PersistPincode(MobilePolicy policy)
+        public void PersistPincode(MobilePolicy policy)
         {
             DeletePincode();
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
@@ -362,6 +368,170 @@ namespace Salesforce.SDK.Auth
             _vault.Add(newPin);
             PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistPincode - pincode added to vault",
                 LoggingLevel.Verbose);
+        }
+
+        /// <summary>
+        ///     This will return true if there is a master pincode set.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsPincodeSet()
+        {
+            bool result = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode() != null;
+
+            PlatformAdapter.SendToCustomLogger(string.Format("AuthStorageHelper.IsPincodeSet - result = {0}", result), LoggingLevel.Verbose);
+
+            return result;
+        }
+
+        /// <summary>
+        ///     This will return true if a pincode is required before the app can be accessed.
+        /// </summary>
+        /// <returns></returns>
+        public static bool IsPincodeRequired()
+        {
+            AuthStorageHelper auth = GetAuthStorageHelper();
+            // a flag is set if the timer was exceeded at some point. Automatically return true if the flag is set.
+            bool required = auth.RetrieveData(PincodeRequired) != null;
+            if (required)
+            {
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
+                return true;
+            }
+            if (IsPincodeSet())
+            {
+                MobilePolicy policy = GetMobilePolicy();
+                if (policy != null)
+                {
+                    string time = auth.RetrieveData(PinBackgroundedTimeKey);
+                    if (time != null)
+                    {
+                        DateTime previous = DateTime.Parse(time);
+                        DateTime current = DateTime.Now.ToUniversalTime();
+                        TimeSpan diff = current.Subtract(previous);
+                        if (diff.Minutes >= policy.ScreenLockTimeout)
+                        {
+                            // flag that requires pincode to be entered in the future. Until the flag is deleted a pincode will be required.
+                            auth.PersistData(true, PincodeRequired, time);
+                            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
+                            return true;
+                        }
+                    }
+                }
+            }
+            // We aren't requiring pincode, so remove the flag.
+            auth.DeleteData(PincodeRequired);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.IsPincodeRequired - Pincode is not required", LoggingLevel.Verbose);
+            return false;
+        }
+
+        private static string GenerateEncryptedPincode(string pincode)
+        {
+            HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            IBuffer buff = CryptographicBuffer.ConvertStringToBinary(pincode, BinaryStringEncoding.Utf8);
+            IBuffer hashed = alg.HashData(buff);
+            string res = CryptographicBuffer.EncodeToHexString(hashed);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.GenerateEncryptedPincode - Pincode generated, now encrypting and returning it", LoggingLevel.Verbose);
+            return Encryptor.Encrypt(res);
+        }
+
+        /// <summary>
+        ///     Stores the pincode and associated mobile policy information including pin length and screen lock timeout.
+        /// </summary>
+        /// <param name="policy"></param>
+        /// <param name="pincode"></param>
+        public static void StorePincode(MobilePolicy policy, string pincode)
+        {
+            string hashed = GenerateEncryptedPincode(pincode);
+            var mobilePolicy = new MobilePolicy
+            {
+                ScreenLockTimeout = policy.ScreenLockTimeout,
+                PinLength = policy.PinLength,
+                PincodeHash = Encryptor.Encrypt(hashed, pincode)
+            };
+            AuthStorageHelper.GetAuthStorageHelper().PersistPincode(mobilePolicy);
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.StorePincode - Pincode stored", LoggingLevel.Verbose);
+        }
+
+        /// <summary>
+        ///     Validate the given pincode against the stored pincode.
+        /// </summary>
+        /// <param name="pincode">Pincode to validate</param>
+        /// <returns>True if pincode matches</returns>
+        public static bool ValidatePincode(string pincode)
+        {
+            string compare = GenerateEncryptedPincode(pincode);
+            try
+            {
+                string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
+                var policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
+                bool result = compare.Equals(Encryptor.Decrypt(policy.PincodeHash, pincode));
+
+                PlatformAdapter.SendToCustomLogger(string.Format("AuthStorageHelper.ValidatePincode - result = {0}", result), LoggingLevel.Verbose);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.ValidatePincode - Exception occurred when validating pincode:", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                Debug.WriteLine("Error validating pincode");
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        ///     Clear the pincode flag.
+        /// </summary>
+        public static void Unlock()
+        {
+            GetAuthStorageHelper().DeleteData(PincodeRequired);
+            SavePinTimer();
+        }
+
+        public static void ClearPinTimer()
+        {
+            GetAuthStorageHelper().DeleteData(PinBackgroundedTimeKey);
+        }
+
+        public static void SavePinTimer()
+        {
+            MobilePolicy policy = GetMobilePolicy();
+            Account account = AccountManager.GetAccount();
+            if (account != null && policy != null && policy.ScreenLockTimeout > 0)
+            {
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.SavePinTimer - saving pin timer", LoggingLevel.Verbose);
+                AuthStorageHelper.GetAuthStorageHelper()
+                    .PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
+            }
+        }
+
+        /// <summary>
+        ///     Returns the global mobile policy stored.
+        /// </summary>
+        /// <returns></returns>
+        public static MobilePolicy GetMobilePolicy()
+        {
+            string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
+            if (retrieved != null)
+            {
+                PlatformAdapter.SendToCustomLogger("AuthStorageHelper.GetMobilePolicy - returning retrieved policy", LoggingLevel.Verbose);
+                return JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
+            }
+            PlatformAdapter.SendToCustomLogger("AuthStorageHelper.GetMobilePolicy - No policy found", LoggingLevel.Verbose);
+            return null;
+        }
+
+        /// <summary>
+        ///     This will wipe out the pincode and associated data.
+        /// </summary>
+        public static void WipePincode()
+        {
+            AuthStorageHelper auth = AuthStorageHelper.GetAuthStorageHelper();
+            auth.DeletePincode();
+            auth.DeleteData(PinBackgroundedTimeKey);
+            auth.DeleteData(PincodeRequired);
+            PlatformAdapter.SendToCustomLogger("PincodeManager.WipePincode - Pincode wiped", LoggingLevel.Verbose);
         }
 
         internal string RetrievePincode()
@@ -455,9 +625,9 @@ namespace Salesforce.SDK.Auth
                 {
                     try
                     {
-                        var encrpytionSettingsObj = JsonConvert.DeserializeObject<dynamic>(encrpytionSettings.Password);
-                        password = encrpytionSettingsObj.Password;
-                        salt = encrpytionSettingsObj.Salt;
+                        var encrpytionSettingsObj = JObject.Parse(encrpytionSettings.Password);
+                        password = encrpytionSettingsObj.Value<string>("Password");
+                        salt = encrpytionSettingsObj.Value<string>("Salt");
                         PlatformAdapter.SendToCustomLogger(
                         "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have been retrieved successfully.",
                         LoggingLevel.Verbose);

@@ -2,8 +2,8 @@
 using Windows.UI.Xaml.Navigation;
 using NoteSync.Pages;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
-using Salesforce.SDK.Source.Settings;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -33,20 +33,10 @@ namespace NoteSync.Shared
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
-        /// <summary>
-        ///     InitializeConfig should implement the commented out code. You should come up with your own, unique password and
-        ///     salt and for added security
-        ///     you should implement your own key generator using the IKeyGenerator interface.
-        /// </summary>
-        /// <returns></returns>
-        protected override SalesforceConfig InitializeConfig()
+        protected override void InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
-            Encryptor.init(settings);
-            var config = SalesforceConfig.RetrieveConfig<Config>();
-            if (config == null)
-                config = new Config();
-            return config;
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 
@@ -96,7 +95,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         /// </summary>
         private async void OnLogout()
         {
-            await SalesforceApplication.GlobalClientManager.Logout();
+            await SDKManager.GlobalClientManager.Logout();
         }
 
         private void OnSwitch()
@@ -111,7 +110,7 @@ namespace Salesforce.Sample.RestExplorer.Phone
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            SalesforceApplication.GlobalClientManager.GetRestClient();
+            SDKManager.GlobalClientManager.GetRestClient();
         }
     }
 }

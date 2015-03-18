@@ -32,7 +32,7 @@ using System.Threading;
 using System.Windows.Input;
 using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
 
@@ -179,7 +179,7 @@ namespace Salesforce.Sample.RestExplorer.ViewModels
         /// <param name="parameter"></param>
         public async void Execute(object parameter)
         {
-            RestClient rc = SalesforceApplication.GlobalClientManager.GetRestClient();
+            RestClient rc = SDKManager.GlobalClientManager.GetRestClient();
             if (rc != null)
             {
                 RestRequest request = BuildRestRequest();

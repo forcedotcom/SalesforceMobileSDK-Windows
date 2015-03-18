@@ -31,7 +31,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace Salesforce.SDK.Hybrid
+namespace Salesforce.SDK.Settings
 {
     /// <summary>
     ///     Helper for reading files from resources.

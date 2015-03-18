@@ -96,7 +96,7 @@ namespace Salesforce.SDK.Hybrid
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            _client = SalesforceApplication.GlobalClientManager.PeekRestClient();
+            _client = SDKManager.GlobalClientManager.PeekRestClient();
 
             // Not logged in
             if (_client == null)
@@ -129,7 +129,7 @@ namespace Salesforce.SDK.Hybrid
                 if (NetworkInterface.GetIsNetworkAvailable())
                 {
                     Log("Starting authentication flow");
-                    _client = SalesforceApplication.GlobalClientManager.GetRestClient();
+                    _client = SDKManager.GlobalClientManager.GetRestClient();
                     // After login, we will end up in OnResumeLoggedInNotLoaded
                 }
                     // Offline
@@ -296,7 +296,7 @@ namespace Salesforce.SDK.Hybrid
         /// <param name="plugin"></param>
         public void Authenticate(SalesforceOAuthPlugin plugin)
         {
-            _client = SalesforceApplication.GlobalClientManager.GetRestClient();
+            _client = SDKManager.GlobalClientManager.GetRestClient();
             if (_client == null)
             {
                 // login flow will get started, when page is eventually reloaded, we will be called again and _client will not be null
@@ -349,7 +349,7 @@ namespace Salesforce.SDK.Hybrid
         public async void LogoutCurrentUser()
         {
             _webAppLoaded = false;
-            await SalesforceApplication.GlobalClientManager.Logout();
+            await SDKManager.GlobalClientManager.Logout();
             _syncContext.Post(state => Authenticate(null), null);
             // XXX Authenticate might call Navigate so it must be done on the UI thread
         }

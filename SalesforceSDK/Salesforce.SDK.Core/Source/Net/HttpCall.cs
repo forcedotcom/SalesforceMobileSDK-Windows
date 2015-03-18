@@ -43,8 +43,8 @@ using Windows.Web.Http.Filters;
 using Windows.Web.Http.Headers;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Utilities;
-using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.Net
 {
@@ -378,7 +378,7 @@ namespace Salesforce.SDK.Net
 
             try
             {
-                var config = SalesforceApplication.ServerConfiguration;
+                var config = SDKManager.ServerConfiguration;
                 if (config == null)
                 {
                     throw new Exception();

@@ -28,6 +28,7 @@
 using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.Hybrid
 {

@@ -78,7 +78,7 @@ namespace Salesforce.SDK.Source.Pages
 
         public ObservableCollection<ServerSetting> Servers
         {
-            get { return SalesforceApplication.ServerConfiguration.ServerList; }
+            get { return SDKManager.ServerConfiguration.ServerList; }
         }
 
         public void ContinueWebAuthentication(WebAuthenticationBrokerContinuationEventArgs args)
@@ -127,7 +127,7 @@ namespace Salesforce.SDK.Source.Pages
         private void SetupAccountPage()
         {
             ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
-            SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+            SalesforceConfig config = SDKManager.ServerConfiguration;
             bool titleMissing = true;
             if (!String.IsNullOrWhiteSpace(config.ApplicationTitle) && config.IsApplicationTitleVisible)
             {
@@ -187,7 +187,7 @@ namespace Salesforce.SDK.Source.Pages
             {
                 _currentState = SingleUserViewState;
                 SetLoginBarVisibility(Visibility.Collapsed);
-                PincodeManager.WipePincode();
+                AuthStorageHelper.WipePincode();
                 VisualStateManager.GoToState(this, SingleUserViewState, true);
             }
             else
@@ -204,7 +204,7 @@ namespace Salesforce.SDK.Source.Pages
             AddServerFlyout.Opened += AddServerFlyout_Opened;
             AddServerFlyout.Closed += AddServerFlyout_Closed;
             AccountsList.SelectionChanged += accountsList_SelectionChanged;
-            AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
+            AddConnection.Visibility = (SDKManager.ServerConfiguration.AllowNewConnections
                 ? Visibility.Visible
                 : Visibility.Collapsed);
         }
@@ -212,8 +212,8 @@ namespace Salesforce.SDK.Source.Pages
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await AccountManager.SwitchToAccount(AccountsList.SelectedItem as Account);
-            SalesforceApplication.ResetClientManager();
-            if (SalesforceApplication.GlobalClientManager.PeekRestClient() != null)
+            SDKManager.ResetClientManager();
+            if (SDKManager.GlobalClientManager.PeekRestClient() != null)
             {
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
@@ -252,7 +252,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
-            if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
+            if (Servers.Count <= 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
             {
                 ListboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
@@ -318,7 +318,7 @@ namespace Salesforce.SDK.Source.Pages
                 ServerHost = haddress,
                 ServerName = hname
             };
-            SalesforceApplication.ServerConfiguration.AddServer(server);
+            SDKManager.ServerConfiguration.AddServer(server);
 
             ServerFlyout.ShowAt(ApplicationTitle);
         }
@@ -340,8 +340,8 @@ namespace Salesforce.SDK.Source.Pages
 
         private void DeleteServer(object sender, RoutedEventArgs e)
         {
-            SalesforceApplication.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
-            SalesforceApplication.ServerConfiguration.SaveConfig();
+            SDKManager.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
+            SDKManager.ServerConfiguration.SaveConfig();
         }
 
         private void addAccount_Click(object sender, RoutedEventArgs e)
@@ -354,8 +354,8 @@ namespace Salesforce.SDK.Source.Pages
             if (server != null)
             {
                 VisualStateManager.GoToState(this, LoggingUserInViewState, true);
-                SalesforceApplication.ResetClientManager();
-                SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+                SDKManager.ResetClientManager();
+                SalesforceConfig config = SDKManager.ServerConfiguration;
                 var options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
                 SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
                     config.Scopes);

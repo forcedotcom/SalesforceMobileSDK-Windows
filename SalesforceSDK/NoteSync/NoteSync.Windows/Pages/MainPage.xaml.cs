@@ -97,9 +97,9 @@ namespace NoteSync.Pages
         private async void Logout(object sender, RoutedEventArgs e)
         {
             NotesDataModel.ClearSmartStore();
-            if (SalesforceApplication.GlobalClientManager != null)
+            if (SDKManager.GlobalClientManager != null)
             {
-                await SalesforceApplication.GlobalClientManager.Logout();
+                await SDKManager.GlobalClientManager.Logout();
             }
             AccountManager.SwitchAccount();
         }

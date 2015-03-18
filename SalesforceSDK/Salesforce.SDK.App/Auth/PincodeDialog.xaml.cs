@@ -112,7 +112,7 @@ namespace Salesforce.SDK.Auth
             if (e != null
                 && Options != null
                 && PincodeOptions.PincodeScreen.Locked.Equals(Options.Screen)
-                && PincodeManager.IsPincodeRequired())
+                && AuthStorageHelper.IsPincodeRequired())
             {
                 e.Cancel = true;
             }
@@ -193,7 +193,7 @@ namespace Salesforce.SDK.Auth
                 PlatformAdapter.SendToCustomLogger(
                     string.Format("PincodeDialog.ConfirmClicked - Pincode matched, going to {0}",
                         SalesforceApplication.RootApplicationPage), LoggingLevel.Verbose);
-                PincodeManager.StorePincode(Options.Policy, Options.Passcode);
+                AuthStorageHelper.StorePincode(Options.Policy, Options.Passcode);
                 PincodeManager.Unlock();
                 Frame.Navigate(SalesforceApplication.RootApplicationPage);
             }
@@ -213,7 +213,7 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
             }
-            else if (PincodeManager.ValidatePincode(Passcode.Password))
+            else if (AuthStorageHelper.ValidatePincode(Passcode.Password))
             {
                 PincodeManager.Unlock();
                 if (Frame.CanGoBack)
@@ -229,7 +229,7 @@ namespace Salesforce.SDK.Auth
             {
                 if (RetryCounter <= 1)
                 {
-                    await SalesforceApplication.GlobalClientManager.Logout();
+                    await SDKManager.GlobalClientManager.Logout();
                 }
                 RetryCounter--;
                 ContentFooter.Text = String.Format(LocalizedStrings.GetString("passcode_incorrect"), RetryCounter);
