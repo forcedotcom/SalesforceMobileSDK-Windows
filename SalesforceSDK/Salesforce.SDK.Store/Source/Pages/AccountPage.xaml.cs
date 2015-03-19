@@ -244,13 +244,23 @@ namespace Salesforce.SDK.Source.Pages
                     "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
-                    await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+                    await
+                        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             }
             // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
             // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
             // should just swallow that exception
             catch (FileNotFoundException)
             {
+                SetupAccountPage();
+                return;
+            }
+            catch (Exception ex)
+            {
+                PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
                 SetupAccountPage();
                 return;
             }
