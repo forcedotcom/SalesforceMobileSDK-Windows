@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Auth;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -50,22 +51,13 @@ namespace $safeprojectname$
         }
 
         /// <summary>
-        /// InitializeConfig should implement the commented out code. You should come up with your own, unique password and salt and for added security
-        /// you should implement your own key generator using the IKeyGenerator interface.  
+        /// If you wish to roll your own EncryptionSettings, this would be the place to initialize it. 
         /// </summary>
         /// <returns></returns>
-        protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
-        {         
-            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator())
-            {
-                Password = "$EncryptionPassword$",
-                Salt = "$EncryptionSalt$"
-            };
-            Encryptor.init(settings);
-            Config config = SalesforceConfig.RetrieveConfig<Config>();
-            if (config == null)
-                config = new Config();
-            return config;
+        protected override void InitializeConfig()
+        {
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         /// <summary>

@@ -25,6 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Newtonsoft.Json;
+
 namespace Salesforce.SDK.Auth
 {
     internal class PincodeOptions

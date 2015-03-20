@@ -8,7 +8,7 @@
     <ProjectGuid>{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Salesforce.SDK.App</RootNamespace>
+    <RootNamespace>Salesforce.SDK</RootNamespace>
     <AssemblyName>Salesforce.SDK.App</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>

@@ -75,5 +75,10 @@ namespace $safeprojectname$
         {
             get { return null; }
         }
+
+        public override bool IsApplicationTitleVisible
+        {
+            get { return true; }
+        }
     }
 }
