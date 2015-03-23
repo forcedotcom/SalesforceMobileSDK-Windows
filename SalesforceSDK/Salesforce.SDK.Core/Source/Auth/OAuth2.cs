@@ -311,14 +311,19 @@ namespace Salesforce.SDK.Auth
             return await c.ExecuteAndDeserialize<AuthResponse>();
         }
 
+        public static Task<bool> TryRefreshAuthToken(ref Account account)
+        {
+            return TryRefresAuthToken(account);
+        }
+
         /// <summary>
         ///     Async method for refreshing the token, persisting the data in the encrypted settings and returning the updated
         ///     account
         ///     with the new access token.
         /// </summary>
         /// <param name="account"></param>
-        /// <returns></returns>
-        public static async Task<Account> RefreshAuthToken(Account account)
+        /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
+        private static async Task<bool> TryRefresAuthToken(Account account)
         {
             if (account != null)
             {
@@ -334,9 +339,10 @@ namespace Salesforce.SDK.Auth
                     PlatformAdapter.SendToCustomLogger("OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
                     PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
+                    return false;
                 }
             }
-            return account;
+            return true;
         }
 
         /// <summary>
