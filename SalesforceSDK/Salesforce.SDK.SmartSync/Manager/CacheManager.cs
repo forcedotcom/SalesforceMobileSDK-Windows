@@ -67,7 +67,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private CacheManager(Account account, string communityId)
         {
-            _smartStore = new SmartStore.Store.SmartStore();
+            _smartStore = SmartStore.Store.SmartStore.GetSmartStore(account);
             ResetInMemoryCache();
         }
 

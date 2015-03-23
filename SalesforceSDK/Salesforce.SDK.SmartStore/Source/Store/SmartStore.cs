@@ -32,7 +32,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Storage;
+using Windows.Storage.Streams;
+using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
@@ -87,17 +91,12 @@ namespace Salesforce.SDK.SmartStore.Store
         private static readonly DateTime Jan1st1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         // Backing database
-        private static string _databasePath;
+        private string _databasePath;
 
-        internal static string DatabasePath
+        public string DatabasePath
         {
             get
             {
-                if (String.IsNullOrWhiteSpace(_databasePath))
-                {
-                    DBOpenHelper open = DBOpenHelper.GetOpenHelper(AccountManager.GetAccount());
-                    _databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
-                }
                 return _databasePath;
             }
         }
@@ -112,12 +111,84 @@ namespace Salesforce.SDK.SmartStore.Store
             get { return (long) DateTime.UtcNow.Ticks; }
         }
 
+        private SmartStore()
+        {
+            _databasePath = GenerateDatabasePath(AccountManager.GetAccount());
+        }
+
+        private SmartStore(Account account)
+        {
+            _databasePath = GenerateDatabasePath(account);
+        }
+
+        public static SmartStore GetSmartStore()
+        {
+            var store = new SmartStore();
+            store.CreateMetaTables();
+            return store;
+        }
+
+        public static SmartStore GetSmartStore(Account account)
+        {
+            var store = new SmartStore(account);
+            store.CreateMetaTables();
+            return store;
+        }
+
+        public static SmartStore GetGlobalSmartStore()
+        {
+            var store = new SmartStore(null); // generate a "global" smartstore
+            store.CreateMetaTables();
+            return store;
+        }
+
+        public static string GenerateDatabasePath(Account account)
+        {
+            DBOpenHelper open = DBOpenHelper.GetOpenHelper(AccountManager.GetAccount());
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
+        }
+
+        public static async Task<bool> HasGlobalSmartStore()
+        {
+            return await HasSmartStore(null);
+        }
+
+        public static async Task<bool> HasSmartStore(Account account)
+        {
+            IRandomAccessStreamWithContentType stream = null;
+            bool fileExists = false;
+            try
+            {
+                var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
+                var folder = ApplicationData.Current.LocalFolder;
+                var file = await folder.GetFileAsync(path);
+                stream = await file.OpenReadAsync();
+                fileExists = true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                fileExists = true;
+            }
+            catch (Exception)
+            {
+                fileExists = false;
+            }
+            finally
+            {
+                if (stream != null)
+                {
+                    stream.Dispose();
+                }
+            }
+            return fileExists;
+        }
+
         /// <summary>
         ///     Create soup index map table to keep track of soups' index specs
         ///     Create soup name map table to keep track of soup name to table name mappings
         ///     Called when the database is first created
         /// </summary>
-        public static void CreateMetaTables()
+        public void CreateMetaTables()
         {
             lock (smartlock)
             {
@@ -168,6 +239,31 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
                 SQLiteResult result = db.Execute("DROP TABLE IF EXISTS " + SoupIndexMapTable);
                 db.Execute("DROP TABLE IF EXISTS " + SoupNamesTable);
+                CreateMetaTables();
+            }
+        }
+
+        public static void DeleteAllDatabases(bool includeGlobal)
+        {
+            var accounts = AccountManager.GetAccounts();
+            foreach (var accountKey in accounts.Keys)
+            {
+                var account = accounts[accountKey];
+                var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
+                var helper = DBHelper.GetInstance(GenerateDatabasePath(account));
+                DropAllSoups(path);
+                SQLiteResult result = helper.Execute("DROP TABLE IF EXISTS " + SoupIndexMapTable);
+                helper.Execute("DROP TABLE IF EXISTS " + SoupNamesTable);
+                helper.Dispose();
+            }
+            if (includeGlobal)
+            {
+                var path = DBOpenHelper.GetOpenHelper(null).DatabaseFile;
+                var helper = DBHelper.GetInstance(GenerateDatabasePath(null));
+                DropAllSoups(path);
+                SQLiteResult result = helper.Execute("DROP TABLE IF EXISTS " + SoupIndexMapTable);
+                helper.Execute("DROP TABLE IF EXISTS " + SoupNamesTable);
+                helper.Dispose();
             }
         }
 
@@ -441,15 +537,20 @@ namespace Salesforce.SDK.SmartStore.Store
         /// <param name="soupName"></param>
         public void DropSoup(string soupName)
         {
+            DropSoup(DatabasePath, soupName);
+        }
+
+        private static void DropSoup(string databasePath, string soupName)
+        {
             lock (smartlock)
             {
-                DBHelper db = DBHelper.GetInstance(DatabasePath);
+                DBHelper db = DBHelper.GetInstance(databasePath);
                 string soupTableName = db.GetSoupTableName(soupName);
                 if (!String.IsNullOrWhiteSpace(soupTableName))
                 {
                     SQLiteResult result = db.Execute("DROP TABLE IF EXISTS " + soupTableName);
                     bool success = result == SQLiteResult.DONE;
-                    var soupDrop = new Dictionary<string, object> {{SoupNameCol, soupName}};
+                    var soupDrop = new Dictionary<string, object> { { SoupNameCol, soupName } };
                     try
                     {
                         db.BeginTransaction();
@@ -487,16 +588,32 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
+        public static void DropAllSoups(string databasePath)
+        {
+            lock (smartlock)
+            {
+                List<string> soupNames = GetAllSoupNames(databasePath);
+                foreach (string soup in soupNames)
+                {
+                    DropSoup(databasePath, soup);
+                }
+            }
+        }
         /// <summary>
         ///     Returns a list of all soup names.
         /// </summary>
         /// <returns></returns>
         public List<string> GetAllSoupNames()
         {
+            return GetAllSoupNames(DatabasePath);
+        }
+
+        private static List<string> GetAllSoupNames(string databasePath)
+        {
             lock (smartlock)
             {
                 var soupNames = new List<string>();
-                DBHelper db = DBHelper.GetInstance(DatabasePath);
+                DBHelper db = DBHelper.GetInstance(databasePath);
                 using (SQLiteStatement stmt = db.Query(SoupNamesTable, new[] {SoupNameCol}, String.Empty, String.Empty,
                     String.Empty))
                 {

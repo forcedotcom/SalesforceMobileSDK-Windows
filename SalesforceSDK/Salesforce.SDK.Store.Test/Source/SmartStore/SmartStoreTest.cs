@@ -27,8 +27,10 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json.Linq;
+using SQLitePCL;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -50,11 +52,11 @@ namespace Salesforce.SDK.SmartStore.Store
         private static SmartStore Store;
 
         [ClassInitialize]
-        public static void TestSetup(TestContext context)
+        public async static Task TestSetup(TestContext context)
         {
-            Store = new SmartStore();
+            Store = SmartStore.GetGlobalSmartStore();
             Store.ResetDatabase();
-            SmartStore.CreateMetaTables();
+
             Store.RegisterSoup(EMPLOYEES_SOUP, new[]
             {
                 // should be TABLE_1
@@ -85,6 +87,26 @@ namespace Salesforce.SDK.SmartStore.Store
                     "select {employees:firstName}, {employees:lastName} from {employees} order by {employees:lastName}"));
             Assert.AreEqual("select TABLE_2_1 from TABLE_2 order by TABLE_2_0",
                 Store.ConvertSmartSql("select {departments:name} from {departments} order by {departments:deptCode}"));
+        }
+
+        /// <summary>
+        ///     Testing simple smart sql to sql conversion2
+        [TestMethod]
+        public void TestDeleteDb()
+        {
+            Assert.AreEqual("select TABLE_1_0, TABLE_1_1 from TABLE_1 order by TABLE_1_1",
+                Store.ConvertSmartSql(
+                    "select {employees:firstName}, {employees:lastName} from {employees} order by {employees:lastName}"));
+            SmartStore.DeleteAllDatabases(true);
+            try
+            {
+                Store.HasSoup(DEPARTMENTS_SOUP);
+                Assert.Fail("Table exists");
+            }
+            catch (SQLiteException)
+            {
+                // we're good, table doesn't exist
+            }
         }
 
         /// <summary>

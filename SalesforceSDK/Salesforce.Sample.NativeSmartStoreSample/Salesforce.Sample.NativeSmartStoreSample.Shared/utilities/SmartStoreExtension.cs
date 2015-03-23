@@ -30,8 +30,7 @@ namespace Salesforce.Sample.NativeSmartStoreSample.utilities
 
         public SmartStoreExtension()
         {
-            _store = new SmartStore();
-            SmartStore.CreateMetaTables();
+            _store = SmartStore.GetSmartStore();
             CreateAccountsSoup();
             CreateOpportunitiesSoup();
         }
