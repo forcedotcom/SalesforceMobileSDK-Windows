@@ -329,7 +329,6 @@ namespace Salesforce.SDK.Auth
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
                     AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
-                    throw new Exception();
                 }
                 catch (WebException ex)
                 {
