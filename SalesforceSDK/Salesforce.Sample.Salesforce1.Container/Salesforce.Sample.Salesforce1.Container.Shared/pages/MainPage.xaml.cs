@@ -70,14 +70,24 @@ namespace Salesforce.Sample.Salesforce1.Container
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Account account = AccountManager.GetAccount();
+            var success = false;
             if (account != null)
             {
                 if (!oneView.CanGoBack)
                 {
-                    account = await OAuth2.RefreshAuthToken(account);
-                    string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl, LoginOptions.DefaultDisplayType,
-                        account.AccessToken, GetPage(account));
-                    oneView.Navigate(new Uri(startPage));
+                    success = await OAuth2.TryRefreshAuthToken(ref account);
+                    if (success)
+                    {
+                        string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
+                            LoginOptions.DefaultDisplayType,
+                            account.AccessToken, GetPage(account));
+                    
+                        oneView.Navigate(new Uri(startPage));
+                    }
+                    else
+                    {
+                        await SDKManager.GlobalClientManager.Logout();
+                    }
                 }
             }
             else
