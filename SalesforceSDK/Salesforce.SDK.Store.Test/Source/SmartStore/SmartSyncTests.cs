@@ -79,9 +79,8 @@ namespace Salesforce.SDK.SmartStore.Store
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
             await OAuth2.RefresAuthToken(account);
-            _smartStore = new SmartStore();
+            _smartStore = SmartStore.GetGlobalSmartStore();
             _smartStore.ResetDatabase();
-            SmartStore.CreateMetaTables();
             _syncManager = SyncManager.GetInstance(null);
             _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
                 async () =>

@@ -57,7 +57,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private SyncManager(Account account, string communityId)
         {
-            _smartStore = new SmartStore.Store.SmartStore();
+            _smartStore = SmartStore.Store.SmartStore.GetSmartStore(account);
             RestClient = new RestClient(account.InstanceUrl, account.AccessToken,
                 async () =>
                 {

@@ -78,8 +78,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         {
             Account account = AccountManager.GetAccount();
             if (account == null) return;
-            _store = new SmartStore();
-            SmartStore.CreateMetaTables();
+            _store = SmartStore.GetSmartStore(account);
             _syncManager = SyncManager.GetInstance(account);
             Contacts = new SortedObservableCollection<ContactObject>();
             FilteredContacts = new SortedObservableCollection<ContactObject>();

@@ -46,9 +46,8 @@ namespace Salesforce.SDK.SmartStore.Store
         [ClassInitialize]
         public static void TestSetup(TestContext context)
         {
-            Store = new SmartStore();
+            Store = SmartStore.GetGlobalSmartStore();
             Store.ResetDatabase();
-            SmartStore.CreateMetaTables();
             Store.RegisterSoup(TEST_SOUP, new[] {new IndexSpec("key", SmartStoreType.SmartString)});
         }
 
