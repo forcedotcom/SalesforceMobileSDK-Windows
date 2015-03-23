@@ -37,10 +37,10 @@ using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Windows.Foundation.Diagnostics;
-
 #if WINDOWS_PHONE_APP
 using Windows.Phone.UI.Input;
 #endif
+using Salesforce.SDK.Exceptions;
 
 namespace Salesforce.SDK.App
 {
@@ -144,7 +144,7 @@ namespace Salesforce.SDK.App
                 await OAuth2.RefresAuthToken(account);
                 OAuth2.RefreshCookies();
             }
-            catch (WebException ex)
+            catch (OAuthException ex)
             {
                 PlatformAdapter.SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
                 PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
