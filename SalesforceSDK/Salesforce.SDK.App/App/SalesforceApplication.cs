@@ -141,7 +141,7 @@ namespace Salesforce.SDK.App
             {
                 //Assign this to a var as ref requires it.
                 var account = AccountManager.GetAccount();
-                await OAuth2.TryRefreshAuthToken(ref account);
+                await OAuth2.RefresAuthToken(account);
                 OAuth2.RefreshCookies();
             }
             catch (WebException ex)

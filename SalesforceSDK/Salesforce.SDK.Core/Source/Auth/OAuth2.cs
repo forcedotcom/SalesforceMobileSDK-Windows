@@ -39,6 +39,7 @@ using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
 using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
@@ -311,11 +312,6 @@ namespace Salesforce.SDK.Auth
             return await c.ExecuteAndDeserialize<AuthResponse>();
         }
 
-        public static Task<bool> TryRefreshAuthToken(ref Account account)
-        {
-            return TryRefresAuthToken(account);
-        }
-
         /// <summary>
         ///     Async method for refreshing the token, persisting the data in the encrypted settings and returning the updated
         ///     account
@@ -323,7 +319,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
-        private static async Task<bool> TryRefresAuthToken(Account account)
+        public static async Task<Account> RefresAuthToken(Account account)
         {
             if (account != null)
             {
@@ -333,17 +329,28 @@ namespace Salesforce.SDK.Auth
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
                     AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+                    throw new Exception();
+                }
+                catch (WebException ex)
+                {
+                    PlatformAdapter.SendToCustomLogger(
+                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                    Debug.WriteLine("Error refreshing token");
+                    throw new OAuthException(ex.Message, ex.Status);
                 }
                 catch (Exception ex)
                 {
-                    PlatformAdapter.SendToCustomLogger("OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger(
+                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
                     PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
-                    return false;
+                    throw new OAuthException(ex.Message, ex.InnerException);
                 }
             }
-            return true;
+            return account;
         }
+
 
         /// <summary>
         ///     Async method to revoke the user's refresh token (i.e. do a server-side logout for the authenticated user)

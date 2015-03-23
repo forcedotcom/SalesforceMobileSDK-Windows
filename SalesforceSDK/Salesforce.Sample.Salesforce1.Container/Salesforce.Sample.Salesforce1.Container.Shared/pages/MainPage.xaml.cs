@@ -30,6 +30,7 @@
 using Windows.Storage;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Native;
 using System;
 using Windows.UI.Xaml;
@@ -70,22 +71,22 @@ namespace Salesforce.Sample.Salesforce1.Container
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             Account account = AccountManager.GetAccount();
-            var success = false;
             if (account != null)
             {
                 if (!oneView.CanGoBack)
                 {
-                    if(await OAuth2.TryRefreshAuthToken(ref account))
+                    try
                     {
+                        account = await OAuth2.RefresAuthToken(account);
                         string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
-                            LoginOptions.DefaultDisplayType,
-                            account.AccessToken, GetPage(account));
-                    
+                                LoginOptions.DefaultDisplayType,
+                                account.AccessToken, GetPage(account));
+
                         oneView.Navigate(new Uri(startPage));
                     }
-                    else
+                    catch (OAuthException ex)
                     {
-                        await SDKManager.GlobalClientManager.Logout();
+                        SDKManager.GlobalClientManager.Logout();
                     }
                 }
             }

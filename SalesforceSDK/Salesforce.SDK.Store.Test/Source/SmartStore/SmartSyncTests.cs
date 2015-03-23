@@ -78,7 +78,7 @@ namespace Salesforce.SDK.SmartStore.Store
             Account account = await AccountManager.CreateNewAccount(options, response);
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
-            await OAuth2.TryRefreshAuthToken(ref account);
+            await OAuth2.RefresAuthToken(account);
             _smartStore = new SmartStore();
             _smartStore.ResetDatabase();
             SmartStore.CreateMetaTables();
