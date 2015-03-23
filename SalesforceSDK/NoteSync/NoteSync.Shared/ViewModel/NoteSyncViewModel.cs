@@ -77,8 +77,7 @@ namespace NoteSync.ViewModel
         {
             Account account = AccountManager.GetAccount();
             if (account == null) return;
-            _store = new SmartStore();
-            SmartStore.CreateMetaTables();
+            _store = SmartStore.GetSmartStore();
             _syncManager = SyncManager.GetInstance(account);
             Notes = new SortedObservableCollection<NoteObject>();
             FilteredNotes = new SortedObservableCollection<NoteObject>();

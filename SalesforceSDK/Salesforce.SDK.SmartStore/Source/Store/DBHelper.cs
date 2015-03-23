@@ -380,12 +380,6 @@ namespace Salesforce.SDK.SmartStore.Store
             }
         }
 
-        public void DeleteDatabase(string databaseFile)
-        {
-            _instances.Remove(DatabasePath);
-            _sqlConnection.Dispose();
-        }
-
         public string GetSoupTableName(string soupName)
         {
             string soupTableName = GetCachedTableName(soupName);
@@ -510,6 +504,9 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 _sqlConnection.Dispose();
             }
+            _instances.Remove(DatabasePath);
+            SoupNameToIndexSpecsMap.Clear();
+            SoupNameToTableNamesMap.Clear();
         }
     }
 }
