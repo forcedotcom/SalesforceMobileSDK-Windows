@@ -230,10 +230,9 @@ namespace Salesforce.SDK.Source.Pages
 
         private void DisplayErrorDialog(string message)
         {
-            MessageContent.Text = message;
-
             Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
+                MessageContent.Text = message;
                 TryShowFlyout(MessageFlyout, ApplicationLogo);
             });
         }
@@ -380,18 +379,16 @@ namespace Salesforce.SDK.Source.Pages
             SDKManager.ServerConfiguration.SaveConfig();
         }
 
-        private bool TryShowFlyout(Flyout flyout, FrameworkElement location)
+        private void TryShowFlyout(Flyout flyout, FrameworkElement location)
         {
             try
             {
                 flyout.ShowAt(location);
-                return true;
             }
             catch (ArgumentException ex)
             {
                 Debug.WriteLine("Error displaying flyout");
                 PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Error);
-                return false;
             }
         }
     }
