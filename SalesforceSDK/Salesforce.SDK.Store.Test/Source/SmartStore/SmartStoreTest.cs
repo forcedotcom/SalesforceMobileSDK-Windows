@@ -55,6 +55,11 @@ namespace Salesforce.SDK.SmartStore.Store
         public async static Task TestSetup(TestContext context)
         {
             Store = SmartStore.GetGlobalSmartStore();
+            SetupData();
+        }
+
+        private static void SetupData()
+        {
             Store.ResetDatabase();
 
             Store.RegisterSoup(EMPLOYEES_SOUP, new[]
@@ -106,6 +111,10 @@ namespace Salesforce.SDK.SmartStore.Store
             catch (SQLiteException)
             {
                 // we're good, table doesn't exist
+            }
+            finally
+            {
+                SetupData();
             }
         }
 
