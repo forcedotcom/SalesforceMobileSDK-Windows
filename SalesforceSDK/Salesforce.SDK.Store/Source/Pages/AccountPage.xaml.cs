@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
@@ -43,9 +44,12 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
 using Windows.Foundation.Diagnostics;
+using Windows.UI.Core;
 
 namespace Salesforce.SDK.Source.Pages
 {
+    // TODO: use MVVM pattern
+
     /// <summary>
     ///     Phone based page for displaying accounts.
     /// </summary>
@@ -197,7 +201,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void AddServerFlyout_Closed(object sender, object e)
         {
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void ServerFlyout_Closed(object sender, object e)
@@ -220,14 +224,18 @@ namespace Salesforce.SDK.Source.Pages
             else
             {
                 ServerFlyout.Placement = FlyoutPlacementMode.Bottom;
-                ServerFlyout.ShowAt(ApplicationLogo);
+                TryShowFlyout(ServerFlyout, ApplicationLogo);
             }
         }
 
         private void DisplayErrorDialog(string message)
         {
             MessageContent.Text = message;
-            MessageFlyout.ShowAt(ApplicationLogo);
+
+            Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                TryShowFlyout(MessageFlyout, ApplicationLogo);
+            });
         }
 
         private async void DoAuthFlow(LoginOptions loginOptions)
@@ -297,7 +305,7 @@ namespace Salesforce.SDK.Source.Pages
         {
             HostName.Text = "";
             HostAddress.Text = "";
-            AddServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(AddServerFlyout, ApplicationLogo);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -319,12 +327,12 @@ namespace Salesforce.SDK.Source.Pages
             };
             SDKManager.ServerConfiguration.AddServer(server);
 
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
@@ -370,6 +378,21 @@ namespace Salesforce.SDK.Source.Pages
         {
             SDKManager.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
             SDKManager.ServerConfiguration.SaveConfig();
+        }
+
+        private bool TryShowFlyout(Flyout flyout, FrameworkElement location)
+        {
+            try
+            {
+                flyout.ShowAt(location);
+                return true;
+            }
+            catch (ArgumentException ex)
+            {
+                Debug.WriteLine("Error displaying flyout");
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Error);
+                return false;
+            }
         }
     }
 }
