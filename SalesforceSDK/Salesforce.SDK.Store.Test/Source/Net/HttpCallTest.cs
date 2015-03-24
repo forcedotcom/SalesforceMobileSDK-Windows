@@ -26,7 +26,7 @@
  */
 
 using System;
-using System.Net;
+using Windows.Web.Http;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 
 namespace Salesforce.SDK.Net
@@ -67,7 +67,7 @@ namespace Salesforce.SDK.Net
             Assert.IsTrue(call.Success);
             Assert.IsNull(call.Error);
             Assert.IsTrue(call.ResponseBody.Contains("Google Search"));
-            Assert.AreEqual(HttpStatusCode.OK, call.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Ok, call.StatusCode);
         }
 
         [TestMethod]

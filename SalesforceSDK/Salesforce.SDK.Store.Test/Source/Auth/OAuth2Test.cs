@@ -47,7 +47,7 @@ namespace Salesforce.SDK.Auth
             var loginOptions = new LoginOptions(loginUrl, clientId, callbackUrl, scopes);
 
             string expectedUrl =
-                "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test://sfdc&scope=web%20api%20refresh_token";
+                "https://login.salesforce.com/services/oauth2/authorize?display=touch&response_type=token&client_id=TEST_CLIENT_ID&redirect_uri=test%3A%2F%2Fsfdc&scope=web+api+refresh_token";
             string actualUrl = OAuth2.ComputeAuthorizationUrl(loginOptions);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong authorization url");
         }
@@ -60,17 +60,17 @@ namespace Salesforce.SDK.Auth
             string url = "https://target.url";
 
             string expectedUrl =
-                "https://fake.instance/secur/frontdoor.jsp?display=touch&sid=FAKE_ACCESS_TOKEN&retURL=https://target.url";
+                "https://fake.instance/secur/frontdoor.jsp?display=touch&sid=FAKE_ACCESS_TOKEN&retURL=https%3A%2F%2Ftarget.url";
             string actualUrl = OAuth2.ComputeFrontDoorUrl(instanceUrl, accessToken, url);
             Assert.AreEqual(expectedUrl, actualUrl, "Wrong front door url");
         }
 
 
         [TestMethod]
-        public void TestRefreshAuthToken()
+        public async Task TestRefreshAuthToken()
         {
             // Try describe without being authenticated, expect 401
-            Assert.AreEqual(HttpStatusCode.Unauthorized, DoDescribe(null));
+            Assert.AreEqual(HttpStatusCode.Unauthorized, await DoDescribe(null));
 
             // Get auth token (through refresh)
             var loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
@@ -78,11 +78,11 @@ namespace Salesforce.SDK.Auth
                 OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
-            Assert.AreEqual(HttpStatusCode.Ok, DoDescribe(refreshResponse.AccessToken));
+            Assert.AreEqual(HttpStatusCode.Ok, await DoDescribe(refreshResponse.AccessToken));
         }
 
         [TestMethod]
-        public void testCallIdentityService()
+        public void TestCallIdentityService()
         {
             // Get auth token and identity url (through refresh)
             var loginOptions = new LoginOptions(TestCredentials.LOGIN_URL, TestCredentials.CLIENT_ID, null, null);
@@ -94,7 +94,7 @@ namespace Salesforce.SDK.Auth
                 OAuth2.CallIdentityService(refreshResponse.IdentityUrl, refreshResponse.AccessToken).Result;
 
             // Check username
-            Assert.AreEqual("sdktest@cs0.com", identityResponse.UserName);
+            Assert.AreEqual("sdktest@cs1.com", identityResponse.UserName);
         }
 
         [TestMethod]
@@ -140,7 +140,7 @@ namespace Salesforce.SDK.Auth
 
         private async Task<HttpStatusCode> DoDescribe(string authToken)
         {
-            string describeAccountPath = "/services/data/v26.0/sobjects/Account/describe";
+            string describeAccountPath = "/services/data/v33.0/sobjects/Account/describe";
             var headers = new HttpCallHeaders(authToken, new Dictionary<string, string>());
             HttpCall result =
                 await HttpCall.CreateGet(headers, TestCredentials.INSTANCE_SERVER + describeAccountPath).Execute();
