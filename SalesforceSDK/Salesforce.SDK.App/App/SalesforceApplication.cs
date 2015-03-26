@@ -158,6 +158,7 @@ namespace Salesforce.SDK.App
 
         protected override void OnActivated(IActivatedEventArgs args)
         {
+            base.OnActivated(args);
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnActivated(args);
             var rootFrame = Window.Current.Content as Frame;
             if (rootFrame != null)
@@ -168,6 +169,7 @@ namespace Salesforce.SDK.App
 
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            base.OnLaunched(e);
             PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
         }
     }
