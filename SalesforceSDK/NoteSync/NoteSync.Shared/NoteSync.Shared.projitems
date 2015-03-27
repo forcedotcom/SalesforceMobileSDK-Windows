@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\NoteCard.xaml.cs">
       <DependentUpon>NoteCard.xaml</DependentUpon>
     </Compile>
-    <Compile Include="$(MSBuildThisFileDirectory)Data\ContentSoqlSyncTarget.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ContentSoqlSyncDownTarget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)settings\Config.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\NoteObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModel\NoteSyncViewModel.cs" />

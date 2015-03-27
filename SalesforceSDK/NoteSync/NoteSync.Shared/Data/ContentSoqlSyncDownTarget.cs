@@ -41,7 +41,7 @@ using Salesforce.SDK.SmartSync.Util;
 
 namespace NoteSync.Data
 {
-    public class ContentSoqlSyncTarget : SoqlSyncTarget
+    public class ContentSoqlSyncDownTarget : SoqlSyncDownTarget
     {
         public const string RequestTemplate = "<?xml version=\"1.0\"?>" +
                                               "<se:Envelope xmlns:se=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
@@ -70,19 +70,19 @@ namespace NoteSync.Data
 
         private string _queryLocator;
 
-        public ContentSoqlSyncTarget(String query) : base(query)
+        public ContentSoqlSyncDownTarget(String query) : base(query)
         {
             QueryType = QueryTypes.Custom;
             _queryLocator = null;
         }
 
-        public new static SyncTarget FromJson(JObject target)
+        public new static SyncDownTarget FromJson(JObject target)
         {
             if (target == null)
                 return null;
 
             var query = target.ExtractValue<string>(Constants.Query);
-            return new ContentSoqlSyncTarget(query);
+            return new ContentSoqlSyncDownTarget(query);
         }
 
         /// <summary>
@@ -90,16 +90,16 @@ namespace NoteSync.Data
         /// </summary>
         /// <param name="soql"></param>
         /// <returns></returns>
-        public new static ContentSoqlSyncTarget TargetForSOQLSyncDown(string soql)
+        public new static ContentSoqlSyncDownTarget TargetForSOQLSyncDown(string soql)
         {
-            return new ContentSoqlSyncTarget(soql);
+            return new ContentSoqlSyncDownTarget(soql);
         }
 
         /// <summary>
         ///     return json representation of target
         /// </summary>
         /// <returns></returns>
-        public override JObject AsJson()
+        public new JObject AsJson()
         {
             JObject target = base.AsJson();
             target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;

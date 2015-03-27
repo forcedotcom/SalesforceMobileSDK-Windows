@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -42,95 +42,38 @@ namespace Salesforce.SDK.SmartSync.Model
     /// </summary>
     public abstract class SyncTarget
     {
-        public enum QueryTypes
-        {
-            Mru,
-            Sosl,
-            Soql,
-            Custom
-        }
-
         public const string WindowsImpl = "windowsImpl";
         public const string WindowsImplType = "windowsImplType";
+        public const string IdFieldName = "idFieldName";
+        public const string ModificationDateFieldName = "modificationDateFieldName";
 
-        public QueryTypes QueryType { protected set; get; }
-        public int TotalSize { protected set; get; } // set during fetch
+        private readonly string _idFieldName;
+        private readonly string _modificationDateFieldName;
 
-        /// <summary>
-        ///     Build SyncTarget from json
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static SyncTarget FromJson(JObject target)
+        protected SyncTarget()
         {
-            if (target == null) return null;
-            var tempTarget = target.ExtractValue<string>(Constants.QueryType);
-            var queryType = (QueryTypes) Enum.Parse(typeof (QueryTypes), tempTarget);
-            switch (queryType)
-            {
-                case QueryTypes.Mru:
-                    return MruSyncTarget.FromJson(target);
-                case QueryTypes.Soql:
-                    return SoqlSyncTarget.FromJson(target);
-                case QueryTypes.Sosl:
-                    return SoslSyncTarget.FromJson(target);
-                default:
-                    JToken impl;
-                    if (target.TryGetValue(WindowsImpl, out impl))
-                    {
-                        JToken implType;
-                        if (target.TryGetValue(WindowsImplType, out implType))
-                        {
-                            try
-                            {
-                                Assembly assembly = Assembly.Load(new AssemblyName(impl.ToObject<string>()));
-                                Type type = assembly.GetType(implType.ToObject<string>());
-                                if (type.GetTypeInfo().IsSubclassOf(typeof (SyncTarget)))
-                                {
-                                    MethodInfo method = type.GetTypeInfo().GetDeclaredMethod("FromJson");
-                                    return (SyncTarget) method.Invoke(type, new object[] {target});
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                throw new SmartStoreException("Invalid SyncTarget");
-                            }
-                        }
-                    }
-                    break;
-            }
-            throw new SmartStoreException("Could not generate SyncTarget from json target");
+            _idFieldName = Constants.Id;
+            _modificationDateFieldName = Constants.LastModifiedDate;
         }
 
-        public static string AddFilterForReSync(string query, long maxTimeStamp)
+        protected SyncTarget(JObject target)
         {
-            if (maxTimeStamp != SyncManager.Unchanged)
-            {
-                string extraPredicate = Constants.LastModifiedDate + " > " +
-                                        new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
-                if (query.Contains(" where "))
-                {
-                    var reg = new Regex("( where )");
-                    query = reg.Replace(query, "$1 where " + extraPredicate + " and ", 1);
-                }
-                else
-                {
-                    string pred = "$1 where " + extraPredicate;
-                    var reg = new Regex("( from[ ]+[^ ]*)");
-                    query = reg.Replace(query, pred, 1);
-                }
-            }
-            return query;
+            _idFieldName = target != null ? target.ExtractValue<string>(IdFieldName) : Constants.Id;
+            _modificationDateFieldName = target != null ? target.ExtractValue<string>(ModificationDateFieldName) : Constants.LastModifiedDate;
         }
 
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
-        public abstract JObject AsJson();
+        public JObject AsJson()
+        {
+            var target = new JObject();
+            target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
+            target[WindowsImplType] = GetType().GetTypeInfo().Assembly.FullName;
+            target[IdFieldName] = _idFieldName;
+            target[ModificationDateFieldName] = _modificationDateFieldName;
 
-        public abstract Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp);
-
-        public abstract Task<JArray> ContinueFetch(SyncManager syncManager);
-
+            return target;
+        }
     }
 }
