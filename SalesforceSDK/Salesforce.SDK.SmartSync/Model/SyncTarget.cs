@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+ * Copyright (c) 2014-2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -65,11 +65,11 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
-        public JObject AsJson()
+        public virtual JObject AsJson()
         {
             var target = new JObject();
             target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
-            target[WindowsImplType] = GetType().GetTypeInfo().Assembly.FullName;
+            target[WindowsImplType] = GetType().GetTypeInfo().FullName;
             target[IdFieldName] = _idFieldName;
             target[ModificationDateFieldName] = _modificationDateFieldName;
 

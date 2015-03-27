@@ -77,11 +77,11 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
-        public new JObject AsJson()
+        public override JObject AsJson()
         {
             var target = base.AsJson();
-            if (FieldList != null) target.Add(Constants.FieldList, new JArray(FieldList));
-            if (!String.IsNullOrWhiteSpace(ObjectType)) target.Add(Constants.SObjectType, ObjectType);
+            if (FieldList != null) target[Constants.FieldList] = new JArray(FieldList);
+            if (!String.IsNullOrWhiteSpace(ObjectType)) target[Constants.SObjectType] = ObjectType;
             return target;
         }
 

@@ -72,10 +72,10 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
-        public new JObject AsJson()
+        public override JObject AsJson()
         {
             var target = base.AsJson();
-            if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
+            if (!String.IsNullOrWhiteSpace(Query)) target[Constants.Query] = Query;
             return target;
         }
 
