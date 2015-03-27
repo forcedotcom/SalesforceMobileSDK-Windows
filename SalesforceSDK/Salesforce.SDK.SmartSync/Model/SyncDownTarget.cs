@@ -64,40 +64,27 @@ namespace Salesforce.SDK.SmartSync.Model
         public static SyncDownTarget FromJson(JObject target)
         {
             if (target == null) return null;
-            var tempTarget = target.ExtractValue<string>(Constants.QueryType);
-            var queryType = (QueryTypes)Enum.Parse(typeof(QueryTypes), tempTarget);
-            switch (queryType)
+            JToken impl;
+            if (target.TryGetValue(WindowsImpl, out impl))
             {
-                case QueryTypes.Mru:
-                    return new MruSyncDownTarget(target);
-                case QueryTypes.Soql:
-                    return new SoqlSyncDownTarget(target);
-                case QueryTypes.Sosl:
-                    return new SoslSyncDownTarget(target);
-                default:
-                    JToken impl;
-                    if (target.TryGetValue(WindowsImpl, out impl))
+                JToken implType;
+                if (target.TryGetValue(WindowsImplType, out implType))
+                {
+                    try
                     {
-                        JToken implType;
-                        if (target.TryGetValue(WindowsImplType, out implType))
+                        Assembly assembly = Assembly.Load(new AssemblyName(impl.ToObject<string>()));
+                        Type type = assembly.GetType(implType.ToObject<string>());
+                        if (type.GetTypeInfo().IsSubclassOf(typeof(SyncTarget)))
                         {
-                            try
-                            {
-                                Assembly assembly = Assembly.Load(new AssemblyName(impl.ToObject<string>()));
-                                Type type = assembly.GetType(implType.ToObject<string>());
-                                if (type.GetTypeInfo().IsSubclassOf(typeof(SyncTarget)))
-                                {
-                                    MethodInfo method = type.GetTypeInfo().GetDeclaredMethod("FromJson");
-                                    return (SyncDownTarget)method.Invoke(type, new object[] { target });
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                throw new SmartStoreException("Invalid SyncDownTarget");
-                            }
+                            MethodInfo method = type.GetTypeInfo().GetDeclaredMethod("FromJson");
+                            return (SyncDownTarget)method.Invoke(type, new object[] { target });
                         }
                     }
-                    break;
+                    catch (Exception)
+                    {
+                        throw new SmartStoreException("Invalid SyncDownTarget");
+                    }
+                }
             }
             throw new SmartStoreException("Could not generate SyncDownTarget from json target");
         }
@@ -123,10 +110,10 @@ namespace Salesforce.SDK.SmartSync.Model
             return query;
         }
 
-        public new JObject AsJson()
+        public override JObject AsJson()
         {
             var target = base.AsJson();
-            target.Add(Type, QueryType.ToString());
+            target[Type] = QueryType.ToString();
             target[QueryString] = Query;
             return target;
         }

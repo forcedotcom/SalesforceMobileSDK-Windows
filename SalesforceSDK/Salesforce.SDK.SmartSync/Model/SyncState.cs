@@ -211,8 +211,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncTotalSize, TotalSize},
                 {Constants.SyncMaxTimeStamp, MaxTimeStamp}
             };
-            if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJson());
-            if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJson());
+            if (Target != null) sync[Constants.SyncTarget] = Target.AsJson();
+            if (Options != null) sync[Constants.SyncOptions] = Options.AsJson();
             return sync;
         }
 

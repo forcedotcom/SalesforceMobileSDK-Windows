@@ -57,7 +57,7 @@ namespace Salesforce.SDK.SmartSync.Model
             throw new SmartStoreException("Could not generate SyncUpTarget from json target");
         }
 
-        public new JObject AsJson()
+        public override JObject AsJson()
         {
             var target = new JObject();
             target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
