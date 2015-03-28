@@ -39,9 +39,14 @@ namespace Salesforce.SDK.SmartSync.Model
     /// <summary>
     ///     Target for sync u i.e. set of objects to download from server
     /// </summary>
-    public class SoslSyncTarget : SyncTarget
+    public class SoslSyncDownTarget : SyncDownTarget
     {
- private SoslSyncTarget(string query)
+        public SoslSyncDownTarget(JObject target) : base(target)
+        {
+            this.Query = target.ExtractValue<string>(Constants.Query);
+        }
+
+        private SoslSyncDownTarget(string query)
         {
             QueryType = QueryTypes.Sosl;
             Query = query;
@@ -56,12 +61,12 @@ namespace Salesforce.SDK.SmartSync.Model
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public new static SyncTarget FromJson(JObject target)
+        public new static SyncDownTarget FromJson(JObject target)
         {
             if (target == null) return null;
 
             var query = target.ExtractValue<string>(Constants.Query);
-            return new SoslSyncTarget(query);
+            return new SoslSyncDownTarget(query);
         }
 
         /// <summary>
@@ -69,8 +74,8 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <returns>json representation of target</returns>
         public override JObject AsJson()
         {
-            var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
-            if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
+            var target = base.AsJson();
+            if (!String.IsNullOrWhiteSpace(Query)) target[Constants.Query] = Query;
             return target;
         }
 
@@ -96,9 +101,9 @@ namespace Salesforce.SDK.SmartSync.Model
         /// </summary>
         /// <param name="soql"></param>
         /// <returns></returns>
-        public static SyncTarget TargetForSOSLSyncDown(string soql)
+        public static SyncDownTarget TargetForSOSLSyncDown(string soql)
         {
-            return new SoslSyncTarget(soql);
+            return new SoslSyncDownTarget(soql);
         }
     }
 }

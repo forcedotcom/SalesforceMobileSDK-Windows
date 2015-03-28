@@ -38,16 +38,23 @@ namespace Salesforce.SDK.SmartSync.Model
     /// <summary>
     ///     Target for sync u i.e. set of objects to download from server
     /// </summary>
-    public class SoqlSyncTarget : SyncTarget
+    public class SoqlSyncDownTarget : SyncDownTarget
     {
-        protected SoqlSyncTarget(string query)
+        public const string QueryString = "query";
+        public string Query { protected set; get; }
+        protected SoqlSyncDownTarget(string query) : base(query)
         {
             QueryType = QueryTypes.Soql;
             Query = query;
         }
 
 
-        public string Query { protected set; get; }
+        public SoqlSyncDownTarget(JObject target) : base(target)
+        {
+            this.Query = target.ExtractValue<string>(QueryString);
+        }
+
+        //public string Query { protected set; get; }
         public string NextRecordsUrl { protected set; get; }
 
         /// <summary>
@@ -55,12 +62,12 @@ namespace Salesforce.SDK.SmartSync.Model
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        public new static SyncTarget FromJson(JObject target)
+        public new static SyncDownTarget FromJson(JObject target)
         {
             if (target == null) return null;
 
             var query = target.ExtractValue<string>(Constants.Query);
-            return new SoqlSyncTarget(query);
+            return new SoqlSyncDownTarget(query);
         }
 
         /// <summary>
@@ -68,8 +75,8 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <returns>json representation of target</returns>
         public override JObject AsJson()
         {
-            var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
-            if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
+            var target = base.AsJson();
+            if (!String.IsNullOrWhiteSpace(Query)) target[Constants.Query] = Query;
             return target;
         }
 
@@ -109,9 +116,9 @@ namespace Salesforce.SDK.SmartSync.Model
         /// </summary>
         /// <param name="soql"></param>
         /// <returns></returns>
-        public static SyncTarget TargetForSOQLSyncDown(string soql)
+        public static SyncDownTarget TargetForSOQLSyncDown(string soql)
         {
-            return new SoqlSyncTarget(soql);
+            return new SoqlSyncDownTarget(soql);
         }
     }
 }

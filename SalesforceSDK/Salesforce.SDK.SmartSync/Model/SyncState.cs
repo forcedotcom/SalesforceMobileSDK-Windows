@@ -26,6 +26,7 @@
  */
 
 using System;
+using Windows.ApplicationModel.Contacts;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartStore.Store;
 using Salesforce.SDK.SmartSync.Util;
@@ -58,7 +59,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public long Id { private set; get; }
         public SyncTypes SyncType { private set; get; }
-        public SyncTarget Target { private set; get; } // null for sync-up
+        public SyncTarget Target { private set; get; }
         public SyncOptions Options { private set; get; } // null for sync-down
         public String SoupName { private set; get; }
         public SyncStatusTypes Status { set; get; }
@@ -96,7 +97,7 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <param name="options"></param>
         /// <param name="soupName"></param>
         /// <returns></returns>
-        public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncTarget target, string soupName, SyncOptions options = null)
+        public static SyncState CreateSyncDown(SmartStore.Store.SmartStore store, SyncDownTarget target, string soupName, SyncOptions options = null)
         {
             var sync = new JObject
             {
@@ -106,7 +107,7 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1},
-                {Constants.SyncMaxTimeStamp, -1}
+                {Constants.SyncMaxTimeStamp, -1},
             };
             if (options != null)
             {
@@ -125,10 +126,11 @@ namespace Salesforce.SDK.SmartSync.Model
         ///     Create sync state in database for a sync up and return corresponding SyncState
         /// </summary>
         /// <param name="store"></param>
+        /// <param name="target"></param>
         /// <param name="options"></param>
         /// <param name="soupName"></param>
         /// <returns></returns>
-        public static SyncState CreateSyncUp(SmartStore.Store.SmartStore store, SyncOptions options, string soupName)
+        public static SyncState CreateSyncUp(SmartStore.Store.SmartStore store, SyncUpTarget target, SyncOptions options, string soupName)
         {
             var sync = new JObject
             {
@@ -138,7 +140,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncStatus, SyncStatusTypes.New.ToString()},
                 {Constants.SyncProgress, 0},
                 {Constants.SyncTotalSize, -1},
-                {Constants.SyncMaxTimeStamp, -1}
+                {Constants.SyncMaxTimeStamp, -1},
+                {Constants.SyncTarget, target.AsJson()}
             };
             JObject upserted = store.Upsert(Constants.SyncsSoup, sync);
             if (upserted != null)
@@ -157,15 +160,17 @@ namespace Salesforce.SDK.SmartSync.Model
         public static SyncState FromJson(JObject sync)
         {
             if (sync == null) return null;
+            var jsonTarget = sync.ExtractValue<JObject>(Constants.SyncTarget);
+            var syncType = (SyncTypes)Enum.Parse(typeof(SyncTypes), sync.ExtractValue<string>(Constants.SyncType));
             var state = new SyncState
             {
                 Id = sync.ExtractValue<long>(SmartStore.Store.SmartStore.SoupEntryId),
-                Target = SyncTarget.FromJson(sync.ExtractValue<JObject>(Constants.SyncTarget)),
+                Target = (syncType == SyncTypes.SyncDown ? (SyncTarget) SyncDownTarget.FromJson(jsonTarget) : SyncUpTarget.FromJSON(jsonTarget)),
                 Options = SyncOptions.FromJson(sync.ExtractValue<JObject>(Constants.SyncOptions)),
                 SoupName = sync.ExtractValue<string>(Constants.SyncSoupName),
                 Progress = sync.ExtractValue<int>(Constants.SyncProgress),
                 TotalSize = sync.ExtractValue<int>(Constants.SyncTotalSize),
-                SyncType = (SyncTypes) Enum.Parse(typeof (SyncTypes), sync.ExtractValue<string>(Constants.SyncType)),
+                SyncType = syncType,
                 Status =
                     (SyncStatusTypes)
                         Enum.Parse(typeof (SyncStatusTypes), sync.ExtractValue<string>(Constants.SyncStatus)),
@@ -206,8 +211,8 @@ namespace Salesforce.SDK.SmartSync.Model
                 {Constants.SyncTotalSize, TotalSize},
                 {Constants.SyncMaxTimeStamp, MaxTimeStamp}
             };
-            if (Target != null) sync.Add(Constants.SyncTarget, Target.AsJson());
-            if (Options != null) sync.Add(Constants.SyncOptions, Options.AsJson());
+            if (Target != null) sync[Constants.SyncTarget] = Target.AsJson();
+            if (Options != null) sync[Constants.SyncOptions] = Options.AsJson();
             return sync;
         }
 

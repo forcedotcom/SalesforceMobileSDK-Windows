@@ -139,7 +139,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                         .Limit(Limit)
                         .Build();
                 SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-                SyncTarget target = SoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
+                SyncDownTarget target = SoqlSyncDownTarget.TargetForSOQLSyncDown(soqlQuery);
                 try
                 {
                     SyncState sync = _syncManager.SyncDown(target, ContactSoup, HandleSyncUpdate);
@@ -165,7 +165,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         {
             RegisterSoup();
             SyncOptions options = SyncOptions.OptionsForSyncUp(ContactObject.ContactFields.ToList(), SyncState.MergeModeOptions.LeaveIfChanged);
-            _syncManager.SyncUp(options, ContactSoup, HandleSyncUpdate);
+            var target = new SyncUpTarget();
+            _syncManager.SyncUp(target, options, ContactSoup, HandleSyncUpdate);
         }
 
         public async void DeleteObject(ContactObject contact)
