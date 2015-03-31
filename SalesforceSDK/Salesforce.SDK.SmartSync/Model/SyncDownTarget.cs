@@ -161,15 +161,15 @@ namespace Salesforce.SDK.SmartSync.Model
                 var jObj = t.ToObject<JObject>();
                 if (jObj != null)
                 {
-                    var date = jObj.ExtractValue<DateTime>(Constants.LastModifiedDate);
-                    if (date == null)
+                    var date = jObj.ExtractValue<string>(GetModificationDate());
+                    if (String.IsNullOrWhiteSpace(date))
                     {
                         maxTimeStamp = Unchanged;
                         break;
                     }
                     try
                     {
-                        long timeStamp = date.Ticks;
+                        long timeStamp = Convert.ToDateTime(date).Ticks;
                         maxTimeStamp = Math.Max(timeStamp, maxTimeStamp);
                     }
                     catch (Exception)
