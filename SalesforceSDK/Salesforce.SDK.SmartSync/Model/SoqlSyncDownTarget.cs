@@ -111,14 +111,5 @@ namespace Salesforce.SDK.SmartSync.Model
             return records;
         }
 
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        //public static SyncDownTarget TargetForSOQLSyncDown(string soql)
-        //{
-        //    return new SoqlSyncDownTarget(soql);
-        //}
     }
 }
