@@ -327,7 +327,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
             // Create sync
             SyncDownTarget target =
-                SoqlSyncDownTarget.TargetForSOQLSyncDown("SELECT Id, Name, " + Constants.LastModifiedDate + " FROM Account WHERE Id IN " +
+               new SoqlSyncDownTarget("SELECT Id, Name, " + Constants.LastModifiedDate + " FROM Account WHERE Id IN " +
                                                  idsClause);
             SyncOptions options = SyncOptions.OptionsForSyncDown(mergeMode);
             SyncState sync = SyncState.CreateSyncDown(_smartStore, target, AccountsSoup, options);

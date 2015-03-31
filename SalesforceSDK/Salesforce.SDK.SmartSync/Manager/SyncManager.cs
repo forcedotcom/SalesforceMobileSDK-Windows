@@ -45,7 +45,6 @@ namespace Salesforce.SDK.SmartSync.Manager
     public class SyncManager
     {
         public const int PageSize = 2000;
-        public const int Unchanged = -1;
         public const string Local = "__local__";
         public const string LocallyCreated = "__locally_created__";
         public const string LocallyUpdated = "__locally_updated__";
@@ -221,7 +220,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             catch (Exception fail)
             {
                 Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
-                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, Unchanged, callback);
+                UpdateSync(sync, SyncState.SyncStatusTypes.Failed, SyncDownTarget.Unchanged, callback);
             }
         }
 
@@ -293,8 +292,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             // getting type and id
 
             string objectType = SmartStore.Store.SmartStore.Project(record, Constants.SobjectType).ToString();
-            var objectId = record.ExtractValue<string>(Constants.Id);
-            var lastModifiedDate = record.ExtractValue<DateTime>(Constants.LastModifiedDate).Ticks;
+            var objectId = record.ExtractValue<string>(target.GetId());
+            var lastModifiedDate = record.ExtractValue<DateTime>(target.GetModificationDate()).Ticks;
 
             /*
              * Check if we're attempting to update a record that has been updated on the server after the client update.
@@ -312,8 +311,8 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 foreach (
                     string fieldName in
-                        fieldList.Where(fieldName => !Constants.Id.Equals(fieldName, StringComparison.CurrentCulture) &&
-                            !Constants.LastModifiedDate.Equals(fieldName, StringComparison.CurrentCulture) &&
+                        fieldList.Where(fieldName => !target.GetId().Equals(fieldName, StringComparison.CurrentCulture) &&
+                            !target.GetModificationDate().Equals(fieldName, StringComparison.CurrentCulture) &&
                             !Constants.SystemModstamp.Equals(fieldName, StringComparison.CurrentCulture)))
                 {
                     fields.Add(fieldName, record[fieldName]);
@@ -326,7 +325,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     String recordServerId = await target.CreateOnServerAsync(this, objectType, fields);
                     if (recordServerId != null)
                     {
-                        record[Constants.Id] = recordServerId;
+                        record[target.GetId()] = recordServerId;
                         CleanAndSaveRecord(soupName, record);
                     }
                     break;
@@ -372,7 +371,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 SaveRecordsToSmartStore(sync.SoupName, records, sync.MergeMode);
                 countSaved += records.Count;
-                maxTimeStamp = Math.Max(maxTimeStamp, GetMaxTimeStamp(records));
+                maxTimeStamp = Math.Max(maxTimeStamp, target.GetMaxTimeStamp(records));
                 if (countSaved < totalSize)
                 {
                     UpdateSync(sync, SyncState.SyncStatusTypes.Running, countSaved * 100 / totalSize, callback);
@@ -453,7 +452,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (sync == null)
                 return;
             sync.Status = status;
-            if (progress != Unchanged)
+            if (progress != SyncDownTarget.Unchanged)
             {
                 sync.Progress = progress;
             }
@@ -471,7 +470,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         private long GetMaxTimeStamp(JArray jArray)
         {
-            long maxTimeStamp = Unchanged;
+            long maxTimeStamp = SyncDownTarget.Unchanged;
             foreach (JToken t in jArray)
             {
                 var jObj = t.ToObject<JObject>();
@@ -480,7 +479,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     var date = jObj.ExtractValue<DateTime>(Constants.LastModifiedDate);
                     if (date == null)
                     {
-                        maxTimeStamp = Unchanged;
+                        maxTimeStamp = SyncDownTarget.Unchanged;
                         break;
                     }
                     try
@@ -491,7 +490,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                     catch (Exception)
                     {
                         Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse LastModifiedDate");
-                        maxTimeStamp = Unchanged;
+                        maxTimeStamp = SyncDownTarget.Unchanged;
                         break;
                     }
                 }

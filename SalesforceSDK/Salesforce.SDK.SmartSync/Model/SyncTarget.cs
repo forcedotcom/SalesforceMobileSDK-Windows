@@ -25,14 +25,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.SmartStore.Store;
-using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.SmartSync.Model
@@ -74,6 +68,16 @@ namespace Salesforce.SDK.SmartSync.Model
             target[ModificationDateFieldName] = _modificationDateFieldName;
 
             return target;
+        }
+
+        public string GetId()
+        {
+            return _idFieldName;
+        }
+
+        public string GetModificationDate()
+        {
+            return _modificationDateFieldName;
         }
     }
 }

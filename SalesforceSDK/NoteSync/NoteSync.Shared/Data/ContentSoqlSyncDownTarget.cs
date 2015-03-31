@@ -70,42 +70,11 @@ namespace NoteSync.Data
 
         private string _queryLocator;
 
-        public ContentSoqlSyncDownTarget(String query) : base(query)
+        public ContentSoqlSyncDownTarget(JObject target) : base(target)
         {
-            QueryType = QueryTypes.Custom;
-            _queryLocator = null;
+
         }
 
-        public new static SyncDownTarget FromJson(JObject target)
-        {
-            if (target == null)
-                return null;
-
-            var query = target.ExtractValue<string>(Constants.Query);
-            return new ContentSoqlSyncDownTarget(query);
-        }
-
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public new static ContentSoqlSyncDownTarget TargetForSOQLSyncDown(string soql)
-        {
-            return new ContentSoqlSyncDownTarget(soql);
-        }
-
-        /// <summary>
-        ///     return json representation of target
-        /// </summary>
-        /// <returns></returns>
-        public new JObject AsJson()
-        {
-            JObject target = base.AsJson();
-            target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
-            target[WindowsImplType] = GetType().GetTypeInfo().FullName;
-            return target;
-        }
 
         public override async Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)
         {

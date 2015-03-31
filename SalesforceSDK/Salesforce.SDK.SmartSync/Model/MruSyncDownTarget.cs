@@ -57,24 +57,6 @@ namespace Salesforce.SDK.SmartSync.Model
         }
 
         /// <summary>
-        ///     Build SyncTarget from json
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static new SyncDownTarget FromJson(JObject target)
-        {
-            if (target == null) return null;
-            var jFieldList = target.ExtractValue<JArray>(Constants.FieldList);
-            var fieldList = new List<string>();
-            if (jFieldList != null)
-            {
-                fieldList = jFieldList.ToObject<List<string>>();
-            }
-            var objectType = target.ExtractValue<string>(Constants.SObjectType);
-            return new MruSyncDownTarget(fieldList, objectType);
-        }
-
-        /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
         public override JObject AsJson()

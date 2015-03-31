@@ -26,10 +26,13 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.SmartStore.Store;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Util;
@@ -49,6 +52,8 @@ namespace Salesforce.SDK.SmartSync.Model
         public new const string WindowsImplType = "windowsImplType";
         public const string Type = "type";
         public const string QueryString = "query";
+        public const string ModificationDateFieldName = "modificationDateFieldName";
+        public const int Unchanged = -1;
 
         public QueryTypes QueryType { protected set; get; }
 
@@ -91,7 +96,7 @@ namespace Salesforce.SDK.SmartSync.Model
 
         public static string AddFilterForReSync(string query, long maxTimeStamp)
         {
-            if (maxTimeStamp != SyncManager.Unchanged)
+            if (maxTimeStamp != Unchanged)
             {
                 string extraPredicate = Constants.LastModifiedDate + " > " +
                                         new DateTime(maxTimeStamp, DateTimeKind.Utc).ToString("o");
@@ -147,5 +152,35 @@ namespace Salesforce.SDK.SmartSync.Model
             return TotalSize;
         }
 
+
+        public long GetMaxTimeStamp(JArray jArray)
+        {
+            long maxTimeStamp = Unchanged;
+            foreach (JToken t in jArray)
+            {
+                var jObj = t.ToObject<JObject>();
+                if (jObj != null)
+                {
+                    var date = jObj.ExtractValue<DateTime>(Constants.LastModifiedDate);
+                    if (date == null)
+                    {
+                        maxTimeStamp = Unchanged;
+                        break;
+                    }
+                    try
+                    {
+                        long timeStamp = date.Ticks;
+                        maxTimeStamp = Math.Max(timeStamp, maxTimeStamp);
+                    }
+                    catch (Exception)
+                    {
+                        Debug.WriteLine("SmartSync.GetMaxTimeStamp could not parse LastModifiedDate");
+                        maxTimeStamp = Unchanged;
+                        break;
+                    }
+                }
+            }
+            return maxTimeStamp;
+        }
     }
 }

@@ -46,7 +46,7 @@ namespace Salesforce.SDK.SmartSync.Model
             this.Query = target.ExtractValue<string>(Constants.Query);
         }
 
-        private SoslSyncDownTarget(string query)
+        public SoslSyncDownTarget(string query)
         {
             QueryType = QueryTypes.Sosl;
             Query = query;
@@ -55,19 +55,6 @@ namespace Salesforce.SDK.SmartSync.Model
 
         private string Query { set; get; }
         private string NextRecordsUrl { set; get; }
-
-        /// <summary>
-        ///     Build SyncTarget from json
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public new static SyncDownTarget FromJson(JObject target)
-        {
-            if (target == null) return null;
-
-            var query = target.ExtractValue<string>(Constants.Query);
-            return new SoslSyncDownTarget(query);
-        }
 
         /// <summary>
         /// </summary>
@@ -96,14 +83,5 @@ namespace Salesforce.SDK.SmartSync.Model
             return null;
         }
 
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public static SyncDownTarget TargetForSOSLSyncDown(string soql)
-        {
-            return new SoslSyncDownTarget(soql);
-        }
     }
 }
