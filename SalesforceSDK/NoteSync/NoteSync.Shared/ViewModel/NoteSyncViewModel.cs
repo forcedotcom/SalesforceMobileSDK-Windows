@@ -145,7 +145,7 @@ namespace NoteSync.ViewModel
                     .Limit(Limit)
                     .Build();
             SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-            SyncDownTarget target = ContentSoqlSyncDownTarget.TargetForSOQLSyncDown(soqlQuery);
+            SyncDownTarget target = new SoqlSyncDownTarget(soqlQuery);
             try
             {
                 SyncState sync = _syncManager.SyncDown(target, NotesSoup, HandleSyncUpdate, options);

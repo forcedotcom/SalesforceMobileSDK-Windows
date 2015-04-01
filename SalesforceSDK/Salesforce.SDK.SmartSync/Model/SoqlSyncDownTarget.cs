@@ -42,7 +42,7 @@ namespace Salesforce.SDK.SmartSync.Model
     {
         public const string QueryString = "query";
         public string Query { protected set; get; }
-        protected SoqlSyncDownTarget(string query) : base(query)
+        public SoqlSyncDownTarget(string query) : base(query)
         {
             QueryType = QueryTypes.Soql;
             Query = query;
@@ -111,14 +111,5 @@ namespace Salesforce.SDK.SmartSync.Model
             return records;
         }
 
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public static SyncDownTarget TargetForSOQLSyncDown(string soql)
-        {
-            return new SoqlSyncDownTarget(soql);
-        }
     }
 }
