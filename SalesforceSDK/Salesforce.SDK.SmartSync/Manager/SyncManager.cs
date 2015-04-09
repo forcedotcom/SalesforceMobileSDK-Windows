@@ -184,7 +184,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong type: " + sync.SyncType);
             }
-            var target = (SyncDownTarget) sync.Target;
+            var target = (SyncDownTarget)sync.Target;
             if (target.QueryType != SyncDownTarget.QueryTypes.Soql)
             {
                 throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong query type: " +
@@ -225,7 +225,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         {
             if (sync == null)
                 throw new SmartStoreException("SyncState sync was null");
-            var target = (SyncUpTarget) sync.Target;
+            var target = (SyncUpTarget)sync.Target;
             HashSet<string> dirtyRecordIds = GetDirtyRecordIds(sync.SoupName, SmartStore.Store.SmartStore.SoupEntryId);
             int totalSize = dirtyRecordIds.Count;
             sync.TotalSize = totalSize;
@@ -270,7 +270,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             return false;
         }
 
-        private async Task<bool> SyncUpOneRecord(SyncUpTarget target,string soupName, List<string> fieldList, JObject record,
+        private async Task<bool> SyncUpOneRecord(SyncUpTarget target, string soupName, List<string> fieldList, JObject record,
             SyncState.MergeModeOptions mergeMode)
         {
             var action = SyncAction.None;
@@ -299,7 +299,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (SyncState.MergeModeOptions.LeaveIfChanged == mergeMode &&
                 (action == SyncAction.Update || action == SyncAction.Delete))
             {
-                bool isNewer = await IsNewerThanServer(target,objectType, objectId, lastModifiedDate.ToString());
+                bool isNewer = await IsNewerThanServer(target, objectType, objectId, lastModifiedDate.ToString());
                 if (!isNewer) return true;
             }
 
@@ -307,7 +307,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (SyncAction.Create == action || SyncAction.Update == action)
             {
                 foreach (
-                    string fieldName in 
+                    string fieldName in
                         fieldList.Where(fieldName => !target.GetId().Equals(fieldName, StringComparison.CurrentCulture) &&
                             !target.GetModificationDate().Equals(fieldName, StringComparison.CurrentCulture) &&
                             !Constants.SystemModstamp.Equals(fieldName, StringComparison.CurrentCulture)))
