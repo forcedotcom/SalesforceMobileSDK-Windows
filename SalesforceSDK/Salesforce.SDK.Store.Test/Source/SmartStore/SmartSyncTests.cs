@@ -81,7 +81,7 @@ namespace Salesforce.SDK.SmartStore.Store
             await OAuth2.RefresAuthToken(account);
             _smartStore = SmartStore.GetGlobalSmartStore();
             _smartStore.ResetDatabase();
-            _syncManager = SyncManager.GetInstance(null);
+            _syncManager = SyncManager.GetInstance();
             _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
                 async () =>
                 {
