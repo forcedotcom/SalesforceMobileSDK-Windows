@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -46,7 +47,7 @@ namespace Salesforce.SDK.SmartSync.Model
         {
         }
 
-        public SyncUpTarget()
+        public SyncUpTarget() : base()
         {
 
         }
@@ -80,14 +81,6 @@ namespace Salesforce.SDK.SmartSync.Model
                 }
             }
             throw new SmartStoreException("Could not generate SyncUpTarget from json target");
-        }
-
-        public override JObject AsJson()
-        {
-            var target = new JObject();
-            target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
-            target[WindowsImplType] = GetType().GetTypeInfo().FullName;
-            return target;
         }
 
         public async Task<String> CreateOnServerAsync(SyncManager syncManager, String objectType, Dictionary<String, Object> fields)
@@ -134,7 +127,7 @@ namespace Salesforce.SDK.SmartSync.Model
                     lastModResponse.AsJObject.ExtractValue<JArray>(Constants.Records)[0].Value<JObject>()
                         .ExtractValue<string>(Constants.LastModifiedDate);
             }
-            return null;
+                return null;
         }
 
         public HashSet<String> GetIdsOfRecordsToSyncUp(SyncManager syncManager, String soupName)
