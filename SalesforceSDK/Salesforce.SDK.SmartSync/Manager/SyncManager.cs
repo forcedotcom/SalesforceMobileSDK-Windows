@@ -29,11 +29,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartStore.Store;
@@ -56,21 +53,26 @@ namespace Salesforce.SDK.SmartSync.Manager
         public readonly RestClient RestClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
 
-        private SyncManager(Account account, string communityId)
+        /// <summary>
+        ///     Private constructor 
+        /// </summary>
+        /// <param name="smartStore"></param>
+        /// <param name="client"></param>
+        private SyncManager(SmartStore.Store.SmartStore smartStore, RestClient client)
         {
-            _smartStore = SmartStore.Store.SmartStore.GetSmartStore(account);
-            RestClient = new RestClient(account.InstanceUrl, account.AccessToken,
-                async () =>
-                {
-                    account = AccountManager.GetAccount();
-                    AuthResponse authResponse =
-                        await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                    account.AccessToken = authResponse.AccessToken;
-                    return account.AccessToken;
-                }
-                );
             ApiVersion = ApiVersionStrings.VersionNumber;
-            SyncState.SetupSyncsSoupIfNeeded(_smartStore);
+            _smartStore = smartStore;
+            RestClient = client;
+            SyncState.SetupSyncsSoupIfNeeded(smartStore);
+        }
+
+        /// <summary>
+        ///     Returns the instance of this class associated with current user.
+        /// </summary>
+        /// <returns> Sync Manager</returns>
+        public static SyncManager GetInstance()
+        {
+            return GetInstance(null);
         }
 
         /// <summary>
@@ -81,17 +83,25 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// <returns></returns>
         public static SyncManager GetInstance(Account account, string communityId = null)
         {
+            return GetInstance(account, communityId, null);
+        }
+
+        public static SyncManager GetInstance(Account account, string communityId, SmartStore.Store.SmartStore smartStore)
+        {
             if (account == null)
             {
                 account = AccountManager.GetAccount();
             }
-            if (account == null)
+
+            if (smartStore == null)
             {
-                return null;
+                smartStore = SmartStore.Store.SmartStore.GetSmartStore(account);
             }
-            string uniqueId = Constants.GenerateAccountCommunityId(account, communityId);
+
+            string uniqueId = Constants.GenerateUniqueId(account, smartStore);
             lock (Synclock)
             {
+                var client = new ClientManager().PeekRestClient();
                 SyncManager instance = null;
                 if (_instances != null)
                 {
@@ -100,13 +110,14 @@ namespace Salesforce.SDK.SmartSync.Manager
                         SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
                         return instance;
                     }
-                    instance = new SyncManager(account, communityId);
+
+                    instance = new SyncManager(smartStore, client);
                     _instances.Add(uniqueId, instance);
                 }
                 else
                 {
                     _instances = new Dictionary<string, SyncManager>();
-                    instance = new SyncManager(account, communityId);
+                    instance = new SyncManager(smartStore, client);
                     _instances.Add(uniqueId, instance);
                 }
                 SyncState.SetupSyncsSoupIfNeeded(instance._smartStore);
@@ -115,25 +126,11 @@ namespace Salesforce.SDK.SmartSync.Manager
         }
 
         /// <summary>
-        ///     Resets the Sync manager associated with this user and community.
+        ///     Resets the Sync manager.
         /// </summary>
-        /// <param name="account"></param>
-        /// <param name="communityId"></param>
-        public static void Reset(Account account, string communityId = null)
+        public static void Reset()
         {
-            if (account == null)
-            {
-                account = AccountManager.GetAccount();
-            }
-            if (account != null)
-            {
-                lock (Synclock)
-                {
-                    SyncManager instance = GetInstance(account, communityId);
-                    if (instance == null) return;
-                    _instances.Remove(Constants.GenerateAccountCommunityId(account, communityId));
-                }
-            }
+            _instances.Clear();
         }
 
         /// <summary>
@@ -187,7 +184,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             {
                 throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong type: " + sync.SyncType);
             }
-            var target = (SyncDownTarget) sync.Target;
+            var target = (SyncDownTarget)sync.Target;
             if (target.QueryType != SyncDownTarget.QueryTypes.Soql)
             {
                 throw new SmartStoreException("Cannot run ReSync:" + syncId + ": wrong query type: " +
@@ -228,7 +225,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         {
             if (sync == null)
                 throw new SmartStoreException("SyncState sync was null");
-            var target = (SyncUpTarget) sync.Target;
+            var target = (SyncUpTarget)sync.Target;
             HashSet<string> dirtyRecordIds = GetDirtyRecordIds(sync.SoupName, SmartStore.Store.SmartStore.SoupEntryId);
             int totalSize = dirtyRecordIds.Count;
             sync.TotalSize = totalSize;
@@ -273,7 +270,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             return false;
         }
 
-        private async Task<bool> SyncUpOneRecord(SyncUpTarget target,string soupName, List<string> fieldList, JObject record,
+        private async Task<bool> SyncUpOneRecord(SyncUpTarget target, string soupName, List<string> fieldList, JObject record,
             SyncState.MergeModeOptions mergeMode)
         {
             var action = SyncAction.None;
@@ -302,7 +299,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             if (SyncState.MergeModeOptions.LeaveIfChanged == mergeMode &&
                 (action == SyncAction.Update || action == SyncAction.Delete))
             {
-                bool isNewer = await IsNewerThanServer(target,objectType, objectId, lastModifiedDate.ToString());
+                bool isNewer = await IsNewerThanServer(target, objectType, objectId, lastModifiedDate.ToString());
                 if (!isNewer) return true;
             }
 
