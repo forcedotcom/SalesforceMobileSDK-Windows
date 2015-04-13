@@ -29,7 +29,7 @@ namespace Salesforce.SDK
 {
     public class TestCredentials
     {
-        public const string API_VERSION = "v26.0";
+        public const string API_VERSION = "v31.0";
         public const string LOGIN_URL = "https://test.salesforce.com";
         public const string INSTANCE_SERVER = "https://cs1.salesforce.com";
 
