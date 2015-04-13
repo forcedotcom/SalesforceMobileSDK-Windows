@@ -99,5 +99,16 @@ namespace Salesforce.SDK.Rest
             }
             return restClient;
         }
+
+        public RestClient GetUnAuthenticatedRestClient(string instanceUrl)
+        {
+            var restClient = PeekUnAuthenticatedRestClient(instanceUrl);
+            return restClient;
+        }
+
+        public RestClient PeekUnAuthenticatedRestClient(string instanceUrl)
+        {
+            return new RestClient(instanceUrl);
+        }
     }
 }
