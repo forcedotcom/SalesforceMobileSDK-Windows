@@ -109,6 +109,10 @@ namespace Salesforce.SDK.Source.Pages
                     SetupAccountPage();
                 }
             }
+            else if (webResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
+            {
+                SetupAccountPage();
+            }
             else
             {
                 DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
