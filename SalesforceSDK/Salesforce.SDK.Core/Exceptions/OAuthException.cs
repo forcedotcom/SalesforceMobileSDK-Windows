@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,19 +24,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using System;
+using System.Net;
 
-namespace Salesforce.SDK
+namespace Salesforce.SDK.Exceptions
 {
-    public class TestCredentials
+    public class OAuthException : WebException
     {
-        public const string API_VERSION = "v31.0";
-        public const string LOGIN_URL = "https://test.salesforce.com";
-        public const string INSTANCE_SERVER = "https://cs1.salesforce.com";
+        public OAuthException(string message)
+            : base(message)
+        {
+        }
+        public OAuthException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
 
-        public const string CLIENT_ID =
-            "3MVG92.uWdyphVj4bnolD7yuIpCQsNgddWtqRND3faxrv9uKnbj47H4RkwheHA2lKY4cBusvDVp0M6gdGE8hp";
+        public OAuthException(string message, WebExceptionStatus statusCode) : base(message, statusCode)
+        {
 
-        public const string REFRESH_TOKEN =
-            "5Aep861KIwKdekr90KlxVVUI47zdR6dX_VeBWZBS.SiQYYAy5JPlgkezkgDiE1o9mI4jd6mD4ZFYA==";
+        }
     }
 }

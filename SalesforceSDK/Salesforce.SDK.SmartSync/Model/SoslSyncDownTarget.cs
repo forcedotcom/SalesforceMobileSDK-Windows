@@ -26,6 +26,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
@@ -38,80 +39,49 @@ namespace Salesforce.SDK.SmartSync.Model
     /// <summary>
     ///     Target for sync u i.e. set of objects to download from server
     /// </summary>
-    public class SoqlSyncTarget : SyncTarget
+    public class SoslSyncDownTarget : SyncDownTarget
     {
-        protected SoqlSyncTarget(string query)
+        public SoslSyncDownTarget(JObject target) : base(target)
         {
-            QueryType = QueryTypes.Soql;
+            this.Query = target.ExtractValue<string>(Constants.Query);
+        }
+
+        public SoslSyncDownTarget(string query)
+        {
+            QueryType = QueryTypes.Sosl;
             Query = query;
         }
 
 
-        public string Query { protected set; get; }
-        public string NextRecordsUrl { protected set; get; }
-
-        /// <summary>
-        ///     Build SyncTarget from json
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public new static SyncTarget FromJson(JObject target)
-        {
-            if (target == null) return null;
-
-            var query = target.ExtractValue<string>(Constants.Query);
-            return new SoqlSyncTarget(query);
-        }
+        private string Query { set; get; }
+        private string NextRecordsUrl { set; get; }
 
         /// <summary>
         /// </summary>
         /// <returns>json representation of target</returns>
         public override JObject AsJson()
         {
-            var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
-            if (!String.IsNullOrWhiteSpace(Query)) target.Add(Constants.Query, Query);
+            var target = base.AsJson();
+            if (!String.IsNullOrWhiteSpace(Query)) target[Constants.Query] = Query;
             return target;
         }
 
         public override async Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)
         {
-            string queryToRun = maxTimeStamp > 0 ? AddFilterForReSync(Query, maxTimeStamp) : Query;
-            RestRequest request = RestRequest.GetRequestForQuery(syncManager.ApiVersion, queryToRun);
-            RestResponse response = await syncManager.SendRestRequest(request);
-            JObject responseJson = response.AsJObject;
-            var records = responseJson.ExtractValue<JArray>(Constants.Records);
+            var request = RestRequest.GetRequestForSearch(syncManager.ApiVersion, Query);
+            var response = await syncManager.SendRestRequest(request);
+            var records = response.AsJArray;
 
-            // Record total size
-            TotalSize = responseJson.ExtractValue<int>(Constants.TotalSize);
-
-            // Capture next records url
-            NextRecordsUrl = responseJson.ExtractValue<string>(Constants.NextRecordsUrl);
+            // Recording total size
+            TotalSize = records.Count;
 
             return records;
         }
 
-        public override async Task<JArray> ContinueFetch(SyncManager syncManager)
+        public override Task<JArray> ContinueFetch(SyncManager syncManager)
         {
-            if (String.IsNullOrWhiteSpace(NextRecordsUrl))
-            {
-                return null;
-            }
-
-            var request = new RestRequest(HttpMethod.Get, NextRecordsUrl, null);
-            RestResponse response = await syncManager.SendRestRequest(request);
-            JObject responseJson = response.AsJObject;
-            var records = responseJson.ExtractValue<JArray>(Constants.Records);
-            return records;
+            return null;
         }
 
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public static SyncTarget TargetForSOQLSyncDown(string soql)
-        {
-            return new SoqlSyncTarget(soql);
-        }
     }
 }

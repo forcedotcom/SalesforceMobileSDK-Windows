@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.SmartStore.Store;
@@ -161,6 +162,11 @@ namespace Salesforce.SDK.SmartSync.Util
                 uniqueId = account.UserId;
             }
             return uniqueId;
+        }
+
+        public static string GenerateUniqueId(Account account, SmartStore.Store.SmartStore smartStore)
+        {
+            return (account != null ? account.UserId : "" + ":" + smartStore.DatabasePath);
         }
 
         /**

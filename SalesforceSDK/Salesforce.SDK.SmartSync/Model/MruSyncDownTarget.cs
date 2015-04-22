@@ -38,34 +38,22 @@ namespace Salesforce.SDK.SmartSync.Model
     /// <summary>
     ///     MruSyncTarget, sync target for handling MRU syncs.
     /// </summary>
-    public class MruSyncTarget : SyncTarget
+    public class MruSyncDownTarget : SyncDownTarget
     {
         private List<string> FieldList { set; get; }
         private string ObjectType { set; get; }
 
-        private MruSyncTarget(List<string> fieldList, string objectType)
+        private MruSyncDownTarget(List<string> fieldList, string objectType)
         {
             QueryType = QueryTypes.Mru;
             FieldList = fieldList;
             ObjectType = objectType;
         }
 
-        /// <summary>
-        ///     Build SyncTarget from json
-        /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        public static new SyncTarget FromJson(JObject target)
+        public MruSyncDownTarget(JObject target) : base(target)
         {
-            if (target == null) return null;
-            var jFieldList = target.ExtractValue<JArray>(Constants.FieldList);
-            var fieldList = new List<string>();
-            if (jFieldList != null)
-            {
-                fieldList = jFieldList.ToObject<List<string>>();
-            }
-            var objectType = target.ExtractValue<string>(Constants.SObjectType);
-            return new MruSyncTarget(fieldList, objectType);
+            FieldList = target.ExtractValue<JArray>(Constants.FieldList).ToObject<List<string>>();
+            ObjectType = target.ExtractValue<string>(Constants.SObjectType);
         }
 
         /// <summary>
@@ -73,9 +61,9 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <returns>json representation of target</returns>
         public override JObject AsJson()
         {
-            var target = new JObject {{Constants.QueryType, QueryType.ToString()}};
-            if (FieldList != null) target.Add(Constants.FieldList, new JArray(FieldList));
-            if (!String.IsNullOrWhiteSpace(ObjectType)) target.Add(Constants.SObjectType, ObjectType);
+            var target = base.AsJson();
+            if (FieldList != null) target[Constants.FieldList] = new JArray(FieldList);
+            if (!String.IsNullOrWhiteSpace(ObjectType)) target[Constants.SObjectType] = ObjectType;
             return target;
         }
 
@@ -85,9 +73,9 @@ namespace Salesforce.SDK.SmartSync.Model
         /// <param name="objectType"></param>
         /// <param name="fieldList"></param>
         /// <returns></returns>
-        public static SyncTarget TargetForMruSyncDown(string objectType, List<string> fieldList)
+        public static SyncDownTarget TargetForMruSyncDown(string objectType, List<string> fieldList)
         {
-            return new MruSyncTarget(fieldList, objectType);
+            return new MruSyncDownTarget(fieldList, objectType);
         }
 
         public async override Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)

@@ -39,6 +39,7 @@ using Windows.Web.Http;
 using Windows.Web.Http.Filters;
 using Newtonsoft.Json;
 using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
 using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
@@ -317,8 +318,8 @@ namespace Salesforce.SDK.Auth
         ///     with the new access token.
         /// </summary>
         /// <param name="account"></param>
-        /// <returns></returns>
-        public static async Task<Account> RefreshAuthToken(Account account)
+        /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
+        public static async Task<Account> RefresAuthToken(Account account)
         {
             if (account != null)
             {
@@ -329,15 +330,26 @@ namespace Salesforce.SDK.Auth
                     account.AccessToken = response.AccessToken;
                     AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
-                    PlatformAdapter.SendToCustomLogger("OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger(
+                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
                     PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
+                    throw new OAuthException(ex.Message, ex.Status);
+                }
+                catch (Exception ex)
+                {
+                    PlatformAdapter.SendToCustomLogger(
+                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                    Debug.WriteLine("Error refreshing token");
+                    throw new OAuthException(ex.Message, ex.InnerException);
                 }
             }
             return account;
         }
+
 
         /// <summary>
         ///     Async method to revoke the user's refresh token (i.e. do a server-side logout for the authenticated user)

@@ -41,7 +41,7 @@ using Salesforce.SDK.SmartSync.Util;
 
 namespace NoteSync.Data
 {
-    public class ContentSoqlSyncTarget : SoqlSyncTarget
+    public class ContentSoqlSyncDownTarget : SoqlSyncDownTarget
     {
         public const string RequestTemplate = "<?xml version=\"1.0\"?>" +
                                               "<se:Envelope xmlns:se=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
@@ -70,42 +70,11 @@ namespace NoteSync.Data
 
         private string _queryLocator;
 
-        public ContentSoqlSyncTarget(String query) : base(query)
+        public ContentSoqlSyncDownTarget(JObject target) : base(target)
         {
-            QueryType = QueryTypes.Custom;
-            _queryLocator = null;
+
         }
 
-        public new static SyncTarget FromJson(JObject target)
-        {
-            if (target == null)
-                return null;
-
-            var query = target.ExtractValue<string>(Constants.Query);
-            return new ContentSoqlSyncTarget(query);
-        }
-
-        /// <summary>
-        ///     Build SyncTarget for soql target
-        /// </summary>
-        /// <param name="soql"></param>
-        /// <returns></returns>
-        public new static ContentSoqlSyncTarget TargetForSOQLSyncDown(string soql)
-        {
-            return new ContentSoqlSyncTarget(soql);
-        }
-
-        /// <summary>
-        ///     return json representation of target
-        /// </summary>
-        /// <returns></returns>
-        public override JObject AsJson()
-        {
-            JObject target = base.AsJson();
-            target[WindowsImpl] = GetType().GetTypeInfo().Assembly.FullName;
-            target[WindowsImplType] = GetType().GetTypeInfo().FullName;
-            return target;
-        }
 
         public override async Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)
         {

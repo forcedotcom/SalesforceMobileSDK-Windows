@@ -43,12 +43,16 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
 using Windows.Foundation.Diagnostics;
+using Windows.UI.Core;
 
 namespace Salesforce.SDK.Source.Pages
 {
+    // TODO: use MVVM pattern
+
     /// <summary>
     ///     Phone based page for displaying accounts.
     /// </summary>
+    /// 
     public partial class AccountPage : Page, IWebAuthenticationContinuable
     {
         private const string SingleUserViewState = "SingleUser";
@@ -105,6 +109,10 @@ namespace Salesforce.SDK.Source.Pages
                     SetupAccountPage();
                 }
             }
+            else if (webResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
+            {
+                SetupAccountPage();
+            }
             else
             {
                 DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
@@ -114,8 +122,11 @@ namespace Salesforce.SDK.Source.Pages
 
         private void DisplayErrorDialog(string message)
         {
-            MessageContent.Text = message;
-            MessageFlyout.ShowAt(ApplicationLogo);
+            Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                MessageContent.Text = message;
+                TryShowFlyout(MessageFlyout, ApplicationLogo);
+            });
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -235,7 +246,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void AddServerFlyout_Closed(object sender, object e)
         {
-            ServerFlyout.ShowAt(ApplicationTitle);
+            TryShowFlyout(ServerFlyout, ApplicationTitle);
             _addServerFlyoutShowing = false;
         }
 
@@ -260,7 +271,7 @@ namespace Salesforce.SDK.Source.Pages
             else
             {
                 ListboxServers.SelectedIndex = -1;
-                ServerFlyout.ShowAt(ApplicationTitle);
+                TryShowFlyout(ServerFlyout, ApplicationTitle);
             }
         }
 
@@ -290,15 +301,7 @@ namespace Salesforce.SDK.Source.Pages
             _addServerFlyoutShowing = true;
             HostName.Text = "";
             HostAddress.Text = "";
-            try
-            {
-                AddServerFlyout.ShowAt(ApplicationTitle);
-            }
-            catch (ArgumentException)
-            {
-                Debug.WriteLine("Error displaying connection flyout");
-            }
-            
+            TryShowFlyout(AddServerFlyout, ApplicationTitle);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -320,12 +323,12 @@ namespace Salesforce.SDK.Source.Pages
             };
             SDKManager.ServerConfiguration.AddServer(server);
 
-            ServerFlyout.ShowAt(ApplicationTitle);
+            TryShowFlyout(ServerFlyout, ApplicationTitle);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            ServerFlyout.ShowAt(ApplicationTitle);
+            TryShowFlyout(ServerFlyout, ApplicationTitle);
         }
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
@@ -378,6 +381,18 @@ namespace Salesforce.SDK.Source.Pages
             var tb = sender as TextBlock;
             if (tb != null)
                 tb.Foreground = this.Foreground;
+        }
+
+        private void TryShowFlyout(Flyout flyout, FrameworkElement location)
+        {
+            try
+            {
+                flyout.ShowAt(location);
+            }
+            catch (ArgumentException ex)
+            {
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Error);
+            }
         }
     }
 }
