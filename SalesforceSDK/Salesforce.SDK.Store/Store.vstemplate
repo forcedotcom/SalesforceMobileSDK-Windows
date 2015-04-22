@@ -1,0 +1,37 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Salesforce.SDK.Store</Name>
+    <Description>&lt;No description available&gt;</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Salesforce.SDK.Store</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="Salesforce.SDK.Store.csproj" File="Salesforce.SDK.Store.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+      <Folder Name="Source" TargetFolderName="Source">
+        <Folder Name="App" TargetFolderName="App">
+          <ProjectItem ReplaceParameters="true" TargetFileName="SFApplicationHelper.cs">SFApplicationHelper.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Auth" TargetFolderName="Auth">
+          <ProjectItem ReplaceParameters="true" TargetFileName="AuthHelper.cs">AuthHelper.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Pages" TargetFolderName="Pages">
+          <ProjectItem ReplaceParameters="true" TargetFileName="AccountPage.xaml">AccountPage.xaml</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="AccountPage.xaml.cs">AccountPage.xaml.cs</ProjectItem>
+        </Folder>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

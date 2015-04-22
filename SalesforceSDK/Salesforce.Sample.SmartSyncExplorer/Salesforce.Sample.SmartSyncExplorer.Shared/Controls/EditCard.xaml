@@ -1,0 +1,95 @@
+﻿<UserControl
+    x:Class="Salesforce.Sample.SmartSyncExplorer.Controls.EditCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="230"
+    d:DesignWidth="400">
+    <Viewbox Stretch="Fill"  StretchDirection="Both">
+        <Grid VerticalAlignment="Center" Height="230" Width="400">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border Grid.Column="0" Grid.Row="0">
+                <Border.Background>White</Border.Background>
+
+                <StackPanel>
+                    <Border Background="LightSkyBlue">
+                        <TextBlock Text="&#x1f483;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                               HorizontalAlignment="Stretch" FontSize="22" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}" />
+                    </Border>
+                    <Border Background="DeepSkyBlue">
+                        <TextBlock Text="&#x1f4db;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                               Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                               HorizontalAlignment="Stretch" FontSize="22" />
+                    </Border>
+                    <Border Background="LightSkyBlue">
+                        <TextBlock Text="&#x1f4d1;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                                    Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                               HorizontalAlignment="Stretch" FontSize="22" />
+                    </Border>
+                    <Border Background="DeepSkyBlue" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}">
+                        <TextBlock Text="&#x1f4de;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                               HorizontalAlignment="Stretch" FontSize="22"  />
+                    </Border>
+                    <Border Background="LightSkyBlue">
+                        <TextBlock Text="&#x1f4e7;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                                   Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                               HorizontalAlignment="Stretch" FontSize="22" />
+                    </Border>
+                    <Border Background="DeepSkyBlue">
+                        <TextBlock Text="&#x2302;" FontFamily="Segoe UI Symbol" Foreground="Black" TextAlignment="Center"
+                                Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}" HorizontalAlignment="Stretch" FontSize="22" />
+                    </Border>
+                </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Grid.Row="0">
+                <Border.Background>White</Border.Background>
+                <StackPanel>
+                    <Border Background="LightSkyBlue">
+                        <TextBox x:Name="ContactNameBox" Text="{Binding Name}" Foreground="Black" Height="30"
+                             PlaceholderText="Contact Name (First and Last)" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                    <Border Background="DeepSkyBlue">
+                        <TextBox x:Name="TitleBox" Text="{Binding TitleDept}" Foreground="Black" PlaceholderText="Title"
+                             Background="Transparent" BorderThickness="0" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}" />
+                    </Border>
+                    <Border Background="LightSkyBlue">
+                        <TextBox x:Name="DepartmentBox" Text="{Binding Phone}" Foreground="Black" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                             PlaceholderText="Department" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                    <Border Background="DeepSkyBlue">
+                        <TextBox x:Name="PhoneBox" Text="{Binding Email}" Foreground="Black" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                             PlaceholderText="Phone Number" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                    <Border Background="LightSkyBlue">
+                        <TextBox x:Name="EmailBox" Text="{Binding Address}" Foreground="Black" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                             PlaceholderText="Email" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                    <Border Background="DeepSkyBlue">
+                        <TextBox x:Name="AddressBox" Text="{Binding Email}" Foreground="Black" Height="{Binding ElementName=ContactNameBox, Path=ActualHeight}"
+                             PlaceholderText="Address" Background="Transparent" BorderThickness="0" />
+                    </Border>
+                </StackPanel>
+            </Border>
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" Width="Auto">
+                <Button x:Name="SaveButton" Foreground="Black" HorizontalAlignment="Center"
+                    Width="{Binding ElementName=CancelButton, Path=ActualWidth}" Click="SaveButton_OnClick">
+                    Save
+                </Button>
+                <Button x:Name="CancelButton" Foreground="Black" HorizontalAlignment="Center"
+                     Click="CancelButton_OnClick">
+                    Cancel
+                </Button>
+                <Button x:Name="DeleteButton" Width="{Binding ElementName=CancelButton, Path=ActualWidth}" Foreground="Black" HorizontalAlignment="Center" Click="DeleteButton_OnClick">Delete</Button>
+            </StackPanel>
+        </Grid>
+    </Viewbox>
+</UserControl>

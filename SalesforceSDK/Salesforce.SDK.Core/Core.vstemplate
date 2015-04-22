@@ -1,0 +1,91 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>Salesforce.SDK.Core</Name>
+    <Description>&lt;No description available&gt;</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>Salesforce.SDK.Core</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="Salesforce.SDK.Core.csproj" File="Salesforce.SDK.Core.csproj" ReplaceParameters="true">
+      <ProjectItem ReplaceParameters="true" TargetFileName="packages.config">packages.config</ProjectItem>
+      <Folder Name="Properties" TargetFolderName="Properties">
+        <ProjectItem ReplaceParameters="true" TargetFileName="AssemblyInfo.cs">AssemblyInfo.cs</ProjectItem>
+      </Folder>
+      <Folder Name="Resources" TargetFolderName="Resources">
+        <ProjectItem ReplaceParameters="true" TargetFileName="servers.xml">servers.xml</ProjectItem>
+      </Folder>
+      <Folder Name="Source" TargetFolderName="Source">
+        <Folder Name="Adaptation" TargetFolderName="Adaptation">
+          <ProjectItem ReplaceParameters="true" TargetFileName="PlatformAdapter.cs">PlatformAdapter.cs</ProjectItem>
+        </Folder>
+        <Folder Name="App" TargetFolderName="App">
+          <ProjectItem ReplaceParameters="true" TargetFileName="ISalesforcePage.cs">ISalesforcePage.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ISFApplicationHelper.cs">ISFApplicationHelper.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="SalesforceApplication.cs">SalesforceApplication.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="SuspensionManager.cs">SuspensionManager.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Auth" TargetFolderName="Auth">
+          <ProjectItem ReplaceParameters="true" TargetFileName="Account.cs">Account.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="AccountManager.cs">AccountManager.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="AuthStorageHelper.cs">AuthStorageHelper.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="IAuthHelper.cs">IAuthHelper.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="OAuth2.cs">OAuth2.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PincodeDialog.xaml">PincodeDialog.xaml</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PincodeDialog.xaml.cs">PincodeDialog.xaml.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PincodeManager.cs">PincodeManager.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="PincodeOptions.cs">PincodeOptions.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Hybrid" TargetFolderName="Hybrid">
+          <ProjectItem ReplaceParameters="true" TargetFileName="BootConfig.cs">BootConfig.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ConfigHelper.cs">ConfigHelper.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="HybridMainPage.cs">HybridMainPage.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="SalesforceOAuthPlugin.cs">SalesforceOAuthPlugin.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="StreamUriResolver.cs">StreamUriResolver.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Native" TargetFolderName="Native">
+          <ProjectItem ReplaceParameters="true" TargetFileName="NativeMainPage.cs">NativeMainPage.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ServerControl.xaml">ServerControl.xaml</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ServerControl.xaml.cs">ServerControl.xaml.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Net" TargetFolderName="Net">
+          <ProjectItem ReplaceParameters="true" TargetFileName="HttpCall.cs">HttpCall.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Rest" TargetFolderName="Rest">
+          <ProjectItem ReplaceParameters="true" TargetFileName="ApiVersionStrings.cs">ApiVersionStrings.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ClientManager.cs">ClientManager.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="RestClient.cs">RestClient.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="RestRequest.cs">RestRequest.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="RestResponse.cs">RestResponse.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Security" TargetFolderName="Security">
+          <ProjectItem ReplaceParameters="true" TargetFileName="EncryptionSettings.cs">EncryptionSettings.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="Encryptor.cs">Encryptor.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="HmacSHA256KeyGenerator.cs">HmacSHA256KeyGenerator.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="IKeyGenerator.cs">IKeyGenerator.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Settings" TargetFolderName="Settings">
+          <ProjectItem ReplaceParameters="true" TargetFileName="SalesforceConfig.cs">SalesforceConfig.cs</ProjectItem>
+          <ProjectItem ReplaceParameters="true" TargetFileName="ServerSetting.cs">ServerSetting.cs</ProjectItem>
+        </Folder>
+        <Folder Name="Utilities" TargetFolderName="Utilities">
+          <ProjectItem ReplaceParameters="true" TargetFileName="ExtensionMethods.cs">ExtensionMethods.cs</ProjectItem>
+        </Folder>
+      </Folder>
+      <Folder Name="Strings" TargetFolderName="Strings">
+        <Folder Name="en" TargetFolderName="en">
+          <ProjectItem ReplaceParameters="false" TargetFileName="resources.resw">resources.resw</ProjectItem>
+        </Folder>
+        <ProjectItem ReplaceParameters="true" TargetFileName="LocalizedStrings.cs">LocalizedStrings.cs</ProjectItem>
+      </Folder>
+    </Project>
+  </TemplateContent>
+</VSTemplate>
