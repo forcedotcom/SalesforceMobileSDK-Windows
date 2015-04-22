@@ -444,6 +444,7 @@ namespace Salesforce.SDK.Net
             loadHandler = async (web, e) =>
             {
                 WebView view = web;
+                var appName = await GetApplicationDisplayNameAsync();
                 if (view != null)
                 {
                     try
@@ -455,7 +456,7 @@ namespace Salesforce.SDK.Net
                         PackageVersion packageVersion = Package.Current.Id.Version;
                         string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                                       packageVersion.Build;
-                        UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayNameAsync(),
+                        UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
                         packageVersionString, "native", "");
                         pageCompleted.TrySetResult(UserAgentHeader);
                     }
