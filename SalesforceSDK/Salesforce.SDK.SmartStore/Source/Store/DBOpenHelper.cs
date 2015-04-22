@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.SmartStore.Store
@@ -35,10 +36,11 @@ namespace Salesforce.SDK.SmartStore.Store
     {
         public static readonly int DBVersion = 1;
         public static readonly string DBName = "smartstore{0}.db";
+        public static readonly string DBNameSuffix = ".db";
 
-        private static Dictionary<string, DBOpenHelper> openHelpers;
-        private static DBOpenHelper defaultHelper;
-        private static readonly object dbopenlock = new Object();
+        private static Dictionary<string, DBOpenHelper> _openHelpers;
+        private static DBOpenHelper _defaultHelper;
+        private static readonly object Dbopenlock = new Object();
 
         private DBOpenHelper(string dbName)
         {
@@ -49,7 +51,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static DBOpenHelper GetOpenHelper(Account account)
         {
-            lock (dbopenlock)
+            lock (Dbopenlock)
             {
                 return GetOpenHelper(account, null);
             }
@@ -59,30 +61,56 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             string dbName = String.Format(DBName, "");
 
-            if (account != null)
+            if (account == null) return _defaultHelper ?? (_defaultHelper = new DBOpenHelper(dbName));
+            var uniqueId = account.UserId;
+            DBOpenHelper helper = null;
+            if (_openHelpers == null)
             {
-                string uniqueId = account.UserId;
-                DBOpenHelper helper = null;
-                if (openHelpers == null)
-                {
-                    openHelpers = new Dictionary<string, DBOpenHelper>();
-                    helper = new DBOpenHelper(String.Format(DBName, uniqueId));
-                    openHelpers.Add(uniqueId, helper);
-                }
-                else
-                {
-                    if (!openHelpers.TryGetValue(uniqueId, out helper))
-                    {
-                        helper = new DBOpenHelper(dbName);
-                    }
-                }
-                return helper;
+                _openHelpers = new Dictionary<string, DBOpenHelper>();
+                helper = new DBOpenHelper(String.Format(DBName, uniqueId));
+                _openHelpers.Add(uniqueId, helper);
             }
-            if (defaultHelper == null)
+            else
             {
-                defaultHelper = new DBOpenHelper(dbName);
+                if (!_openHelpers.TryGetValue(uniqueId, out helper))
+                {
+                    helper = new DBOpenHelper(dbName);
+                }
             }
-            return defaultHelper;
+            return helper;
         }
+
+        public static DBOpenHelper GetOpenHelper(string dbNamePrefix, Account account, string communityId)
+        {
+            var dbName = new StringBuilder(dbNamePrefix);
+
+		    // If we have account information, we will use it to create a database suffix for the user.
+		    if (account != null)
+            {
+
+			    // Default user path for a user is 'internal', if community ID is null.
+		        if (String.IsNullOrWhiteSpace(communityId))
+		        {
+                    dbName.Append(communityId);
+		        }
+		    }
+		    dbName.Append(DBNameSuffix);
+		    DBOpenHelper helper = null;
+            if (_openHelpers == null)
+            {
+                _openHelpers = new Dictionary<string, DBOpenHelper>();
+                helper = new DBOpenHelper(dbName.ToString());
+                _openHelpers.Add(dbName.ToString(), helper);
+            }
+            else
+            {
+                if (!_openHelpers.TryGetValue(dbName.ToString(), out helper))
+                {
+                    helper = new DBOpenHelper(dbName.ToString());
+                }
+            }
+            return helper;
+        }
+
     }
 }

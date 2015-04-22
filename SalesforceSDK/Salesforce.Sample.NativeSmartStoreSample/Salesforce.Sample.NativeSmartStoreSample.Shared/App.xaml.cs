@@ -2,6 +2,7 @@
 
 using Salesforce.Sample.NativeSmartStoreSample.Shared.Pages;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
 using System;
 using Windows.UI.Xaml.Navigation;
@@ -39,14 +40,10 @@ namespace Salesforce.Sample.NativeSmartStoreSample.Shared
         /// you should implement your own key generator using the IKeyGenerator interface.  
         /// </summary>
         /// <returns></returns>
-        protected override Salesforce.SDK.Source.Settings.SalesforceConfig InitializeConfig()
-        {         
-            EncryptionSettings settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
-            Encryptor.init(settings);
-            Config config = SalesforceConfig.RetrieveConfig<Config>();
-            if (config == null)
-                config = new Config();
-            return config;
+        protected override void InitializeConfig()
+        {
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         /// <summary>

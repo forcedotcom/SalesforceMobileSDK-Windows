@@ -78,11 +78,10 @@ namespace Salesforce.SDK.SmartStore.Store
             Account account = await AccountManager.CreateNewAccount(options, response);
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
-            await OAuth2.RefreshAuthToken(account);
-            _smartStore = new SmartStore();
+            await OAuth2.RefresAuthToken(account);
+            _smartStore = SmartStore.GetGlobalSmartStore();
             _smartStore.ResetDatabase();
-            SmartStore.CreateMetaTables();
-            _syncManager = SyncManager.GetInstance(null);
+            _syncManager = SyncManager.GetInstance();
             _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
                 async () =>
                 {
@@ -302,7 +301,8 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             // Create sync
             SyncOptions options = SyncOptions.OptionsForSyncUp(new List<string>(new[] {Constants.Name}), mergeMode);
-            SyncState sync = SyncState.CreateSyncUp(_smartStore, options, AccountsSoup);
+            var target = new SyncUpTarget();
+            SyncState sync = SyncState.CreateSyncUp(_smartStore, target, options, AccountsSoup);
             long syncId = sync.Id;
             CheckStatus(sync, SyncState.SyncTypes.SyncUp, syncId, SyncState.SyncStatusTypes.New, 0, -1);
 
@@ -326,8 +326,8 @@ namespace Salesforce.SDK.SmartStore.Store
             String idsClause = "('" + String.Join("', '", _idToNames.Keys) + "')";
 
             // Create sync
-            SyncTarget target =
-                SoqlSyncTarget.TargetForSOQLSyncDown("SELECT Id, Name, " + Constants.LastModifiedDate + " FROM Account WHERE Id IN " +
+            SyncDownTarget target =
+               new SoqlSyncDownTarget("SELECT Id, Name, " + Constants.LastModifiedDate + " FROM Account WHERE Id IN " +
                                                  idsClause);
             SyncOptions options = SyncOptions.OptionsForSyncDown(mergeMode);
             SyncState sync = SyncState.CreateSyncDown(_smartStore, target, AccountsSoup, options);

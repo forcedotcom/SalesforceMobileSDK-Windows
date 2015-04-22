@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Windows.ApplicationModel.Resources;
@@ -43,9 +44,12 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
 using Windows.Foundation.Diagnostics;
+using Windows.UI.Core;
 
 namespace Salesforce.SDK.Source.Pages
 {
+    // TODO: use MVVM pattern
+
     /// <summary>
     ///     Phone based page for displaying accounts.
     /// </summary>
@@ -77,7 +81,7 @@ namespace Salesforce.SDK.Source.Pages
 
         public ObservableCollection<ServerSetting> Servers
         {
-            get { return SalesforceApplication.ServerConfiguration.ServerList; }
+            get { return SDKManager.ServerConfiguration.ServerList; }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -89,7 +93,7 @@ namespace Salesforce.SDK.Source.Pages
         private void SetupAccountPage()
         {
             ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
-            SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+            SalesforceConfig config = SDKManager.ServerConfiguration;
             bool titleMissing = true;
             if (!String.IsNullOrWhiteSpace(config.ApplicationTitle) && config.IsApplicationTitleVisible)
             {
@@ -142,7 +146,7 @@ namespace Salesforce.SDK.Source.Pages
             {
                 _currentState = SingleUserViewState;
                 SetLoginBarVisibility(Visibility.Collapsed);
-                PincodeManager.WipePincode();
+                AuthStorageHelper.WipePincode();
                 VisualStateManager.GoToState(this, SingleUserViewState, true);
             }
             else
@@ -162,7 +166,7 @@ namespace Salesforce.SDK.Source.Pages
             ListboxServers.SelectedValue = null;
             HostName.PlaceholderText = LocalizedStrings.GetString("name");
             HostAddress.PlaceholderText = LocalizedStrings.GetString("address");
-            AddConnection.Visibility = (SalesforceApplication.ServerConfiguration.AllowNewConnections
+            AddConnection.Visibility = (SDKManager.ServerConfiguration.AllowNewConnections
                 ? Visibility.Visible
                 : Visibility.Collapsed);
         }
@@ -171,10 +175,10 @@ namespace Salesforce.SDK.Source.Pages
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await AccountManager.SwitchToAccount(AccountsList.SelectedItem as Account);
-            SalesforceApplication.ResetClientManager();
-            if (SalesforceApplication.GlobalClientManager.PeekRestClient() != null)
+            SDKManager.ResetClientManager();
+            if (SDKManager.GlobalClientManager.PeekRestClient() != null)
             {
-                Frame.Navigate(SalesforceApplication.RootApplicationPage);
+                Frame.Navigate(SDKManager.RootApplicationPage);
                 Account account = AccountManager.GetAccount();
                 if (account.Policy != null)
                 {
@@ -197,7 +201,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void AddServerFlyout_Closed(object sender, object e)
         {
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void ServerFlyout_Closed(object sender, object e)
@@ -212,7 +216,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
-            if (Servers.Count <= 1 && !SalesforceApplication.ServerConfiguration.AllowNewConnections)
+            if (Servers.Count <= 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
             {
                 ListboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
@@ -220,14 +224,17 @@ namespace Salesforce.SDK.Source.Pages
             else
             {
                 ServerFlyout.Placement = FlyoutPlacementMode.Bottom;
-                ServerFlyout.ShowAt(ApplicationLogo);
+                TryShowFlyout(ServerFlyout, ApplicationLogo);
             }
         }
 
         private void DisplayErrorDialog(string message)
         {
-            MessageContent.Text = message;
-            MessageFlyout.ShowAt(ApplicationLogo);
+            Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                MessageContent.Text = message;
+                TryShowFlyout(MessageFlyout, ApplicationLogo);
+            });
         }
 
         private async void DoAuthFlow(LoginOptions loginOptions)
@@ -244,13 +251,23 @@ namespace Salesforce.SDK.Source.Pages
                     "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
-                    await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
+                    await
+                        WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, loginUri, callbackUri);
             }
             // If a bad URI was passed in the user is shown an error message by the WebAuthenticationBroken, when user
             // taps back arrow we are then thrown a FileNotFoundException, but since user already saw error message we
             // should just swallow that exception
             catch (FileNotFoundException)
             {
+                SetupAccountPage();
+                return;
+            }
+            catch (Exception ex)
+            {
+                PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+
+                DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
                 SetupAccountPage();
                 return;
             }
@@ -287,7 +304,7 @@ namespace Salesforce.SDK.Source.Pages
         {
             HostName.Text = "";
             HostAddress.Text = "";
-            AddServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(AddServerFlyout, ApplicationLogo);
         }
 
         private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -307,14 +324,14 @@ namespace Salesforce.SDK.Source.Pages
                 ServerHost = haddress,
                 ServerName = hname
             };
-            SalesforceApplication.ServerConfiguration.AddServer(server);
+            SDKManager.ServerConfiguration.AddServer(server);
 
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            ServerFlyout.ShowAt(ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
@@ -332,8 +349,8 @@ namespace Salesforce.SDK.Source.Pages
             if (server != null)
             {
                 VisualStateManager.GoToState(this, LoggingUserInViewState, true);
-                SalesforceApplication.ResetClientManager();
-                SalesforceConfig config = SalesforceApplication.ServerConfiguration;
+                SDKManager.ResetClientManager();
+                SalesforceConfig config = SDKManager.ServerConfiguration;
                 var options = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl, config.Scopes);
                 SalesforceConfig.LoginOptions = new LoginOptions(server.ServerHost, config.ClientId, config.CallbackUrl,
                     config.Scopes);
@@ -358,8 +375,21 @@ namespace Salesforce.SDK.Source.Pages
 
         private void DeleteServer(object sender, RoutedEventArgs e)
         {
-            SalesforceApplication.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
-            SalesforceApplication.ServerConfiguration.SaveConfig();
+            SDKManager.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
+            SDKManager.ServerConfiguration.SaveConfig();
+        }
+
+        private void TryShowFlyout(Flyout flyout, FrameworkElement location)
+        {
+            try
+            {
+                flyout.ShowAt(location);
+            }
+            catch (ArgumentException ex)
+            {
+                Debug.WriteLine("Error displaying flyout");
+                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Error);
+            }
         }
     }
 }

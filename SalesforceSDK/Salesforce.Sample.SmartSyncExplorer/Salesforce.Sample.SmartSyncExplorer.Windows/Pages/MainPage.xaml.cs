@@ -34,11 +34,10 @@ using Newtonsoft.Json.Linq;
 using Salesforce.Sample.SmartSyncExplorer.Controls;
 using Salesforce.Sample.SmartSyncExplorer.utilities;
 using Salesforce.Sample.SmartSyncExplorer.ViewModel;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Native;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
+using Salesforce.SDK.Native;
 
 namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
 {
@@ -101,9 +100,9 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared.Pages
         private async void Logout(object sender, RoutedEventArgs e)
         {
             ContactsDataModel.ClearSmartStore();
-            if (SalesforceApplication.GlobalClientManager != null)
+            if (SDKManager.GlobalClientManager != null)
             {
-                await SalesforceApplication.GlobalClientManager.Logout();
+                await SDKManager.GlobalClientManager.Logout();
             }
             AccountManager.SwitchAccount();
         }

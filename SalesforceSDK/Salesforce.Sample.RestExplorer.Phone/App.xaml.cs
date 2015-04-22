@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.Sample.RestExplorer.Shared;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
 
@@ -111,14 +112,10 @@ namespace Salesforce.Sample.RestExplorer.Phone
             }
         }
 
-        protected override SalesforceConfig InitializeConfig()
+        protected override void InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
-            Encryptor.init(settings);
-            var config = SalesforceConfig.RetrieveConfig<Config>();
-            if (config == null)
-                config = new Config();
-            return config;
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         protected override Type SetRootApplicationPage()

@@ -36,7 +36,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Hybrid;
+using Salesforce.SDK.Settings;
 using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Source.Settings

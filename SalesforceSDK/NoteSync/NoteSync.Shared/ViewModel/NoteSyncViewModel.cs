@@ -77,8 +77,7 @@ namespace NoteSync.ViewModel
         {
             Account account = AccountManager.GetAccount();
             if (account == null) return;
-            _store = new SmartStore();
-            SmartStore.CreateMetaTables();
+            _store = SmartStore.GetSmartStore();
             _syncManager = SyncManager.GetInstance(account);
             Notes = new SortedObservableCollection<NoteObject>();
             FilteredNotes = new SortedObservableCollection<NoteObject>();
@@ -146,7 +145,7 @@ namespace NoteSync.ViewModel
                     .Limit(Limit)
                     .Build();
             SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-            SyncTarget target = ContentSoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
+            SyncDownTarget target = new SoqlSyncDownTarget(soqlQuery);
             try
             {
                 SyncState sync = _syncManager.SyncDown(target, NotesSoup, HandleSyncUpdate, options);
@@ -163,7 +162,8 @@ namespace NoteSync.ViewModel
             RegisterSoup();
             SyncOptions options = SyncOptions.OptionsForSyncUp(NoteObject.NoteFields.ToList(),
                 SyncState.MergeModeOptions.LeaveIfChanged);
-            _syncManager.SyncUp(options, NotesSoup, HandleSyncUpdate);
+            var target = new SyncUpTarget();
+            _syncManager.SyncUp(target, options, NotesSoup, HandleSyncUpdate);
         }
 
         private void HandleSyncUpdate(SyncState sync)

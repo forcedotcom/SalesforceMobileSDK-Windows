@@ -78,8 +78,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         {
             Account account = AccountManager.GetAccount();
             if (account == null) return;
-            _store = new SmartStore();
-            SmartStore.CreateMetaTables();
+            _store = SmartStore.GetSmartStore(account);
             _syncManager = SyncManager.GetInstance(account);
             Contacts = new SortedObservableCollection<ContactObject>();
             FilteredContacts = new SortedObservableCollection<ContactObject>();
@@ -140,7 +139,7 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
                         .Limit(Limit)
                         .Build();
                 SyncOptions options = SyncOptions.OptionsForSyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
-                SyncTarget target = SoqlSyncTarget.TargetForSOQLSyncDown(soqlQuery);
+                SyncDownTarget target = new SoqlSyncDownTarget(soqlQuery);
                 try
                 {
                     SyncState sync = _syncManager.SyncDown(target, ContactSoup, HandleSyncUpdate);
@@ -166,7 +165,8 @@ namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
         {
             RegisterSoup();
             SyncOptions options = SyncOptions.OptionsForSyncUp(ContactObject.ContactFields.ToList(), SyncState.MergeModeOptions.LeaveIfChanged);
-            _syncManager.SyncUp(options, ContactSoup, HandleSyncUpdate);
+            var target = new SyncUpTarget();
+            _syncManager.SyncUp(target, options, ContactSoup, HandleSyncUpdate);
         }
 
         public async void DeleteObject(ContactObject contact)

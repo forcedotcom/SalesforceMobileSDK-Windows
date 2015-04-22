@@ -63,7 +63,10 @@ namespace Salesforce.SDK.SmartSync.Model
                 }
             }
             RawData = rawData;
-            _hashcode = ObjectId.GetHashCode();
+            if (ObjectId != null)
+            {
+                _hashcode = ObjectId.GetHashCode();
+            }
             _hashcode ^= rawData.GetHashCode() + _hashcode * 37;
         }
 

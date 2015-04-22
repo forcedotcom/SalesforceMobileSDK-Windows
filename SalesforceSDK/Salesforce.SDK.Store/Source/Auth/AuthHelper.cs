@@ -64,15 +64,15 @@ namespace Salesforce.SDK.Auth
         {
             var frame = Window.Current.Content as Frame;
             Account account = await AccountManager.CreateNewAccount(loginOptions, authResponse);
-            if (account.Policy != null && (!PincodeManager.IsPincodeSet() || PincodeManager.IsPincodeRequired()))
+            if (account.Policy != null && (!PincodeManager.IsPincodeSet() || AuthStorageHelper.IsPincodeRequired()))
             {
                 PincodeManager.LaunchPincodeScreen();
             }
             else
             {
                 PlatformAdapter.SendToCustomLogger(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
-                                                         SalesforceApplication.RootApplicationPage), LoggingLevel.Information);
-                frame.Navigate(SalesforceApplication.RootApplicationPage);
+                                                         SDKManager.RootApplicationPage), LoggingLevel.Information);
+                frame.Navigate(SDKManager.RootApplicationPage);
             }
         }
     }

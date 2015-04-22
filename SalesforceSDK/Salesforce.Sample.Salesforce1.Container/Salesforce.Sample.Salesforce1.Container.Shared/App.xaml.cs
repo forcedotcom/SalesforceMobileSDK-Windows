@@ -31,6 +31,7 @@ using System;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.Sample.Salesforce1.Container.Settings;
 using Salesforce.SDK.App;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
@@ -64,14 +65,10 @@ namespace Salesforce.Sample.Salesforce1.Container
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
-        protected override SalesforceConfig InitializeConfig()
+        protected override void InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
-            Encryptor.init(settings);
-            var config = SalesforceConfig.RetrieveConfig<Config>();
-            if (config == null)
-                config = new Config();
-            return config;
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         protected override Type SetRootApplicationPage()

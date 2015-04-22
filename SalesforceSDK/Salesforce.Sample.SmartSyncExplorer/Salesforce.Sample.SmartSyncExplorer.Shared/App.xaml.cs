@@ -32,12 +32,10 @@ namespace Salesforce.Sample.SmartSyncExplorer.Shared
         ///     you should implement your own key generator using the IKeyGenerator interface.
         /// </summary>
         /// <returns></returns>
-        protected override SalesforceConfig InitializeConfig()
+        protected override void InitializeConfig()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
-            Encryptor.init(settings);
-            Config config = SalesforceConfig.RetrieveConfig<Config>() ?? new Config();
-            return config;
+            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            config.SaveConfig();
         }
 
         /// <summary>
