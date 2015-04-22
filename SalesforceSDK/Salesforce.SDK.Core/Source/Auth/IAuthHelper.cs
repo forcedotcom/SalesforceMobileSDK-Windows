@@ -24,6 +24,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using System;
 
 namespace Salesforce.SDK.Auth
 {
@@ -43,5 +44,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="loginOptions"></param>
         /// <param name="authResponse"></param>
         void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse);
+
+        Type AccountPage { get; }
     }
 }

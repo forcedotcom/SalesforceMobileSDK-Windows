@@ -444,9 +444,22 @@ namespace Salesforce.SDK.Net
             loadHandler = async (web, e) =>
             {
                 WebView view = web;
+                var appName = await GetApplicationDisplayNameAsync();
                 if (view != null)
                 {
-                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.userAgent); "});
+                    try
+                    {
+                        await view.InvokeScriptAsync("eval", new[] { "window.external.notify(navigator.userAgent); " });
+                    }
+                    catch (Exception)
+                    {
+                        PackageVersion packageVersion = Package.Current.Id.Version;
+                        string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                                      packageVersion.Build;
+                        UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
+                        packageVersionString, "native", "");
+                        pageCompleted.TrySetResult(UserAgentHeader);
+                    }
                 }
             };
             DateTime endTime = DateTime.Now.AddSeconds(10);
