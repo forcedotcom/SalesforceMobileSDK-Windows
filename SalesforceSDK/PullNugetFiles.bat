@@ -6,7 +6,7 @@ set "win=%basepath%Salesforce.SDK.Core.NuGet\build\win"
 set "libwin=%basepath%Salesforce.SDK.Core.NuGet\lib\win"
 set "libwpa=%basepath%Salesforce.SDK.Core.NuGet\lib\wpa"
 
-if %1 == "release" (goto :release) else (goto :debug)
+if "%1" == "Release" (goto :release) else (goto :debug)
 
 :release
 set "mode=Release"
@@ -17,6 +17,8 @@ set "mode=Debug"
 goto :copy
 
 :copy
+echo %mode%
+echo %1
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\ARM\%mode%\Salesforce.SDK.* %wpa%\ARM
 xcopy /s /y %basepath%Salesforce.SDK.Phone\bin\x86\%mode%\Salesforce.SDK.* %wpa%\x86
 xcopy /s /y %basepath%Salesforce.SDK.Store\bin\ARM\%mode%\Salesforce.SDK.* %win%\ARM

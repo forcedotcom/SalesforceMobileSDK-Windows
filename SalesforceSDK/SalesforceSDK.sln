@@ -665,6 +665,7 @@ Global
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|iOS.ActiveCfg = Debug|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|Windows Phone.ActiveCfg = Debug|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Debug|Windows-AnyCPU.ActiveCfg = Debug|Any CPU
