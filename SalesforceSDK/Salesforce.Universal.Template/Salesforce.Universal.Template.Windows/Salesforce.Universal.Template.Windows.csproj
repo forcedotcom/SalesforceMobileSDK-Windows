@@ -124,19 +124,19 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Core">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\lib\win\Salesforce.SDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\lib\win\Salesforce.SDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.App">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\lib\win\Salesforce.SDK.App.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\lib\win\Salesforce.SDK.App.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Store" Condition="'$(Platform)'=='x86'">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\build\win\x86\Salesforce.SDK.Store.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\build\win\x86\Salesforce.SDK.Store.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Store" Condition="'$(Platform)'=='x64'">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\build\win\x64\Salesforce.SDK.Store.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\build\win\x64\Salesforce.SDK.Store.dll</HintPath>
     </Reference>
 	<Reference Include="Salesforce.SDK.Store" Condition="'$(Platform)'=='ARM'">
-      <HintPath>..\..\packages\Salesforce.SDK.3.2.0\build\win\ARM\Salesforce.SDK.Store.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.3.3.0-unstable\build\win\ARM\Salesforce.SDK.Store.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
