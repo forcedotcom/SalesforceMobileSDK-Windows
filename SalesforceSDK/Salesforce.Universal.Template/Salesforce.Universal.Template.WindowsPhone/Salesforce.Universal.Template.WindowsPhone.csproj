@@ -103,19 +103,19 @@
       <HintPath>..\..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Core">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\lib\wpa\Salesforce.SDK.Core.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\lib\wpa\Salesforce.SDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.App">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\lib\wpa\Salesforce.SDK.App.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\lib\wpa\Salesforce.SDK.App.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Phone" Condition="'$(Platform)'=='x86'">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\build\wpa\x86\Salesforce.SDK.Phone.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\build\wpa\x86\Salesforce.SDK.Phone.dll</HintPath>
     </Reference>
     <Reference Include="Salesforce.SDK.Phone" Condition="'$(Platform)'=='x64'">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\build\wpa\x86\Salesforce.SDK.Phone.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\build\wpa\x86\Salesforce.SDK.Phone.dll</HintPath>
     </Reference>
 	<Reference Include="Salesforce.SDK.Phone" Condition="'$(Platform)'=='ARM'">
-      <HintPath>..\..\packages\Salesforce.SDK.Core.3.2.0\build\wpa\ARM\Salesforce.SDK.Phone.dll</HintPath>
+      <HintPath>..\..\packages\Salesforce.SDK.Core.3.3.0-unstable\build\wpa\ARM\Salesforce.SDK.Phone.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
