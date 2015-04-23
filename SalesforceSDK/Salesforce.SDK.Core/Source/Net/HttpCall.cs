@@ -310,12 +310,19 @@ namespace Salesforce.SDK.Net
                 var task = new TaskCompletionSource<string>();
                 await Task.Run(async () =>
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                        CoreDispatcherPriority.Normal, async () =>
-                        {
-                            await GenerateUserAgentHeader();
-                            task.SetResult(UserAgentHeader);
-                        });
+                    try
+                    {
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                       CoreDispatcherPriority.Normal, async () =>
+                       {
+                           await GenerateUserAgentHeader();
+                           task.SetResult(UserAgentHeader);
+                       });
+                    }
+                    catch (Exception)
+                    {
+                        SafeSetUserAgent();
+                    }
                 });
                 await task.Task;
             }
@@ -475,6 +482,16 @@ namespace Salesforce.SDK.Net
                 }
             }
             return UserAgentHeader;
+        }
+
+        private async Task SafeSetUserAgent()
+        {
+            var appName = await GetApplicationDisplayNameAsync();
+            PackageVersion packageVersion = Package.Current.Id.Version;
+            string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                          packageVersion.Build;
+            UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
+            packageVersionString, "native", "");
         }
 
         public void Dispose()

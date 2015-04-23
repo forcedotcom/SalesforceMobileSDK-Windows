@@ -12,7 +12,6 @@ namespace Salesforce.SDK.Hybrid.Auth
     {
         public LoginOptions()
         {
-            throw new InvalidOperationException("Constructor is not supported");
         }
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace Salesforce.SDK.Hybrid.Auth
         /// <param name="displayType"></param>
         /// <param name="scopes"></param>
         public LoginOptions(string loginUrl, string clientId, string callbackUrl, [ReadOnlyArray()] string[] scopes)
-            : this(loginUrl, clientId, callbackUrl, SDK.Auth.LoginOptions.DefaultDisplayType, scopes)
+            : this(loginUrl, clientId, callbackUrl, SDK.Auth.LoginOptions.DefaultStoreDisplayType, scopes)
         {
         }
 
@@ -43,11 +42,11 @@ namespace Salesforce.SDK.Hybrid.Auth
             DisplayType = displayType;
         }
 
-        public string LoginUrl { get; private set; }
-        public string ClientId { get; private set; }
-        public string CallbackUrl { get; private set; }
+        public string LoginUrl { get; set; }
+        public string ClientId { get; set; }
+        public string CallbackUrl { get; set; }
         public string DisplayType { get; set; }
-        public string[] Scopes { get; private set; }
+        public string[] Scopes { get; set; }
 
         internal SDK.Auth.LoginOptions ConvertToSDKLoginOptions()
         {

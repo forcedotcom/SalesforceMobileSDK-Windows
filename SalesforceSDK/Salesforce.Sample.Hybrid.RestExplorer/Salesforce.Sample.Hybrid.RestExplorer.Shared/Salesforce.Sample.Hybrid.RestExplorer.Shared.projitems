@@ -6,6 +6,7 @@
     <SharedGUID>4a19cc07-f908-4199-b33b-2baf75e5606e</SharedGUID>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)data\bootconfig.json" />
     <Content Include="$(MSBuildThisFileDirectory)js\default.js" />
   </ItemGroup>
 </Project>

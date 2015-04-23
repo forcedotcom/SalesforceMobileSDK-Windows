@@ -78,9 +78,11 @@ namespace Salesforce.Sample.Salesforce1.Container
                     try
                     {
                         account = await OAuth2.RefresAuthToken(account);
-                        string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
+                        string startPage = GetPage(account) +
+                                           "?display=touch&sid=" + account.AccessToken;
+                        /*string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
                                 LoginOptions.DefaultDisplayType,
-                                account.AccessToken, GetPage(account));
+                                account.AccessToken, GetPage(account));*/
 
                         oneView.Navigate(new Uri(startPage));
                     }
