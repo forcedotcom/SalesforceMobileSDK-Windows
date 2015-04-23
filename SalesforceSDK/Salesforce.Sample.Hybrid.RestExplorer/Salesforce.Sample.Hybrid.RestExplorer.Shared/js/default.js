@@ -17,6 +17,26 @@
         }
     }
 
+    var fetchRecords = function () {
+        var soql = 'SELECT Id, Name FROM User LIMIT 10';
+        var rest = Salesforce.SDK.Hybrid.Rest;
+        var cm = new rest.ClientManager();
+        var client = cm.peekRestClient();
+
+        var request = rest.RestRequest.getRequestForQuery("v31.0", soql);
+
+        var response = client.sendAsync(request).then(function (data) {
+            var users = JSON.parse(data.asString).records;
+
+            var listItemsHtml = '';
+            for (var i = 0; i < users.length; i++) {
+                listItemsHtml += ('<li class="table-view-cell"><div class="media-body">' + users[i].Name + '</div></li>');
+            }
+
+            document.querySelector('#users').innerHTML = listItemsHtml;
+        });
+    };
+
     function sfdcLogin() {
         WinJS.xhr({ url: "data/bootconfig.json" }).done(function complete(response) {
             var auth = Salesforce.SDK.Hybrid.Auth;
@@ -34,7 +54,7 @@
                 var authResponse = responseResult.fragment.substring(1);
                 auth.HybridAccountManager.createNewAccount(options, authResponse).then(function () {
                     authzInProgress = false;
-                    WinJS.Navigation.navigate(jsonResult.startPage);
+                    fetchRecords();
                 });
             }, function(err) {
                 WinJS.log("Error returned by WebAuth broker: " + err, "Web Authentication SDK Sample", "error");
