@@ -78,7 +78,7 @@ namespace Salesforce.SDK.SmartStore.Store
             Account account = await AccountManager.CreateNewAccount(options, response);
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
-            await OAuth2.RefresAuthToken(account);
+            await OAuth2.RefreshAuthToken(account);
             _smartStore = SmartStore.GetGlobalSmartStore();
             _smartStore.ResetDatabase();
             _syncManager = SyncManager.GetInstance();

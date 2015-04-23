@@ -77,7 +77,7 @@ namespace Salesforce.Sample.Salesforce1.Container
                 {
                     try
                     {
-                        account = await OAuth2.RefresAuthToken(account);
+                        account = await OAuth2.RefreshAuthToken(account);
                         string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
                                 LoginOptions.DefaultDisplayType,
                                 account.AccessToken, GetPage(account));
