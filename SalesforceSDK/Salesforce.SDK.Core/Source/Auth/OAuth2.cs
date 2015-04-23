@@ -319,7 +319,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
-        public static async Task<Account> RefresAuthToken(Account account)
+        public static async Task<Account> RefreshAuthToken(Account account)
         {
             if (account != null)
             {

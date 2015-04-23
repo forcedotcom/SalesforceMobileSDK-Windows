@@ -10,10 +10,19 @@
     <UserControl.Resources>
         <sfdcStrings:LocalizedStrings x:Key="Localize"/>
     </UserControl.Resources>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="Hello Salesforce1 Template!" Style="{StaticResource HeaderTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
-    </Grid>
+
+  <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
+    <StackPanel Orientation="Vertical">
+      <TextBlock Text="Contact List" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" Foreground="Black"></TextBlock>
+      <ListView  x:Name ="contactList" ItemsSource="{Binding}" HorizontalAlignment="Center" ScrollViewer.VerticalScrollMode="Auto">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Name}" Foreground="Black"/>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackPanel>
+  </Grid>
 
     <Page.BottomAppBar>
         <CommandBar x:Name="controlBar">
