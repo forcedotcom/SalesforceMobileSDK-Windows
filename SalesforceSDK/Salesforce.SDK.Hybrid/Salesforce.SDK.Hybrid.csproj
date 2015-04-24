@@ -52,6 +52,7 @@
     <Compile Include="Auth\HybridAccountManager.cs" />
     <Compile Include="Auth\LoginOptions.cs" />
     <Compile Include="Auth\MobilePolicy.cs" />
+    <Compile Include="Auth\OAuth2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rest\ClientManager.cs" />
     <Compile Include="Rest\RestClient.cs" />

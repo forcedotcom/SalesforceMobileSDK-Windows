@@ -24,7 +24,12 @@ namespace Salesforce.SDK.Hybrid.Rest
         {
             Request = request;
         }
-   
+
+        public RestRequest()
+        {
+            
+        }
+
         /// <summary>
         ///     Generic constructors for arbitrary requests.
         /// </summary>

@@ -12,6 +12,11 @@ namespace Salesforce.SDK.Hybrid.Rest
         private SDK.Rest.RestResponse _response;
         private string _responseBody;
 
+        public RestResponse()
+        {
+            
+        }
+
         internal RestResponse(SDK.Rest.RestResponse response)
         {
             _response = response;

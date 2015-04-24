@@ -83,7 +83,7 @@ namespace Salesforce.SDK.Source.Security
 
         public static string Decrypt(string text, string nonce)
         {
-            if (String.IsNullOrWhiteSpace(text))
+            if (String.IsNullOrWhiteSpace(text) || Settings == null)
             {
                 return null;
             }
