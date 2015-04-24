@@ -23,13 +23,13 @@
         var client = cm.peekRestClient();
         if (client != null) {
             cm.logout().done(function() {
-                sfdcLogin();
+                location.reload();
             });
         }
     }
 
     var fetchRecords = function () {
-        var soql = 'SELECT Id, Name FROM User LIMIT 10';
+        var soql = 'SELECT Id, Name FROM Contact LIMIT 10';
         var rest = Salesforce.SDK.Hybrid.Rest;
         var cm = new rest.ClientManager();
         var client = cm.peekRestClient();
@@ -74,7 +74,7 @@
                 var jsonResult = JSON.parse(response.responseText);
                 var endUri = new Windows.Foundation.Uri(jsonResult.oauthRedirectURI);
                 var options = new auth.LoginOptions("https://test.salesforce.com/", jsonResult.remoteAccessConsumerKey, jsonResult.oauthRedirectURI, jsonResult.oauthScopes);
-                var startUriStr = auth.HybridAccountManager.computeAuthorizationUrl(options);
+                var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
                 var startUri = new Windows.Foundation.Uri(startUriStr);
                 authzInProgress = true;
                 Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
