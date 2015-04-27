@@ -25,10 +25,7 @@ namespace Salesforce.SDK.Hybrid.Auth
 
         public static void InitEncryption()
         {
-            if (GetAccount() == null)
-            {
-                Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
-            }
+            Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
         }
 
         public static IDictionary<string, Account> GetAccounts()
@@ -55,7 +52,7 @@ namespace Salesforce.SDK.Hybrid.Auth
 
         public static IAsyncOperation<Account> CreateNewAccount(LoginOptions loginOptions, string response)
         {
-            SDK.Auth.AuthResponse authResponse = OAuth2.ParseFragment(response);
+            SDK.Auth.AuthResponse authResponse = SDK.Auth.OAuth2.ParseFragment(response);
             return Task.Run(async () =>
             {
                 var account = await SDK.Auth.AccountManager.CreateNewAccount(loginOptions.ConvertToSDKLoginOptions(), authResponse);
@@ -63,9 +60,6 @@ namespace Salesforce.SDK.Hybrid.Auth
             }).AsAsyncOperation<Account>();
         }
 
-        public static string ComputeAuthorizationUrl(LoginOptions options)
-        {
-            return OAuth2.ComputeAuthorizationUrl(options.ConvertToSDKLoginOptions());
-        }
+       
     }
 }
