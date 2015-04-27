@@ -10,6 +10,7 @@
     <Content Include="$(MSBuildThisFileDirectory)data\bootconfig.json" />
     <Content Include="$(MSBuildThisFileDirectory)js\app.js" />
     <Content Include="$(MSBuildThisFileDirectory)js\default.js" />
+    <Content Include="$(MSBuildThisFileDirectory)js\salesforce.windows.oauth.js" />
     <Content Include="$(MSBuildThisFileDirectory)main.html" />
   </ItemGroup>
 </Project>
