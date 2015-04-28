@@ -15,8 +15,10 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Salesforce.Universal.Template.Windows.App">
-      <m2:VisualElements DisplayName="Salesforce.Universal.Template.Windows" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="Salesforce.Universal.Template.Windows" ForegroundText="light" BackgroundColor="#464646">
-        <m2:SplashScreen Image="Assets\SplashScreen.png" />
+      <m2:VisualElements DisplayName="Salesforce.Universal.Template.Windows" Square150x150Logo="Assets\Square150x150Logo.png" Square30x30Logo="Assets\SmallLogo.png" Description="Salesforce.Universal.Template.Windows" ForegroundText="light" BackgroundColor="#464646">
+      <m2:DefaultTile DefaultSize="square150x150Logo">
+        </m2:DefaultTile>  
+      <m2:SplashScreen Image="Assets\SplashScreen.png" />
       </m2:VisualElements>
     </Application>
   </Applications>

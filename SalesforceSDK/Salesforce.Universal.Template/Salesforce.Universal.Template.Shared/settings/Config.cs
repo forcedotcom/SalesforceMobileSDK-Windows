@@ -62,7 +62,30 @@ namespace $safeprojectname$
 
         public override Windows.UI.Color? LoginBackgroundColor
         {
-            get { return Colors.DeepSkyBlue; }
+            get
+            {
+                string color = "#009adb"; 
+                if (color.StartsWith("#"))
+                    color = color.Remove(0, 1);
+                byte r, g, b;
+                if (color.Length == 3)
+                {
+                    r = Convert.ToByte(color[0] + "" + color[0], 16);
+                    g = Convert.ToByte(color[1] + "" + color[1], 16);
+                    b = Convert.ToByte(color[2] + "" + color[2], 16);
+                }
+                else if (color.Length == 6)
+                {
+                    r = Convert.ToByte(color[0] + "" + color[1], 16);
+                    g = Convert.ToByte(color[2] + "" + color[3], 16);
+                    b = Convert.ToByte(color[4] + "" + color[5], 16);
+                }
+                else
+                {
+                    throw new ArgumentException("Hex color " + color + " is invalid.");
+                }
+                return Color.FromArgb(255, r, g, b);
+            }
         }
 
 
