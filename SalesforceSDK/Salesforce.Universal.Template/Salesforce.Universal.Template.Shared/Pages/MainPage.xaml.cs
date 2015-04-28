@@ -71,6 +71,11 @@ namespace $safeprojectname$.Pages
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            var color = new Config().LoginBackgroundColor;
+            if (color != null)
+            {
+                grid.Background = new SolidColorBrush(color.Value);
+            }
             Account account = AccountManager.GetAccount();
             if (account != null)
             {

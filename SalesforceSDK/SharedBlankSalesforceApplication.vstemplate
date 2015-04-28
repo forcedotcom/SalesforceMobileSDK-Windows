@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="ProjectGroup">
 	<TemplateData>
-    <Name>Salesforce Application (Universal Apps)</Name>
+    <Name>Salesforce Application (Universal Apps for Windows 8.1)</Name>
     <Description>Salesforce Universal App</Description>
     <Icon>BlankApp.png</Icon>
 		<DefaultName>App</DefaultName>
