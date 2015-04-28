@@ -11,18 +11,20 @@
         <sfdcStrings:LocalizedStrings x:Key="Localize"/>
     </UserControl.Resources>
 
-  <Grid Background="{ThemeResource ApplicationForegroundThemeBrush}">
-    <StackPanel Orientation="Vertical">
-      <TextBlock Text="Contact List" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" Foreground="Black"></TextBlock>
-      <ListView  x:Name ="contactList" ItemsSource="{Binding}" HorizontalAlignment="Center" ScrollViewer.VerticalScrollMode="Auto">
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding Name}" Foreground="Black"/>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
-    </StackPanel>
-  </Grid>
+  <Grid x:Name="grid">
+       <ListView  x:Name ="contactList" ItemsSource="{Binding}" HorizontalAlignment="Center" Padding="0,18,0,0" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Contact List" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="21" HorizontalAlignment="Center" Width="Auto"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 
     <Page.BottomAppBar>
         <CommandBar x:Name="controlBar">
@@ -34,7 +36,6 @@
                               Click="SwitchAccount" VerticalAlignment="Center">
             </AppBarButton>
             <AppBarButton x:Name="logoutBtn"
-                              Visibility="Collapsed"
                               DataContext="logout"
                               Label="{Binding Converter={StaticResource Localize}}"
                               Icon="HangUp"
