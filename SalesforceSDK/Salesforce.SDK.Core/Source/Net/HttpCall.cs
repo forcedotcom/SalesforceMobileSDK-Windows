@@ -310,12 +310,19 @@ namespace Salesforce.SDK.Net
                 var task = new TaskCompletionSource<string>();
                 await Task.Run(async () =>
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                        CoreDispatcherPriority.Normal, async () =>
-                        {
-                            await GenerateUserAgentHeader();
-                            task.SetResult(UserAgentHeader);
-                        });
+                    try
+                    {
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                       CoreDispatcherPriority.Normal, async () =>
+                       {
+                           await GenerateUserAgentHeader();
+                           task.SetResult(UserAgentHeader);
+                       });
+                    }
+                    catch (Exception)
+                    {
+                        SafeSetUserAgent();
+                    }
                 });
                 await task.Task;
             }
@@ -415,53 +422,23 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         private static async Task<string> GenerateUserAgentHeader()
         {
-            var pageCompleted = new TaskCompletionSource<string>();
-            var webView = new WebView();
-            NotifyEventHandler scriptHandler = null;
-            TypedEventHandler<WebView, WebViewNavigationCompletedEventArgs> loadHandler = null;
-            scriptHandler = async (s, e) =>
-            {
-                try
-                {
-                    PackageVersion packageVersion = Package.Current.Id.Version;
-                    string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
-                                                  packageVersion.Build;
-                    UserAgentHeader = String.Format(UserAgentHeaderFormat, await GetApplicationDisplayNameAsync(),
-                    packageVersionString, "native", e.Value);
-                    pageCompleted.TrySetResult(UserAgentHeader);
-                }
-                catch (Exception ex)
-                {
-                    pageCompleted.SetException(ex);
-                }
-                finally
-                {
-                    /* release */
-                    webView.ScriptNotify -= scriptHandler;
-                    webView.NavigationCompleted -= loadHandler;
-                }
-            };
-            loadHandler = async (web, e) =>
-            {
-                WebView view = web;
-                if (view != null)
-                {
-                    await view.InvokeScriptAsync("eval", new[] {"window.external.notify(navigator.userAgent); "});
-                }
-            };
-            DateTime endTime = DateTime.Now.AddSeconds(10);
-            webView.ScriptNotify += scriptHandler;
-            webView.NavigationCompleted += loadHandler;
-            webView.NavigateToString("<html />");
-            while (pageCompleted.Task.Status != TaskStatus.RanToCompletion)
-            {
-                await Task.Delay(10);
-                if (DateTime.Now >= endTime)
-                {
-                    pageCompleted.TrySetResult("failed to create userAgent");
-                }
-            }
+            var appName = await GetApplicationDisplayNameAsync();
+            PackageVersion packageVersion = Package.Current.Id.Version;
+            string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                          packageVersion.Build;
+            UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
+            packageVersionString, "native", "");
             return UserAgentHeader;
+        }
+
+        private async Task SafeSetUserAgent()
+        {
+            var appName = await GetApplicationDisplayNameAsync();
+            PackageVersion packageVersion = Package.Current.Id.Version;
+            string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
+                                          packageVersion.Build;
+            UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
+            packageVersionString, "native", "");
         }
 
         public void Dispose()

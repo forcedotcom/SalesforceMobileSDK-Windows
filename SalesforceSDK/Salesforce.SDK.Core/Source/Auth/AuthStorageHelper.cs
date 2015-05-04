@@ -212,7 +212,8 @@ namespace Salesforce.SDK.Auth
                     {
                         PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
-                        return JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                        var accountStr = Encryptor.Decrypt(account.Password);
+                        return JsonConvert.DeserializeObject<Account>(accountStr);
                     }
                     catch (Exception ex)
                     {

@@ -55,6 +55,10 @@ namespace Salesforce.SDK.Auth
         public static readonly string DefaultStoreDisplayType = "page";
         public static readonly string DefaultDisplayType = DefaultPhoneDisplayType;
 
+        public LoginOptions()
+        {
+            
+        }
         /// <summary>
         ///     Constructor for LoginOptions
         /// </summary>
@@ -83,11 +87,11 @@ namespace Salesforce.SDK.Auth
             DisplayType = displayType;
         }
 
-        public string LoginUrl { get; private set; }
-        public string ClientId { get; private set; }
-        public string CallbackUrl { get; private set; }
+        public string LoginUrl { get; set; }
+        public string ClientId { get; set; }
+        public string CallbackUrl { get; set; }
         public string DisplayType { get; set; }
-        public string[] Scopes { get; private set; }
+        public string[] Scopes { get; set; }
     }
 
     /// <summary>

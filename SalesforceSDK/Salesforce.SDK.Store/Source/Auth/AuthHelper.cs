@@ -30,8 +30,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
-using Salesforce.SDK.Source.Pages;
 using Windows.Foundation.Diagnostics;
 
 namespace Salesforce.SDK.Auth
@@ -41,6 +39,19 @@ namespace Salesforce.SDK.Auth
     /// </summary>
     public sealed class AuthHelper : IAuthHelper
     {
+
+        public Type AccountPage
+        {
+            get
+            {
+                if (SDKManager.RootAccountPage != null)
+                {
+                    return SDKManager.RootAccountPage;
+                }
+                return typeof(Source.Pages.AccountPage);
+            }
+        }
+
         /// <summary>
         ///     Bring up the WebAuthenticationBroker
         /// </summary>
@@ -51,7 +62,7 @@ namespace Salesforce.SDK.Auth
             {
                 await
                     frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                        () => { frame.Navigate(typeof (AccountPage)); });
+                        () => { frame.Navigate(AccountPage); });
             }
         }
 

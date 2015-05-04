@@ -42,6 +42,20 @@ namespace Salesforce.SDK.Auth
         public static Type RootApplicationPage { get; set; }
 
         /// <summary>
+        /// Set RootAccountPage if you wish to provide your own account settings page.
+        /// 
+        /// If you do wish to do this, be warned that you should still call,
+        /// 1. PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+        /// 2. PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
+        /// Both methods will assist in displaying and finishing the login steps, including creation of the account and pincode settings.
+        /// 
+        /// You can also provide this own functionality yourself. Please look at AuthHelper.cs in the SDK.Phone and SDK.Store application for example code and work from there
+        /// if you wish to completely customize your login flow.
+        /// </summary>
+        public static Type RootAccountPage { get; set; }
+
+
+        /// <summary>
         ///     The global client manager is provided for ease of accessing clients such as the RestClient.
         /// </summary>
         public static ClientManager GlobalClientManager { get; private set; }
