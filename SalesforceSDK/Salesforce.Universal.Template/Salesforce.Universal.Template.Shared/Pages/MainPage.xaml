@@ -10,9 +10,20 @@
     <UserControl.Resources>
         <sfdcStrings:LocalizedStrings x:Key="Localize"/>
     </UserControl.Resources>
-    
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="Hello Salesforce1 Template!" Style="{StaticResource HeaderTextBlockStyle}" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+  <Grid x:Name="grid">
+       <ListView  x:Name ="contactList" ItemsSource="{Binding}" HorizontalAlignment="Center" Padding="0,18,0,0" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Contact List" Style="{StaticResource HeaderTextBlockStyle}" HorizontalAlignment="Center" Foreground="White"></TextBlock>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" Foreground="White" FontSize="21" HorizontalAlignment="Center" Width="Auto"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 
     <Page.BottomAppBar>
@@ -25,7 +36,6 @@
                               Click="SwitchAccount" VerticalAlignment="Center">
             </AppBarButton>
             <AppBarButton x:Name="logoutBtn"
-                              Visibility="Collapsed"
                               DataContext="logout"
                               Label="{Binding Converter={StaticResource Localize}}"
                               Icon="HangUp"

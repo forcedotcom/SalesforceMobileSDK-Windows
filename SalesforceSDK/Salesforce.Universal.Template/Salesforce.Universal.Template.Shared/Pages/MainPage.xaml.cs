@@ -43,6 +43,10 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Exceptions;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -53,10 +57,44 @@ namespace $safeprojectname$.Pages
     /// </summary>
     public sealed partial class MainPage : NativeMainPage
     {
+        private ObservableCollection<Contact> _contacts = new ObservableCollection<Contact>();
+        
+        public ObservableCollection<Contact> Contacts
+        {
+            get { return this._contacts; }
+        }
 
         public MainPage() : base()
         {
             this.InitializeComponent();
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var color = new Config().LoginBackgroundColor;
+            if (color != null)
+            {
+                grid.Background = new SolidColorBrush(color.Value);
+            }
+            Account account = AccountManager.GetAccount();
+            if (account != null)
+            {
+                try
+                {
+                    account = await OAuth2.RefreshAuthToken(account);
+                    _contacts = await SendRequest("SELECT Name FROM Contact");
+                    contactList.DataContext = Contacts;
+                }
+                catch (OAuthException ex)
+                {
+                    SDKManager.GlobalClientManager.Logout();
+                }
+
+            }
+            else
+            {
+                base.OnNavigatedTo(e);
+            }
         }
         
         private void SwitchAccount(object sender, RoutedEventArgs e)
@@ -73,5 +111,29 @@ namespace $safeprojectname$.Pages
             }
             AccountManager.SwitchAccount();
         }
+
+        private async Task<ObservableCollection<Contact>> SendRequest(string soql)
+        {
+            var restRequest = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
+            var client = SDKManager.GlobalClientManager.GetRestClient() ??
+                         new RestClient(AccountManager.GetAccount().InstanceUrl);
+            var response = await client.SendAsync(restRequest);
+            if (!response.Success)
+            {
+                return null;
+            }
+            var records = response.AsJObject.GetValue("records").ToObject<JArray>();
+            foreach (var item in records)
+            {
+                _contacts.Add(new Contact { Name = item.Value<string>("Name") });
+            }
+
+            return _contacts;
+        }
+    }
+
+    public class Contact
+    {
+        public string Name { get; set; }
     }
 }
