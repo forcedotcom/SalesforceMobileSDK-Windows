@@ -46,13 +46,14 @@ module SalesforceJS {
             }
             this.servers = new ServerConfig();
             var self = this;
-            return new WinJS.Promise(function(resolve) {
+            return new WinJS.Promise((resolve, reject, progress) => {
                 WinJS.xhr({ url: bootConfig }).then((response) => {
                     self.loadBootConfig(response.responseText);
+                    progress();
                 }).then(() => {
                     WinJS.xhr({ url: "data/servers.xml" }).done((response) => {
                         self.loadServerXml(response);
-                        resolve();
+                        resolve(self);
                     });
                 });
             });
@@ -82,7 +83,7 @@ module SalesforceJS {
             auth.HybridAccountManager.initEncryption();
             var boot = this.config;
             var account = auth.HybridAccountManager.getAccount();
-            return new WinJS.Promise(function(resolve, reject, progress) {
+            return new WinJS.Promise((resolve, reject, progress) => {
                 if (account == null) {
                     var options = new auth.LoginOptions(server.address, boot.remoteAccessConsumerKey, boot.oauthRedirectURI, boot.oauthScopes);
                     var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
@@ -90,25 +91,44 @@ module SalesforceJS {
                     var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
                     Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
                             Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri)
-                        .done(function(result) {
+                        .done(result => {
+                        if (result.responseData == "") {
+                            reject(result.responseStatus);
+                        } else {
                             var responseResult = new Windows.Foundation.Uri(result.responseData);
                             var authResponse = responseResult.fragment.substring(1);
-                            auth.HybridAccountManager.createNewAccount(options, authResponse).done(function(newAccount) {
+                            auth.HybridAccountManager.createNewAccount(options, authResponse).done(newAccount => {
                                 if (newAccount != null) {
                                     resolve(newAccount);
                                 } else {
                                     reject(result.responseErrorDetail);
                                 }
-
                             });
-                        }, function(err) {
-                            reject(err);
+                        }
+                    }, err => {
+                        reject(err);
                         });
+                    progress();
                 } else {
                     auth.OAuth2.refreshAuthToken(account);
                     resolve(account);
                 }
             });
+        }
+
+        public logout() {
+            return new WinJS.Promise((resolve) => {
+                var rest = Salesforce.SDK.Hybrid.Rest;
+                var cm = new rest.ClientManager();
+                var client = cm.peekRestClient();
+                if (client != null) {
+                    cm.logout().done(() => {
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            });   
         }
     }
 }

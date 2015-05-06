@@ -25,7 +25,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 
@@ -95,7 +97,15 @@ namespace Salesforce.SDK.Rest
             RestClient restClient = PeekRestClient();
             if (restClient == null)
             {
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                try
+                {
+                    PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                }
+                catch (InvalidOperationException)
+                {
+                   PlatformAdapter.SendToCustomLogger("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
+                }
+               
             }
             return restClient;
         }

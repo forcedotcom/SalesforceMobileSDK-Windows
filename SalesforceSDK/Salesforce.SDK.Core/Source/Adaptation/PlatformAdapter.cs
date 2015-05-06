@@ -97,6 +97,8 @@ namespace Salesforce.SDK.Adaptation
 
         private static Type GetConcreteType(Type interfaceType)
         {
+            if (PlatformAssembly == null)
+                throw new InvalidOperationException();
             // For instance interface Foo.IAbc should have a concreate class Foo.Abc
             string concreteTypeName = interfaceType.Namespace + "." + interfaceType.Name.Substring(1);
             return PlatformAssembly.GetType(concreteTypeName);

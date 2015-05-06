@@ -34,13 +34,14 @@ var SalesforceJS;
             }
             this.servers = new ServerConfig();
             var self = this;
-            return new WinJS.Promise(function (resolve) {
+            return new WinJS.Promise(function (resolve, reject, progress) {
                 WinJS.xhr({ url: bootConfig }).then(function (response) {
                     self.loadBootConfig(response.responseText);
+                    progress();
                 }).then(function () {
                     WinJS.xhr({ url: "data/servers.xml" }).done(function (response) {
                         self.loadServerXml(response);
-                        resolve();
+                        resolve(self);
                     });
                 });
             });
@@ -73,23 +74,44 @@ var SalesforceJS;
                     var startUri = new Windows.Foundation.Uri(startUriStr);
                     var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
                     Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri).done(function (result) {
-                        var responseResult = new Windows.Foundation.Uri(result.responseData);
-                        var authResponse = responseResult.fragment.substring(1);
-                        auth.HybridAccountManager.createNewAccount(options, authResponse).done(function (newAccount) {
-                            if (newAccount != null) {
-                                resolve(newAccount);
-                            }
-                            else {
-                                reject(result.responseErrorDetail);
-                            }
-                        });
+                        if (result.responseData == "") {
+                            reject(result.responseStatus);
+                        }
+                        else {
+                            var responseResult = new Windows.Foundation.Uri(result.responseData);
+                            var authResponse = responseResult.fragment.substring(1);
+                            auth.HybridAccountManager.createNewAccount(options, authResponse).done(function (newAccount) {
+                                if (newAccount != null) {
+                                    resolve(newAccount);
+                                }
+                                else {
+                                    reject(result.responseErrorDetail);
+                                }
+                            });
+                        }
                     }, function (err) {
                         reject(err);
                     });
+                    progress();
                 }
                 else {
                     auth.OAuth2.refreshAuthToken(account);
                     resolve(account);
+                }
+            });
+        };
+        OAuth2.prototype.logout = function () {
+            return new WinJS.Promise(function (resolve) {
+                var rest = Salesforce.SDK.Hybrid.Rest;
+                var cm = new rest.ClientManager();
+                var client = cm.peekRestClient();
+                if (client != null) {
+                    cm.logout().done(function () {
+                        resolve();
+                    });
+                }
+                else {
+                    resolve();
                 }
             });
         };

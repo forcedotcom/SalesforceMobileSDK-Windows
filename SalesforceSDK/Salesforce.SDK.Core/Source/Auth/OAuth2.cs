@@ -404,6 +404,8 @@ namespace Salesforce.SDK.Auth
 
         public static async void ClearCookies(LoginOptions loginOptions)
         {
+            if (Window.Current == null)
+                return;
             var frame = Window.Current.Content as Frame;
             if (frame != null)
             {
