@@ -75,21 +75,22 @@ namespace Salesforce.Sample.Salesforce1.Container
             {
                 if (!oneView.CanGoBack)
                 {
+                    bool failed = false;
                     try
                     {
-                        account = await OAuth2.RefresAuthToken(account);
+                        account = await OAuth2.RefreshAuthToken(account);
                         string startPage = GetPage(account) +
                                            "?display=touch&sid=" + account.AccessToken;
-                        /*string startPage = OAuth2.ComputeFrontDoorUrl(account.InstanceUrl,
-                                LoginOptions.DefaultDisplayType,
-                                account.AccessToken, GetPage(account));*/
-
+                      
+                        account = await OAuth2.RefreshAuthToken(account);
                         oneView.Navigate(new Uri(startPage));
                     }
                     catch (OAuthException ex)
                     {
-                        SDKManager.GlobalClientManager.Logout();
+                        failed = true;
                     }
+                    if (failed)
+                        await SDKManager.GlobalClientManager.Logout();
                 }
             }
             else

@@ -11,6 +11,8 @@
     <Content Include="$(MSBuildThisFileDirectory)js\app.js" />
     <Content Include="$(MSBuildThisFileDirectory)js\default.js" />
     <Content Include="$(MSBuildThisFileDirectory)js\salesforce.windows.oauth.js" />
+    <Content Include="$(MSBuildThisFileDirectory)js\winjs-3.0.d.ts" />
+    <Content Include="$(MSBuildThisFileDirectory)js\WinJS-3.0.js" />
     <Content Include="$(MSBuildThisFileDirectory)main.html" />
   </ItemGroup>
 </Project>
