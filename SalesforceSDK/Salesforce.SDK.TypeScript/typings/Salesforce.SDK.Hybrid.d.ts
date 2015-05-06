@@ -41,6 +41,7 @@ declare module Salesforce.SDK.Hybrid.Auth {
     export class HybridAccountManager implements Salesforce.SDK.Hybrid.Auth.IHybridAccountManagerClass {
         constructor();
         static createNewAccount(loginOptions: Salesforce.SDK.Hybrid.Auth.LoginOptions, response: string): Windows.Foundation.IAsyncOperation<Salesforce.SDK.Hybrid.Auth.Account>;
+        static switchToAccount(account: Salesforce.SDK.Hybrid.Auth.Account): Windows.Foundation.IAsyncOperation<boolean>;
         static deleteAccount(): void;
         static getAccount(): Salesforce.SDK.Hybrid.Auth.Account;
         static getAccounts(): Windows.Foundation.Collections.IMap<string,Salesforce.SDK.Hybrid.Auth.Account>;

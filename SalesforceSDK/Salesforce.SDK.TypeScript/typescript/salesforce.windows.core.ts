@@ -34,6 +34,8 @@ module SalesforceJS {
 
         private config: BootConfig;
         private servers: ServerConfig;
+        private auth = Salesforce.SDK.Hybrid.Auth;
+        private rest = Salesforce.SDK.Hybrid.Rest;
 
         constructor() {
             this.config = new BootConfig();
@@ -82,16 +84,14 @@ module SalesforceJS {
             var auth = Salesforce.SDK.Hybrid.Auth;
             auth.HybridAccountManager.initEncryption();
             var boot = this.config;
-            var account = auth.HybridAccountManager.getAccount();
             return new WinJS.Promise((resolve, reject, progress) => {
-                if (account == null) {
-                    var options = new auth.LoginOptions(server.address, boot.remoteAccessConsumerKey, boot.oauthRedirectURI, boot.oauthScopes);
-                    var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
-                    var startUri = new Windows.Foundation.Uri(startUriStr);
-                    var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
-                    Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
-                            Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri)
-                        .done(result => {
+                var options = new auth.LoginOptions(server.address, boot.remoteAccessConsumerKey, boot.oauthRedirectURI, boot.oauthScopes);
+                var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
+                var startUri = new Windows.Foundation.Uri(startUriStr);
+                var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
+                Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(
+                        Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri)
+                    .done(result => {
                         if (result.responseData == "") {
                             reject(result.responseStatus);
                         } else {
@@ -107,19 +107,14 @@ module SalesforceJS {
                         }
                     }, err => {
                         reject(err);
-                        });
-                    progress();
-                } else {
-                    auth.OAuth2.refreshAuthToken(account);
-                    resolve(account);
-                }
+                    });
+                progress();
             });
         }
 
         public logout() {
             return new WinJS.Promise((resolve) => {
-                var rest = Salesforce.SDK.Hybrid.Rest;
-                var cm = new rest.ClientManager();
+                var cm = new this.rest.ClientManager();
                 var client = cm.peekRestClient();
                 if (client != null) {
                     cm.logout().done(() => {
@@ -130,5 +125,56 @@ module SalesforceJS {
                 }
             });   
         }
+
+        public getAuthCredentials(success, fail) {
+            var account = this.auth.HybridAccountManager.getAccount();
+            if (account != null) {
+                success(this.auth.Account.toJson(account));
+            } else {
+                fail();
+            }
+        }
+
+        public forcetkRefresh (success, fail) {
+            var account = this.auth.HybridAccountManager.getAccount();
+            if (account != null) {
+                this.auth.OAuth2.refreshAuthToken(account).done(resolve => {
+                    success(resolve);
+                }, reject => {
+                    fail(reject);
+                });
+            } else {
+                fail(null);
+            }
+        }
+
+        public getUsers(success, fail) {
+            var imapAccounts = this.auth.HybridAccountManager.getAccounts();
+            if (imapAccounts != null && imapAccounts.size > 0) {
+                var first = imapAccounts.first();
+                var accounts = new Array<Salesforce.SDK.Hybrid.Auth.Account>();
+                accounts.push(<Salesforce.SDK.Hybrid.Auth.Account>first.current.value);
+                while (first.moveNext()) {
+                    accounts.push(<Salesforce.SDK.Hybrid.Auth.Account>first.current.value);
+                }
+                success(accounts);
+            } else {
+                fail(null);
+            }
+        }
+
+        public getUser(success, fail) {
+            var account = this.auth.HybridAccountManager.getAccount();
+            if (account != null) {
+                success(account);
+            } else {
+                fail(null);
+            }
+        }
+
+        public switchToUser(account : Salesforce.SDK.Hybrid.Auth.Account) {
+            return this.auth.HybridAccountManager.switchToAccount(account);
+        }
     }
+
 }
