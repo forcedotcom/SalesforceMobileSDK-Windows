@@ -1,13 +1,100 @@
 ﻿// For an introduction to the Blank template, see the following documentation:
 // http://go.microsoft.com/fwlink/?LinkId=232509
-(function () {
+(function() {
     "use strict";
 
     var app = WinJS.Application;
     var activation = Windows.ApplicationModel.Activation;
     var oauth = new SalesforceJS.OAuth2();
 
-    var fetchRecords = function () {
+    var fetchServers = function () {
+        var listItemsHtml = document.querySelector('#servers');
+        for (var i = 0; i < oauth.servers.serverList.length; i++) {
+            var server = oauth.servers.serverList[i];
+            var buttonli = document.createElement("li");
+            var buttondiv = document.createElement("div");
+            var userButton = document.createElement("button");
+            buttonli.setAttribute("class", "table-view-cell");
+            buttonli.setAttribute("align", "center");
+            buttondiv.setAttribute("class", "media-body");
+            userButton.addEventListener("click", serverItem(server), false);
+            userButton.innerText = "Login User to: " + server.address;
+            buttondiv.appendChild(userButton);
+            buttonli.appendChild(buttondiv);
+            listItemsHtml.appendChild(buttonli);
+        }
+    }
+
+    var fetchUsers = function() {
+        var accounts;
+        var account;
+
+        oauth.getUser(function success(result) {
+            account = result;
+        });
+        oauth.getUsers(function success(result) {
+            accounts = result;
+        });
+        var buttonli;
+        var buttondiv;
+        var userButton;
+        var listItemsHtml = document.querySelector('#users');
+        if (accounts != null) {
+            for (var x = 0; x < accounts.length; x++) {
+                var current = accounts[x];
+                if (current.userId == account.userId) {
+                    var li = document.createElement("li");
+                    var div = document.createElement("div");
+
+                    li.setAttribute("class", "table-view-cell");
+                    div.setAttribute("class", "media-body");
+
+                    div.innerHTML = current.userName;
+                    li.appendChild(div);
+                    listItemsHtml.appendChild(li);
+                } else {
+                    buttonli = document.createElement("li");
+                    buttondiv = document.createElement("div");
+                    userButton = document.createElement("button");
+                    buttonli.setAttribute("class", "table-view-cell");
+                    buttonli.setAttribute("align", "center");
+                    buttondiv.setAttribute("class", "media-body");
+                    userButton.addEventListener("click", userItem(current), false);
+                    userButton.innerText = current.userName;
+                    buttondiv.appendChild(userButton);
+                    buttonli.appendChild(buttondiv);
+                    listItemsHtml.appendChild(buttonli);
+                }
+            }
+            buttonli = document.createElement("li");
+            buttondiv = document.createElement("div");
+            var logoutButton = document.createElement("button");
+            buttonli.setAttribute("class", "table-view-cell");
+            buttonli.setAttribute("align", "center");
+            buttondiv.setAttribute("class", "media-body");
+            logoutButton.addEventListener("click", logout, false);
+            logoutButton.innerText = "Logout";
+            buttondiv.appendChild(logoutButton);
+            buttonli.appendChild(buttondiv);
+            listItemsHtml.appendChild(buttonli);
+        }
+    }
+
+    var userItem = function(account) {
+        return function () { switchUser(account); }
+    }
+
+    var serverItem = function (server) {
+        return function () {
+            oauth.login(server).done(function () {
+                refresh();
+            }, function (error) {
+                startup();
+            });
+        }
+    }
+
+    var fetchContacts = function () {
         var soql = 'SELECT Id, Name FROM Contact LIMIT 10';
         var rest = Salesforce.SDK.Hybrid.Rest;
         var cm = new rest.ClientManager();
@@ -18,7 +105,7 @@
         var response = client.sendAsync(request).then(function (data) {
             var users = JSON.parse(data.asString).records;
 
-            var listItemsHtml = document.querySelector('#users');
+            var listItemsHtml = document.querySelector('#contacts');
             for (var i = 0; i < users.length; i++) {
                 var li = document.createElement("li");
                 var div = document.createElement("div");
@@ -29,22 +116,26 @@
                 li.appendChild(div);
                 listItemsHtml.appendChild(li);
             }
-            var buttonli = document.createElement("li");
-            var buttondiv = document.createElement("div");
-            var logoutButton = document.createElement("button");
-            buttonli.setAttribute("class", "table-view-cell");
-            buttonli.setAttribute("align", "center");
-            buttondiv.setAttribute("class", "media-body");
-            logoutButton.addEventListener("click", logout, false);
-            logoutButton.innerText = "Logout";
-            buttondiv.appendChild(logoutButton);
-            buttonli.appendChild(buttondiv);
-            listItemsHtml.appendChild(buttonli);
+        
         });
     };
     
-    var clearRecords = function() {
-        var elmtTable = document.querySelector('#users');
+    var refresh = function() {
+        clearRecords('#servers');
+        clearRecords('#users');
+        clearRecords('#contacts');
+        fetchServers();
+        fetchContacts();
+        fetchUsers();
+    }
+    var switchUser = function(account) {
+        oauth.switchToUser(account).done(function success() {
+            refresh();
+        });
+    }
+
+    var clearRecords = function(table) {
+        var elmtTable = document.querySelector(table);
         var tableRows = elmtTable.getElementsByTagName('li');
         var rowCount = tableRows.length;
 
@@ -55,19 +146,31 @@
 
     var logout = function() {
         oauth.logout()
-            .then(function () {
-            clearRecords();
-                startup(); });
+            .then(function() {
+                var accounts;
+                oauth.getUsers(function success(result) {
+                    accounts = result;
+                });
+                if (accounts.length > 0) {
+                    switchUser(accounts[0]);
+                } else {
+                    startup();
+                }
+            });
     }
 
-    var startup = function() {
+    var startup = function () {
         oauth.configureOAuth("data/bootconfig.json", null)
-            .then(function() {
-                oauth.loginDefaultServer().done(function() {
-                    fetchRecords();
-                }, function (error) {
-                    startup();
-                });
+            .then(function () {
+                oauth.getUsers(function success(result) {
+                    refresh();
+                }, function failure(result) {
+                    oauth.loginDefaultServer().done(function () {
+                        refresh();
+                    }, function (error) {
+                        startup();
+                    });
+                });   
             });
     }
 

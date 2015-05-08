@@ -383,6 +383,8 @@ namespace Salesforce.SDK.Auth
         public static void RefreshCookies()
         {
             PlatformAdapter.SendToCustomLogger("OAuth.RefreshCookies - attempting at refreshing cookies", LoggingLevel.Verbose);
+            if (Window.Current == null)
+                return;
             Account account = AccountManager.GetAccount();
             if (account != null)
             {
