@@ -207,9 +207,9 @@ Global
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|ARM.Build.0 = Release|ARM
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|ARM.Deploy.0 = Release|ARM
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|iOS.ActiveCfg = Release|Any CPU
-		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.Deploy.0 = Release|Any CPU
+		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.Build.0 = Release|x86
+		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Mixed Platforms.Deploy.0 = Release|x86
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Win32.ActiveCfg = Release|x86
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Win32.Build.0 = Release|x86
 		{EA18ADF8-C135-42E2-AED3-B90B0A5E2EA5}.Release|Win32.Deploy.0 = Release|x86
