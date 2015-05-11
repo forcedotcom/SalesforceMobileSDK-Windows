@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salesforce.SDK.Hybrid
+namespace Salesforce.SDK.Hybrid.SmartStore
 {
     public sealed class SmartStoreType
     {
