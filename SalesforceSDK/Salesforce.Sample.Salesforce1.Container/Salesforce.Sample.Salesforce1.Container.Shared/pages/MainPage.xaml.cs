@@ -78,7 +78,6 @@ namespace Salesforce.Sample.Salesforce1.Container
                     bool failed = false;
                     try
                     {
-                        account = await OAuth2.RefreshAuthToken(account);
                         string startPage = GetPage(account) +
                                            "?display=touch&sid=" + account.AccessToken;
                       

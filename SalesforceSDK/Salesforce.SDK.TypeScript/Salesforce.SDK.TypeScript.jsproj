@@ -76,6 +76,8 @@
     <Content Include="css\default.css" />
     <Content Include="js\WinJS-3.0.js" />
     <Content Include="typescript\salesforce.windows.core.js" />
+    <Content Include="typescript\salesforce.windows.smartstore.js" />
+    <Content Include="typescript\salesforce.windows.smartsync.js" />
     <None Include="Salesforce.SDK.TypeScript_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -83,11 +85,17 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="typescript\salesforce.windows.core.ts" />
+    <TypeScriptCompile Include="typescript\salesforce.windows.smartstore.ts" />
+    <TypeScriptCompile Include="typescript\salesforce.windows.smartsync.ts" />
     <TypeScriptCompile Include="typings\Salesforce.SDK.Hybrid.d.ts" />
+    <TypeScriptCompile Include="typings\Salesforce.SDK.Hybrid.SmartStore.d.ts" />
+    <TypeScriptCompile Include="typings\Salesforce.SDK.Hybrid.SmartSync.d.ts" />
     <TypeScriptCompile Include="typings\winjs-3.0.d.ts" />
     <TypeScriptCompile Include="typings\winrt.d.ts" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Salesforce.SDK.Hybrid.SmartStore\Salesforce.SDK.Hybrid.SmartStore.csproj" />
+    <ProjectReference Include="..\Salesforce.SDK.Hybrid.SmartSync\Salesforce.SDK.Hybrid.SmartSync.csproj" />
     <ProjectReference Include="..\Salesforce.SDK.Hybrid\Salesforce.SDK.Hybrid.csproj" />
   </ItemGroup>
   <ItemGroup>
