@@ -76,6 +76,8 @@
     <Content Include="css\default.css" />
     <Content Include="js\WinJS-3.0.js" />
     <Content Include="typescript\salesforce.windows.core.js" />
+    <Content Include="typescript\salesforce.windows.smartstore.js" />
+    <Content Include="typescript\salesforce.windows.smartsync.js" />
     <None Include="Salesforce.SDK.TypeScript_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
