@@ -1,4 +1,4 @@
-/*
+﻿/*
 * Copyright (c) 2015, salesforce.com, inc.
 * All rights reserved.
 *
@@ -98,7 +98,8 @@ var SalesforceJS;
                 var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
                 var startUri = new Windows.Foundation.Uri(startUriStr);
                 var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
-                Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri).done(function (result) {
+                Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri)
+                    .done(function (result) {
                     if (result.responseData == "") {
                         reject(result.responseStatus);
                     }
@@ -183,6 +184,12 @@ var SalesforceJS;
         };
         OAuth2.prototype.switchToUser = function (account) {
             return this.auth.HybridAccountManager.switchToAccount(account);
+        };
+        OAuth2.prototype.getAppHomeUrl = function () {
+            if (this.config == null) {
+                return null;
+            }
+            return this.config.startPage;
         };
         return OAuth2;
     })();

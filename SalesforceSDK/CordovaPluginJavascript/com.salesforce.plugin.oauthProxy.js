@@ -28,6 +28,41 @@ var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
 var SERVICE = "com.salesforce.oauth";
 
 var exec = require("com.salesforce.util.exec").exec;
+var core = require("../Salesforce.SDK.TypeScript/typescript/salesforce.windows.core.js");
+var oauth2 = new SalesforceJS.OAuth2();
 
+var logoutInitiated = false;
+
+var getAuthCredentials = function(success, error) {
+    oauth2.getAuthCredentials(success, error);
+};
+
+var authenticate = function (server) {
+    oauth2.login(server);
+};
+
+var logout = function() {
+    if(!logoutInitiated) {
+      logoutInitiated = true;
+      oauth2.logout();
+    }
+
+};
+
+var getAppHomeUrl = function(success) {
+  oauth2.getAppHomeUrl(success);
+};
+
+var forcetkRefresh = function(success, error) {
+    oauth2.forcetkRefresh(success, error);
+}
+
+module.exports = {
+    getAuthCredentials: getAuthCredentials,
+    authenticate: authenticate,
+    logout: logout,
+    getAppHomeUrl: getAppHomeUrl,
+    forcetkRefresh: forcetkRefresh
+};
 
 require("cordova/exec/proxy").add("plugin.oauth", module.exports);
