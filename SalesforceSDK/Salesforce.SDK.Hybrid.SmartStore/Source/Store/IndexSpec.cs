@@ -14,6 +14,11 @@ namespace Salesforce.SDK.Hybrid.SmartStore
     {
         private SDK.SmartStore.Store.IndexSpec _indexSpec;
 
+        public IndexSpec()
+        {
+            throw new InvalidOperationException("IndexSpec without parameters is not supported");
+        }
+
         public IndexSpec(String path, SmartStoreType type)
         {
             var smartStoreType = JsonConvert.SerializeObject(type);
@@ -35,8 +40,8 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         internal static SDK.SmartStore.Store.IndexSpec[] ConvertToSdkIndexSpecs(IndexSpec[] indexSpecs)
         {
-            var specs = JsonConvert.SerializeObject(indexSpecs);
-            return JsonConvert.DeserializeObject<SDK.SmartStore.Store.IndexSpec[]>(specs);
+            var specs = from n in indexSpecs select n._indexSpec;
+            return specs.ToArray();
         }
 
         internal static IndexSpec[] ConvertToHybridIndexSpecs(SDK.SmartStore.Store.IndexSpec[] indexSpecs)

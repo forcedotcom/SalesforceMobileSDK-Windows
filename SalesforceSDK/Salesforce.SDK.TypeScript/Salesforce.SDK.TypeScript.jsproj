@@ -38,6 +38,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>e2e39b4c-e5e1-4163-8fbb-cd01473086d1</ProjectGuid>
     <TypeScriptToolsVersion>1.4</TypeScriptToolsVersion>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <TypeScriptGeneratesDeclarations>false</TypeScriptGeneratesDeclarations>
@@ -58,11 +60,18 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>Salesforce.SDK.TypeScript_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <NuGetPackageImportStamp>5dba1e3e</NuGetPackageImportStamp>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="..\CordovaPluginJavascript\com.salesforce.plugin.oauthProxy.js">
+      <Link>js\com.salesforce.plugin.oauthProxy.js</Link>
+    </Content>
+    <Content Include="..\CordovaPluginJavascript\com.salesforce.plugin.smartstoreProxy.js">
+      <Link>js\com.salesforce.plugin.smartstoreProxy.js</Link>
+    </Content>
     <Content Include="..\Salesforce.SDK.Core\Resources\servers.xml">
       <Link>data\servers.xml</Link>
     </Content>
@@ -75,13 +84,18 @@
     <Content Include="js\default.js" />
     <Content Include="css\default.css" />
     <Content Include="js\WinJS-3.0.js" />
+    <Content Include="SQLitePCL.Ext.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="typescript\salesforce.windows.core.js" />
     <Content Include="typescript\salesforce.windows.smartstore.js" />
     <Content Include="typescript\salesforce.windows.smartsync.js" />
     <None Include="Salesforce.SDK.TypeScript_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, version=12.0" />
     <SDKReference Include="Microsoft.WinJS.2.0, Version=1.0" />
+    <SDKReference Include="SQLite.WinRT81, Version=3.8.7.4" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="typescript\salesforce.windows.core.ts" />
@@ -101,6 +115,13 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\$(WMSJSProjectDirectory)\Microsoft.VisualStudio.$(WMSJSProject).targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.jsproj.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.jsproj.targets')" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below then uncomment
        that target and the DisableFastUpToDateCheck PropertyGroup. 
        Other similar extension points exist, see Microsoft.Common.targets.

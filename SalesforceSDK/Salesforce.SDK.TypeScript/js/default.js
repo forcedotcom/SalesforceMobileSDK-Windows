@@ -103,8 +103,16 @@
         var request = rest.RestRequest.getRequestForQuery("v31.0", soql);
 
         var response = client.sendAsync(request).then(function (data) {
+            var smart = Salesforce.SDK.Hybrid.SmartStore;
+            var smartstore = smart.SmartStore.getSmartStore();
             var users = JSON.parse(data.asString).records;
-
+            var indexspec = [
+                new smart.IndexSpec("Id", smart.SmartStoreType.smartString),
+              new smart.IndexSpec("FirstName", smart.SmartStoreType.smartString),
+              new smart.IndexSpec("LastName", smart.SmartStoreType.smartString) 
+            ];
+            smartstore.registerSoup("user", indexspec);
+            var registered = smartstore.hasSoup("user");
             var listItemsHtml = document.querySelector('#contacts');
             for (var i = 0; i < users.length; i++) {
                 var li = document.createElement("li");
@@ -164,6 +172,7 @@
             .then(function () {
                 oauth.getUsers(function success(result) {
                     refresh();
+                    
                 }, function failure(result) {
                     oauth.loginDefaultServer().done(function () {
                         refresh();
