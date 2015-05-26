@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Newtonsoft.Json;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.SmartStore.Store;
 using System;
 using System.Collections.Generic;
@@ -14,18 +15,21 @@ namespace Salesforce.SDK.Hybrid.SmartStore
     {
         private SDK.SmartStore.Store.IndexSpec _indexSpec;
 
+        public IndexSpec()
+        {
+            throw new InvalidOperationException("IndexSpec without parameters is not supported");
+        }
+
         public IndexSpec(String path, SmartStoreType type)
         {
-            var smartStoreType = JsonConvert.SerializeObject(type);
             _indexSpec = new SDK.SmartStore.Store.IndexSpec(path,
-                JsonConvert.DeserializeObject<SDK.SmartStore.Store.SmartStoreType>(smartStoreType));
+                new SDK.SmartStore.Store.SmartStoreType(type.ColumnType));
         }
 
         public IndexSpec(String path, SmartStoreType type, String columnName)
         {
-            var smartStoreType = JsonConvert.SerializeObject(type);
             _indexSpec = new SDK.SmartStore.Store.IndexSpec(path,
-                JsonConvert.DeserializeObject<SDK.SmartStore.Store.SmartStoreType>(smartStoreType), columnName);
+                new SDK.SmartStore.Store.SmartStoreType(type.ColumnType), columnName);
         }
 
         public static IDictionary<string, IndexSpec> MapForIndexSpecs([ReadOnlyArray()]IndexSpec[] indexSpecs)
@@ -35,8 +39,8 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         internal static SDK.SmartStore.Store.IndexSpec[] ConvertToSdkIndexSpecs(IndexSpec[] indexSpecs)
         {
-            var specs = JsonConvert.SerializeObject(indexSpecs);
-            return JsonConvert.DeserializeObject<SDK.SmartStore.Store.IndexSpec[]>(specs);
+            var specs = from n in indexSpecs select n._indexSpec;
+            return specs.ToArray();
         }
 
         internal static IndexSpec[] ConvertToHybridIndexSpecs(SDK.SmartStore.Store.IndexSpec[] indexSpecs)

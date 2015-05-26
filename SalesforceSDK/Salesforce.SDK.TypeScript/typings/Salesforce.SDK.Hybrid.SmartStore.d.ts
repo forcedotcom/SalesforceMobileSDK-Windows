@@ -43,6 +43,7 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
     }
 
     export class IndexSpec implements Salesforce.SDK.Hybrid.SmartStore.IIndexSpecClass {
+        constructor();
         constructor(path: string, type: Salesforce.SDK.Hybrid.SmartStore.SmartStoreType);
         constructor(path: string, type: Salesforce.SDK.Hybrid.SmartStore.SmartStoreType, columnName: string);
         static mapForIndexSpecs(indexSpecs: Salesforce.SDK.Hybrid.SmartStore.IndexSpec[]): Windows.Foundation.Collections.IMap<string,Salesforce.SDK.Hybrid.SmartStore.IndexSpec>;
@@ -57,8 +58,8 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
         convertSmartSql(smartSql: string): string;
         countQuery(querySpec: Salesforce.SDK.Hybrid.SmartStore.QuerySpec): number;
         createMetaTables(): void;
-        create(soupName: string, soupElt: any): any;
-        create(soupName: string, soupElt: any, handleTx: boolean): any;
+        create(soupName: string, soupElt: string): any;
+        create(soupName: string, soupElt: string, handleTx: boolean): any;
         delete(soupName: string, soupEntryIds: number[], handleTx: boolean): boolean;
         dropAllSoups(): void;
         dropAllSoups(databasePath: string): void;
@@ -72,16 +73,17 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
         reIndexSoup(soupName: string, indexPaths: string[], handleTx: boolean): void;
         resetDatabase(): void;
         retrieve(soupName: string, soupEntryIds: number[]): string;
-        update(soupName: string, soupElt: any, soupEntryId: number, handleTx: boolean): any;
-        upsert(soupName: string, soupElt: any): any;
-        upsert(soupName: string, soupElt: any, externalIdPath: string): any;
-        upsert(soupName: string, soupElt: any, externalIdPath: string, handleTx: boolean): any;
+        update(soupName: string, soupElt: string, soupEntryId: number, handleTx: boolean): any;
+        upsert(soupName: string, soupElt: string): any;
+        upsert(soupName: string, soupElt: string, externalIdPath: string): any;
+        upsert(soupName: string, soupElt: string, externalIdPath: string, handleTx: boolean): any;
     }
 
     export interface ISmartStoreTypeClass {
+        columnType: string;
     }
 
-    export class QuerySpec implements Salesforce.SDK.Hybrid.SmartStore.IQuerySpecClass {
+    export class QuerySpec implements Salesforce.SDK.Hybrid.SmartStore.IQuerySpecClass{
         constructor();
         static buildAllQuerySpec(soupName: string, path: string, order: Salesforce.SDK.Hybrid.SmartStore.SqlOrder, pageSize: number): Salesforce.SDK.Hybrid.SmartStore.QuerySpec;
         static buildExactQuerySpec(soupName: string, path: string, exactMatchKey: string, pageSize: number): Salesforce.SDK.Hybrid.SmartStore.QuerySpec;
@@ -98,7 +100,7 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
         like
     }
 
-    export class SmartStore implements Salesforce.SDK.Hybrid.SmartStore.ISmartStoreClass {
+    export class SmartStore implements Salesforce.SDK.Hybrid.SmartStore.ISmartStoreClass{
         constructor();
         static deleteAllDatabases(includeGlobal: boolean): void;
         static generateDatabasePath(account: Salesforce.SDK.Hybrid.Auth.Account): string;
@@ -113,8 +115,8 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
         convertSmartSql(smartSql: string): string;
         countQuery(querySpec: Salesforce.SDK.Hybrid.SmartStore.QuerySpec): number;
         createMetaTables(): void;
-        create(soupName: string, soupElt: any): any;
-        create(soupName: string, soupElt: any, handleTx: boolean): any;
+        create(soupName: string, soupElt: string): any;
+        create(soupName: string, soupElt: string, handleTx: boolean): any;
         delete(soupName: string, soupEntryIds: number[], handleTx: boolean): boolean;
         dropAllSoups(): void;
         dropAllSoups(databasePath: string): void;
@@ -128,16 +130,21 @@ declare module Salesforce.SDK.Hybrid.SmartStore {
         reIndexSoup(soupName: string, indexPaths: string[], handleTx: boolean): void;
         resetDatabase(): void;
         retrieve(soupName: string, soupEntryIds: number[]): string;
-        update(soupName: string, soupElt: any, soupEntryId: number, handleTx: boolean): any;
-        upsert(soupName: string, soupElt: any): any;
-        upsert(soupName: string, soupElt: any, externalIdPath: string): any;
-        upsert(soupName: string, soupElt: any, externalIdPath: string, handleTx: boolean): any;
+        update(soupName: string, soupElt: string, soupEntryId: number, handleTx: boolean): any;
+        upsert(soupName: string, soupElt: string): any;
+        upsert(soupName: string, soupElt: string, externalIdPath: string): any;
+        upsert(soupName: string, soupElt: string, externalIdPath: string, handleTx: boolean): any;
         toString(): string;
     }
 
-    export class SmartStoreType implements Salesforce.SDK.Hybrid.SmartStore.ISmartStoreTypeClass {
+    export class SmartStoreType implements Salesforce.SDK.Hybrid.SmartStore.ISmartStoreTypeClass{
+        constructor();
         constructor(columnType: string);
         toString(): string;
+        static smartInteger: Salesforce.SDK.Hybrid.SmartStore.SmartStoreType;
+        static smartString: Salesforce.SDK.Hybrid.SmartStore.SmartStoreType;
+        static smartFloating: Salesforce.SDK.Hybrid.SmartStore.SmartStoreType;
+        columnType: string;
     }
 
     enum SqlOrder {

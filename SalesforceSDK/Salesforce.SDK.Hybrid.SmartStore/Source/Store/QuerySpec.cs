@@ -23,20 +23,23 @@ namespace Salesforce.SDK.Hybrid.SmartStore
     };
     public sealed class QuerySpec
     {
+        [JsonProperty]
+        internal SDK.SmartStore.Store.QuerySpec SdkQuerySpec;
+
         public static QuerySpec BuildAllQuerySpec(string soupName, string path, SqlOrder order, int pageSize)
         {
             var sqlOrder = JsonConvert.SerializeObject(order);
             var nativeQuerySpec = SDK.SmartStore.Store.QuerySpec.BuildAllQuerySpec(soupName, path, JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec.SqlOrder>(sqlOrder), pageSize);
-            var querySpec = JsonConvert.SerializeObject(nativeQuerySpec);
-            return JsonConvert.DeserializeObject<QuerySpec>(querySpec);
+            var querySpec = new QuerySpec {SdkQuerySpec = nativeQuerySpec};
+            return querySpec;
         }
 
         public static QuerySpec BuildExactQuerySpec(string soupName, string path, string exactMatchKey, int pageSize)
         {
             var nativeQuerySpec = SDK.SmartStore.Store.QuerySpec.BuildExactQuerySpec(soupName, path, exactMatchKey,
                 pageSize);
-            var querySpec = JsonConvert.SerializeObject(nativeQuerySpec);
-            return JsonConvert.DeserializeObject<QuerySpec>(querySpec);
+            var querySpec = new QuerySpec {SdkQuerySpec = nativeQuerySpec};
+            return querySpec;
         }
 
         public static QuerySpec BuildRangeQuerySpec(string soupName, string path, string beginKey, string endKey,
@@ -44,8 +47,8 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         {
             var sqlOrder = JsonConvert.SerializeObject(order);
             var nativeQuerySpec = SDK.SmartStore.Store.QuerySpec.BuildRangeQuerySpec(soupName, path, beginKey, endKey, JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec.SqlOrder>(sqlOrder), pageSize);
-            var querySpec = JsonConvert.SerializeObject(nativeQuerySpec);
-            return JsonConvert.DeserializeObject<QuerySpec>(querySpec);
+            var querySpec = new QuerySpec {SdkQuerySpec = nativeQuerySpec};
+            return querySpec;
         }
 
         public static QuerySpec BuildLikeQuerySpec(string soupName, string path, string likeKey, SqlOrder order,
@@ -53,15 +56,15 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         {
             var sqlOrder = JsonConvert.SerializeObject(order);
             var nativeQuerySpec = SDK.SmartStore.Store.QuerySpec.BuildLikeQuerySpec(soupName, path, likeKey, JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec.SqlOrder>(sqlOrder), pageSize);
-            var querySpec = JsonConvert.SerializeObject(nativeQuerySpec);
-            return JsonConvert.DeserializeObject<QuerySpec>(querySpec);
+            var querySpec = new QuerySpec {SdkQuerySpec = nativeQuerySpec};
+            return querySpec;
         }
 
         public static QuerySpec BuildSmartQuerySpec(string smartSql, int pageSize)
         {
             var nativeQuerySpec = SDK.SmartStore.Store.QuerySpec.BuildSmartQuerySpec(smartSql, pageSize);
-            var querySpec = JsonConvert.SerializeObject(nativeQuerySpec);
-            return JsonConvert.DeserializeObject<QuerySpec>(querySpec);
+            var querySpec = new QuerySpec { SdkQuerySpec = nativeQuerySpec };
+            return querySpec;
         }
     }
 }
