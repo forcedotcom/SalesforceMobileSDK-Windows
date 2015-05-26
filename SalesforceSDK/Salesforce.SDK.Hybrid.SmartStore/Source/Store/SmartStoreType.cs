@@ -18,6 +18,17 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         private static readonly SmartStoreType _smartString = new SmartStoreType(SmartTypeString);
         private static readonly SmartStoreType _smartFloating = new SmartStoreType(SmartTypeFloating);
 
+        public string ColumnType {
+            get
+            {
+                return _smartStoreType.ColumnType;
+            }
+            set
+            {
+                _smartStoreType = new SDK.SmartStore.Store.SmartStoreType(value);
+            }
+        }
+
         public static SmartStoreType SmartInteger
         {
             get { return _smartInteger; }

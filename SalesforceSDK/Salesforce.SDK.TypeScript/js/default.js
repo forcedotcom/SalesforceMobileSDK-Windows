@@ -108,9 +108,11 @@
             var users = JSON.parse(data.asString).records;
             var indexspec = [
                 new smart.IndexSpec("Id", smart.SmartStoreType.smartString),
-              new smart.IndexSpec("FirstName", smart.SmartStoreType.smartString),
-              new smart.IndexSpec("LastName", smart.SmartStoreType.smartString) 
+              new smart.IndexSpec("Name", smart.SmartStoreType.smartString),
             ];
+            if (smartstore.hasSoup("user")) {
+                smartstore.dropSoup("user");
+            }
             smartstore.registerSoup("user", indexspec);
             var registered = smartstore.hasSoup("user");
             var listItemsHtml = document.querySelector('#contacts');
@@ -123,8 +125,13 @@
                 div.innerHTML = users[i].Name;
                 li.appendChild(div);
                 listItemsHtml.appendChild(li);
+                if (registered) {
+                    var result = smartstore.upsert("user", JSON.stringify(users[i]));
+                }
             }
-        
+            var qspec = smart.QuerySpec.buildAllQuerySpec("user", "Name", smart.SqlOrder.asc, 20);
+            var smartResults = smartstore.query(qspec, 0);
+            var json = JSON.parse(smartResults);
         });
     };
     

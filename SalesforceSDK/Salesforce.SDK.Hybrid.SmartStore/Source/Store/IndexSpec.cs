@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Newtonsoft.Json;
+using Salesforce.SDK.Auth;
 using Salesforce.SDK.SmartStore.Store;
 using System;
 using System.Collections.Generic;
@@ -21,16 +22,14 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public IndexSpec(String path, SmartStoreType type)
         {
-            var smartStoreType = JsonConvert.SerializeObject(type);
             _indexSpec = new SDK.SmartStore.Store.IndexSpec(path,
-                JsonConvert.DeserializeObject<SDK.SmartStore.Store.SmartStoreType>(smartStoreType));
+                new SDK.SmartStore.Store.SmartStoreType(type.ColumnType));
         }
 
         public IndexSpec(String path, SmartStoreType type, String columnName)
         {
-            var smartStoreType = JsonConvert.SerializeObject(type);
             _indexSpec = new SDK.SmartStore.Store.IndexSpec(path,
-                JsonConvert.DeserializeObject<SDK.SmartStore.Store.SmartStoreType>(smartStoreType), columnName);
+                new SDK.SmartStore.Store.SmartStoreType(type.ColumnType), columnName);
         }
 
         public static IDictionary<string, IndexSpec> MapForIndexSpecs([ReadOnlyArray()]IndexSpec[] indexSpecs)

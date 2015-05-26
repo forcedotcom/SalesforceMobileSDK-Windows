@@ -127,14 +127,12 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public string Query(QuerySpec querySpec, int pageIndex)
         {
-            var spec = JsonConvert.SerializeObject(querySpec);
-            return NativeSmartStore.Query(JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec>(spec), pageIndex).ToString();
+            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex).ToString();
         }
 
         public long CountQuery(QuerySpec querySpec)
         {
-            var spec = JsonConvert.SerializeObject(querySpec);
-            return NativeSmartStore.CountQuery(JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec>(spec));
+            return NativeSmartStore.CountQuery(querySpec.SdkQuerySpec);
         }
 
         public bool Delete(string soupName, [ReadOnlyArray()]long[] soupEntryIds, Boolean handleTx)
@@ -142,29 +140,29 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.Delete(soupName, soupEntryIds, handleTx);
         }
 
-        public object Create(string soupName, object soupElt)
+        public object Create(string soupName, string soupElt)
         {
-            return NativeSmartStore.Create(soupName, (JObject)soupElt);
+            return NativeSmartStore.Create(soupName, JObject.Parse(soupElt));
         }
 
-        public object Create(string soupName, object soupElt, bool handleTx)
+        public object Create(string soupName, string soupElt, bool handleTx)
         {
-            return NativeSmartStore.Create(soupName, (JObject) soupElt, handleTx);
+            return NativeSmartStore.Create(soupName, JObject.Parse(soupElt), handleTx);
         }
 
-        public object Upsert(string soupName, object soupElt, string externalIdPath)
+        public object Upsert(string soupName, string soupElt, string externalIdPath)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject) soupElt, externalIdPath);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt), externalIdPath);
         }
 
-        public object Upsert(string soupName, object soupElt)
+        public object Upsert(string soupName, string soupElt)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject)soupElt);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt));
         }
 
-        public object Upsert(string soupName, object soupElt, string externalIdPath, bool handleTx)
+        public object Upsert(string soupName, string soupElt, string externalIdPath, bool handleTx)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject) soupElt, externalIdPath, handleTx);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt), externalIdPath, handleTx);
         }
 
         public long LookupSoupEntryId(string soupName, string fieldPath, string fieldValue)
@@ -172,9 +170,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.LookupSoupEntryId(soupName, fieldPath, fieldValue);
         }
 
-        public object Update(String soupName, object soupElt, long soupEntryId, bool handleTx)
+        public object Update(String soupName, string soupElt, long soupEntryId, bool handleTx)
         {
-            return NativeSmartStore.Update(soupName, (JObject) soupElt, soupEntryId, handleTx);
+            return NativeSmartStore.Update(soupName, JObject.Parse(soupElt), soupEntryId, handleTx);
         }
 
         public string Retrieve(string soupName, params long[] soupEntryIds)
