@@ -26,6 +26,69 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         [JsonProperty]
         internal SDK.SmartStore.Store.QuerySpec SdkQuerySpec;
 
+        internal string BeginKey
+        {
+            get { return SdkQuerySpec.BeginKey; }
+        }
+
+        internal string CountSmartSql
+        {
+            get { return SdkQuerySpec.CountSmartSql; }
+        }
+
+        internal string EndKey
+        {
+            get { return SdkQuerySpec.EndKey; }
+        }
+
+        internal string LikeKey
+        {
+            get { return SdkQuerySpec.LikeKey; }
+        }
+
+        internal string MatchKey
+        {
+            get { return SdkQuerySpec.MatchKey; }
+        }
+
+        internal SqlOrder Order
+        {
+            get
+            {
+                var order = JsonConvert.SerializeObject(SdkQuerySpec.Order);
+                return JsonConvert.DeserializeObject<SqlOrder>(order);
+            }
+        }
+
+        internal int PageSize
+        {
+            get { return SdkQuerySpec.PageSize; }
+        }
+
+        internal string Path
+        {
+            get { return SdkQuerySpec.Path; }
+        }
+
+        internal SmartQueryType QueryType
+        {
+            get
+            {
+                var queryType = JsonConvert.SerializeObject(SdkQuerySpec.QueryType);
+                return JsonConvert.DeserializeObject<SmartQueryType>(queryType);
+            }
+        }
+
+        internal string SmartSql
+        {
+            get { return SdkQuerySpec.SmartSql; }
+        }
+
+        internal string SoupName
+        {
+            get { return SdkQuerySpec.SoupName; }
+        }
+
         public static QuerySpec BuildAllQuerySpec(string soupName, string path, SqlOrder order, int pageSize)
         {
             var sqlOrder = JsonConvert.SerializeObject(order);
