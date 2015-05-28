@@ -10,11 +10,12 @@ using Windows.Storage.Streams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Hybrid.Auth;
+using Salesforce.SDK.Hybrid.SmartStore.Source.Store;
 using Account = Salesforce.SDK.Hybrid.Auth.Account;
 
 namespace Salesforce.SDK.Hybrid.SmartStore
 {
-    public sealed class SmartStore
+    public sealed class SmartStore : ISmartStore
     {
         private SDK.SmartStore.Store.SmartStore NativeSmartStore
         {
@@ -163,6 +164,16 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         public object Upsert(string soupName, string soupElt, string externalIdPath, bool handleTx)
         {
             return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt), externalIdPath, handleTx);
+        }
+
+        public bool BeginDatabaseTransaction()
+        {
+            return NativeSmartStore.Database.BeginTransaction();
+        }
+
+        public bool CommitDatabaseTransaction()
+        {
+            return NativeSmartStore.Database.CommitTransaction();
         }
 
         public long LookupSoupEntryId(string soupName, string fieldPath, string fieldValue)
