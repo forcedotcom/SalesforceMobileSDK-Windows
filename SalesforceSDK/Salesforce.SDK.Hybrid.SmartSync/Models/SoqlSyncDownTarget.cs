@@ -13,6 +13,11 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
     {
         private SDK.SmartSync.Model.SoqlSyncDownTarget _soqlSyncDownTarget;
 
+        public SoqlSyncDownTarget()
+        {
+
+        }
+
         public SoqlSyncDownTarget(string query)
         {
             _soqlSyncDownTarget = new SDK.SmartSync.Model.SoqlSyncDownTarget(query);

@@ -6,12 +6,18 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Auth;
 
 namespace Salesforce.SDK.Hybrid.SmartSync.Models
 {
     public sealed class SyncUpTarget
     {
          private SDK.SmartSync.Model.SyncUpTarget _syncUpTarget;
+
+        public SyncUpTarget()
+        {
+            _syncUpTarget = new SDK.SmartSync.Model.SyncUpTarget();
+        }
 
         public SyncUpTarget(string target)
         {

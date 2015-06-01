@@ -63,6 +63,9 @@
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Manager\SOQLBuilder.cs" />
+    <Compile Include="Manager\SOSLBuilder.cs" />
+    <Compile Include="Manager\SOSLReturningBuilder.cs" />
     <Compile Include="Manager\SyncManager.cs" />
     <Compile Include="Models\MruSyncDownTarget.cs" />
     <Compile Include="Models\SoqlSyncDownTarget.cs" />

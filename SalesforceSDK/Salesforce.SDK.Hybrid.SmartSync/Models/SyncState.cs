@@ -18,6 +18,51 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
             get { return new SDK.SmartSync.Model.SyncState(); }
         }
 
+
+        public long Id 
+        {
+            get { return NativeSyncState.Id; }
+        }
+        public SyncTypes SyncType
+        {
+            get
+            {
+                var nativeSyncType = NativeSyncState.SyncType;
+                var hybridSyncType = JsonConvert.SerializeObject(nativeSyncType);
+                return JsonConvert.DeserializeObject<SyncTypes>(hybridSyncType);
+            }
+        }
+        //public SyncTarget Target { private set; get; }
+        public SyncOptions Options {
+            get
+            {
+                var nativeSyncOptions = NativeSyncState.Options;
+                var hybridSyncOptions = JsonConvert.SerializeObject(nativeSyncOptions);
+                return JsonConvert.DeserializeObject<SyncOptions>(hybridSyncOptions);
+            }
+        }
+        public String SoupName {
+            get { return NativeSyncState.SoupName; }
+        }
+        public SyncStatusTypes Status {
+            get
+            {
+                var nativeStatus = NativeSyncState.Status;
+                var hybridStatus = JsonConvert.SerializeObject(nativeStatus);
+                return JsonConvert.DeserializeObject<SyncStatusTypes>(hybridStatus);
+
+            }
+        }
+        public int Progress {
+            get { return NativeSyncState.Progress; }
+        }
+        public int TotalSize {
+            get { return NativeSyncState.TotalSize; }
+        }
+        public long MaxTimeStamp {
+            get { return NativeSyncState.MaxTimeStamp; }
+        }
+
         public MergeModeOptions MergeMode
         {
             get

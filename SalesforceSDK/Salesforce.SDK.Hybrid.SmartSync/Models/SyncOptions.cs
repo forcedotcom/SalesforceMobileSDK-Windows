@@ -11,6 +11,13 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
 {
     public sealed class SyncOptions
     {
+        [JsonProperty]
+        internal MergeModeOptions MergeMode;
+
+        [JsonProperty]
+        internal List<string> FieldList;
+        
+        
         public static SyncOptions FromJson(string options)
         {
             var jObject = JsonConvert.DeserializeObject<JObject>(options);
