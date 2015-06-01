@@ -57,7 +57,7 @@ namespace Salesforce.SDK.SmartSync.Model
                 ? SyncState.MergeModeOptions.None
                 : (SyncState.MergeModeOptions) Enum.Parse(typeof (SyncState.MergeModeOptions), mergeModeStr);
             var array = options.ExtractValue<JArray>(Constants.FieldList);
-            return new SyncOptions(array.ToObject<List<string>>(), mergeMode);
+            return array == null ? new SyncOptions(null, mergeMode) : new SyncOptions(array.ToObject<List<string>>(), mergeMode);
         }
 
         public static SyncOptions OptionsForSyncUp(List<string> fieldList, SyncState.MergeModeOptions mergeMode = SyncState.MergeModeOptions.Overwrite)

@@ -2,6 +2,6 @@
 <Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ReferenceCachePath>C:\Users\smcnulty\AppData\Local\Temp\Salesforce.Sample.Hybrid.RestExplorer.WindowsPhone_refcache</ReferenceCachePath>
-    <ToolsVersionPromptShown>1.4</ToolsVersionPromptShown>
+    <ToolsVersionPromptShown>1.5</ToolsVersionPromptShown>
   </PropertyGroup>
 </Project>
