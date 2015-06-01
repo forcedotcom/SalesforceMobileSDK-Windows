@@ -183,11 +183,12 @@ namespace Salesforce.SDK.Hybrid
                     // Offline
                 else
                 {
+                    // TODO: FIXME
                     // Has cached version
-                    if (false /* FIXME */)
-                    {
-                        Log("Success:Loading cached version of remote application because offline");
-                    }
+                    //if (false)
+                    //{
+                    //    Log("Success:Loading cached version of remote application because offline");
+                    //}
                     // No cached version
                     Log("Error:Can't load remote application offline without cached version");
                     LoadErrorPage();
