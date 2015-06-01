@@ -53,7 +53,7 @@ namespace Salesforce.SDK.SmartSync.Model
         }
 
 
-        private string Query { set; get; }
+        private new string Query { set; get; }
         private string NextRecordsUrl { set; get; }
 
         /// <summary>

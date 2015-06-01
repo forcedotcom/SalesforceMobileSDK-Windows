@@ -233,7 +233,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     DropAllSoups();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // it's ok
                 }
@@ -695,23 +695,20 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 return statement.GetText(position);
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception) { }
+
             try
             {
                 return statement.GetInteger(position);
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception) { }
+
             try
             {
                 return statement.GetFloat(position);
             }
-            catch (Exception e)
-            {
-            }
+            catch (Exception) { }
+
             return null;
         }
 
