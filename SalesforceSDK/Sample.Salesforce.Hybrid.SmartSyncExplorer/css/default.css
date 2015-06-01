@@ -1,0 +1,29 @@
+﻿body {
+    color: deepskyblue
+}
+
+.loginpage {
+    background-color: deepskyblue;
+    text-align: center;
+    
+}
+
+button {
+    border-color: white;
+    background-color: transparent;
+    border-width: 1px;
+    position: relative;
+    vertical-align: middle;
+}
+
+.showserverlist {
+    display: block;
+}
+
+.hideserverlist {
+    display: none;
+}
+
+.danger {
+    color : red
+}

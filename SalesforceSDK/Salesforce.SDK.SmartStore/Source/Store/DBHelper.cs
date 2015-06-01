@@ -394,7 +394,7 @@ namespace Salesforce.SDK.SmartStore.Store
             return soupTableName;
         }
 
-        protected string GetSoupTableNameFromDb(string soupName)
+        private string GetSoupTableNameFromDb(string soupName)
         {
             using (
                 SQLiteStatement stmt = Query(SmartStore.SoupNamesTable, new[] { SmartStore.IdCol }, String.Empty,
@@ -452,7 +452,7 @@ namespace Salesforce.SDK.SmartStore.Store
             return indexSpecs;
         }
 
-        protected IndexSpec[] GetIndexSpecsFromDb(String soupName)
+        private IndexSpec[] GetIndexSpecsFromDb(String soupName)
         {
             SQLiteStatement statement = Query(SmartStore.SoupIndexMapTable,
                 new[] { SmartStore.PathCol, SmartStore.ColumnNameCol, SmartStore.ColumnTypeCol }, null,

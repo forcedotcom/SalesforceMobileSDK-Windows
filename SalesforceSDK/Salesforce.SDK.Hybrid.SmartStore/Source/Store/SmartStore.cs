@@ -1,4 +1,30 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2015, salesforce.com, inc.
+ * All rights reserved.
+ * Redistribution and use of this software in source and binary forms, with or
+ * without modification, are permitted provided that the following conditions
+ * are met:
+ * - Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * - Neither the name of salesforce.com, inc. nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission of salesforce.com, inc.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -10,11 +36,12 @@ using Windows.Storage.Streams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Hybrid.Auth;
+using Salesforce.SDK.Hybrid.SmartStore.Source.Store;
 using Account = Salesforce.SDK.Hybrid.Auth.Account;
 
 namespace Salesforce.SDK.Hybrid.SmartStore
 {
-    public sealed class SmartStore
+    public sealed class SmartStore : ISmartStore
     {
         private SDK.SmartStore.Store.SmartStore NativeSmartStore
         {
@@ -127,14 +154,12 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public string Query(QuerySpec querySpec, int pageIndex)
         {
-            var spec = JsonConvert.SerializeObject(querySpec);
-            return NativeSmartStore.Query(JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec>(spec), pageIndex).ToString();
+            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex).ToString();
         }
 
         public long CountQuery(QuerySpec querySpec)
         {
-            var spec = JsonConvert.SerializeObject(querySpec);
-            return NativeSmartStore.CountQuery(JsonConvert.DeserializeObject<SDK.SmartStore.Store.QuerySpec>(spec));
+            return NativeSmartStore.CountQuery(querySpec.SdkQuerySpec);
         }
 
         public bool Delete(string soupName, [ReadOnlyArray()]long[] soupEntryIds, Boolean handleTx)
@@ -142,29 +167,39 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.Delete(soupName, soupEntryIds, handleTx);
         }
 
-        public object Create(string soupName, object soupElt)
+        public object Create(string soupName, string soupElt)
         {
-            return NativeSmartStore.Create(soupName, (JObject)soupElt);
+            return NativeSmartStore.Create(soupName, JObject.Parse(soupElt));
         }
 
-        public object Create(string soupName, object soupElt, bool handleTx)
+        public object Create(string soupName, string soupElt, bool handleTx)
         {
-            return NativeSmartStore.Create(soupName, (JObject) soupElt, handleTx);
+            return NativeSmartStore.Create(soupName, JObject.Parse(soupElt), handleTx);
         }
 
-        public object Upsert(string soupName, object soupElt, string externalIdPath)
+        public object Upsert(string soupName, string soupElt, string externalIdPath)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject) soupElt, externalIdPath);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt), externalIdPath);
         }
 
-        public object Upsert(string soupName, object soupElt)
+        public object Upsert(string soupName, string soupElt)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject)soupElt);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt));
         }
 
-        public object Upsert(string soupName, object soupElt, string externalIdPath, bool handleTx)
+        public object Upsert(string soupName, string soupElt, string externalIdPath, bool handleTx)
         {
-            return NativeSmartStore.Upsert(soupName, (JObject) soupElt, externalIdPath, handleTx);
+            return NativeSmartStore.Upsert(soupName, JObject.Parse(soupElt), externalIdPath, handleTx);
+        }
+
+        public bool BeginDatabaseTransaction()
+        {
+            return NativeSmartStore.Database.BeginTransaction();
+        }
+
+        public bool CommitDatabaseTransaction()
+        {
+            return NativeSmartStore.Database.CommitTransaction();
         }
 
         public long LookupSoupEntryId(string soupName, string fieldPath, string fieldValue)
@@ -172,9 +207,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.LookupSoupEntryId(soupName, fieldPath, fieldValue);
         }
 
-        public object Update(String soupName, object soupElt, long soupEntryId, bool handleTx)
+        public object Update(String soupName, string soupElt, long soupEntryId, bool handleTx)
         {
-            return NativeSmartStore.Update(soupName, (JObject) soupElt, soupEntryId, handleTx);
+            return NativeSmartStore.Update(soupName, JObject.Parse(soupElt), soupEntryId, handleTx);
         }
 
         public string Retrieve(string soupName, params long[] soupEntryIds)
