@@ -33,6 +33,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Hybrid.Auth;
@@ -43,6 +44,8 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 {
     public sealed class SmartStore : ISmartStore
     {
+        private static Dictionary<int, StoreCursor> _cursors;
+
         private SDK.SmartStore.Store.SmartStore NativeSmartStore
         {
             get { return SDK.SmartStore.Store.SmartStore.GetSmartStore(); }
@@ -53,6 +56,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             var store = SDK.SmartStore.Store.SmartStore.GetSmartStore();
             store.CreateMetaTables();
             var hybridStore = JsonConvert.SerializeObject(store);
+
+            _cursors = new Dictionary<int, StoreCursor>();
+
             return JsonConvert.DeserializeObject<SmartStore>(hybridStore);
         }
 
@@ -232,5 +238,75 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return SDK.SmartStore.Store.SmartStore.GetSoupTableName(soupId);
         }
 
+        /// <summary>
+        /// Native implementation of pgCloseCursor
+        /// </summary>
+        /// <param name="id"></param>
+        public void CloseCursor(int id)
+        {
+            if (_cursors.ContainsKey(id))
+            {
+                _cursors.Remove(id);
+            }
+        }
+
+        /// <summary>
+        /// Native implementation of pgMoveCursorToPageIndex
+        /// </summary>
+        public string MoveCursorToPageIndex(int id, int index)
+        {
+            if (!_cursors.ContainsKey(id))
+            {
+                return string.Empty;
+            }
+
+            var cursor = _cursors[id];
+            cursor.MoveToPageIndex(index);
+
+            return cursor.GetCursorData(this);
+        }
+
+        /// <summary>
+        /// Native implementation of pgQuerySoup
+        /// </summary>
+        /// <returns></returns>
+        public string QuerySoup(QuerySpec querySpec)
+        {
+            if (querySpec.QueryType == SmartQueryType.Smart)
+            {
+                throw new RuntimeBinderException("Smart queries can only be run through runSmartQuery");
+            }
+
+            return RunQuery(querySpec);
+        }
+
+        /// <summary>
+        /// Native implementation of pgRunSmartQuery
+        /// </summary>
+        /// <returns></returns>
+        public string RunSmartQuery(QuerySpec querySpec)
+        {
+            if (querySpec.QueryType != SmartQueryType.Smart)
+            {
+                throw new RuntimeBinderException("RunSmartQuery can only run smart queries");
+            }
+
+            return RunQuery(querySpec);
+        }
+
+        /// <summary>
+        /// Helper function for query functions
+        /// </summary>
+        /// <param name="querySpec"></param>
+        /// <returns></returns>
+        private string RunQuery(QuerySpec querySpec)
+        {
+            var cursor = new StoreCursor(this, querySpec);
+
+            _cursors.Add(cursor.CursorId, cursor);
+
+            var data = cursor.GetCursorData(this);
+            return data;
+        }
     }
 }

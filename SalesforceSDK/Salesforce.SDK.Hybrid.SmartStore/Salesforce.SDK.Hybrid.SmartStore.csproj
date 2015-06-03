@@ -58,6 +58,7 @@
     <Compile Include="Source\Store\SmartStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Store\SmartStoreType.cs" />
+    <Compile Include="Source\Store\StoreCursor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
