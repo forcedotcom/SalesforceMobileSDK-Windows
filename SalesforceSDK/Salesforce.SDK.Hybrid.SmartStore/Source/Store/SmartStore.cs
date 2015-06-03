@@ -37,8 +37,9 @@ using Microsoft.CSharp.RuntimeBinder;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Hybrid.Auth;
-using Salesforce.SDK.Hybrid.SmartStore.Source.Store;
+using Salesforce.SDK.SmartStore.Store;
 using Account = Salesforce.SDK.Hybrid.Auth.Account;
+using ISmartStore = Salesforce.SDK.Hybrid.SmartStore.Source.Store.ISmartStore;
 
 namespace Salesforce.SDK.Hybrid.SmartStore
 {
@@ -244,10 +245,13 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         /// <param name="id"></param>
         public void CloseCursor(int id)
         {
-            if (_cursors.ContainsKey(id))
+            if (!_cursors.ContainsKey(id))
             {
-                _cursors.Remove(id);
+                throw new SmartStoreException("cursor id " + id + " does not exist");
             }
+
+            _cursors.Remove(id);
+
         }
 
         /// <summary>
@@ -257,7 +261,7 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         {
             if (!_cursors.ContainsKey(id))
             {
-                return string.Empty;
+                throw new SmartStoreException("cursor id " + id + " does not exist");
             }
 
             var cursor = _cursors[id];
