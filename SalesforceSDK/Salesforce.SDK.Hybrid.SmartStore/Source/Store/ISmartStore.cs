@@ -15,5 +15,10 @@ namespace Salesforce.SDK.Hybrid.SmartStore.Source.Store
         object Upsert(string soupName, string soupElt, string externalIdPath, bool handleTx);
         bool BeginDatabaseTransaction();
         bool CommitDatabaseTransaction();
+        string ConvertSmartSql(string smartSql);
+        void CloseCursor(int id);
+        string MoveCursorToPageIndex(int id, int index);
+        string QuerySoup(QuerySpec querySpec);
+        string RunSmartQuery(QuerySpec querySpec);
     }
 }
