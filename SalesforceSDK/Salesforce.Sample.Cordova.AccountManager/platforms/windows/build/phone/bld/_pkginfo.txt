@@ -1,0 +1,1 @@
+C:\Repo\sdk-github\SalesforceSDK\Salesforce.Sample.Cordova.AccountManager\platforms\windows\AppPackages\CordovaApp.Phone_0.0.1.0_debug_Test\CordovaApp.Phone_0.0.1.0_AnyCPU_debug.appxbundle

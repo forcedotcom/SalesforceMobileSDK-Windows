@@ -1,0 +1,2 @@
+MainPackage=C:\Repo\sdk-github\SalesforceSDK\Salesforce.Sample.Cordova.AccountManager\platforms\windows\build\phone\debug\anycpu\CordovaApp.Phone_0.0.1.0_anycpu_debug.appx
+ResourcePack=C:\Repo\sdk-github\SalesforceSDK\Salesforce.Sample.Cordova.AccountManager\platforms\windows\build\phone\debug\anycpu\CordovaApp.Phone_0.0.1.0_scale-100.appx

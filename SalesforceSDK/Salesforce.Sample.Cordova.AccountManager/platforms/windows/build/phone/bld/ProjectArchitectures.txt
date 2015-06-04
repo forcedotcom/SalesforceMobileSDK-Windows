@@ -1,0 +1,1 @@
+C:\Repo\sdk-github\SalesforceSDK\Salesforce.Sample.Cordova.AccountManager\platforms\windows\CordovaApp.Phone.jsproj;neutral
