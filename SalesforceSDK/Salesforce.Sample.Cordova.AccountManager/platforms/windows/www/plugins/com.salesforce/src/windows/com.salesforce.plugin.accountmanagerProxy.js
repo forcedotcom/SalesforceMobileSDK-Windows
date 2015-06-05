@@ -28,8 +28,8 @@ var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
 var SERVICE = "com.salesforce.sfaccountmanager";
 
 var exec = require("com.salesforce.util.exec").exec;
-var core = require("com.salesforce.SalesforceCore");
-var oauth2 = new SalesforceJS.OAuth2();
+var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var oauth2 = new core.OAuth2();
 
 var UserAccount = function(authToken, refreshToken, loginServer, idUrl, instanceServer, orgId, userId, username, clientId) {
     this.authToken = authToken;

@@ -194,5 +194,11 @@ var SalesforceJS;
     })();
     SalesforceJS.OAuth2 = OAuth2;
 })(SalesforceJS || (SalesforceJS = {}));
+
+
+
+module.exports = {
+   SalesforceJS : SalesforceJS
+};
 //# sourceMappingURL=salesforce.windows.core.js.map
 });
