@@ -12,18 +12,20 @@
     <UserControl.Resources>
         <strings:LocalizedStrings x:Key="Localize" />
 
-        <Flyout x:Name="ServerFlyout" Placement="Bottom">
+        <Flyout x:Name="ServerFlyout" Placement="Bottom" AutomationProperties.AutomationId="Flyout_Server">
             <StackPanel Width="400" x:Name="ServerFlyoutPanel" Background="Transparent">
                 <TextBlock x:Name="ServerFlyoutLabel"
                            DataContext="choose_connection"
                            Text="{Binding Converter={StaticResource Localize}}"
                            Margin="5 0 5 25"
                            Style="{StaticResource SubheaderTextBlockStyle}"
-                           TextAlignment="Center" />
+                           TextAlignment="Center" 
+                           AutomationProperties.AutomationId="TextBlock_ServerFlyout_Label"/>
 
                 <ListBox x:Name="ListboxServers"
                          SelectionMode="Single"
-                         Margin="5 0 5 25">
+                         Margin="5 0 5 25"
+                         AutomationProperties.AutomationId="ListBox_ServerFlyout_ServerList">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
@@ -44,14 +46,16 @@
                             Margin="10 0 10 0"
                             Width="Auto"
                             Click="addConnection_Click"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center" 
+                            AutomationProperties.AutomationId="Button_ServerFlyout_AddConnection"/>
                 </StackPanel>
 
             </StackPanel>
         </Flyout>
 
         <Flyout x:Name="AddServerFlyout"
-                Placement="Bottom">
+                Placement="Bottom"
+                AutomationProperties.AutomationId="Flyout_AddServer">
             <StackPanel Width="400" x:Name="AddServerFlyoutPanel" Background="Transparent">
                 <TextBlock x:Name="AddServerFlyoutLabel"
                            DataContext="new_connection"
@@ -59,28 +63,33 @@
                            Grid.Row="1"
                            Margin="5 0 5 15"
                            Style="{StaticResource SubheaderTextBlockStyle}"
-                           TextAlignment="Center" />
+                           TextAlignment="Center" 
+                           AutomationProperties.AutomationId="TextBlock_AddServerFlyout_Label"/>
                 <StackPanel Margin="5 0 5 15">
                     <TextBlock Name="lbl_HostAddress"
                                DataContext="address_label"
                                Text="{Binding Converter={StaticResource Localize}}"
                                Foreground="DimGray"
-                               Margin="10 0 0 0"/>
+                               Margin="10 0 0 0"
+                               AutomationProperties.AutomationId="TextBlock_AddServerFlyout_AddressLabel"/>
                     <TextBox x:Name="HostAddress"
                              MaxLength="2048"
                              InputScope="Url"
                              HorizontalAlignment="Stretch"
-                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostAddress}">
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostAddress}"
+                             AutomationProperties.AutomationId="TextBox_AddServerFlyout_Address">
                     </TextBox>
                     <TextBlock Name="lbl_HostName"
                                DataContext="host_label"
                                Text="{Binding Converter={StaticResource Localize}}"
                                Foreground="DimGray"
-                               Margin="10 0 0 0"/>
+                               Margin="10 0 0 0"
+                               AutomationProperties.AutomationId="TextBlock_AddServerFlyout_HostNameLabel"/>
                     <TextBox x:Name="HostName"
                              MaxLength="2048"
                              HorizontalAlignment="Stretch"
-                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostName}">            
+                             AutomationProperties.LabeledBy="{Binding ElementName=lbl_HostName}"
+                             AutomationProperties.AutomationId="TextBlock_AddServerFlyout_HostName">            
                     </TextBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
@@ -90,20 +99,23 @@
                             Margin="10 0 10 0"
                             Width="Auto"
                             Click="addCustomHostBtn_Click"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center" 
+                            AutomationProperties.AutomationId="Button_AddServerFlyout_Add"/>
                     <Button x:Name="CancelCustomHostBtn"
                             DataContext="cancel"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Width="Auto"
                             Click="cancelCustomHostBtn_Click"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center" 
+                            AutomationProperties.AutomationId="Button_AddServerFlyout_Cancel"/>
                 </StackPanel>
             </StackPanel>
         </Flyout>
 
         <Flyout x:Name="MessageFlyout"
-                Placement="Bottom">
+                Placement="Bottom"
+                AutomationProperties.AutomationId="Flyout_Message">
             <StackPanel x:Name="MessageFlyoutPanel" Background="Transparent">
                 <TextBlock x:Name="MessageContent"
                            Grid.Row="1"
@@ -111,13 +123,15 @@
                            HorizontalAlignment="Stretch"
                            TextWrapping="Wrap"
                            Style="{StaticResource TitleTextBlockStyle}"
-                           TextAlignment="Center" />
+                           TextAlignment="Center" 
+                           AutomationProperties.AutomationId="TextBlock_MessageFlyout_MessageContent"/>
                 <Button x:Name="CloseMessageButton"
                             DataContext="ok"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="CloseMessageButton_OnClick"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center" 
+                            AutomationProperties.AutomationId="Button_MessageFlyout_Ok"/>
             </StackPanel>
         </Flyout>
     </UserControl.Resources>
@@ -130,7 +144,8 @@
                    Grid.Row="0"
                    HorizontalAlignment="Center"
                    Margin="5 0 5 20"
-                   Style="{StaticResource HeaderTextBlockStyle}" />
+                   Style="{StaticResource HeaderTextBlockStyle}" 
+                   AutomationProperties.AutomationId="TextBlock_ApplicationTitle"/>
             <ItemsControl x:Name="ApplicationLogo" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -155,13 +170,15 @@
                    Grid.Row="0"
                    HorizontalAlignment="Center"
                    Margin="5 0 5 20"
-                   Style="{StaticResource SubheaderTextBlockStyle}" />
+                   Style="{StaticResource SubheaderTextBlockStyle}" 
+                   AutomationProperties.AutomationId="TextBlock_SelectAccount_ListTitle"/>
 
                 <ListBox Grid.Row="1" x:Name="AccountsList"
                  SelectedValuePath="{Binding Account}"
                  HorizontalAlignment="Center"
                  Width="400"
-                 SelectionMode="Single" />
+                 SelectionMode="Single" 
+                 AutomationProperties.AutomationId="ListBox_SelectAccount_AccountList"/>
 
             </Grid>
             <Grid Background="Transparent" x:Name="SingleUserGrid">
@@ -171,14 +188,16 @@
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="LoginToSalesforce_OnClick"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center" 
+                            AutomationProperties.AutomationId="Button_Login_LoginSalesforce"/>
                     <Button x:Name="ChooseConnection"
                             DataContext="choose_connection"
                             Content="{Binding Converter={StaticResource Localize}}"
                             Margin="10 0 10 0"
                             Click="ShowServerFlyout"
                             Width="{Binding ElementName=LoginToSalesforce, Path=ActualWidth}"
-                            HorizontalAlignment="Center"/>
+                            HorizontalAlignment="Center"
+                            AutomationProperties.AutomationId="Button_Login_ChooseConnection"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
@@ -239,13 +258,14 @@
     </Grid>
 
     <Page.BottomAppBar>
-        <CommandBar x:Name="LoginBar" IsSticky="True" IsOpen="True">
+        <CommandBar x:Name="LoginBar" IsSticky="True" IsOpen="True" AutomationProperties.AutomationId="CommandBar_LoginBar">
             <AppBarButton x:Name="AppBarAddAccount"
                           DataContext="account"
                           Label="{Binding Converter={StaticResource Localize}}"
                           Icon="Add"
                           HorizontalAlignment="Center"
-                          Click="ShowServerFlyout" VerticalAlignment="Center" />
+                          Click="ShowServerFlyout" VerticalAlignment="Center" 
+                          AutomationProperties.AutomationId="AppBarButton_LoginBar_Add"/>
         </CommandBar>
     </Page.BottomAppBar>
 </Page>
