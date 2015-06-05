@@ -65,6 +65,6 @@ module.exports = {
     forcetkRefresh: forcetkRefresh
 };
 
-require("cordova/exec/proxy").add("plugin.oauth", module.exports);
+require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
 
 });

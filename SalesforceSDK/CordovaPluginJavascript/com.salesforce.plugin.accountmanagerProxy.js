@@ -1,4 +1,4 @@
-/*
+cordova.define("com.salesforce.SalesforceAccountManagerProxy", function(require, exports, module) { /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -28,8 +28,8 @@ var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
 var SERVICE = "com.salesforce.sfaccountmanager";
 
 var exec = require("com.salesforce.util.exec").exec;
-var core = require("../Salesforce.SDK.TypeScript/typescriptsalesforce.windows.core.js");
-var oauth2 = new SalesforceJS.OAuth2();
+var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var oauth2 = new core.OAuth2();
 
 var UserAccount = function(authToken, refreshToken, loginServer, idUrl, instanceServer, orgId, userId, username, clientId) {
     this.authToken = authToken;
@@ -73,3 +73,5 @@ module.exports = {
 };
 
 require("cordova/exec/proxy").add("plugin.oauth", module.exports);
+
+});
