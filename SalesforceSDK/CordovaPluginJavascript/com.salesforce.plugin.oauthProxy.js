@@ -30,6 +30,7 @@ var SERVICE = "com.salesforce.oauth";
 var exec = require("com.salesforce.util.exec").exec;
 var core = require("com.salesforce.SalesforceCore").SalesforceJS;
 var oauth2 = new core.OAuth2();
+oauth2.configureOAuth("bootconfig.json", null);
 
 var logoutInitiated = false;
 
@@ -37,8 +38,13 @@ var getAuthCredentials = function(success, error) {
     oauth2.getAuthCredentials(success, error);
 };
 
-var authenticate = function (server) {
-    oauth2.login(server);
+var authenticate = function (success, fail, server) {
+    if (server instanceof Array) {
+        oauth2.login(server[1]);
+    }
+    else {
+        oauth2.login(server);
+    }
 };
 
 var logout = function() {

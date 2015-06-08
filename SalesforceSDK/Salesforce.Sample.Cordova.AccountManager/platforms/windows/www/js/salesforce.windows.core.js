@@ -57,7 +57,7 @@ var SalesforceJS;
         }
         OAuth2.prototype.configureOAuth = function (bootConfig, serverConfig) {
             if ((/^\s*$/).test(bootConfig)) {
-                bootConfig = "bootconfig.json";
+                bootConfig = "data/bootconfig.json";
             }
             this.servers = new ServerConfig();
             var self = this;
@@ -66,7 +66,7 @@ var SalesforceJS;
                     self.loadBootConfig(response.responseText);
                     progress();
                 }).then(function () {
-                    WinJS.xhr({ url: "servers.xml" }).done(function (response) {
+                    WinJS.xhr({ url: "data/servers.xml" }).done(function (response) {
                         self.loadServerXml(response);
                         resolve(self);
                     });
@@ -194,11 +194,5 @@ var SalesforceJS;
     })();
     SalesforceJS.OAuth2 = OAuth2;
 })(SalesforceJS || (SalesforceJS = {}));
-
-
-
-module.exports = {
-   SalesforceJS : SalesforceJS
-};
 //# sourceMappingURL=salesforce.windows.core.js.map
 });

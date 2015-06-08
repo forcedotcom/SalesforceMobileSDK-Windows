@@ -24,9 +24,11 @@ www\js\forcetk.ui.js
 www\js\jquery.min.js
 www\js\MockCordova.js
 www\js\MockSmartStore.js
+www\js\salesforce.windows.core.js
 www\js\smartsync.js
 www\js\stackrouter.js
 www\js\underscore-min.js
+www\js\WinJS-3.0.js
 www\plugins\com.phonegap.plugins.PushPlugin\www\PushNotification.js
 www\plugins\com.salesforce\src\windows\com.salesforce.plugin.accountmanagerProxy.js
 www\plugins\com.salesforce\src\windows\com.salesforce.plugin.oauthProxy.js
@@ -44,3 +46,5 @@ www\plugins\com.salesforce\www\com.salesforce.util.logger.js
 www\plugins\com.salesforce\www\com.salesforce.util.push.js
 www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js
 www\plugins\org.apache.cordova.device\www\device.js
+www\servers.xml
+www\servers.xml

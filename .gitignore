@@ -11,3 +11,6 @@ Debug/
 ContainerBin/
 NuGet.Config
 NuGet.exe
+*.txt
+*.cache
+*.user
