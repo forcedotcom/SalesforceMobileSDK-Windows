@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2014, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,40 +25,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Security.Cryptography;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.Web;
+using Salesforce.SDK.Auth;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
-namespace Salesforce.SDK.Hybrid
+// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+
+namespace Salesforce.Sample.HybridMainPage.Universal
 {
-    public sealed class StreamUriResolver : IUriToStreamResolver
+    /// <summary>
+    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// </summary>
+    public sealed partial class MainPage : Salesforce.SDK.Hybrid.HybridMainPage
     {
-        public IAsyncOperation<IInputStream> UriToStreamAsync(Uri uri)
+        public MainPage()
         {
-            string host = uri.Host;
-            int delimiter = host.LastIndexOf('_');
-            string encodedContentId = host.Substring(delimiter + 1);
-            IBuffer buffer = CryptographicBuffer.DecodeFromHexString(encodedContentId);
-
-            string contentIdentifier = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, buffer);
-            string relativePath = uri.PathAndQuery;
-
-            var appDataUri = new Uri("ms-appx:///" + contentIdentifier + relativePath);
-
-            return GetFileStreamFromApplicationUriAsync(appDataUri).AsAsyncOperation();
+            this.InitializeComponent();
         }
 
-        private async Task<IInputStream> GetFileStreamFromApplicationUriAsync(Uri uri)
+        protected override WebView GetWebView()
         {
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            if (file == null)
-                return null;
-            IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
-            return stream;
+            return oneView;
+        }
+
+        private void SwitchAccount(object sender, RoutedEventArgs e)
+        {
+            AccountManager.SwitchAccount();
+        }
+
+        private async void Logout(object sender, RoutedEventArgs e)
+        {
+            if (SDKManager.GlobalClientManager != null)
+            {
+                await SDKManager.GlobalClientManager.Logout();
+            }
+            AccountManager.SwitchAccount();
         }
     }
 }

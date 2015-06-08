@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -201,7 +201,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void LoadErrorPage()
         {
-            var uri = new Uri("www/" + _bootConfig.ErrorPage, UriKind.Relative);
+            var uri = new Uri(_bootConfig.ErrorPage, UriKind.Relative);
             LoadUri(uri);
         }
 
@@ -226,7 +226,12 @@ namespace Salesforce.SDK.Hybrid
             Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
 
             // Pass the resolver object to the navigate call.
-            browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
+            // browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
+            string relativePath = url.PathAndQuery;
+
+            var appDataUri = new Uri("ms-appx-web://" + relativePath);
+            browser.Navigate(appDataUri);
+
         }
 
         private void LoadUri(Uri uri)
@@ -235,7 +240,13 @@ namespace Salesforce.SDK.Hybrid
             browser.NavigationStarting += onBrowserNavigationStarting;
             if (browser.Source == null)
             {
-                browser.Navigate(uri);
+                try
+                {
+                    browser.Navigate(uri);
+
+                }
+                catch (ArgumentException)
+                { }
             }
             else if (browser.Source.Equals(uri))
             {
@@ -292,49 +303,6 @@ namespace Salesforce.SDK.Hybrid
         }
 
         /// <summary>
-        ///     Launch login flow if not authenticated or refresh auth token if already authenticated
-        /// </summary>
-        /// <param name="plugin"></param>
-        public void Authenticate(SalesforceOAuthPlugin plugin)
-        {
-            _client = SDKManager.GlobalClientManager.GetRestClient();
-            if (_client == null)
-            {
-                // login flow will get started, when page is eventually reloaded, we will be called again and _client will not be null
-            }
-            else
-            {
-                RefreshSession(plugin);
-            }
-        }
-
-        private void RefreshSession(SalesforceOAuthPlugin plugin)
-        {
-            PlatformAdapter.SendToCustomLogger("HybridMainPage.RefreshSession - Making a REST call to refresh session", LoggingLevel.Verbose);
-
-            // Cheap REST call to refresh session
-            _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
-            {
-                if (plugin != null)
-                {
-                    if (!response.Success)
-                    {
-                        PlatformAdapter.SendToCustomLogger(
-                            string.Format("HybridMainPage.RefreshSession - Error = {0}", response.Error.ToString()), LoggingLevel.Verbose);
-
-                        plugin.OnAuthenticateError(response.Error.Message);
-                    }
-                    else
-                    {
-                        PlatformAdapter.SendToCustomLogger("HybridMainPage.RefreshSession - refresh successful", LoggingLevel.Verbose);
-
-                        plugin.OnAuthenticateSuccess(GetJSONCredentials());
-                    }
-                }
-            });
-        }
-
-        /// <summary>
         ///     Return credentials as object with the fields expected by the javascript side
         /// </summary>
         /// <returns></returns>
@@ -351,7 +319,6 @@ namespace Salesforce.SDK.Hybrid
         {
             _webAppLoaded = false;
             await SDKManager.GlobalClientManager.Logout();
-            _syncContext.Post(state => Authenticate(null), null);
             // XXX Authenticate might call Navigate so it must be done on the UI thread
         }
 

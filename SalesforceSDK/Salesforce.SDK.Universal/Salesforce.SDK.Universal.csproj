@@ -115,6 +115,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\App\SFApplicationHelper.cs" />
     <Compile Include="Source\Auth\AuthHelper.cs" />
+    <Compile Include="Source\Hybrid\BootConfig.cs" />
+    <Compile Include="Source\Hybrid\HybridMainPage.cs" />
     <Compile Include="Source\Pages\AccountPage.xaml.cs" />
   </ItemGroup>
   <ItemGroup>

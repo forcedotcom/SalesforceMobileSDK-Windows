@@ -1,0 +1,35 @@
+﻿<hybrid:HybridMainPage
+    x:Class="Salesforce.Sample.HybridMainPage.Universal.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Salesforce.Sample.HybridMainPage.Universal"
+    xmlns:hybrid="using:Salesforce.SDK.Hybrid"
+    xmlns:sfdcStrings="using:Salesforce.SDK.Strings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <sfdcStrings:LocalizedStrings x:Key="Localize" />
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <WebView x:Name="oneView" />
+    </Grid>
+    
+    <Page.BottomAppBar>
+    <CommandBar x:Name="controlBar">
+        <AppBarButton x:Name="SwitchAccountBtn"
+                          DataContext="account"
+                          Label="{Binding Converter={StaticResource Localize}}"
+                          Icon="Switch"
+                          HorizontalAlignment="Center"
+                          Click="SwitchAccount" VerticalAlignment="Center" />
+        <AppBarButton x:Name="logoutBtn"
+                          DataContext="logout"
+                          Label="{Binding Converter={StaticResource Localize}}"
+                          Icon="HangUp"
+                          HorizontalAlignment="Center"
+                          Click="Logout" VerticalAlignment="Center" />
+    </CommandBar>
+    </Page.BottomAppBar>
+</hybrid:HybridMainPage>
