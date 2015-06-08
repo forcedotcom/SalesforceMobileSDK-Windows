@@ -14,7 +14,7 @@ jQuery(document).ready(function () {
         return Server;
     })();
 
-    
+
     //Add event listeners and so forth here
     console.log("onLoad: jquery ready");
     // FastClick
@@ -29,20 +29,18 @@ jQuery(document).ready(function () {
             }
             //Call getAuthCredentials to get the initial session credentials
             if (getDeviceProperty() == "windows") {
-                
+
 
                 var auth = new Server("Production", "https://login.salesforce.com");
-                
-                var oauth = cordova.require("com.salesforce.plugin.oauth").authenticate({}, {}, [auth]);
-                //getAuthCredentials(
-                //    function(creds) {
-                //        appStart(_.extend(creds, { userAgent: navigator.userAgent }), cordova.require(
-                //"com.salesforce.plugin.oauth").forcetkRefresh);
-                //    },
-                //    function(error) {
-                //        console.log("Auth failed: " + error);
-                //    });
-            } 
+
+                var oauth = cordova.require("com.salesforce.plugin.oauth").authenticate(function (creds) {
+                    appStart(_.extend(creds, { userAgent: navigator.userAgent }), cordova.require(
+            "com.salesforce.plugin.oauth").forcetkRefresh);
+                },
+                    function (error) {
+                        console.log("Auth failed: " + error);
+                    }, [auth]);
+            }
 
         });
     }

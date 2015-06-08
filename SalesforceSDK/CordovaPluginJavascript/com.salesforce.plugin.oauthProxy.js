@@ -39,12 +39,15 @@ var getAuthCredentials = function(success, error) {
 };
 
 var authenticate = function (success, fail, server) {
+    var serv = server;
     if (server instanceof Array) {
-        oauth2.login(server[1]);
+        serv = server[1];
     }
-    else {
-        oauth2.login(server);
-    }
+    oauth2.login(serv).done(function (account) {
+        success(account);
+    }, function (error) {
+        fail(error);
+    });
 };
 
 var logout = function() {
