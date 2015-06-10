@@ -52,7 +52,7 @@ namespace Salesforce.SDK.SmartSync.Model
         public new const string WindowsImplType = "windowsImplType";
         public const string Type = "type";
         public const string QueryString = "query";
-        public const string ModificationDateFieldName = "modificationDateFieldName";
+        public new const string ModificationDateFieldName = "modificationDateFieldName";
         public const int Unchanged = -1;
 
         public QueryTypes QueryType { protected set; get; }

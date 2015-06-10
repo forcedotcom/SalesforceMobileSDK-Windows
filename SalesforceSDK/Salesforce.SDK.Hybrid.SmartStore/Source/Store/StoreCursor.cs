@@ -26,62 +26,56 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.Rest;
-using Salesforce.SDK.SmartSync.Manager;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.Hybrid.SmartStore.Source.Store;
 
-namespace Salesforce.SDK.SmartSync.Model
+namespace Salesforce.SDK.Hybrid.SmartStore
 {
-    /// <summary>
-    ///     Target for sync u i.e. set of objects to download from server
-    /// </summary>
-    public class SoslSyncDownTarget : SyncDownTarget
+    public sealed class StoreCursor
     {
-        public SoslSyncDownTarget(JObject target) : base(target)
+        private static int _lastId;
+
+        private readonly QuerySpec _querySpec;
+        private readonly int _totalPages;
+        private readonly long _totalEntries;
+        private int _currentPageIndex;
+        public int CursorId { get; }
+
+        public StoreCursor()
         {
-            this.Query = target.ExtractValue<string>(Constants.Query);
+            throw new NotImplementedException();
         }
 
-        public SoslSyncDownTarget(string query)
+        public StoreCursor(ISmartStore store, QuerySpec querySpec)
         {
-            QueryType = QueryTypes.Sosl;
-            Query = query;
+            if (store == null || querySpec == null || querySpec.PageSize <= 0)
+            {
+                throw new ArgumentException();
+            }
+
+            CursorId = _lastId++;
+            _querySpec = querySpec;
+            _totalEntries = store.CountQuery(querySpec);
+            _totalPages = (int)Math.Ceiling(((double)_totalEntries) / querySpec.PageSize);
+            _currentPageIndex = 0;
         }
 
-
-        private new string Query { set; get; }
-        private string NextRecordsUrl { set; get; }
-
-        /// <summary>
-        /// </summary>
-        /// <returns>json representation of target</returns>
-        public override JObject AsJson()
+        public void MoveToPageIndex(int newPageIndex)
         {
-            var target = base.AsJson();
-            if (!String.IsNullOrWhiteSpace(Query)) target[Constants.Query] = Query;
-            return target;
+            _currentPageIndex = newPageIndex < 0 ? 0 : newPageIndex >= _totalPages ? _totalPages - 1 : newPageIndex;
         }
 
-        public override async Task<JArray> StartFetch(SyncManager syncManager, long maxTimeStamp)
+        public string GetCursorData(ISmartStore smartStore)
         {
-            var request = RestRequest.GetRequestForSearch(syncManager.ApiVersion, Query);
-            var response = await syncManager.SendRestRequest(request);
-            var records = response.AsJArray;
-
-            // Recording total size
-            TotalSize = records.Count;
-
-            return records;
+            return new JObject
+            {
+                {"cursorId", CursorId},
+                {"currentPageIndex", _currentPageIndex},
+                {"pageSize", _querySpec.PageSize},
+                {"totalEntries", _totalEntries},
+                {"totalPages", _totalPages},
+                {"currentPageOrderedEntries", smartStore.Query(_querySpec, _currentPageIndex)}
+            }.ToString();
         }
-
-        public override Task<JArray> ContinueFetch(SyncManager syncManager)
-        {
-            return null;
-        }
-
     }
 }

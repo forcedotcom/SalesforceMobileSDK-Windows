@@ -53,10 +53,12 @@
   <ItemGroup>
     <Compile Include="Source\Store\DBOpenHelper.cs" />
     <Compile Include="Source\Store\IndexSpec.cs" />
+    <Compile Include="Source\Store\ISmartStore.cs" />
     <Compile Include="Source\Store\QuerySpec.cs" />
     <Compile Include="Source\Store\SmartStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Store\SmartStoreType.cs" />
+    <Compile Include="Source\Store\StoreCursor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

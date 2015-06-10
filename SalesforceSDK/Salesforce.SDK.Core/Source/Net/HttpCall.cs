@@ -310,6 +310,8 @@ namespace Salesforce.SDK.Net
                 var task = new TaskCompletionSource<string>();
                 await Task.Run(async () =>
                 {
+                    var hasError = false;
+
                     try
                     {
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -321,7 +323,12 @@ namespace Salesforce.SDK.Net
                     }
                     catch (Exception)
                     {
-                        SafeSetUserAgent();
+                        hasError = true;
+                    }
+
+                    if (hasError)
+                    {
+                        await SafeSetUserAgent();
                     }
                 });
                 await task.Task;

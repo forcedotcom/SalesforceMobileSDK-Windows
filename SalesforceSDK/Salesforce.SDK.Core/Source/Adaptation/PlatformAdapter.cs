@@ -36,7 +36,8 @@ namespace Salesforce.SDK.Adaptation
     internal enum Platform
     {
         Phone,
-        Store
+        Store,
+        Universal // default adapter if phone & store projects are not referenced.
     }
 
     public class PlatformNotSupportedException : Exception

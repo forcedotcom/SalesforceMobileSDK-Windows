@@ -214,7 +214,7 @@ namespace Salesforce.SDK.SmartSync.Manager
                 }
                 UpdateSync(sync, SyncState.SyncStatusTypes.Done, 100, callback);
             }
-            catch (Exception fail)
+            catch (Exception)
             {
                 Debug.WriteLine("SmartSyncManager:runSync, Error during sync: " + sync.Id);
                 UpdateSync(sync, SyncState.SyncStatusTypes.Failed, SyncDownTarget.Unchanged, callback);

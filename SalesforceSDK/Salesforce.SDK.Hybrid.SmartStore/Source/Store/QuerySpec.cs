@@ -52,32 +52,32 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         [JsonProperty]
         internal SDK.SmartStore.Store.QuerySpec SdkQuerySpec;
 
-        internal string BeginKey
+        public string BeginKey
         {
             get { return SdkQuerySpec.BeginKey; }
         }
 
-        internal string CountSmartSql
+        public string CountSmartSql
         {
             get { return SdkQuerySpec.CountSmartSql; }
         }
 
-        internal string EndKey
+        public string EndKey
         {
             get { return SdkQuerySpec.EndKey; }
         }
 
-        internal string LikeKey
+        public string LikeKey
         {
             get { return SdkQuerySpec.LikeKey; }
         }
 
-        internal string MatchKey
+        public string MatchKey
         {
             get { return SdkQuerySpec.MatchKey; }
         }
 
-        internal SqlOrder Order
+        public SqlOrder Order
         {
             get
             {
@@ -86,17 +86,17 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             }
         }
 
-        internal int PageSize
+        public int PageSize
         {
             get { return SdkQuerySpec.PageSize; }
         }
 
-        internal string Path
+        public string Path
         {
             get { return SdkQuerySpec.Path; }
         }
 
-        internal SmartQueryType QueryType
+        public SmartQueryType QueryType
         {
             get
             {
@@ -105,12 +105,12 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             }
         }
 
-        internal string SmartSql
+        public string SmartSql
         {
             get { return SdkQuerySpec.SmartSql; }
         }
 
-        internal string SoupName
+        public string SoupName
         {
             get { return SdkQuerySpec.SoupName; }
         }
