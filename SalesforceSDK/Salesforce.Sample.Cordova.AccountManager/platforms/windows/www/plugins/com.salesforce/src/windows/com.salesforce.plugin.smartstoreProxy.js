@@ -178,75 +178,77 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
 
 
     // ====== Soup manipulation ======
-    var getDatabaseSize = function (isGlobalStore, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.getDatabaseSize:isGlobalStore=" + isGlobalStore);
-        Salesforce
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE, "pgGetDatabaseSize", [{ "isGlobalStore": isGlobalStore }]);
-    };
-
-    var registerSoup = function (successCB, errorCB, args) {
-        storeConsole.debug(args[1]);
-        var payload = args[1];
-        var specs = JSON.stringify(payload.indexes);
-        storeConsole.debug("SmartStore.registerSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",indexSpecs=" + specs);
+    var getSmartStore = function (isGlobalStore) {
         var sm = null;
         if (payload.isGlobalStore) {
             sm = smartStore.SmartStore.getGlobalSmartStore();
         } else {
             sm = smartStore.SmartStore.getSmartStore();
         }
+        return sm;
+    }
+
+    var getDatabaseSize = function (successCB, errorCB, args) {
+        errorCB("not supported");
+    };
+
+    var registerSoup = function (successCB, errorCB, args) {
+        var payload = args[1];
+        var specs = JSON.stringify(payload.indexes);
+        storeConsole.debug("SmartStore.registerSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",indexSpecs=" + specs);
+        var sm = getSmartStore(payload.isGlobalStore);
         if (!sm) {
             errorCB("No active account");
         } else {
             var indexspecs = smartStore.IndexSpec.jsonToIndexSpecCollection(specs);
             sm.registerSoup(payload.soupName, indexspecs);
+            successCB();
         }
     };
 
-    var removeSoup = function (isGlobalStore, soupName, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.removeSoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgRemoveSoup",
-             [{ "soupName": soupName, "isGlobalStore": isGlobalStore }]
-            );
+    var removeSoup = function (successCB, errorCB, args) {
+        var payload = args[1];
+        storeConsole.debug("SmartStore.removeSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            var indexspecs = smartStore.IndexSpec.jsonToIndexSpecCollection(specs);
+            sm.dropSoup(payload.soupName);
+            successCB();
+        }
     };
 
-    var getSoupIndexSpecs = function (isGlobalStore, soupName, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.getSoupIndexSpecs:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgGetSoupIndexSpecs",
-             [{ "soupName": soupName, "isGlobalStore": isGlobalStore }]
-            );
+    var getSoupIndexSpecs = function (successCB, errorCB, args) {
+        var payload = args[1];
+        storeConsole.debug("SmartStore.getSoupIndexSpecs:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            var specs = sm.getSoupIndexSpecsSerialized(payload.soupName);
+            successCB(specs);
+        }
     };
 
-    var alterSoup = function (isGlobalStore, soupName, indexSpecs, reIndexData, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.alterSoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",indexSpecs=" + JSON.stringify(indexSpecs));
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgAlterSoup",
-             [{ "soupName": soupName, "indexes": indexSpecs, "reIndexData": reIndexData, "isGlobalStore": isGlobalStore }]
-            );
+    var alterSoup = function (successCB, errorCB, args) {
+        errorCB("Not supported");
     };
 
-    var reIndexSoup = function (isGlobalStore, soupName, paths, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.reIndexSoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",paths=" + JSON.stringify(paths));
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgReIndexSoup",
-             [{ "soupName": soupName, "paths": paths, "isGlobalStore": isGlobalStore }]
-            );
+    var reIndexSoup = function (successCB, errorCB, args) {
+        errorCB("Not supported");
     };
 
-    var clearSoup = function (isGlobalStore, soupName, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.clearSoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgClearSoup",
-             [{ "soupName": soupName, "isGlobalStore": isGlobalStore }]
-            );
+    var clearSoup = function (successCB, errorCB, args) {
+        var payload = args[1];
+        storeConsole.debug("SmartStore.clearSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            sm.clearSoup(payload.soupName);
+            successCB();
+        }
     };
 
     var showInspector = function (isGlobalStore) {
@@ -255,66 +257,74 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
         exec(SALESFORCE_MOBILE_SDK_VERSION, null, null, SERVICE, "pgShowInspector", [{ "isGlobalStore": isGlobalStore }]);
     };
 
-    var soupExists = function (isGlobalStore, soupName, successCB, errorCB) {
+    var soupExists = function (successCB, errorCB, args) {
         if (checkFirstArg(arguments)) return;
         storeConsole.debug("SmartStore.soupExists:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgSoupExists",
-             [{ "soupName": soupName, "isGlobalStore": isGlobalStore }]
-            );
+        var payload = args[1];
+        storeConsole.debug("SmartStore.soupExists:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            successCB(sm.hasSoup(payload.soupName));
+        }
     };
 
-    var querySoup = function (isGlobalStore, soupName, querySpec, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        if (querySpec.queryType == "smart") throw new Error("Smart queries can only be run using runSmartQuery");
-        storeConsole.debug("SmartStore.querySoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",indexPath=" + querySpec.indexPath);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgQuerySoup",
-             [{ "soupName": soupName, "querySpec": querySpec, "isGlobalStore": isGlobalStore }]
-            );
+    var querySoup = function (successCB, errorCB, args) {
+        var payload = args[1];
+        var spec = payload.querySpec;
+        if (spec.queryType == "smart") throw new Error("Smart queries can only be run using runSmartQuery");
+        storeConsole.debug("SmartStore.querySoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",indexPath=" + spec.indexPath);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            var smart = smartStore.QuerySpec.buildSmartQuerySpec(spec.smartSql, spec.pageSize);
+            successCB(sm.query(smart, payload.pageIndex));
+        }
     };
 
-    var runSmartQuery = function (isGlobalStore, querySpec, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        if (querySpec.queryType != "smart") throw new Error("runSmartQuery can only run smart queries");
-        storeConsole.debug("SmartStore.runSmartQuery:isGlobalStore=" + isGlobalStore + ",smartSql=" + querySpec.smartSql);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgRunSmartQuery",
-             [{ "querySpec": querySpec, "isGlobalStore": isGlobalStore }]
-            );
+    var runSmartQuery = function (successCB, errorCB, args) {
+        querySoup(successCB, errorCB, args);
     };
 
-    var retrieveSoupEntries = function (isGlobalStore, soupName, entryIds, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.retrieveSoupEntries:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",entryIds=" + entryIds);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgRetrieveSoupEntries",
-             [{ "soupName": soupName, "entryIds": entryIds, "isGlobalStore": isGlobalStore }]
-            );
+    var retrieveSoupEntries = function (successCB, errorCB, args) {
+        var payload = args[1];
+        storeConsole.debug("SmartStore.soupExists:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",entryIds=" + payload.entryIds);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            successCB(sm.retrieve(payload.soupName, payload.entryIds));
+        }
     };
 
-    var upsertSoupEntries = function (isGlobalStore, soupName, entries, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        upsertSoupEntriesWithExternalId(isGlobalStore, soupName, entries, "_soupEntryId", successCB, errorCB);
+    var upsertSoupEntries = function (successCB, errorCB, args) {
+        args[1].externalIdPath = "_soupEntryId";
+        upsertSoupEntriesWithExternalId(successCB, errorCB, args);
     };
 
-    var upsertSoupEntriesWithExternalId = function (isGlobalStore, soupName, entries, externalIdPath, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.upsertSoupEntries:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",entries=" + entries.length + ",externalIdPath=" + externalIdPath);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgUpsertSoupEntries",
-             [{ "soupName": soupName, "entries": entries, "externalIdPath": externalIdPath, "isGlobalStore": isGlobalStore }]
-            );
+    var upsertSoupEntriesWithExternalId = function (successCB, errorCB, args) {
+        var payload = args[1];
+        storeConsole.debug("SmartStore.upsertSoupEntries:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",entries=" + payload.entries.length + ",externalIdPath=" + payload.externalIdPath);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            successCB(sm.upsert(payload.soupName, payload.entries, payload.externalIdPath));
+        }
     };
 
-    var removeFromSoup = function (isGlobalStore, soupName, entryIds, successCB, errorCB) {
+    var removeFromSoup = function (successCB, errorCB, args) {
         if (checkFirstArg(arguments)) return;
-        storeConsole.debug("SmartStore.removeFromSoup:isGlobalStore=" + isGlobalStore + ",soupName=" + soupName + ",entryIds=" + entryIds);
+        storeConsole.debug("SmartStore.removeFromSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",entryIds=" + payload.entryIds);
         isGlobalStore = isGlobalStore || false;
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgRemoveFromSoup",
-             [{ "soupName": soupName, "entryIds": entryIds, "isGlobalStore": isGlobalStore }]
-            );
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            successCB(sm.delete(payload.soupName, payload.entryIds, true));
+        }
     };
 
     //====== Cursor manipulation ======
@@ -360,32 +370,32 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
      * Part of the module that is public
      */
     module.exports = {
-        alterSoup: alterSoup,
-        buildAllQuerySpec: buildAllQuerySpec,
-        buildExactQuerySpec: buildExactQuerySpec,
-        buildLikeQuerySpec: buildLikeQuerySpec,
-        buildRangeQuerySpec: buildRangeQuerySpec,
-        buildSmartQuerySpec: buildSmartQuerySpec,
-        clearSoup: clearSoup,
-        closeCursor: closeCursor,
-        getDatabaseSize: getDatabaseSize,
+        pgAlterSoup: alterSoup,
+        pgBuildAllQuerySpec: buildAllQuerySpec,
+        pgBuildExactQuerySpec: buildExactQuerySpec,
+        pgBuildLikeQuerySpec: buildLikeQuerySpec,
+        pgBuildRangeQuerySpec: buildRangeQuerySpec,
+        pgBuildSmartQuerySpec: buildSmartQuerySpec,
+        pgClearSoup: clearSoup,
+        pgCloseCursor: closeCursor,
+        pgGetDatabaseSize: getDatabaseSize,
         getLogLevel: getLogLevel,
-        getSoupIndexSpecs: getSoupIndexSpecs,
-        moveCursorToNextPage: moveCursorToNextPage,
-        moveCursorToPageIndex: moveCursorToPageIndex,
-        moveCursorToPreviousPage: moveCursorToPreviousPage,
-        querySoup: querySoup,
-        reIndexSoup: reIndexSoup,
+        pgGetSoupIndexSpecs: getSoupIndexSpecs,
+        pgMoveCursorToNextPage: moveCursorToNextPage,
+        pgMoveCursorToPageIndex: moveCursorToPageIndex,
+        pgMoveCursorToPreviousPage: moveCursorToPreviousPage,
+        pgQuerySoup: querySoup,
+        pgReIndexSoup: reIndexSoup,
         pgRegisterSoup: registerSoup,
-        removeFromSoup: removeFromSoup,
-        removeSoup: removeSoup,
-        retrieveSoupEntries: retrieveSoupEntries,
-        runSmartQuery: runSmartQuery,
+        pgRemoveFromSoup: removeFromSoup,
+        pgRemoveSoup: removeSoup,
+        pgRetrieveSoupEntries: retrieveSoupEntries,
+        pgRunSmartQuery: runSmartQuery,
         setLogLevel: setLogLevel,
-        showInspector: showInspector,
-        soupExists: soupExists,
-        upsertSoupEntries: upsertSoupEntries,
-        upsertSoupEntriesWithExternalId: upsertSoupEntriesWithExternalId,
+        pgShowInspector: showInspector,
+        pgSoupExists: soupExists,
+        pgUpsertSoupEntries: upsertSoupEntries,
+        pgUpsertSoupEntriesWithExternalId: upsertSoupEntriesWithExternalId,
 
         // Constructors
         QuerySpec: QuerySpec,
