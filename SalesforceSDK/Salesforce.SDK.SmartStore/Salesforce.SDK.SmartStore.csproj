@@ -50,6 +50,7 @@
     <Compile Include="Source\Store\SmartStore.cs" />
     <Compile Include="Source\Store\SmartStoreException.cs" />
     <Compile Include="Source\Store\SmartType.cs" />
+    <Compile Include="Source\Util\Constants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

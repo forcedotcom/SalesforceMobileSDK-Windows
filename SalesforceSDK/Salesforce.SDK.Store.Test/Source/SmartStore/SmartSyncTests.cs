@@ -35,7 +35,7 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
-using Salesforce.SDK.SmartSync.Util;
+using Salesforce.SDK.SmartStore.Util;
 using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.SmartStore.Store

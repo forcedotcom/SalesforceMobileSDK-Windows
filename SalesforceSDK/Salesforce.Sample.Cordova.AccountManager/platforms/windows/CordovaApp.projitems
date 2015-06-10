@@ -6,6 +6,14 @@
     <SharedGUID>9ebdb27f-d75b-4d8c-b53f-7be4a1fe89f9</SharedGUID>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Newtonsoft.Json.dll" />
+    <Content Include="$(MSBuildThisFileDirectory)sqlite3.dll" />
+    <Content Include="$(MSBuildThisFileDirectory)SQLitePCL.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)SQLitePCL.Ext.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)www\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

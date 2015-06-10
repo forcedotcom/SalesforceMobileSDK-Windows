@@ -12,6 +12,10 @@ images\StoreLogo.scale-100.png
 images\StoreLogo.scale-240.png
 images\Wide310x150Logo.scale-100.png
 images\Wide310x150Logo.scale-240.png
+Newtonsoft.Json.dll
+sqlite3.dll
+SQLitePCL.dll
+SQLitePCL.Ext.dll
 www\bootconfig.json
 www\cordova.js
 www\cordova_plugins.js
@@ -30,13 +34,16 @@ www\js\forcetk.ui.js
 www\js\jquery.min.js
 www\js\MockCordova.js
 www\js\MockSmartStore.js
+www\js\salesforce.windows.core.js
 www\js\smartsync.js
 www\js\stackrouter.js
 www\js\underscore-min.js
+www\js\WinJS-3.0.js
 www\plugins\com.phonegap.plugins.PushPlugin\www\PushNotification.js
 www\plugins\com.salesforce\src\windows\com.salesforce.plugin.accountmanagerProxy.js
 www\plugins\com.salesforce\src\windows\com.salesforce.plugin.oauthProxy.js
 www\plugins\com.salesforce\src\windows\com.salesforce.plugin.smartstoreProxy.js
+www\plugins\com.salesforce\src\windows\salesforce.windows.core.js
 www\plugins\com.salesforce\www\com.salesforce.plugin.oauth.js
 www\plugins\com.salesforce\www\com.salesforce.plugin.sdkinfo.js
 www\plugins\com.salesforce\www\com.salesforce.plugin.sfaccountmanager.js
@@ -49,3 +56,4 @@ www\plugins\com.salesforce\www\com.salesforce.util.logger.js
 www\plugins\com.salesforce\www\com.salesforce.util.push.js
 www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js
 www\plugins\org.apache.cordova.device\www\device.js
+www\servers.xml

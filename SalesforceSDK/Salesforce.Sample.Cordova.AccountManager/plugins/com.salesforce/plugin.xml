@@ -156,6 +156,10 @@
             <runs/>
         </js-module>
 	<framework src="src/windows/WinMD/Salesforce.SDK.Hybrid.winmd" custom="true" />
+        <framework src="src/windows/WinMD/Salesforce.SDK.SmartStore.dll" />
+        <framework src="src/windows/WinMD/Salesforce.SDK.SmartSync.dll" />
+	<framework src="src/windows/WinMD/SQLitePCL.dll" />
+	<framework src="src/windows/WinMD/SQLitePCL.Ext.dll" />
 	<js-module src="src/windows/com.salesforce.plugin.smartstoreProxy.js" name="SalesforceSmartStoreProxy">
             <runs/>
         </js-module>

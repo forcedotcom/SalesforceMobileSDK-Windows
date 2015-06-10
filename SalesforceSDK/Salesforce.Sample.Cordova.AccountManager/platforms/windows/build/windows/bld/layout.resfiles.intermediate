@@ -6,6 +6,10 @@ images\Square310x310Logo.scale-100.png
 images\Square70x70Logo.scale-100.png
 images\StoreLogo.scale-100.png
 images\Wide310x150Logo.scale-100.png
+Newtonsoft.Json.dll
+sqlite3.dll
+SQLitePCL.dll
+SQLitePCL.Ext.dll
 www\bootconfig.json
 www\cordova.js
 www\cordova_plugins.js
@@ -46,5 +50,4 @@ www\plugins\com.salesforce\www\com.salesforce.util.logger.js
 www\plugins\com.salesforce\www\com.salesforce.util.push.js
 www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js
 www\plugins\org.apache.cordova.device\www\device.js
-www\servers.xml
 www\servers.xml
