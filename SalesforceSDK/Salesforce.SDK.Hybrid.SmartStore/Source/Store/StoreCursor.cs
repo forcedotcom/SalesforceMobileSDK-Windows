@@ -67,6 +67,8 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public string GetCursorData(ISmartStore smartStore)
         {
+            var arr = (JArray)smartStore.Query(_querySpec, _currentPageIndex);
+
             return new JObject
             {
                 {"cursorId", CursorId},
@@ -74,7 +76,7 @@ namespace Salesforce.SDK.Hybrid.SmartStore
                 {"pageSize", _querySpec.PageSize},
                 {"totalEntries", _totalEntries},
                 {"totalPages", _totalPages},
-                {"currentPageOrderedEntries", smartStore.Query(_querySpec, _currentPageIndex)}
+                {"currentPageOrderedEntries", arr}
             }.ToString();
         }
     }
