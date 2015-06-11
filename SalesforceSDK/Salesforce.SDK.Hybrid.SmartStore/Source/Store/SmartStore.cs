@@ -159,9 +159,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.GetAllSoupNames();
         }
 
-        public string Query(QuerySpec querySpec, int pageIndex)
+        public object Query(QuerySpec querySpec, int pageIndex)
         {
-            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex).ToString();
+            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex);
         }
 
         public long CountQuery(QuerySpec querySpec)
@@ -219,9 +219,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return NativeSmartStore.Update(soupName, JObject.Parse(soupElt), soupEntryId, handleTx);
         }
 
-        public string Retrieve(string soupName, params long[] soupEntryIds)
+        public object Retrieve(string soupName, params long[] soupEntryIds)
         {
-            return NativeSmartStore.Retrieve(soupName, soupEntryIds).ToString();
+            return NativeSmartStore.Retrieve(soupName, soupEntryIds);
         }
 
         public static object Project(object soup, string path)
