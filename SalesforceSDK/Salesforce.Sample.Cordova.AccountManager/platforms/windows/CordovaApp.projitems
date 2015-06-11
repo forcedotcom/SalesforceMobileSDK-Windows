@@ -1,49 +1,97 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>9ebdb27f-d75b-4d8c-b53f-7be4a1fe89f9</SharedGUID>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)www\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)www\js\salesforce.windows.core.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)www\js\WinJS-3.0.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)www\servers.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)config.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Salesforce.SDK.Hybrid">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Salesforce.SDK.Hybrid">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Salesforce.SDK.Hybrid.SmartStore">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartStore.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Salesforce.SDK.Hybrid">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
+    <PropertyGroup>
+        <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+        <HasSharedItems>true</HasSharedItems>
+        <SharedGUID>9ebdb27f-d75b-4d8c-b53f-7be4a1fe89f9</SharedGUID>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="$(MSBuildThisFileDirectory)www\**">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(MSBuildThisFileDirectory)www\js\salesforce.windows.core.js">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(MSBuildThisFileDirectory)www\js\WinJS-3.0.js">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(MSBuildThisFileDirectory)www\servers.xml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="$(MSBuildThisFileDirectory)config.xml" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Salesforce.SDK.Hybrid">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
+            <IsWinMDFile>true</IsWinMDFile>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Salesforce.SDK.Hybrid.SmartStore">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartStore.winmd</HintPath>
+            <IsWinMDFile>true</IsWinMDFile>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="SQLitePCL.Ext">
+            <HintPath>plugins\com.salesforce\SQLitePCL.Ext.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="NewtonSoft.Json">
+            <HintPath>plugins\com.salesforce\NewtonSoft.Json.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Salesforce.SDK.Core">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.Core.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartStore">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartStore">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartStore">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartSync">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartSync">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartSync">
+            <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='ARM'" Include="sqlite3">
+            <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x86'" Include="sqlite3">
+            <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Condition="'$(Platform)'=='x64'" Include="sqlite3">
+            <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+        </Reference>
+    </ItemGroup>
 </Project>

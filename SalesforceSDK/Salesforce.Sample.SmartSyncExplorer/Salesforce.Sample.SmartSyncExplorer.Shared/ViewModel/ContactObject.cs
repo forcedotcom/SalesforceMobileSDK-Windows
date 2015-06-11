@@ -32,7 +32,7 @@ using Newtonsoft.Json.Linq;
 using Salesforce.Sample.SmartSyncExplorer.Annotations;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
-using Salesforce.SDK.SmartSync.Util;
+using Salesforce.SDK.SmartStore.Util;
 
 namespace Salesforce.Sample.SmartSyncExplorer.utilities
 {

@@ -129,6 +129,12 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             return IndexSpec.ConvertToHybridIndexSpecs(NativeSmartStore.GetSoupIndexSpecs(soupName));
         }
 
+        public string GetSoupIndexSpecsSerialized(string soupName)
+        {
+            var specs = NativeSmartStore.GetSoupIndexSpecs(soupName);
+            return JsonConvert.SerializeObject(specs);
+        }
+
         public void ClearSoup(string soupName)
         {
             NativeSmartStore.ClearSoup(soupName);
