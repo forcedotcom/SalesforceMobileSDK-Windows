@@ -161,7 +161,7 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public object Query(QuerySpec querySpec, int pageIndex)
         {
-            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex).ToString();
+            return NativeSmartStore.Query(querySpec.SdkQuerySpec, pageIndex);
         }
 
         public long CountQuery(QuerySpec querySpec)
