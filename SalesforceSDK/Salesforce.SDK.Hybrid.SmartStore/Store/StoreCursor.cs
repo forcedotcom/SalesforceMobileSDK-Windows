@@ -39,7 +39,11 @@ namespace Salesforce.SDK.Hybrid.SmartStore
         private readonly int _totalPages;
         private readonly long _totalEntries;
         private int _currentPageIndex;
-        public int CursorId { get; }
+        public int CursorId
+        {
+            get { return 0; }
+            private set { }
+        }
 
         public StoreCursor()
         {
