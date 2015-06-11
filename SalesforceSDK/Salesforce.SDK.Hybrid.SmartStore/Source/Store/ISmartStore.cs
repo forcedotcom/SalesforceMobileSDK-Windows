@@ -5,9 +5,9 @@ namespace Salesforce.SDK.Hybrid.SmartStore.Source.Store
     public interface ISmartStore
     {
         long CountQuery(QuerySpec querySpec);
-        string Query(QuerySpec querySpec, int pageIndex);
+        object Query(QuerySpec querySpec, int pageIndex);
         bool Delete(string soupName, [ReadOnlyArray()]long[] soupEntryIds, bool handleTx);
-        string Retrieve(string soupName, [ReadOnlyArray()]long[] soupEntryIds);
+        object Retrieve(string soupName, [ReadOnlyArray()]long[] soupEntryIds);
         bool HasSoup(string soupName);
         void RegisterSoup(string soupName, [ReadOnlyArray()]IndexSpec[] indexSpecs);
         void DropSoup(string soupName);
