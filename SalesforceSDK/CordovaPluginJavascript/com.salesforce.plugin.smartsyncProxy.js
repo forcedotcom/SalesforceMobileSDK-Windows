@@ -126,6 +126,5 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
        syncUp: syncUp,
        getSyncStatus: getSyncStatus
      };
-
      require("cordova/exec/proxy").add(SERVICE, module.exports);
 });
