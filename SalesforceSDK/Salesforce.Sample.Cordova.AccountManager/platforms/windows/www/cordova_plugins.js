@@ -49,6 +49,11 @@ module.exports = [
         "runs": true
     },
     {
+        "file": "plugins/com.salesforce/src/windows/salesforce.windows.core.js",
+        "id": "com.salesforce.SalesforceCore",
+        "runs": true
+    },
+    {
         "file": "plugins/com.salesforce/src/windows/com.salesforce.plugin.accountmanagerProxy.js",
         "id": "com.salesforce.SalesforceAccountManagerProxy",
         "runs": true
@@ -59,8 +64,8 @@ module.exports = [
         "runs": true
     },
     {
-        "file": "plugins/com.salesforce/src/windows/salesforce.windows.core.js",
-        "id": "com.salesforce.SalesforceCore",
+        "file": "plugins/com.salesforce/src/windows/com.salesforce.plugin.smartsyncProxy.js",
+        "id": "com.salesforce.SalesforceSmartSyncProxy",
         "runs": true
     },
     {
@@ -88,7 +93,7 @@ module.exports = [
 module.exports.metadata = 
 // TOP OF METADATA
 {
-    "com.salesforce": "3.2.0",
+    "com.salesforce": "3.3.0",
     "org.apache.cordova.device": "0.3.0",
     "com.phonegap.plugins.PushPlugin": "2.2.1"
 }

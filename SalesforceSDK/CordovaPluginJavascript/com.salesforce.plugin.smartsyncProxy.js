@@ -25,10 +25,11 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
   */
 
      var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
-     var SERVICE = "com.salesforce.smartstore";
+     var SERVICE = "com.salesforce.smartsync";
      var manager = Salesforce.SDK.Hybrid.SmartSync;
      var exec = require("com.salesforce.util.exec").exec;
-     var oauth = new SalesforceJS.OAuth2();
+     var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+     var oauth = new core.OAuth2();
 
      // Helper function to handle calls that don't specify isGlobalStore as first argument
      // If missing, the caller is re-invoked with false prepended to the arguments list and true is returned
@@ -112,7 +113,7 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
          errorCB("Error in getting instance for SmartSync");
        }
        else {
-         syncManager.getSyncStatus(paload.syncId);
+         syncManager.getSyncStatus(payload.syncId);
          successCB();
        }
      };
