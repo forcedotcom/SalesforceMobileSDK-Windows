@@ -57,7 +57,7 @@
                         Width="90"
                         Click="LogoutClicked"
                         HorizontalAlignment="Center" 
-                        AutomationProperties.AutomationId="Button_ForgotFlyout_No/>
+                        AutomationProperties.AutomationId="Button_ForgotFlyout_No"/>
             </StackPanel>
         </Flyout>
     </UserControl.Resources>
