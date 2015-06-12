@@ -32,7 +32,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.SmartSync.Util;
 
 namespace NoteSync.ViewModel
 {
