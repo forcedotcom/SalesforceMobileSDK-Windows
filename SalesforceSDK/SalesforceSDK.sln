@@ -7,16 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Store.Test",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.RestExplorer.Store", "Salesforce.Sample.RestExplorer.Store\Salesforce.Sample.RestExplorer.Store.csproj", "{A60A0A18-A146-4777-84A1-63B839F84371}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Core", "Salesforce.SDK.Core\Salesforce.SDK.Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Salesforce.SDK.Core\Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE} = {B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.RestExplorer.Phone", "Salesforce.Sample.RestExplorer.Phone\Salesforce.Sample.RestExplorer.Phone.csproj", "{D6D66DE5-899D-4B9D-9A96-FD9028D1017E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Phone", "Salesforce.SDK.Phone\Salesforce.SDK.Phone.csproj", "{E0188957-3823-40A9-B90D-A8794986D74F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone", "Salesforce.SDK.Phone\Phone.csproj", "{E0188957-3823-40A9-B90D-A8794986D74F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Store", "Salesforce.SDK.Store\Salesforce.SDK.Store.csproj", "{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store", "Salesforce.SDK.Store\Store.csproj", "{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Salesforce.Sample.Salesforce1.Container", "Salesforce.Sample.Salesforce1.Container", "{62093A35-D61C-4F22-B9DE-613A64D199AA}"
 EndProject
@@ -35,7 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3B6819
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.SmartStore", "Salesforce.SDK.SmartStore\Salesforce.SDK.SmartStore.csproj", "{E0838498-6201-4040-B4F1-A2D0C02405A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartStore", "Salesforce.SDK.SmartStore\SmartStore.csproj", "{E0838498-6201-4040-B4F1-A2D0C02405A6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Salesforce.Sample.NativeSmartStoreSample", "Salesforce.Sample.NativeSmartStoreSample", "{722D994C-1843-4038-8999-D1C48B069813}"
 EndProject
@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SalesforceSDKTests", "Sales
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleApps", "SampleApps", "{05DA9854-9AB6-4DD2-BBD5-5EA573244ABE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.SmartSync", "Salesforce.SDK.SmartSync\Salesforce.SDK.SmartSync.csproj", "{923DCD08-E0AF-4214-86B0-86E37851046B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync", "Salesforce.SDK.SmartSync\SmartSync.csproj", "{923DCD08-E0AF-4214-86B0-86E37851046B}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE} = {B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}
 	EndProjectSection
@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.SmartSync
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.SmartSyncExplorer.WindowsPhone", "Salesforce.Sample.SmartSyncExplorer\Salesforce.Sample.SmartSyncExplorer.WindowsPhone\Salesforce.Sample.SmartSyncExplorer.WindowsPhone.csproj", "{3E1D2A5B-9956-41E2-A1FE-284E98ED3855}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Core.NuGet", "Salesforce.SDK.Core.NuGet\Salesforce.SDK.Core.NuGet.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.NuGet", "Salesforce.SDK.Core.NuGet\Core.NuGet.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NoteSync", "NoteSync", "{8601D4F0-2554-47AD-816A-D0180364CF03}"
 EndProject
@@ -72,9 +72,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteSync.Windows", "NoteSyn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteSync.WindowsPhone", "NoteSync\NoteSync.WindowsPhone\NoteSync.WindowsPhone.csproj", "{B53B2613-6AAA-4ADB-84D8-33BBC2923084}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.App", "Salesforce.SDK.App\Salesforce.SDK.App.csproj", "{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "Salesforce.SDK.App\App.csproj", "{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Hybrid", "Salesforce.SDK.Hybrid\Salesforce.SDK.Hybrid.csproj", "{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.Core", "Salesforce.SDK.Hybrid\Hybrid.Core.csproj", "{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Salesforce.Sample.Hybrid.RestExplorer", "Salesforce.Sample.Hybrid.RestExplorer", "{26A845A1-77AB-4F2A-826B-AFA4F1294C9C}"
 EndProject
@@ -84,11 +84,11 @@ Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Salesforce.Sample.Hybrid.Re
 EndProject
 Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Salesforce.Sample.Hybrid.RestExplorer.WindowsPhone", "Salesforce.Sample.Hybrid.RestExplorer\Salesforce.Sample.Hybrid.RestExplorer.WindowsPhone\Salesforce.Sample.Hybrid.RestExplorer.WindowsPhone.jsproj", "{87537CB9-78D7-4F37-92A0-EB33AE8786B0}"
 EndProject
-Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Salesforce.SDK.TypeScript", "Salesforce.SDK.TypeScript\Salesforce.SDK.TypeScript.jsproj", "{E2E39B4C-E5E1-4163-8FBB-CD01473086D1}"
+Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "TypeScript", "Salesforce.SDK.TypeScript\TypeScript.jsproj", "{E2E39B4C-E5E1-4163-8FBB-CD01473086D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Hybrid.SmartStore", "Salesforce.SDK.Hybrid.SmartStore\Salesforce.SDK.Hybrid.SmartStore.csproj", "{3C768AD4-DAC5-40D5-8AB7-141780333BAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartStore", "Salesforce.SDK.Hybrid.SmartStore\Hybrid.SmartStore.csproj", "{3C768AD4-DAC5-40D5-8AB7-141780333BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.SDK.Hybrid.SmartSync", "Salesforce.SDK.Hybrid.SmartSync\Salesforce.SDK.Hybrid.SmartSync.csproj", "{B6093B0A-09A7-4DE9-BF0B-5740D2065840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartSync", "Salesforce.SDK.Hybrid.SmartSync\Hybrid.SmartSync.csproj", "{B6093B0A-09A7-4DE9-BF0B-5740D2065840}"
 EndProject
 Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "Salesforce.Sample.Hybrid.SmartSyncExplorer", "Sample.Salesforce.Hybrid.SmartSyncExplorer\Salesforce.Sample.Hybrid.SmartSyncExplorer.jsproj", "{68FA967B-739B-45EA-8981-6F94B73413A1}"
 EndProject

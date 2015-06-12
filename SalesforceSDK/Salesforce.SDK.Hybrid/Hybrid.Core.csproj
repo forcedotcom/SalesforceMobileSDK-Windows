@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}</ProjectGuid>
+    <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Salesforce.SDK</RootNamespace>
-    <AssemblyName>Salesforce.SDK.App</AssemblyName>
+    <RootNamespace>Salesforce.SDK.Hybrid</RootNamespace>
+    <AssemblyName>Salesforce.SDK.Hybrid</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -37,52 +37,35 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <Page Include="Auth\PincodeDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Native\ServerControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <ProjectReference Include="..\Salesforce.SDK.Core\Core.csproj">
+      <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App\ISalesforcePage.cs" />
-    <Compile Include="App\ISFApplicationHelper.cs" />
-    <Compile Include="App\SalesforceApplication.cs" />
-    <Compile Include="App\SuspensionManager.cs" />
-    <Compile Include="Auth\PincodeDialog.xaml.cs">
-      <DependentUpon>PincodeDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Auth\PincodeManager.cs" />
-    <Compile Include="Auth\PincodeOptions.cs" />
-    <Compile Include="Hybrid\BootConfig.cs" />
-    <Compile Include="Hybrid\HybridMainPage.cs" />
-    <Compile Include="Hybrid\SalesforceOAuthPlugin.cs" />
-    <Compile Include="Hybrid\StreamUriResolver.cs" />
-    <Compile Include="Native\NativeMainPage.cs" />
-    <Compile Include="Native\ServerControl.xaml.cs">
-      <DependentUpon>ServerControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Auth\Account.cs" />
+    <Compile Include="Auth\AuthResponse.cs" />
+    <Compile Include="Auth\HybridAccountManager.cs" />
+    <Compile Include="Auth\LoginOptions.cs" />
+    <Compile Include="Auth\MobilePolicy.cs" />
+    <Compile Include="Auth\OAuth2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
-      <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
-      <Name>Salesforce.SDK.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="Rest\ClientManager.cs" />
+    <Compile Include="Rest\RestClient.cs" />
+    <Compile Include="Rest\RestRequest.cs" />
+    <Compile Include="Rest\RestResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

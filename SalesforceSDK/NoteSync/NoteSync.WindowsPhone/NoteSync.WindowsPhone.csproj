@@ -117,25 +117,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Salesforce.SDK.App\Salesforce.SDK.App.csproj">
+    <ProjectReference Include="..\..\Salesforce.SDK.App\App.csproj">
       <Project>{b1d32173-8770-45b7-aee8-1f29af8cdc87}</Project>
-      <Name>Salesforce.SDK.App</Name>
+      <Name>App</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
+    <ProjectReference Include="..\..\Salesforce.SDK.Core\Core.csproj">
       <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
-      <Name>Salesforce.SDK.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Salesforce.SDK.Phone\Salesforce.SDK.Phone.csproj">
       <Project>{e0188957-3823-40a9-b90d-a8794986d74f}</Project>
       <Name>Salesforce.SDK.Phone</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Salesforce.SDK.SmartStore\Salesforce.SDK.SmartStore.csproj">
+    <ProjectReference Include="..\..\Salesforce.SDK.SmartStore\SmartStore.csproj">
       <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
-      <Name>Salesforce.SDK.SmartStore</Name>
+      <Name>SmartStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Salesforce.SDK.SmartSync\Salesforce.SDK.SmartSync.csproj">
+    <ProjectReference Include="..\..\Salesforce.SDK.SmartSync\SmartSync.csproj">
       <Project>{923dcd08-e0af-4214-86b0-86e37851046b}</Project>
-      <Name>Salesforce.SDK.SmartSync</Name>
+      <Name>SmartSync</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
