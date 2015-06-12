@@ -37,17 +37,17 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\Salesforce.SDK.Core\Salesforce.SDK.Core.csproj">
+    <ProjectReference Include="..\Salesforce.SDK.Core\Core.csproj">
       <Project>{CD53C7B7-C3FF-4982-935B-22FB096CD559}</Project>
-      <Name>Salesforce.SDK.Core</Name>
+      <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Salesforce.SDK.Hybrid\Salesforce.SDK.Hybrid.csproj">
       <Project>{b6f95c8e-e338-4d05-a33d-81c7671a6cb3}</Project>
       <Name>Salesforce.SDK.Hybrid</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Salesforce.SDK.SmartStore\Salesforce.SDK.SmartStore.csproj">
+    <ProjectReference Include="..\Salesforce.SDK.SmartStore\SmartStore.csproj">
       <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
-      <Name>Salesforce.SDK.SmartStore</Name>
+      <Name>SmartStore</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
