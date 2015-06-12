@@ -1,3 +1,0 @@
-MainPackage=C:\git\SalesforceMobileSDK-Windows\SalesforceSDK\ContainerBin\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_Bundle\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_ARM.appx
-SymbolPackage=C:\git\generated\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_Test\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_ARM.appxsym
-ResourcePack=C:\git\SalesforceMobileSDK-Windows\SalesforceSDK\ContainerBin\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_Bundle\Salesforce.Sample.Salesforce1.Container.WindowsPhone_1.0.0.11_scale-100.appx
