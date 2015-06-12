@@ -45,9 +45,9 @@
       <Project>{3c768ad4-dac5-40d5-8ab7-141780333baf}</Project>
       <Name>Hybrid.SmartStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Salesforce.SDK.Hybrid\Salesforce.SDK.Hybrid.csproj">
+    <ProjectReference Include="..\Salesforce.SDK.Hybrid\Hybrid.Core.csproj">
       <Project>{b6f95c8e-e338-4d05-a33d-81c7671a6cb3}</Project>
-      <Name>Salesforce.SDK.Hybrid</Name>
+      <Name>Hybrid.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Salesforce.SDK.SmartStore\SmartStore.csproj">
       <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
