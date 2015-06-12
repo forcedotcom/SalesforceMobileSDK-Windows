@@ -132,7 +132,7 @@ namespace Salesforce.SDK.Hybrid
                     _client = SDKManager.GlobalClientManager.GetRestClient();
                     // After login, we will end up in OnResumeLoggedInNotLoaded
                 }
-                    // Offline
+                // Offline
                 else
                 {
                     Log("Error:Can't start application that requires authentication while offline");
@@ -149,7 +149,7 @@ namespace Salesforce.SDK.Hybrid
                     Log("Success:Loading local application - no authentication required");
                     LoadLocalStartPage();
                 }
-                    // Remote
+                // Remote
                 else
                 {
                     Log("Success:Loading remote application - no authentication required");
@@ -212,7 +212,7 @@ namespace Salesforce.SDK.Hybrid
         {
             var uri =
                 new Uri(
-                    OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType, _client.AccessToken,
+                    OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultStoreDisplayType, _client.AccessToken,
                         _bootConfig.StartPage), UriKind.Absolute);
             LoadUri(uri);
         }
@@ -243,10 +243,11 @@ namespace Salesforce.SDK.Hybrid
                 try
                 {
                     browser.Navigate(uri);
-
                 }
                 catch (ArgumentException)
-                { }
+                {
+                    Log("Error:Could not navigate to " + uri);
+                }
             }
             else if (browser.Source.Equals(uri))
             {
@@ -269,14 +270,14 @@ namespace Salesforce.SDK.Hybrid
             {
                 sender.Stop();
                 // Cheap REST call to refresh session
-                _client.SendAsync(RestRequest.GetRequestForResources(ApiVersion), response =>
-                {
-                    var frontDoorStartURL =
-                        new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultDisplayType,
-                            _client.AccessToken, startURL));
-                    _syncContext.Post(state => sender.Navigate(state as Uri), frontDoorStartURL);
-                }
-                    );
+                _client.SendAsync(RestRequest.GetRequestForResources(SDK.Rest.ApiVersionStrings.VersionNumber), response =>
+                    {
+                        var frontDoorStartURL =
+                            new Uri(OAuth2.ComputeFrontDoorUrl(_client.InstanceUrl, LoginOptions.DefaultStoreDisplayType,
+                                _client.AccessToken, startURL));
+                        _syncContext.Post(state => sender.Navigate(state as Uri), frontDoorStartURL);
+                    }
+                );
             }
         }
 

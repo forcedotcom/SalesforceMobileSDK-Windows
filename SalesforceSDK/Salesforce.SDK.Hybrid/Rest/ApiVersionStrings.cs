@@ -1,5 +1,5 @@
-﻿<!--
- * Copyright (c) 2015, salesforce.com, inc.
+﻿/*
+ * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -23,20 +23,44 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
--->
-<!DOCTYPE html>
+ */
+namespace Salesforce.SDK.Hybrid.Rest
+{
+    public sealed class ApiVersionStrings
+    {
+        public ApiVersionStrings()
+        {
 
-<html>
-<head>
-    <meta charset="utf-8" />
-    <title>Salesforce.SDK.Sample</title>
-    <link href="css/index.css" rel="stylesheet" />
-    <script src="js/salesforce.windows.core.js"></script>
-    <script src="js/index.js"></script>
-</head>
-<body onload="refresh()">
-    <header class="bar bar-nav">
-        <h1 class="title">Could not login, please try again later.</h1>
-    </header>
-</body>
-</html>
+        }
+
+        public static string VersionNumber
+        {
+            get { return SDK.Rest.ApiVersionStrings.VersionNumber; }
+        }
+
+        public static string ApiPrefix
+        {
+            get { return SDK.Rest.ApiVersionStrings.ApiPrefix; }
+        } 
+
+        public static string BasePath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BasePath; }
+        } 
+
+        public static string BaseChatterPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseChatterPath; }
+        }
+
+        public static string BaseConnectPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseConnectPath;  }
+        } 
+
+        public static string BaseSobjectPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseSobjectPath; }
+        } 
+    }
+}

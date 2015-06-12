@@ -54,6 +54,7 @@
     <Compile Include="Auth\MobilePolicy.cs" />
     <Compile Include="Auth\OAuth2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\ApiVersionStrings.cs" />
     <Compile Include="Rest\ClientManager.cs" />
     <Compile Include="Rest\RestClient.cs" />
     <Compile Include="Rest\RestRequest.cs" />
