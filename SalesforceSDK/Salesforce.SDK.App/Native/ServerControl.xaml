@@ -19,7 +19,8 @@
                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                    HorizontalAlignment="Stretch"
                    TextTrimming="CharacterEllipsis"
-                   Tapped="Clicked"/>
+                   Tapped="Clicked"
+                   AutomationProperties.AutomationId="TextBlock_ServerFlyout_ServerName"/>
         <TextBlock Grid.Column="1"
                    Visibility="{Binding CanDelete}"
                    x:Name="DeleteButton"
@@ -30,6 +31,7 @@
                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                    TextAlignment="Center"
                    FontSize="{Binding ElementName=ServerNameBlock, Path=FontSize}"
-                   Tapped="DeleteClicked"/>
+                   Tapped="DeleteClicked"
+                   AutomationProperties.AutomationId="TextBlock_ServerFlyout_DeleteButton"/>
     </Grid>
 </UserControl>

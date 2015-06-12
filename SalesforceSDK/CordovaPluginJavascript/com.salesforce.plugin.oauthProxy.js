@@ -1,4 +1,4 @@
-/*
+cordova.define("com.salesforce.SalesforceOAuthProxy", function(require, exports, module) { /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -28,8 +28,9 @@ var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
 var SERVICE = "com.salesforce.oauth";
 
 var exec = require("com.salesforce.util.exec").exec;
-var core = require("../Salesforce.SDK.TypeScript/typescript/salesforce.windows.core.js");
-var oauth2 = new SalesforceJS.OAuth2();
+var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var oauth2 = new core.OAuth2();
+oauth2.configureOAuth("bootconfig.json", null);
 
 var logoutInitiated = false;
 
@@ -37,8 +38,16 @@ var getAuthCredentials = function(success, error) {
     oauth2.getAuthCredentials(success, error);
 };
 
-var authenticate = function (server) {
-    oauth2.login(server);
+var authenticate = function (success, fail, server) {
+    var serv = server;
+    if (server instanceof Array) {
+        serv = server[1];
+    }
+    oauth2.login(serv).done(function (account) {
+        success(account);
+    }, function (error) {
+        fail(error);
+    });
 };
 
 var logout = function() {
@@ -65,4 +74,6 @@ module.exports = {
     forcetkRefresh: forcetkRefresh
 };
 
-require("cordova/exec/proxy").add("plugin.oauth", module.exports);
+require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
+
+});
