@@ -28,7 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.SmartSync.Manager
 {

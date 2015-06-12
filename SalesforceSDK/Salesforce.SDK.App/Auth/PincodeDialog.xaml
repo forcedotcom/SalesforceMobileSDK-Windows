@@ -8,7 +8,9 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <strings:LocalizedStrings x:Key="Localize" />
-        <Flyout x:Name="ErrorFlyout" Placement="Bottom" AutomationProperties.AutomationId="Flyout_ErrorFlyout">
+        <Flyout x:Name="ErrorFlyout"
+                Placement="Bottom"
+                AutomationProperties.AutomationId="Flyout_ErrorFlyout">
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock x:Name="ErrorContent"
                            Margin="5 0 5 15"
@@ -27,7 +29,9 @@
                         AutomationProperties.AutomationId="Button_ErrorFlyout_Ok"/>
             </StackPanel>
         </Flyout>
-        <Flyout x:Name="ForgotFlyout" Placement="Bottom" AutomationProperties.AutomationId="Flyout_ForgotFlyout">
+        <Flyout x:Name="ForgotFlyout"
+                Placement="Bottom"
+                AutomationProperties.AutomationId="Flyout_ForgotFlyout">
             <StackPanel HorizontalAlignment="Stretch">
                 <TextBlock x:Name="ForgotPincodeContent"
                            Margin="5 0 5 15"
@@ -37,7 +41,7 @@
                            Text="{Binding Converter={StaticResource Localize}}"
                            Style="{StaticResource TitleTextBlockStyle}"
                            TextAlignment="Center" 
-                           AutomationProperties.AutomationId="TextBlock_ForgotFlyout_ForgotPincodeContent" />
+                           AutomationProperties.AutomationId="TextBlock_ForgotFlyout_ForgotPincodeContent"/>
                 <Button x:Name="LogoutConfirmButton"
                         DataContext="yes"
                         Content="{Binding Converter={StaticResource Localize}}"
@@ -45,7 +49,7 @@
                         Width="90"
                         Click="LogoutClicked"
                         HorizontalAlignment="Center" 
-                        AutomationProperties.AutomationId="Button_ForgotFlyout_Yes" />
+                        AutomationProperties.AutomationId="Button_ForgotFlyout_Yes"/>
                 <Button x:Name="LogoutCancelButton"
                         DataContext="no"
                         Content="{Binding Converter={StaticResource Localize}}"
@@ -53,12 +57,14 @@
                         Width="90"
                         Click="LogoutClicked"
                         HorizontalAlignment="Center" 
-                        AutomationProperties.AutomationId="Button_ForgotFlyout_No" />
-             </StackPanel>
+                        AutomationProperties.AutomationId="Button_ForgotFlyout_No/>
+            </StackPanel>
         </Flyout>
     </UserControl.Resources>
 
-    <Grid x:Name="PincodeContainer" HorizontalAlignment="Stretch" Background="Gray">
+    <Grid x:Name="PincodeContainer"
+          HorizontalAlignment="Stretch"
+          Background="Gray">
         <Grid x:Name="PincodeWindow"
               Margin="0,20,0,20"
               VerticalAlignment="Center"

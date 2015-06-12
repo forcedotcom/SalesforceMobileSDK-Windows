@@ -27,7 +27,7 @@
 
 using System.Reflection;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.SmartSync.Model
 {
