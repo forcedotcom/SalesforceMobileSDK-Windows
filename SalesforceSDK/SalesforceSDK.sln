@@ -783,6 +783,7 @@ Global
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|ARM.ActiveCfg = Release|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|iOS.ActiveCfg = Release|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|Win32.ActiveCfg = Release|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|Windows Phone.ActiveCfg = Release|Any CPU
 		{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU
@@ -1251,6 +1252,7 @@ Global
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|ARM.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|iOS.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Win32.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Windows Phone.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU

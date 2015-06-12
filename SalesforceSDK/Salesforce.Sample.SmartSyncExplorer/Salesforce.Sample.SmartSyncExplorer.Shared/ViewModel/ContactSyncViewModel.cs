@@ -43,7 +43,7 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.SmartStore.Store;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.Sample.SmartSyncExplorer.ViewModel
 {

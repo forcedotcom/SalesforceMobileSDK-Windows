@@ -36,7 +36,7 @@ using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Hybrid.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartSync.Model;
-using Salesforce.SDK.SmartStore.Util;
+using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.Hybrid.SmartSync
 {
