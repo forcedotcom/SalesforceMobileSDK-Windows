@@ -1,0 +1,21 @@
+{
+    "com.salesforce": {
+        "source": {
+            "type": "local",
+            "path": "C:\\Repo\\sdk-cordova-plugin"
+        }
+    },
+    "org.apache.cordova.device": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.device"
+        }
+    },
+    "com.phonegap.plugins.PushPlugin": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/forcedotcom/PushPlugin",
+            "subdir": "."
+        }
+    }
+}

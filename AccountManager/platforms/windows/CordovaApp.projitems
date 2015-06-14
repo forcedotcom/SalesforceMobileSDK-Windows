@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+       Licensed to the Apache Software Foundation (ASF) under one
+       or more contributor license agreements.  See the NOTICE file
+       distributed with this work for additional information
+       regarding copyright ownership.  The ASF licenses this file
+       to you under the Apache License, Version 2.0 (the
+       "License"); you may not use this file except in compliance
+       with the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing,
+       software distributed under the License is distributed on an
+       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+       KIND, either express or implied.  See the License for the
+       specific language governing permissions and limitations
+       under the License.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>9ebdb27f-d75b-4d8c-b53f-7be4a1fe89f9</SharedGUID>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)config.xml" />
+    <Content Include="$(MSBuildThisFileDirectory)www\cordova.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\cordova_plugins.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\css\index.css" />
+    <Content Include="$(MSBuildThisFileDirectory)www\css\ratchet-theme-android.css" />
+    <Content Include="$(MSBuildThisFileDirectory)www\css\ratchet.css" />
+    <Content Include="$(MSBuildThisFileDirectory)www\css\styles.css" />
+    <Content Include="$(MSBuildThisFileDirectory)www\img\logo.png" />
+    <Content Include="$(MSBuildThisFileDirectory)www\index.html" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\auth.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\backbone-min.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\cordova.force.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\fastclick.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\forcetk.mobilesdk.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\forcetk.ui.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\jquery.min.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\MockCordova.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\MockSmartStore.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\salesforce.windows.core.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\smartsync.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\stackrouter.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\underscore-min.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\js\WinJS-3.0.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.phonegap.plugins.PushPlugin\www\PushNotification.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.accountmanagerProxy.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.oauthProxy.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.smartstoreProxy.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.smartsyncProxy.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\salesforce.windows.core.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.oauth.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.sdkinfo.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.sfaccountmanager.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.smartstore.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.smartsync.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.bootstrap.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.event.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.exec.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.logger.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.push.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\www\device.js" />
+  </ItemGroup>
+</Project>
