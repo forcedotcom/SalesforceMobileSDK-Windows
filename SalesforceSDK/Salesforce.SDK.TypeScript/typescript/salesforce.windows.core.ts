@@ -201,6 +201,13 @@ module SalesforceJS {
         public switchToUser(account : Salesforce.SDK.Hybrid.Auth.Account) {
             return this.auth.HybridAccountManager.switchToAccount(account);
         }
+
+        public getAppHomeUrl() {
+            if (this.config == null) {
+                return null;
+            }
+            return this.config.startPage;
+        }
     }
 
 }

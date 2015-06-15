@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI;
@@ -228,9 +229,9 @@ namespace Salesforce.SDK.Source.Pages
             }
         }
 
-        private void DisplayErrorDialog(string message)
+        private async Task DisplayErrorDialogAsync(string message)
         {
-            Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 MessageContent.Text = message;
                 TryShowFlyout(MessageFlyout, ApplicationLogo);
@@ -243,7 +244,8 @@ namespace Salesforce.SDK.Source.Pages
             var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             var callbackUri = new Uri(loginOptions.CallbackUrl);
             OAuth2.ClearCookies(loginOptions);
-            WebAuthenticationResult webAuthenticationResult;
+            WebAuthenticationResult webAuthenticationResult = null;
+            var hasWebAuthErrors = false;
 
             try
             {
@@ -267,7 +269,12 @@ namespace Salesforce.SDK.Source.Pages
                 PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
                 PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
 
-                DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
+                hasWebAuthErrors = true;
+            }
+
+            if (hasWebAuthErrors)
+            {
+                await DisplayErrorDialogAsync(LocalizedStrings.GetString("generic_error"));
                 SetupAccountPage();
                 return;
             }
@@ -278,7 +285,7 @@ namespace Salesforce.SDK.Source.Pages
                 if (!String.IsNullOrWhiteSpace(responseUri.Query) &&
                     responseUri.Query.IndexOf("error", StringComparison.CurrentCultureIgnoreCase) >= 0)
                 {
-                    DisplayErrorDialog(LocalizedStrings.GetString("generic_authentication_error"));
+                    await DisplayErrorDialogAsync(LocalizedStrings.GetString("generic_authentication_error"));
                     SetupAccountPage();
                 }
                 else
@@ -295,7 +302,7 @@ namespace Salesforce.SDK.Source.Pages
             }
             else
             {
-                DisplayErrorDialog(LocalizedStrings.GetString("generic_error"));
+                await DisplayErrorDialogAsync(LocalizedStrings.GetString("generic_error"));
                 SetupAccountPage();
             }
         }

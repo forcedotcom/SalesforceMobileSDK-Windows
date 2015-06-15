@@ -40,8 +40,8 @@ namespace Salesforce.SDK.SmartSync.Model
     /// </summary>
     public class SoqlSyncDownTarget : SyncDownTarget
     {
-        public const string QueryString = "query";
-        public string Query { protected set; get; }
+        public new const string QueryString = "query";
+        public new string Query { protected set; get; }
         public SoqlSyncDownTarget(string query) : base(query)
         {
             QueryType = QueryTypes.Soql;

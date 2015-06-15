@@ -1,0 +1,3 @@
+[submodule "salesforcesdk/SalesforceMobileSDK-Shared"]
+	path = salesforcesdk/SalesforceMobileSDK-Shared
+	url = git@github.com:forcedotcom/SalesforceMobileSDK-Shared.git

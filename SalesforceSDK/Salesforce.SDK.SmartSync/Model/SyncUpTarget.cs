@@ -40,8 +40,8 @@ namespace Salesforce.SDK.SmartSync.Model
 {
     public class SyncUpTarget : SyncTarget
     {
-        public const string WindowsImpl = "windowsImpl";
-        public const string WindowsImplType = "windowsImplType";
+        public new const string WindowsImpl = "windowsImpl";
+        public new const string WindowsImplType = "windowsImplType";
 
         public SyncUpTarget(JObject target) : base(target)
         {

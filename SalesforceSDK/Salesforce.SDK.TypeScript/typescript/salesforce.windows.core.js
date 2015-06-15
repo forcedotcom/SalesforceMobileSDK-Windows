@@ -184,6 +184,12 @@ var SalesforceJS;
         OAuth2.prototype.switchToUser = function (account) {
             return this.auth.HybridAccountManager.switchToAccount(account);
         };
+        OAuth2.prototype.getAppHomeUrl = function () {
+            if (this.config == null) {
+                return null;
+            }
+            return this.config.startPage;
+        };
         return OAuth2;
     })();
     SalesforceJS.OAuth2 = OAuth2;
