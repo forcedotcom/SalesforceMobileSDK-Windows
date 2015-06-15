@@ -24,7 +24,7 @@ foreach($name in $names)
 
 write-output "Using $source for source path"
 $shell = new-object -com shell.application
-$paths = @("Salesforce.Universal.Template\")
+$paths = @("Universal.Template\")
 $files = @("BlankApp.png", "SharedBlankSalesforceApplication.vstemplate")
 
 
