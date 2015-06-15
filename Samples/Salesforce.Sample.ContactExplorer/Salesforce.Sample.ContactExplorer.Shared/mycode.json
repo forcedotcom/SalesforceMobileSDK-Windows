@@ -1,0 +1,14 @@
+﻿{
+    "Eval" : "MyCode",
+    "Function" : "Library",
+    "ScriptBlock" : "Unrelated",
+    "MyCode" : [
+    ],
+    "Libraries" : [
+        "cordova*.js",
+        "*force*.js",
+        "inline.js"
+    ],
+    "Unrelated" : [
+    ]
+}

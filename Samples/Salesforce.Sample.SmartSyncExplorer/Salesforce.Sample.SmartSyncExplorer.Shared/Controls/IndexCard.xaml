@@ -1,0 +1,23 @@
+﻿<UserControl
+    x:Class="Salesforce.Sample.SmartSyncExplorer.Controls.IndexCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Salesforce.Sample.SmartSyncExplorer.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="100"
+    d:DesignWidth="100"
+    d:DataContext="{Binding}">
+
+    <Border BorderBrush="Black" BorderThickness="1">
+        <Grid>
+            <Border x:Name="BackgroundBorder" Background="DeepSkyBlue" BorderThickness="1">
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0" Background="Transparent" Click="ReferenceClick">
+                    <TextBlock x:Name="ReferenceName" TextAlignment="Left" Text="{Binding Mode=OneWay}" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="40" Padding="5 0  5 0" Foreground="Black"/>
+                </Button>
+                
+                </Border>
+        </Grid>
+    </Border>
+</UserControl>
