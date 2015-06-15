@@ -225,8 +225,6 @@ namespace Salesforce.SDK.Hybrid
             WebView browser = GetWebView();
             Uri url = browser.BuildLocalStreamUri(StreamResolverKey, _bootConfig.StartPage);
 
-            // Pass the resolver object to the navigate call.
-            // browser.NavigateToLocalStreamUri(url, new StreamUriResolver());
             string relativePath = url.PathAndQuery;
 
             var appDataUri = new Uri("ms-appx-web://" + relativePath);
