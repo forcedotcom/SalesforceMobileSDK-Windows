@@ -60,10 +60,6 @@
     </Compile>
     <Compile Include="Auth\PincodeManager.cs" />
     <Compile Include="Auth\PincodeOptions.cs" />
-    <Compile Include="Hybrid\BootConfig.cs" />
-    <Compile Include="Hybrid\HybridMainPage.cs" />
-    <Compile Include="Hybrid\SalesforceOAuthPlugin.cs" />
-    <Compile Include="Hybrid\StreamUriResolver.cs" />
     <Compile Include="Native\NativeMainPage.cs" />
     <Compile Include="Native\ServerControl.xaml.cs">
       <DependentUpon>ServerControl.xaml</DependentUpon>
