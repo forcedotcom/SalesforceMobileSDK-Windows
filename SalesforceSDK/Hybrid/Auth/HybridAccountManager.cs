@@ -11,11 +11,6 @@ namespace Salesforce.SDK.Hybrid.Auth
 {
     public sealed class HybridAccountManager
     {
-        public HybridAccountManager()
-        {
-
-        }
-
         private static HybridAccountManager _instance = new HybridAccountManager();
 
         public static HybridAccountManager GetInstance()
