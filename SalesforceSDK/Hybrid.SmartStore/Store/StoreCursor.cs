@@ -27,7 +27,7 @@
 
 using System;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.Hybrid.SmartStore.Source.Store;
+using Salesforce.SDK.Hybrid.SmartStore.Store;
 
 namespace Salesforce.SDK.Hybrid.SmartStore
 {
