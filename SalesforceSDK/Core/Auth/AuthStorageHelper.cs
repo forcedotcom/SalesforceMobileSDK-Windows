@@ -57,10 +57,35 @@ namespace Salesforce.SDK.Auth
         private const string InstallationStatusKey = "InstallationStatus";
         private const string PinBackgroundedTimeKey = "pintimeKey";
         private const string PincodeRequired = "pincodeRequired";
-
+        
+        private static readonly int AccountCacheTime = 20; // 20 minutes
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
         private readonly ApplicationDataContainer _persistedData;
         private readonly PasswordVault _vault;
+        private Account _currentAccount;
+        private DateTime _lastSetAccount;
+        private Account CurrentAccount
+        {
+            set
+            {
+                _lastSetAccount = DateTime.Now;
+                _currentAccount = value;
+            }
+            get
+            {
+                if (_lastSetAccount != null)
+                {
+                    var now = DateTime.Now.AddMinutes(AccountCacheTime);
+                    if (_lastSetAccount < now)
+                    {
+                        return _currentAccount;
+                    }
+                }
+                _currentAccount = null;
+                return null;
+            }
+        }
+
 
         private AuthStorageHelper()
         {
@@ -192,6 +217,7 @@ namespace Salesforce.SDK.Auth
             string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
             _vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
             _vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
+            CurrentAccount = account;
             var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
                 LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
@@ -200,6 +226,11 @@ namespace Salesforce.SDK.Auth
 
         internal Account RetrieveCurrentAccount()
         {
+            var check = CurrentAccount;
+            if (check != null)
+            {
+                return check;
+            }
             PasswordCredential creds = SafeRetrieveResource(PasswordVaultCurrentAccount).FirstOrDefault();
             if (creds != null)
             {
@@ -213,7 +244,8 @@ namespace Salesforce.SDK.Auth
                         PlatformAdapter.SendToCustomLogger(
                             "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
                         var accountStr = Encryptor.Decrypt(account.Password);
-                        return JsonConvert.DeserializeObject<Account>(accountStr);
+                        CurrentAccount = JsonConvert.DeserializeObject<Account>(accountStr);
+                        return CurrentAccount;
                     }
                     catch (Exception ex)
                     {
@@ -250,7 +282,17 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         internal Dictionary<string, Account> RetrievePersistedCredentials()
         {
-            IEnumerable<PasswordCredential> creds = SafeRetrieveResource(PasswordVaultAccounts);
+            List<PasswordCredential> creds = new List<PasswordCredential>();
+            var passCreds = SafeRetrieveResource(PasswordVaultAccounts);
+            var current = SafeRetrieveResource(PasswordVaultCurrentAccount);
+            if (passCreds != null)
+            {
+                creds.AddRange(passCreds);
+            }
+            if (current != null)
+            {
+                creds.AddRange(current);
+            }
             var accounts = new Dictionary<string, Account>();
             if (creds != null)
             {
@@ -272,6 +314,8 @@ namespace Salesforce.SDK.Auth
                         }
                         catch (Exception ex)
                         {
+                            if (ex is ArgumentException)
+                                continue;
                             PlatformAdapter.SendToCustomLogger(
                                 "AuthStorageHelper.RetrievePersistedCredentials - Exception occured when decrypting account, removing account from vault",
                                 LoggingLevel.Warning);
@@ -351,6 +395,7 @@ namespace Salesforce.SDK.Auth
             }
             if (current != null)
             {
+                _currentAccount = null;
                 foreach (PasswordCredential next in current)
                 {
                     _vault.Remove(next);
