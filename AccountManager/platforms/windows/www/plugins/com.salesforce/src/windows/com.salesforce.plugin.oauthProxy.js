@@ -41,6 +41,10 @@ var getAuthCredentials = function(success, error) {
 var authenticate = function (success, fail, server) {
     var serv = server;
     if (server instanceof Array) {
+            oauth2.login(server[1]);
+    }
+    else {
+        oauth2.login(server);
         serv = server[1];
     }
     oauth2.login(serv).done(function (account) {

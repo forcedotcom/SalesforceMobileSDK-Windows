@@ -70,8 +70,8 @@ var getAuthCredentials = function (success, fail) {
  *   instanceUrl
  *   userAgent
  */
-var authenticate = function (success, fail) {
-    exec(SALESFORCE_MOBILE_SDK_VERSION, success, fail, SERVICE, "authenticate", []);
+var authenticate = function (success, fail, args) {
+    exec(SALESFORCE_MOBILE_SDK_VERSION, success, fail, SERVICE, "authenticate", args);
 };
 
 /**

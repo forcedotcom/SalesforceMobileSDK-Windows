@@ -1,22 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!--
-       Licensed to the Apache Software Foundation (ASF) under one
-       or more contributor license agreements.  See the NOTICE file
-       distributed with this work for additional information
-       regarding copyright ownership.  The ASF licenses this file
-       to you under the Apache License, Version 2.0 (the
-       "License"); you may not use this file except in compliance
-       with the License.  You may obtain a copy of the License at
-
-         http://www.apache.org/licenses/LICENSE-2.0
-
-       Unless required by applicable law or agreed to in writing,
-       software distributed under the License is distributed on an
-       "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-       KIND, either express or implied.  See the License for the
-       specific language governing permissions and limitations
-       under the License.
--->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -25,6 +7,31 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)config.xml" />
+    <Content Include="$(MSBuildThisFileDirectory)platform_www\cordova.js" />
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\NewtonSoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Core.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartStore.winmd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartSync.winmd" />
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd" />
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.SmartStore.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.SmartSync.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\sqlite3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\SQLitePCL.Ext.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)www\bootconfig.json" />
     <Content Include="$(MSBuildThisFileDirectory)www\cordova.js" />
     <Content Include="$(MSBuildThisFileDirectory)www\cordova_plugins.js" />
     <Content Include="$(MSBuildThisFileDirectory)www\css\index.css" />
@@ -65,5 +72,84 @@
     <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.push.js" />
     <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js" />
     <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\www\device.js" />
+    <Content Include="$(MSBuildThisFileDirectory)www\servers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Salesforce.SDK.Hybrid">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Salesforce.SDK.Hybrid.SmartStore">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartStore.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Salesforce.SDK.Hybrid.SmartSync">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartSync.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="SQLitePCL.Ext">
+      <HintPath>plugins\com.salesforce\SQLitePCL.Ext.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NewtonSoft.Json">
+      <HintPath>plugins\com.salesforce\NewtonSoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Salesforce.SDK.Core">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartStore">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartStore">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartStore">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartSync">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartSync">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartSync">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='ARM'" Include="sqlite3">
+      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x86'" Include="sqlite3">
+      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Condition="'$(Platform)'=='x64'" Include="sqlite3">
+      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

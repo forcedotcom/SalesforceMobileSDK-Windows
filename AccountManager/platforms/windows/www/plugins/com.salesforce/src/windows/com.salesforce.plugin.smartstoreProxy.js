@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exports, module) { /*
+cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, exports, module) { /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *

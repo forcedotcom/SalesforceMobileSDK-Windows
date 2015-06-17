@@ -91,7 +91,7 @@ var SalesforceJS;
         };
         OAuth2.prototype.login = function (server) {
             var auth = Salesforce.SDK.Hybrid.Auth;
-            auth.HybridAccountManager.initEncryption();
+            //auth.HybridAccountManager.initEncryption();
             var boot = this.config;
             return new WinJS.Promise(function (resolve, reject, progress) {
                 var options = new auth.LoginOptions(server.address, boot.remoteAccessConsumerKey, boot.oauthRedirectURI, boot.oauthScopes);
