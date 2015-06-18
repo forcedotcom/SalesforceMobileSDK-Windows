@@ -33,15 +33,13 @@ jQuery(document).ready(function () {
 
                 var auth = new Server("Production", "https://login.salesforce.com");
 
-            //    var oauth = cordova.require("com.salesforce.plugin.oauth").authenticate(function (creds) {
-            //        appStart(_.extend(creds, { userAgent: navigator.userAgent }), cordova.require(
-            //"com.salesforce.plugin.oauth").forcetkRefresh);
-            //    },
-            //        function (error) {
-            //            console.log("Auth failed: " + error);
-                //        }, [auth]);
-
-                var oauth = cordova.require("com.salesforce.plugin.oauth").authenticate({}, {}, [auth]);
+                var oauth = cordova.require("com.salesforce.plugin.oauth").authenticate(function (creds) {
+                    appStart(_.extend(creds, { userAgent: navigator.userAgent }), cordova.require(
+            "com.salesforce.plugin.oauth").forcetkRefresh);
+                },
+                    function (error) {
+                        console.log("Auth failed: " + error);
+                    }, [auth]);
             }
 
         });

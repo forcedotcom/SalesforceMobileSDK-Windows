@@ -6,73 +6,34 @@
     <SharedGUID>9ebdb27f-d75b-4d8c-b53f-7be4a1fe89f9</SharedGUID>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)sqlite3.dll" />
+    <Content Include="$(MSBuildThisFileDirectory)SQLitePCL.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)SQLitePCL.Ext.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)www\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)www\js\salesforce.windows.core.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)www\js\WinJS-3.0.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)www\servers.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)config.xml" />
-    <Content Include="$(MSBuildThisFileDirectory)platform_www\cordova.js" />
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\NewtonSoft.Json.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Core.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartStore.winmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartSync.winmd" />
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd" />
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.SmartStore.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\Salesforce.SDK.SmartSync.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\sqlite3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)plugins\com.salesforce\SQLitePCL.Ext.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)www\bootconfig.json" />
-    <Content Include="$(MSBuildThisFileDirectory)www\cordova.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\cordova_plugins.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\css\index.css" />
-    <Content Include="$(MSBuildThisFileDirectory)www\css\ratchet-theme-android.css" />
-    <Content Include="$(MSBuildThisFileDirectory)www\css\ratchet.css" />
-    <Content Include="$(MSBuildThisFileDirectory)www\css\styles.css" />
-    <Content Include="$(MSBuildThisFileDirectory)www\img\logo.png" />
-    <Content Include="$(MSBuildThisFileDirectory)www\index.html" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\auth.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\backbone-min.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\cordova.force.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\fastclick.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\forcetk.mobilesdk.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\forcetk.ui.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\jquery.min.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\MockCordova.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\MockSmartStore.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\salesforce.windows.core.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\smartsync.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\stackrouter.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\underscore-min.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\js\WinJS-3.0.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.phonegap.plugins.PushPlugin\www\PushNotification.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.accountmanagerProxy.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.oauthProxy.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.smartstoreProxy.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\com.salesforce.plugin.smartsyncProxy.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\src\windows\salesforce.windows.core.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.oauth.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.sdkinfo.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.sfaccountmanager.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.smartstore.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.plugin.smartsync.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.bootstrap.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.event.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.exec.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.logger.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\com.salesforce\www\com.salesforce.util.push.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\src\windows\DeviceProxy.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\plugins\org.apache.cordova.device\www\device.js" />
-    <Content Include="$(MSBuildThisFileDirectory)www\servers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Salesforce.SDK.Hybrid">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Salesforce.SDK.Hybrid">
@@ -87,69 +48,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Salesforce.SDK.Hybrid.SmartSync">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.SmartSync.winmd</HintPath>
+    <Reference Include="Salesforce.SDK.Hybrid">
+      <HintPath>plugins\com.salesforce\Salesforce.SDK.Hybrid.winmd</HintPath>
       <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="SQLitePCL.Ext">
-      <HintPath>plugins\com.salesforce\SQLitePCL.Ext.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="NewtonSoft.Json">
-      <HintPath>plugins\com.salesforce\NewtonSoft.Json.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Salesforce.SDK.Core">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.Core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartStore">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartStore">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartStore">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartStore.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='ARM'" Include="Salesforce.SDK.SmartSync">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x86'" Include="Salesforce.SDK.SmartSync">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x64'" Include="Salesforce.SDK.SmartSync">
-      <HintPath>plugins\com.salesforce\Salesforce.SDK.SmartSync.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='ARM'" Include="sqlite3">
-      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x86'" Include="sqlite3">
-      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Condition="'$(Platform)'=='x64'" Include="sqlite3">
-      <HintPath>plugins\com.salesforce\sqlite3.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>
