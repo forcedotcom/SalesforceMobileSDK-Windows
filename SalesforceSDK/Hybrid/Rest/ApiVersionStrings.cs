@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
@@ -24,41 +24,43 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-using System;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Security.Cryptography;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.Web;
-
-namespace Salesforce.SDK.Hybrid
+namespace Salesforce.SDK.Hybrid.Rest
 {
-    public sealed class StreamUriResolver : IUriToStreamResolver
+    public sealed class ApiVersionStrings
     {
-        public IAsyncOperation<IInputStream> UriToStreamAsync(Uri uri)
+        public ApiVersionStrings()
         {
-            string host = uri.Host;
-            int delimiter = host.LastIndexOf('_');
-            string encodedContentId = host.Substring(delimiter + 1);
-            IBuffer buffer = CryptographicBuffer.DecodeFromHexString(encodedContentId);
 
-            string contentIdentifier = CryptographicBuffer.ConvertBinaryToString(BinaryStringEncoding.Utf8, buffer);
-            string relativePath = uri.PathAndQuery;
-
-            var appDataUri = new Uri("ms-appx:///" + contentIdentifier + relativePath);
-
-            return GetFileStreamFromApplicationUriAsync(appDataUri).AsAsyncOperation();
         }
 
-        private async Task<IInputStream> GetFileStreamFromApplicationUriAsync(Uri uri)
+        public static string VersionNumber
         {
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(uri);
-            if (file == null)
-                return null;
-            IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
-            return stream;
+            get { return SDK.Rest.ApiVersionStrings.VersionNumber; }
+        }
+
+        public static string ApiPrefix
+        {
+            get { return SDK.Rest.ApiVersionStrings.ApiPrefix; }
+        }
+
+        public static string BasePath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BasePath; }
+        }
+
+        public static string BaseChatterPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseChatterPath; }
+        }
+
+        public static string BaseConnectPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseConnectPath; }
+        }
+
+        public static string BaseSobjectPath
+        {
+            get { return SDK.Rest.ApiVersionStrings.BaseSobjectPath; }
         }
     }
 }
