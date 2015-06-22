@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props" Condition="Exists('..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props')" />
-  <Import Project="..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.props" Condition="Exists('..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.props')" />
+  <Import Project="$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props" Condition="Exists('$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -20,7 +19,7 @@
     <PackageCertificateKeyFile>Salesforce.Sample.NativeSmartStoreSample.Windows_TemporaryKey.pfx</PackageCertificateKeyFile>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <NuGetPackageImportStamp>571262fc</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>7f6ebbe5</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -122,30 +121,34 @@
     <Content Include="Assets\StoreLogo.scale-100.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.App\App.csproj">
+    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\App\App.csproj">
       <Project>{b1d32173-8770-45b7-aee8-1f29af8cdc87}</Project>
       <Name>App</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Core\Core.csproj">
+    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Core\Core.csproj">
       <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.SmartStore\SmartStore.csproj">
+    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\SmartStore\SmartStore.csproj">
       <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
       <Name>SmartStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.SmartSync\SmartSync.csproj">
+    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\SmartSync\SmartSync.csproj">
       <Project>{923dcd08-e0af-4214-86b0-86e37851046b}</Project>
       <Name>SmartSync</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Store\Store.csproj">
+    <ProjectReference Include="..\..\..\SalesforceMobileSDK-Windows\SalesforceSDK\Store\Store.csproj">
       <Project>{a107bcc2-ec81-4a4f-8ea2-aa742afe0f01}</Project>
       <Name>Store</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SQLitePCL">
-      <HintPath>..\..\..\packages\SQLitePCL.3.8.7.2\lib\netcore451\SQLitePCL.dll</HintPath>
+      <HintPath>$(SolutionDir)\SQLitePCL.3.8.7.2\lib\netcore451\SQLitePCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -168,15 +171,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-    <Error Condition="!Exists('..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.props'))" />
-    <Error Condition="!Exists('..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.targets'))" />
-    <Error Condition="!Exists('..\..\..\packages\SQLitePCL.raw_basic.0.7.1\build\netcore451\SQLitePCL.raw_basic.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\SQLitePCL.raw_basic.0.7.1\build\netcore451\SQLitePCL.raw_basic.targets'))" />
-    <Error Condition="!Exists('..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props'))" />
-    <Error Condition="!Exists('..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets'))" />
+    <Error Condition="!Exists('$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.props'))" />
+    <Error Condition="!Exists('$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets'))" />
   </Target>
-  <Import Project="..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.targets" Condition="Exists('..\..\packages\SQLitePCL.3.8.5.1\build\netcore451\SQLitePCL.targets')" />
-  <Import Project="..\..\..\packages\SQLitePCL.raw_basic.0.7.1\build\netcore451\SQLitePCL.raw_basic.targets" Condition="Exists('..\..\..\packages\SQLitePCL.raw_basic.0.7.1\build\netcore451\SQLitePCL.raw_basic.targets')" />
-  <Import Project="..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets" Condition="Exists('..\..\..\packages\SQLitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets')" />
+  <Import Project="$(SolutionDir)\SqlitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets" Condition="Exists('$(SolutionDir)\SqlitePCL.3.8.7.2\build\netcore451\SQLitePCL.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

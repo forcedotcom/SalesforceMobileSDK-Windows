@@ -1,15 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40418.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{0FE03C77-E2DC-44D4-8315-114AD4A3D363}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{806D5361-BD93-4138-BA61-D1D5D7B7791D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.RestExplorer.Phone", "Samples\Salesforce.Sample.RestExplorer.Phone\Salesforce.Sample.RestExplorer.Phone.csproj", "{D6D66DE5-899D-4B9D-9A96-FD9028D1017E}"
@@ -44,25 +37,32 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salesforce.Sample.NativeSma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK", "SDK", "{D999F4D2-11FF-49CD-9D40-938EE3419D07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Core\Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "SalesforceMobileSDK-Windows\SalesforceSDK\Core\Core.csproj", "{CD53C7B7-C3FF-4982-935B-22FB096CD559}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.App\App.csproj", "{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App", "SalesforceMobileSDK-Windows\SalesforceSDK\App\App.csproj", "{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Phone\Phone.csproj", "{E0188957-3823-40A9-B90D-A8794986D74F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone", "SalesforceMobileSDK-Windows\SalesforceSDK\Phone\Phone.csproj", "{E0188957-3823-40A9-B90D-A8794986D74F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Store\Store.csproj", "{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store", "SalesforceMobileSDK-Windows\SalesforceSDK\Store\Store.csproj", "{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.Core", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Hybrid\Hybrid.Core.csproj", "{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.Core", "SalesforceMobileSDK-Windows\SalesforceSDK\Hybrid\Hybrid.Core.csproj", "{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartStore", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Hybrid.SmartStore\Hybrid.SmartStore.csproj", "{3C768AD4-DAC5-40D5-8AB7-141780333BAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartStore", "SalesforceMobileSDK-Windows\SalesforceSDK\Hybrid.SmartStore\Hybrid.SmartStore.csproj", "{3C768AD4-DAC5-40D5-8AB7-141780333BAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartSync", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.Hybrid.SmartSync\Hybrid.SmartSync.csproj", "{B6093B0A-09A7-4DE9-BF0B-5740D2065840}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hybrid.SmartSync", "SalesforceMobileSDK-Windows\SalesforceSDK\Hybrid.SmartSync\Hybrid.SmartSync.csproj", "{B6093B0A-09A7-4DE9-BF0B-5740D2065840}"
 EndProject
-Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "TypeScript", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.TypeScript\TypeScript.jsproj", "{E2E39B4C-E5E1-4163-8FBB-CD01473086D1}"
+Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "TypeScript", "SalesforceMobileSDK-Windows\SalesforceSDK\TypeScriptLib\TypeScript.jsproj", "{E2E39B4C-E5E1-4163-8FBB-CD01473086D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartStore", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.SmartStore\SmartStore.csproj", "{E0838498-6201-4040-B4F1-A2D0C02405A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartStore", "SalesforceMobileSDK-Windows\SalesforceSDK\SmartStore\SmartStore.csproj", "{E0838498-6201-4040-B4F1-A2D0C02405A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync", "SalesforceMobileSDK-Windows\SalesforceSDK\Salesforce.SDK.SmartSync\SmartSync.csproj", "{923DCD08-E0AF-4214-86B0-86E37851046B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartSync", "SalesforceMobileSDK-Windows\SalesforceSDK\SmartSync\SmartSync.csproj", "{923DCD08-E0AF-4214-86B0-86E37851046B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F93E9B4D-4127-4D56-B225-5EE081485B4A}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -268,6 +268,7 @@ Global
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Debug|x86.Build.0 = Debug|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD53C7B7-C3FF-4982-935B-22FB096CD559}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -278,6 +279,7 @@ Global
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Debug|x86.Build.0 = Debug|Any CPU
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1D32173-8770-45B7-AEE8-1F29AF8CDC87}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -288,8 +290,8 @@ Global
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|ARM.ActiveCfg = Debug|ARM
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|ARM.Build.0 = Debug|ARM
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|x86.ActiveCfg = Debug|x86
-		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|x86.Build.0 = Debug|x86
+		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0188957-3823-40A9-B90D-A8794986D74F}.Debug|x86.Build.0 = Debug|Any CPU
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0188957-3823-40A9-B90D-A8794986D74F}.Release|ARM.ActiveCfg = Release|ARM
@@ -303,8 +305,8 @@ Global
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|ARM.Build.0 = Debug|ARM
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x64.ActiveCfg = Debug|x64
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x64.Build.0 = Debug|x64
-		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x86.ActiveCfg = Debug|x86
-		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x86.Build.0 = Debug|x86
+		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Debug|x86.Build.0 = Debug|Any CPU
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A107BCC2-EC81-4A4F-8EA2-AA742AFE0F01}.Release|ARM.ActiveCfg = Release|ARM
@@ -318,6 +320,7 @@ Global
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Debug|x86.Build.0 = Debug|Any CPU
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B6F95C8E-E338-4D05-A33D-81C7671A6CB3}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -328,6 +331,7 @@ Global
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Debug|x86.Build.0 = Debug|Any CPU
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3C768AD4-DAC5-40D5-8AB7-141780333BAF}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -338,6 +342,7 @@ Global
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Debug|x86.Build.0 = Debug|Any CPU
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B6093B0A-09A7-4DE9-BF0B-5740D2065840}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -372,6 +377,7 @@ Global
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Debug|x86.Build.0 = Debug|Any CPU
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0838498-6201-4040-B4F1-A2D0C02405A6}.Release|ARM.ActiveCfg = Release|Any CPU
@@ -382,6 +388,7 @@ Global
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Debug|ARM.ActiveCfg = Debug|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{923DCD08-E0AF-4214-86B0-86E37851046B}.Debug|x86.Build.0 = Debug|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|ARM.ActiveCfg = Release|Any CPU
