@@ -45,6 +45,7 @@ using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
 using Windows.Foundation.Diagnostics;
 using Windows.UI.Core;
+using Windows.UI.Xaml.Input;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -377,6 +378,14 @@ namespace Salesforce.SDK.Source.Pages
         {
             SDKManager.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
             SDKManager.ServerConfiguration.SaveConfig();
+        }
+
+        private void ServerSelected(object sender, KeyRoutedEventArgs e)
+        {
+            if (e != null && e.Key == Windows.System.VirtualKey.Enter)
+            {
+                StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
+            }
         }
 
         private void TryShowFlyout(Flyout flyout, FrameworkElement location)

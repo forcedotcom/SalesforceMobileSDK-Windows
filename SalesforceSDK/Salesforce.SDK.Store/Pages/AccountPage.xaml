@@ -23,7 +23,8 @@
 
                 <ListBox x:Name="ListboxServers"
                          SelectionMode="Single"
-                         Margin="5 0 5 25">
+                         Margin="5 0 5 25"
+                         KeyUp="ServerSelected">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
