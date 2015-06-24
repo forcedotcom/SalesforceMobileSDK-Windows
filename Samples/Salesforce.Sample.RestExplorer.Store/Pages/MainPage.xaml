@@ -1,0 +1,89 @@
+﻿<app:NativeMainPage
+    x:Class="Salesforce.Sample.RestExplorer.Store.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Salesforce.Sample.RestExplorer.Store"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:app="using:Salesforce.SDK.Native"
+    mc:Ignorable="d"
+    DataContext="{StaticResource RestActionViewModel}">
+
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Button Name="btnLogout" Width="300">Logout</Button>
+            <Button Name="btnSwitch" Width="300">Switch User</Button>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Grid.Column="0">
+                    <Button Name="btnVersions" Width="150">Versions</Button>
+                    <Button Name="btnResources" Width="150">Resources</Button>
+                    <Button Name="btnDescribeGlobal" Width="150">Describe Global</Button>
+                    <Button Name="btnMetadata" Width="150">Metadata</Button>
+                    <Button Name="btnDescribe" Width="150">Describe</Button>
+                    <Button Name="btnManual" Width="150">Manual</Button>
+                </StackPanel>
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <Button Name="btnCreate" Width="150">Create</Button>
+                    <Button Name="btnRetrieve" Width="150">Retrieve</Button>
+                    <Button Name="btnUpdate" Width="150">Update</Button>
+                    <Button Name="btnUpsert" Width="150">Upsert</Button>
+                    <Button Name="btnDelete" Width="150">Delete</Button>
+                    <Button Name="btnQuery" Width="150">Query</Button>
+                    <Button Name="btnSearch" Width="150">Search</Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0">
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbApiVersion"
+                         Text="{Binding [ApiVersion], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectType"
+                         Text="{Binding [ObjectType], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbObjectId"
+                         Text="{Binding [ObjectId], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalIdField"
+                         Text="{Binding [ExternalIdField], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbExternalId"
+                         Text="{Binding [ExternalId], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFieldList"
+                         Text="{Binding [FieldList], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbFields"
+                         Text="{Binding [Fields], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSoql"
+                         Text="{Binding [Soql], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbSosl"
+                         Text="{Binding [Sosl], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestPath"
+                         Text="{Binding [RequestPath], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestBody"
+                         Text="{Binding [RequestBody], Mode=TwoWay}" />
+                <TextBox Style="{StaticResource TextBoxStyle}" Visibility="Collapsed" Name="tbRequestMethod"
+                         Text="{Binding [RequestMethod], Mode=TwoWay}" />
+            </StackPanel>
+            <Button Name="btnAction" Grid.Row="1" Grid.Column="0" Command="{Binding SendRequest}">Send Request</Button>
+            <WebView Name="wbResult" Grid.Row="2" Grid.Column="0" />
+        </Grid>
+    </Grid>
+</app:NativeMainPage>
