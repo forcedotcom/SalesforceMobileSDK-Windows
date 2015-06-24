@@ -74,5 +74,17 @@ namespace Salesforce.SDK.Hybrid.SmartStore
             var specs = JsonConvert.SerializeObject(indexSpecs);
             return JsonConvert.DeserializeObject<IndexSpec[]>(specs);
         }
+
+        public static IndexSpec[] JsonToIndexSpecCollection(string json)
+        {
+            var jarray = JArray.Parse(json);
+            List<IndexSpec> specs = new List<IndexSpec>();
+            foreach (JObject next in jarray)
+            {
+                var indexSpec = new IndexSpec(next.ExtractValue<string>("path"), new SmartStoreType(next.ExtractValue<string>("type")));
+                specs.Add(indexSpec);
+            }
+            return specs.ToArray();
+        }
     }
 }
