@@ -25,7 +25,7 @@ cordova.define("com.salesforce.SalesforceSmartSyncProxy", function(require, expo
   */
 
      var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
-     var SERVICE = "com.salesforce.smartstore";
+     var SERVICE = "com.salesforce.smartsync";
      var manager = Salesforce.SDK.Hybrid.SmartSync;
      var exec = require("com.salesforce.util.exec").exec;
      var core = require("com.salesforce.SalesforceCore").SalesforceJS;
