@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceOAuthProxy", function (require, exports, module) { /*
+cordova.define("com.salesforce.SalesforceOAuthProxy", function(require, exports, module) { /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -24,56 +24,56 @@ cordova.define("com.salesforce.SalesforceOAuthProxy", function (require, exports
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-    var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
-    var SERVICE = "com.salesforce.oauth";
+var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+var SERVICE = "com.salesforce.oauth";
 
-    var exec = require("com.salesforce.util.exec").exec;
-    var core = require("com.salesforce.SalesforceCore").SalesforceJS;
-    var oauth2 = new core.OAuth2();
-    oauth2.configureOAuth("bootconfig.json", null);
+var exec = require("com.salesforce.util.exec").exec;
+var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var oauth2 = new core.OAuth2();
+oauth2.configureOAuth("bootconfig.json", null);
 
-    var logoutInitiated = false;
+var logoutInitiated = false;
 
-    var getAuthCredentials = function (success, error) {
-        oauth2.getAuthCredentials(success, error);
-    };
+var getAuthCredentials = function(success, error) {
+    oauth2.getAuthCredentials(success, error);
+};
 
-    var authenticate = function (success, fail, server) {
-        var serv = server;
-        if (server instanceof Array) {
-            serv = server[1];
-        }
-        oauth2.login(serv).done(function (account) {
-            success(account);
-        }, function (error) {
-            fail(error);
-        });
-    };
+var authenticate = function (success, fail, server) {
+    var serv = server;
+    if (server instanceof Array) {
+        serv = server[1];
+    }
+    oauth2.login(serv).done(function (account) {
+        success(account);
+    }, function (error) {
+        fail(error);
+    });
+};
 
-    var logout = function () {
-        if (!logoutInitiated) {
-            logoutInitiated = true;
-            oauth2.logout();
-        }
-
-    };
-
-    var getAppHomeUrl = function (success) {
-        oauth2.getAppHomeUrl(success);
-    };
-
-    var forcetkRefresh = function (success, error) {
-        oauth2.forcetkRefresh(success, error);
+var logout = function() {
+    if(!logoutInitiated) {
+      logoutInitiated = true;
+      oauth2.logout();
     }
 
-    module.exports = {
-        getAuthCredentials: getAuthCredentials,
-        authenticate: authenticate,
-        logout: logout,
-        getAppHomeUrl: getAppHomeUrl,
-        forcetkRefresh: forcetkRefresh
-    };
+};
 
-    require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
+var getAppHomeUrl = function(success) {
+  oauth2.getAppHomeUrl(success);
+};
+
+var forcetkRefresh = function(success, error) {
+    oauth2.forcetkRefresh(success, error);
+}
+
+module.exports = {
+    getAuthCredentials: getAuthCredentials,
+    authenticate: authenticate,
+    logout: logout,
+    getAppHomeUrl: getAppHomeUrl,
+    forcetkRefresh: forcetkRefresh
+};
+
+require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
 
 });
