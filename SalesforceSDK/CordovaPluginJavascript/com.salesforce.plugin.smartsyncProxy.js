@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exports, module) {
+cordova.define("com.salesforce.SalesforceSmartSyncProxy", function(require, exports, module) {
   /* Copyright (c) 2015, salesforce.com, inc.
   * All rights reserved.
   *
@@ -25,10 +25,11 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
   */
 
      var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
-     var SERVICE = "com.salesforce.smartstore";
+     var SERVICE = "com.salesforce.smartsync";
      var manager = Salesforce.SDK.Hybrid.SmartSync;
      var exec = require("com.salesforce.util.exec").exec;
-     var oauth = new SalesforceJS.OAuth2();
+     var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+     var oauth = new core.OAuth2();
 
      // Helper function to handle calls that don't specify isGlobalStore as first argument
      // If missing, the caller is re-invoked with false prepended to the arguments list and true is returned
@@ -50,20 +51,10 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
          }
      };
 
-     var getInstance = function(account, communityId) {
-       var syncmanager = null;
-       if (communityId == null) {
-         syncmanager = manager.SyncManager.getInstance(account, null);
-       } else {
-         syncmanager = manager.SyncManager.getInstance(isGlobalStore, communityId);
-       }
+     var getInstance = function() {
+       syncmanager = manager.SyncManager.getInstance();
        return syncmanager;
      }
-
-     var account;
-     oauth.getUser(function success(result) {
-        account = result;
-    });
 
      var syncDown = function(successCB, errorCB, args) {
          if (checkFirstArg(arguments)) return;
@@ -82,7 +73,7 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
      var reSync = function(succesCB, errorCB, args) {
        if(checkFirstArg(arguments)) return;
        var payload = args[1];
-       var syncmanager = getInstance(account, null);
+       var syncmanager = getInstance();
        if(!syncmanager) {
          errorCB("Error in getting instance for SmartSync");
        }
@@ -95,7 +86,7 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
      var syncUp = function(successCB, errorCB, args) {
        if(checkFirstArg(arguments)) return;
        var payload = args[1];
-       var syncmanager = getInstance(account, null);
+       var syncmanager = getInstance();
        if(!syncmanager) {
          errorCB("Error in getting instance for SmartSync");
        }
@@ -107,7 +98,7 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function(require, exp
      var getSyncStatus = function(successCB, errorCB, args) {
        if(checkFirstArg(arguments)) return;
        var payload = args[1];
-       var syncmanager = getInstance(account, null);
+       var syncmanager = getInstance();
        if(!syncmanager) {
          errorCB("Error in getting instance for SmartSync");
        }

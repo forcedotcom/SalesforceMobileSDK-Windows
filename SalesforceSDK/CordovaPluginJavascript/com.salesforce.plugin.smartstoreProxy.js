@@ -279,13 +279,37 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
         if (!sm) {
             errorCB("No active account");
         } else {
+            var qs;
+            switch (spec.queryType)
+            {
+                case "exact":
+                    qs = smartStore.QuerySpec.buildExactQuerySpec(payload.soupName, spec.path, spec.exactMatchKey, spec.pageSize);
+                    break;
+                case "like":
+                    qs = smartStore.QuerySpec.buildLikeQuerySpec(payload.soupName, spec.path, spec.likeKey, spec.order, spec.pageSize);
+                    break;
+                case "range":
+                    qs = smartStore.QuerySpec.buildRangeQuerySpec(payload.soupName, spec.path, spec.beginKey, spec.endKey, spec.order, spec.pageSize);
+                    break;
+                default:
+                    qs = smartStore.QuerySpec.buildSmartQuerySpec(spec.smartSql, spec.pageSize);
+            }
             var smart = smartStore.QuerySpec.buildSmartQuerySpec(spec.smartSql, spec.pageSize);
-            successCB(sm.query(smart, payload.pageIndex));
+            successCB(sm.query(qs, payload.pageIndex));
         }
     };
 
     var runSmartQuery = function (successCB, errorCB, args) {
-        querySoup(successCB, errorCB, args);
+        var payload = args[1];
+        var spec = payload.querySpec;
+        storeConsole.debug("SmartStore.runSmartQuery:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",indexPath=" + spec.indexPath);
+        var sm = getSmartStore(payload.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            var smart = smartStore.QuerySpec.buildSmartQuerySpec(spec.smartSql, spec.pageSize);
+            successCB(sm.query(smart, payload.pageIndex));
+        }
     };
 
     var retrieveSoupEntries = function (successCB, errorCB, args) {
@@ -311,14 +335,16 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
         if (!sm) {
             errorCB("No active account");
         } else {
-            successCB(sm.upsert(payload.soupName, payload.entries, payload.externalIdPath));
+            payload.entries.forEach(function (record) {
+                sm.upsert(payload.soupName, JSON.stringify(record), payload.externalIdPath)
+            });
+            successCB(payload.entries);
         }
     };
 
     var removeFromSoup = function (successCB, errorCB, args) {
-        if (checkFirstArg(arguments)) return;
+        var payload = args[1];
         storeConsole.debug("SmartStore.removeFromSoup:isGlobalStore=" + payload.isGlobalStore + ",soupName=" + payload.soupName + ",entryIds=" + payload.entryIds);
-        isGlobalStore = isGlobalStore || false;
         var sm = getSmartStore(payload.isGlobalStore);
         if (!sm) {
             errorCB("No active account");
@@ -328,17 +354,18 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
     };
 
     //====== Cursor manipulation ======
-    var moveCursorToPageIndex = function (isGlobalStore, cursor, newPageIndex, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("moveCursorToPageIndex:isGlobalStore=" + isGlobalStore + ",cursorId=" + cursor.cursorId + ",newPageIndex=" + newPageIndex);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgMoveCursorToPageIndex",
-             [{ "cursorId": cursor.cursorId, "index": newPageIndex, "isGlobalStore": isGlobalStore }]
-            );
+    var moveCursorToPageIndex = function (successCB, errorCB, args) {
+        var cursor = args[1];
+        storeConsole.debug("moveCursorToPageIndex:isGlobalStore=" + cursor.isGlobalStore + ",cursorId=" + cursor.cursorId + ",newPageIndex=" + cursor.newPageIndex);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            successCB(sm.moveCursorToPageIndex(curor.cursorId, cursor.pageIndex));
+        }
     };
 
-    var moveCursorToNextPage = function (isGlobalStore, cursor, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
+    var moveCursorToNextPage = function (successCB, errorCB, args) {
+        var payload = args[1];
         var newPageIndex = cursor.currentPageIndex + 1;
         if (newPageIndex >= cursor.totalPages) {
             errorCB(cursor, new Error("moveCursorToNextPage called while on last page"));
@@ -347,23 +374,33 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
         }
     };
 
-    var moveCursorToPreviousPage = function (isGlobalStore, cursor, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
+    var moveCursorToPreviousPage = function (successCB, errorCB, args) {
+        var cursor = args[1];
         var newPageIndex = cursor.currentPageIndex - 1;
         if (newPageIndex < 0) {
             errorCB(cursor, new Error("moveCursorToPreviousPage called while on first page"));
         } else {
-            moveCursorToPageIndex(isGlobalStore, cursor, newPageIndex, successCB, errorCB);
+            var sm = getSmartStore(cursor.isGlobalStore);
+            if (!sm) {
+                errorCB("No active account");
+            } else {
+                successCB(sm.moveCursorToPageIndex(cursor.cursorId, cusor.numberIndex));
+            }
         }
     };
 
-    var closeCursor = function (isGlobalStore, cursor, successCB, errorCB) {
-        if (checkFirstArg(arguments)) return;
-        storeConsole.debug("closeCursor:isGlobalStore=" + isGlobalStore + ",cursorId=" + cursor.cursorId);
-        exec(SALESFORCE_MOBILE_SDK_VERSION, successCB, errorCB, SERVICE,
-             "pgCloseCursor",
-             [{ "cursorId": cursor.cursorId, "isGlobalStore": isGlobalStore }]
-            );
+    var closeCursor = function (successCB, errorCB, args) {
+        var cursor = args[1];
+        storeConsole.debug("closeCursor:isGlobalStore=" + cursor.isGlobalStore + ",cursorId=" + cursor.cursorId);
+        var sm = getSmartStore(cursor.isGlobalStore);
+        if (!sm) {
+            errorCB("No active account");
+        } else {
+            if (typeof cursor.cursorId == 'undefined')
+                successCB();
+            else
+                successCB(sm.closeCursor(cursor.cursorId));
+        }
     };
 
     /**
