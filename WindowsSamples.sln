@@ -64,6 +64,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F93E9B
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{262852C6-CD72-467D-83FE-5EEB1973A190}") = "CordovaApp.Windows", "Samples\AccountManager\platforms\windows\CordovaApp.Windows.jsproj", "{58950FB6-2F93-4963-B9CD-637F83F3EFBF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Salesforce.Sample.AccountManager", "Salesforce.Sample.AccountManager", "{FF00A7A7-A92F-4FC9-8C9C-DA38517667E4}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Samples\Salesforce.Sample.SmartSyncExplorer\Salesforce.Sample.SmartSyncExplorer.Shared\Salesforce.Sample.SmartSyncExplorer.Shared.projitems*{513e0a0a-bb9b-443b-95d7-6767bc9146fb}*SharedItemsImports = 4
@@ -72,6 +76,7 @@ Global
 		Samples\Salesforce.Sample.Container\Salesforce.Sample.Container.Shared\Salesforce.Sample.Container.Shared.projitems*{e3a104a7-6d87-40c3-9ecb-29092b97e022}*SharedItemsImports = 4
 		Samples\Salesforce.Sample.SmartSyncExplorer\Salesforce.Sample.SmartSyncExplorer.Shared\Salesforce.Sample.SmartSyncExplorer.Shared.projitems*{445fc4f7-03d2-4c48-98a2-ee47912d0f5d}*SharedItemsImports = 13
 		Samples\Salesforce.Sample.Container\Salesforce.Sample.Container.Shared\Salesforce.Sample.Container.Shared.projitems*{975c84c9-616f-4d8c-8a80-13f8e7a4b046}*SharedItemsImports = 4
+		Samples\AccountManager\platforms\windows\CordovaApp.projitems*{58950fb6-2f93-4963-b9cd-637f83f3efbf}*SharedItemsImports = 5
 		Samples\Salesforce.Sample.Container\Salesforce.Sample.Container.Shared\Salesforce.Sample.Container.Shared.projitems*{f6f2d28c-ba6e-4937-92d5-6f99d02270d4}*SharedItemsImports = 13
 		Samples\Salesforce.Sample.NativeSmartStoreSample\Salesforce.Sample.NativeSmartStoreSample.Shared\Salesforce.Sample.NativeSmartStoreSample.Shared.projitems*{dfcd6129-bc1a-44b8-9620-257f03b04dd0}*SharedItemsImports = 13
 		Samples\Salesforce.Sample.NativeSmartStoreSample\Salesforce.Sample.NativeSmartStoreSample.Shared\Salesforce.Sample.NativeSmartStoreSample.Shared.projitems*{0ccc48ee-997d-4f1a-8d27-e87dbea58d93}*SharedItemsImports = 4
@@ -394,6 +399,30 @@ Global
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|ARM.ActiveCfg = Release|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|x64.ActiveCfg = Release|Any CPU
 		{923DCD08-E0AF-4214-86B0-86E37851046B}.Release|x86.ActiveCfg = Release|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|ARM.ActiveCfg = Debug|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|ARM.Build.0 = Debug|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|ARM.Deploy.0 = Debug|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x64.ActiveCfg = Debug|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x64.Build.0 = Debug|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x64.Deploy.0 = Debug|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x86.ActiveCfg = Debug|x86
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x86.Build.0 = Debug|x86
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Debug|x86.Deploy.0 = Debug|x86
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|ARM.ActiveCfg = Release|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|ARM.Build.0 = Release|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|ARM.Deploy.0 = Release|ARM
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x64.ActiveCfg = Release|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x64.Build.0 = Release|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x64.Deploy.0 = Release|x64
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x86.ActiveCfg = Release|x86
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x86.Build.0 = Release|x86
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -424,5 +453,7 @@ Global
 		{E2E39B4C-E5E1-4163-8FBB-CD01473086D1} = {D999F4D2-11FF-49CD-9D40-938EE3419D07}
 		{E0838498-6201-4040-B4F1-A2D0C02405A6} = {D999F4D2-11FF-49CD-9D40-938EE3419D07}
 		{923DCD08-E0AF-4214-86B0-86E37851046B} = {D999F4D2-11FF-49CD-9D40-938EE3419D07}
+		{58950FB6-2F93-4963-B9CD-637F83F3EFBF} = {FF00A7A7-A92F-4FC9-8C9C-DA38517667E4}
+		{FF00A7A7-A92F-4FC9-8C9C-DA38517667E4} = {806D5361-BD93-4138-BA61-D1D5D7B7791D}
 	EndGlobalSection
 EndGlobal

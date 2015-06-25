@@ -1,5 +1,9 @@
 obj/
 bin/
+build/
+AppPackages/
+BundleArtifacts/
+cordova/
 *.csproj.user
 *.*~
 *.suo
