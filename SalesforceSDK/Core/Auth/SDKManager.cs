@@ -82,6 +82,12 @@ namespace Salesforce.SDK.Auth
         {
             Encryptor.init(settings);
             T config = SalesforceConfig.RetrieveConfig<T>() ?? Activator.CreateInstance<T>();
+
+            if (config.ServerList == null)
+            {
+                config.ServerList = new System.Collections.ObjectModel.ObservableCollection<ServerSetting>();
+            }
+
             config.SaveConfig();
             ServerConfiguration = config;
             return config;

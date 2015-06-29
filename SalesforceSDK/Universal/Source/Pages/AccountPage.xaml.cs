@@ -217,7 +217,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
-            if (Servers.Count <= 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
+            if (Servers.Count == 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
             {
                 ListboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);

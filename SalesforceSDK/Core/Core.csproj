@@ -65,7 +65,9 @@
     <PRIResource Include="Strings\en\resources.resw" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\servers.xml" />
+    <EmbeddedResource Include="Resources\servers.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <TargetPlatform Include="Windows, Version=8.1" />
