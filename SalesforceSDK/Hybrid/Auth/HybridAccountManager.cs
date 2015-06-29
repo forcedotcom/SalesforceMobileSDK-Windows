@@ -71,7 +71,7 @@ namespace Salesforce.SDK.Hybrid.Auth
         public static IAsyncOperation<bool> SwitchToAccount(Account account)
         {
             InitEncryption();
-            var sdkAccount = account.ConvertToSDKAccount();
+            var sdkAccount = (account == null ? null : account.ConvertToSDKAccount());
             return Task.Run(async () => await SDK.Auth.AccountManager.SwitchToAccount(sdkAccount)).AsAsyncOperation();
         }
     }
