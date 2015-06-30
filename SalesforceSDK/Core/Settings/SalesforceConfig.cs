@@ -52,6 +52,8 @@ namespace Salesforce.SDK.Source.Settings
 
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
 
+        private bool _isInitialized;
+
         #endregion
 
         #region Public properties & fields
@@ -115,13 +117,19 @@ namespace Salesforce.SDK.Source.Settings
 
         protected SalesforceConfig()
         {
+        }
+
+        public async Task InitializeAsync()
+        {
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             var configJson = settings.Values[ConfigSettings] as string;
             if (String.IsNullOrWhiteSpace(configJson))
             {
-                SetupServers();
+                await SetupServersAsync();
                 SaveConfig();
             }
+
+            _isInitialized = true;
         }
 
         public void SaveConfig()
@@ -131,8 +139,13 @@ namespace Salesforce.SDK.Source.Settings
             settings.Values[ConfigSettings] = Encryptor.Encrypt(configJson);
         }
 
-        public void AddServer(ServerSetting server)
+        public async Task AddServerAsync(ServerSetting server)
         {
+            if (!_isInitialized)
+            {
+                await InitializeAsync();
+            }
+
             if (!String.IsNullOrWhiteSpace(server.ServerName) && !String.IsNullOrWhiteSpace(server.ServerHost))
             {
                 ServerSetting old =
@@ -159,13 +172,12 @@ namespace Salesforce.SDK.Source.Settings
         ///     in the account creation UI.  If there is only a single server, and new connections is disabled, add account will
         ///     immediately go to oauth.
         /// </summary>
-        protected async void SetupServers()
+        protected async Task SetupServersAsync()
         {
             String xml;
             try
             {
-                Task<String> task = Task.Run(() => ConfigHelper.ReadFileFromApplication(ServerFilePath));
-                xml = await task;
+                xml = await ConfigHelper.ReadFileFromApplicationAsync(ServerFilePath);
             }
             catch (Exception)
             {
