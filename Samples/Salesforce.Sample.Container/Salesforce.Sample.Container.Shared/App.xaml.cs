@@ -65,9 +65,9 @@ namespace Salesforce.Sample.Container
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
-        protected override void InitializeConfig()
+        protected override async void InitializeConfig()
         {
-            var config = SDKManager.InitializeConfig<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            var config = await SDKManager.InitializeConfigAsync<Config>(new EncryptionSettings(new HmacSHA256KeyGenerator()));
             config.SaveConfig();
         }
 
