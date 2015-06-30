@@ -205,14 +205,23 @@ namespace Salesforce.SDK.Auth
             {
                 PlatformAdapter.SendToCustomLogger("AuthStorageHelper.PersistCredentials - removing existing credential", LoggingLevel.Verbose);
                 _vault.Remove(creds);
-                IReadOnlyList<PasswordCredential> current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
-                if (current != null)
+                IReadOnlyList<PasswordCredential> current = null;
+                try
                 {
-                    foreach (PasswordCredential user in current)
+                    current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
+                    if (current != null)
                     {
-                        _vault.Remove(user);
+                        foreach (PasswordCredential user in current)
+                        {
+                            _vault.Remove(user);
+                        }
                     }
+                } catch (Exception)
+                {
+                    PlatformAdapter.SendToCustomLogger(
+                            "AuthStorageHelper.PersistCredentials - did not find existing logged in user while persisting", LoggingLevel.Verbose);
                 }
+                
             }
             string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
             _vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
@@ -309,8 +318,7 @@ namespace Salesforce.SDK.Auth
                     {
                         try
                         {
-                            accounts.Add(next.UserName,
-                           JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password)));
+                            accounts[next.UserName] = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
                         }
                         catch (Exception ex)
                         {
