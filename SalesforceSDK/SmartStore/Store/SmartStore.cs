@@ -144,7 +144,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static string GenerateDatabasePath(Account account)
         {
-            DBOpenHelper open = DBOpenHelper.GetOpenHelper(AccountManager.GetAccount());
+            DBOpenHelper open = DBOpenHelper.GetOpenHelper(account);
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
         }
 
