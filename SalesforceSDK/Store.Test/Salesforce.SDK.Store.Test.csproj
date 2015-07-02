@@ -159,24 +159,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{cd53c7b7-c3ff-4982-935b-22fb096cd559}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SmartStore\SmartStore.csproj">
-      <Project>{e0838498-6201-4040-b4f1-a2d0c02405a6}</Project>
-      <Name>SmartStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SmartSync\SmartSync.csproj">
-      <Project>{923dcd08-e0af-4214-86b0-86e37851046b}</Project>
-      <Name>SmartSync</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Store\Store.csproj">
-      <Project>{a107bcc2-ec81-4a4f-8ea2-aa742afe0f01}</Project>
-      <Name>Store</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>

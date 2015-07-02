@@ -40,7 +40,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;

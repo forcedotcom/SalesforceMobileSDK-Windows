@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+ * Copyright (c) 2014, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -24,43 +24,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Salesforce.SDK.Hybrid.Rest
+
+namespace Salesforce.SDK.SmartStore.Store
 {
-    public sealed class ApiVersionStrings
+    public class SmartStoreType
     {
-        public ApiVersionStrings()
-        {
+        private const string SmartTypeInteger = "integer";
+        private const string SmartTypeString = "string";
+        private const string SmartTypeFloating = "floating";
 
+        public static readonly SmartStoreType SmartInteger = new SmartStoreType(SmartTypeInteger);
+        public static readonly SmartStoreType SmartString = new SmartStoreType(SmartTypeString);
+        public static readonly SmartStoreType SmartFloating = new SmartStoreType(SmartTypeFloating);
+
+        public SmartStoreType(string columnType)
+        {
+            ColumnType = columnType;
         }
 
-        public static string VersionNumber
-        {
-            get { return SDK.Rest.ApiVersionStrings.VersionNumber; }
-        }
-
-        public static string ApiPrefix
-        {
-            get { return SDK.Rest.ApiVersionStrings.ApiPrefix; }
-        } 
-
-        public static string BasePath
-        {
-            get { return SDK.Rest.ApiVersionStrings.BasePath; }
-        } 
-
-        public static string BaseChatterPath
-        {
-            get { return SDK.Rest.ApiVersionStrings.BaseChatterPath; }
-        }
-
-        public static string BaseConnectPath
-        {
-            get { return SDK.Rest.ApiVersionStrings.BaseConnectPath;  }
-        } 
-
-        public static string BaseSobjectPath
-        {
-            get { return SDK.Rest.ApiVersionStrings.BaseSobjectPath; }
-        } 
+        public string ColumnType { get; private set; }
     }
 }
