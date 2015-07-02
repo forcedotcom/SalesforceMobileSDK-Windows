@@ -216,7 +216,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void ShowServerFlyout(object sender, RoutedEventArgs e)
         {
-            if (Servers.Count <= 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
+            if (Servers.Count == 1 && !SDKManager.ServerConfiguration.AllowNewConnections)
             {
                 ListboxServers.SelectedIndex = 0;
                 addAccount_Click(sender, e);
@@ -313,7 +313,7 @@ namespace Salesforce.SDK.Source.Pages
             TryShowFlyout(AddServerFlyout, ApplicationLogo);
         }
 
-        private void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
+        private async void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
             string hname = HostName.Text;
             string haddress = HostAddress.Text;
@@ -330,7 +330,7 @@ namespace Salesforce.SDK.Source.Pages
                 ServerHost = haddress,
                 ServerName = hname
             };
-            SDKManager.ServerConfiguration.AddServer(server);
+            await SDKManager.ServerConfiguration.AddServerAsync(server);
 
             TryShowFlyout(ServerFlyout, ApplicationLogo);
         }

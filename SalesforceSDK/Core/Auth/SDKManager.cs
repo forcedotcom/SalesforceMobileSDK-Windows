@@ -29,6 +29,7 @@ using System;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth
 {
@@ -78,10 +79,21 @@ namespace Salesforce.SDK.Auth
             GlobalClientManager = new ClientManager();
         }
 
-        public static T InitializeConfig<T>(EncryptionSettings settings) where T : SalesforceConfig
+        public static async Task<T> InitializeConfigAsync<T>(EncryptionSettings settings) where T : SalesforceConfig
         {
             Encryptor.init(settings);
-            T config = SalesforceConfig.RetrieveConfig<T>() ?? Activator.CreateInstance<T>();
+            T config = SalesforceConfig.RetrieveConfig<T>();
+            if (config == null)
+            {
+                config = Activator.CreateInstance<T>();
+                await config.InitializeAsync();
+            }
+
+            if (config.ServerList == null)
+            {
+                config.ServerList = new System.Collections.ObjectModel.ObservableCollection<ServerSetting>();
+            }
+
             config.SaveConfig();
             ServerConfiguration = config;
             return config;

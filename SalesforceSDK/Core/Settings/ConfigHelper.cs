@@ -55,7 +55,7 @@ namespace Salesforce.SDK.Settings
             }
         }
 
-        public static async Task<string> ReadFileFromApplication(string path)
+        public static async Task<string> ReadFileFromApplicationAsync(string path)
         {
             var fileUri = new Uri(@"ms-appx:///" + path);
             StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);

@@ -95,7 +95,7 @@ namespace Salesforce.SDK.Hybrid
         {
             if (_instance == null)
             {
-                String configStr = await ConfigHelper.ReadFileFromApplication(BOOTCONFIG_JSON);
+                String configStr = await ConfigHelper.ReadFileFromApplicationAsync(BOOTCONFIG_JSON);
                 _instance = JsonConvert.DeserializeObject<BootConfig>(configStr);
             }
             return _instance;
