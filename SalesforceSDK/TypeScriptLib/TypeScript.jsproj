@@ -108,7 +108,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Hybrid.SmartStore\Hybrid.SmartStore.csproj" />
     <ProjectReference Include="..\Hybrid.SmartSync\Hybrid.SmartSync.csproj" />
-    <ProjectReference Include="..\Hybrid\Hybrid.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4a0dddb5-7a95-4fbf-97cc-616d07737a77}" />
