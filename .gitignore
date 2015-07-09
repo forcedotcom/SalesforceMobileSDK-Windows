@@ -15,3 +15,13 @@ Debug/
 ContainerBin/
 NuGet.Config
 NuGet.exe
+*.intermediate
+AccountManager/platforms/windows/build/windows80/bld/CordovaApp.Windows80.jsproj.FileListAbsolute.txt
+.nuget/NuGet.targets
+AccountManager/platforms/windows/build/phone/bld/ProjectArchitectures.txt
+AccountManager/platforms/windows/build/windows/bld/ProjectArchitectures.txt
+AccountManager/platforms/windows/build/windows80/bld/_pkginfo.txt
+AccountManager/platforms/windows/build/windows80/bld/ProjectArchitectures.txt
+AccountManager/platforms/windows/build/windows/bld/CordovaApp.Windows.jsproj.FileListAbsolute.txt
+AccountManager/platforms/windows/build/phone/bld/CordovaApp.Phone.jsproj.FileListAbsolute.txt
+*.Cache
