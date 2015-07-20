@@ -328,7 +328,10 @@ namespace Salesforce.SDK.Net
 
                     if (hasError)
                     {
+                        //To Do: Consider refactoring as GenerateUserAgentHeader and SafeSetUserAgent
+                        // do the same thing.
                         await SafeSetUserAgent();
+                        task.SetResult(UserAgentHeader);
                     }
                 });
                 await task.Task;
