@@ -6,6 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4F591F5C-4E74-4F58-A4C3-B20E863219A8}</ProjectGuid>
+    <ProjectName>SmartStore.csproj</ProjectName>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.SmartStore</RootNamespace>

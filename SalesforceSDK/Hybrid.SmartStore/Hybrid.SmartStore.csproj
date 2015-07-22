@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{203217C4-C813-4CAA-9933-3E985971CA09}</ProjectGuid>
+    <ProjectName>Hybrid.SmartStore.csproj</ProjectName>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.Hybrid.SmartStore</RootNamespace>

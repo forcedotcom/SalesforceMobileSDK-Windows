@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1BB20010-2DC8-4B04-AC07-B44AB5AB9590}</ProjectGuid>
+    <ProjectName>Hybrid.csproj</ProjectName>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.Hybrid</RootNamespace>

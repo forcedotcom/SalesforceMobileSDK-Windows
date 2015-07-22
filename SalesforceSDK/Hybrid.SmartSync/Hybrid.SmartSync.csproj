@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A50C9379-342A-45AF-B4F2-FB55C0517C2B}</ProjectGuid>
+    <ProjectName>Hybrid.SmartSync.csproj</ProjectName>
     <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.Hybrid.SmartSync</RootNamespace>
