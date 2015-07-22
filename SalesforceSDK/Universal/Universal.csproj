@@ -5,6 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4E325032-0060-4965-BCEB-E737AE088AAF}</ProjectGuid>
+    <ProjectName>Universal.csproj</ProjectName>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.Universal</RootNamespace>
