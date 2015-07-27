@@ -31,13 +31,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Storage;
-using Windows.UI;
-using Windows.UI.Xaml;
+using Core.Security;
+using Core.Settings;
+using Core.Utilities;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using Salesforce.SDK.Settings;
-using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Source.Settings
 {
@@ -103,9 +103,9 @@ namespace Salesforce.SDK.Source.Settings
         /// </summary>
         public abstract string[] Scopes { get; }
 
-        public virtual Color? LoginBackgroundColor { get { return null; } }
+        public virtual RGBColor LoginBackgroundColor => null;
 
-        public virtual Color? LoginForegroundColor { get { return null; } }
+        public virtual RGBColor LoginForegroundColor => null;
 
         public abstract Uri LoginBackgroundLogo { get; }
 
@@ -121,8 +121,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = SDKServiceLocator.Get<IApplicationInformationService>().GetConfigurationSettings();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
@@ -134,9 +133,8 @@ namespace Salesforce.SDK.Source.Settings
 
         public void SaveConfig()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String configJson = JsonConvert.SerializeObject(this);
-            settings.Values[ConfigSettings] = Encryptor.Encrypt(configJson);
+            SDKServiceLocator.Get<IApplicationInformationService>().SaveConfigurationSettings(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -157,7 +155,7 @@ namespace Salesforce.SDK.Source.Settings
                 }
                 else
                 {
-                    server.CanDelete = Visibility.Visible;
+                    server.CanDelete = true;
                     ServerList.Add(server);
                 }
                 SaveConfig();
@@ -177,7 +175,9 @@ namespace Salesforce.SDK.Source.Settings
             String xml;
             try
             {
-                xml = await ConfigHelper.ReadFileFromApplicationAsync(ServerFilePath);
+                xml =
+                    await
+                        SDKServiceLocator.Get<IApplicationInformationService>().ReadApplicationFileAsync(ServerFilePath);
             }
             catch (Exception)
             {
@@ -198,25 +198,24 @@ namespace Salesforce.SDK.Source.Settings
                 {
                     ServerName = (string) query.Attribute("name"),
                     ServerHost = (string) query.Attribute("url"),
-                    CanDelete = Visibility.Collapsed
+                    CanDelete = false
                 };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
         public static T RetrieveConfig<T>() where T : SalesforceConfig
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = SDKServiceLocator.Get<IApplicationInformationService>().GetConfigurationSettings();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
             {
-                return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+                return JsonConvert.DeserializeObject<T>(SDKServiceLocator.Get<IEncryptionService>().Decrypt(configJson));
             }
             catch (Exception)
             {
                 // couldn't decrypt config...
-                settings.Values[ConfigSettings] = String.Empty;
+                SDKServiceLocator.Get<IApplicationInformationService>().ClearConfigurationSettings();
                 return null;
             }
         }

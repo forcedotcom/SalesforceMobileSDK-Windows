@@ -29,7 +29,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace Salesforce.SDK.Settings
 {
@@ -53,21 +52,6 @@ namespace Salesforce.SDK.Settings
             {
                 return reader.ReadToEnd();
             }
-        }
-
-        public static async Task<string> ReadFileFromApplicationAsync(string path)
-        {
-            var fileUri = new Uri(@"ms-appx:///" + path);
-            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
-            if (file != null)
-            {
-                Stream stream = await file.OpenStreamForReadAsync();
-                using (var reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
-            }
-            throw new FileNotFoundException("Resource file not found", path);
         }
     }
 }

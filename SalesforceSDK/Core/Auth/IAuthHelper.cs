@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 using System;
+using System.Collections.Generic;
 
 namespace Salesforce.SDK.Auth
 {
@@ -45,6 +46,14 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse);
 
-        Type AccountPage { get; }
+        void PersistCredentials(Account account);
+        void RefreshCookies();
+        void ClearCookies(LoginOptions options);
+        void DeletePersistedCredentials(string userName, string userId);
+        Dictionary<string, Account> RetrievePersistedCredentials();
+        Account RetrieveCurrentAccount();
+        void SavePinTimer();
+        void DeletePersistedCredentials();
+        void WipePincode();
     }
 }

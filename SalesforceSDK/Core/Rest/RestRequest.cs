@@ -27,8 +27,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
-using Windows.Web.Http;
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
 
@@ -286,7 +286,7 @@ namespace Salesforce.SDK.Rest
             Dictionary<string, object> fields)
         {
             string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(HttpMethod.Patch, RestAction.Update.Path(apiVersion, objectType, objectId),
+            return new RestRequest(new HttpMethod("PATCH"), RestAction.Update.Path(apiVersion, objectType, objectId),
                 fieldsData, ContentTypeValues.Json);
         }
 
@@ -306,7 +306,7 @@ namespace Salesforce.SDK.Rest
             string externalId, Dictionary<string, object> fields)
         {
             string fieldsData = (fields == null ? null : JsonConvert.SerializeObject(fields));
-            return new RestRequest(HttpMethod.Patch,
+            return new RestRequest(new HttpMethod("PATCH"), 
                 RestAction.Upsert.Path(apiVersion, objectType, externalIdField, externalId), fieldsData,
                 ContentTypeValues.Json);
         }

@@ -26,7 +26,6 @@
  */
 
 using System;
-using Windows.UI.Xaml;
 using Newtonsoft.Json;
 
 namespace Salesforce.SDK.Source.Settings
@@ -59,7 +58,7 @@ namespace Salesforce.SDK.Source.Settings
         }
 
         [JsonProperty]
-        public Visibility CanDelete { set; get; }
+        public bool CanDelete { set; get; }
 
         public override string ToString()
         {

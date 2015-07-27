@@ -27,9 +27,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
-using Salesforce.SDK.Adaptation;
+using Core.Logging;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 
 namespace Salesforce.SDK.Rest
 {
@@ -52,7 +52,7 @@ namespace Salesforce.SDK.Rest
             {
                 LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
-                OAuth2.ClearCookies(options);
+                SDKServiceLocator.Get<IAuthHelper>().ClearCookies(options);
                 bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
                 if (loggedOut)
                 {
@@ -80,7 +80,8 @@ namespace Salesforce.SDK.Rest
                         AuthResponse authResponse =
                             await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                         account.AccessToken = authResponse.AccessToken;
-                        AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+
+                        SDKServiceLocator.Get<IAuthHelper>().PersistCredentials(account);
                         return account.AccessToken;
                     }
                     );
@@ -99,11 +100,11 @@ namespace Salesforce.SDK.Rest
             {
                 try
                 {
-                    PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                    SDKServiceLocator.Get<IAuthHelper>().StartLoginFlow();
                 }
                 catch (InvalidOperationException)
                 {
-                   PlatformAdapter.SendToCustomLogger("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
+                    SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
                 }
                
             }

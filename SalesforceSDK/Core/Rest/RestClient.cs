@@ -26,8 +26,9 @@
  */
 
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Windows.Web.Http;
 using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
