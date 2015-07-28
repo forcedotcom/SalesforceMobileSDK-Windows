@@ -28,7 +28,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Core.Logging;
+using Salesforce.SDK.Logging;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Rest;

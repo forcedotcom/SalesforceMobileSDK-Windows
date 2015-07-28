@@ -32,12 +32,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Core.Logging;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Auth
 {

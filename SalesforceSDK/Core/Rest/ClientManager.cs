@@ -27,9 +27,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Core.Logging;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Rest
 {
