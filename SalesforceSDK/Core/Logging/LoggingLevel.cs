@@ -1,4 +1,4 @@
-﻿namespace Core.Logging
+﻿namespace Salesforce.SDK.Logging
 {
     public enum LoggingLevel
     {
