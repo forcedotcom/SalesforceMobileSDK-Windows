@@ -42,5 +42,9 @@ namespace Core.Settings
         Task<string> GetConfigurationSettingsAsync();
 
         Task ClearConfigurationSettingsAsync();
+
+        Task<bool> DoesFileExistAsync(string path);
+
+        string GetApplicationLocalFolderPath();
     }
 }
