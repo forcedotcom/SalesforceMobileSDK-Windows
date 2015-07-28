@@ -26,9 +26,10 @@
  */
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Native
 {
@@ -61,9 +62,9 @@ namespace Salesforce.SDK.Native
             Account account = AccountManager.GetAccount();
             if (account == null)
             {
-                PlatformAdapter.SendToCustomLogger("NativeMainPage.CheckIfLoginNeeded - account object is null, calling StartLoginFlow",
-                                                          Windows.Foundation.Diagnostics.LoggingLevel.Verbose);
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                SDKServiceLocator.Get<ILoggingService>().Log("NativeMainPage.CheckIfLoginNeeded - account object is null, calling StartLoginFlow",
+                                                          LoggingLevel.Verbose);
+                SDKServiceLocator.Get<IAuthHelper>().StartLoginFlow();
             }
         }
     }

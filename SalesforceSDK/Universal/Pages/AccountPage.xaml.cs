@@ -39,12 +39,12 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Strings;
-using Windows.Foundation.Diagnostics;
 using Windows.UI.Core;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Core;
 
 namespace Salesforce.SDK.Source.Pages
 {
@@ -59,6 +59,7 @@ namespace Salesforce.SDK.Source.Pages
         private const string MultipleUserViewState = "MultipleUser";
         private const string LoggingUserInViewState = "LoggingUserIn";
         private string _currentState;
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
         public AccountPage()
         {
@@ -121,9 +122,13 @@ namespace Salesforce.SDK.Source.Pages
             }
 
             // set background from config
-            if (config.LoginBackgroundColor != null)
+            if (config.LoginBackgroundColor != -1)
             {
-                var background = new SolidColorBrush((Color) config.LoginBackgroundColor);
+                var color = Color.FromArgb((byte)(config.LoginBackgroundColor >> 24),
+                                           (byte)(config.LoginBackgroundColor >> 16),
+                                           (byte)(config.LoginBackgroundColor >> 8),
+                                           (byte)(config.LoginBackgroundColor));
+                var background = new SolidColorBrush(color);
                 PageRoot.Background = background;
                 Background = background;
                 // ServerFlyoutPanel.Background = background;
@@ -131,9 +136,13 @@ namespace Salesforce.SDK.Source.Pages
             }
 
             // set foreground from config
-            if (config.LoginForegroundColor != null)
+            if (config.LoginForegroundColor != -1)
             {
-                var foreground = new SolidColorBrush((Color) config.LoginForegroundColor);
+                var color = Color.FromArgb((byte)(config.LoginForegroundColor >> 24),
+                                           (byte)(config.LoginForegroundColor >> 16),
+                                           (byte)(config.LoginForegroundColor >> 8),
+                                           (byte)(config.LoginForegroundColor));
+                var foreground = new SolidColorBrush(color);
                 Foreground = foreground;
                 ApplicationTitle.Foreground = foreground;
                 LoginToSalesforce.Foreground = foreground;
@@ -242,13 +251,13 @@ namespace Salesforce.SDK.Source.Pages
             loginOptions.DisplayType = LoginOptions.DefaultStoreDisplayType;
             var loginUri = new Uri(OAuth2.ComputeAuthorizationUrl(loginOptions));
             var callbackUri = new Uri(loginOptions.CallbackUrl);
-            OAuth2.ClearCookies(loginOptions);
+            SDKServiceLocator.Get<IAuthHelper>().ClearCookies(loginOptions);
             WebAuthenticationResult webAuthenticationResult = null;
             var hasWebAuthErrors = false;
 
             try
             {
-                PlatformAdapter.SendToCustomLogger(
+                LoggingService.Log(
                     "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
@@ -265,8 +274,8 @@ namespace Salesforce.SDK.Source.Pages
             }
             catch (Exception ex)
             {
-                PlatformAdapter.SendToCustomLogger("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
-                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                LoggingService.Log("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical);
 
                 hasWebAuthErrors = true;
             }
@@ -291,8 +300,7 @@ namespace Salesforce.SDK.Source.Pages
                 {
                     AuthResponse authResponse = OAuth2.ParseFragment(responseUri.Fragment.Substring(1));
 
-                    PlatformAdapter.SendToCustomLogger("AccountPage.DoAuthFlow - calling EndLoginFlow()", LoggingLevel.Verbose);
-                    PlatformAdapter.Resolve<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
+                    SDKServiceLocator.Get<IAuthHelper>().EndLoginFlow(loginOptions, authResponse);
                 }
             }
             else if (webAuthenticationResult.ResponseStatus == WebAuthenticationStatus.UserCancel)
@@ -394,7 +402,7 @@ namespace Salesforce.SDK.Source.Pages
             catch (ArgumentException ex)
             {
                 Debug.WriteLine("Error displaying flyout");
-                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Error);
+                LoggingService.Log(ex, LoggingLevel.Critical);
             }
         }
     }

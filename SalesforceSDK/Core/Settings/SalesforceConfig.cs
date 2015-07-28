@@ -33,7 +33,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Core.Security;
 using Core.Settings;
-using Core.Utilities;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
@@ -108,10 +107,16 @@ namespace Salesforce.SDK.Source.Settings
         ///     Implement to define the scopes your app will use such as web or api.
         /// </summary>
         public abstract string[] Scopes { get; }
+        
+        /// <summary>
+        /// Specify background color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginBackgroundColor => -1;
 
-        public virtual RGBColor LoginBackgroundColor => null;
-
-        public virtual RGBColor LoginForegroundColor => null;
+        /// <summary>
+        /// Specify foreground color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginForegroundColor => -1;
 
         public abstract Uri LoginBackgroundLogo { get; }
 

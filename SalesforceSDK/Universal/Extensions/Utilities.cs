@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,31 +25,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Salesforce.SDK.Settings;
+using System;
 using System.IO;
-using System.Reflection;
+using System.Threading.Tasks;
+using Windows.Storage;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Extensions
 {
-    /// <summary>
-    ///     Helper for reading files from resources.
-    /// </summary>
-    public class ConfigHelper
+    public static class Utilities
     {
-        /// <summary>
-        ///     Return string containing contents of resource file
-        ///     Throws a FileNotFoundException if the file cannot be found
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string ReadConfigFromResource(string path)
+        public static async Task<string> ReadFileFromApplicationAsync(string path)
         {
-            var assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(path);
-            if (resource == null) throw new FileNotFoundException("Resource file not found", path);
-            using (var reader = new StreamReader(resource))
+            var fileUri = new Uri(@"ms-appx:///" + path);
+            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
+            if (file != null)
             {
-                return reader.ReadToEnd();
+                Stream stream = await file.OpenStreamForReadAsync();
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
             }
+            throw new FileNotFoundException("Resource file not found", path);
         }
     }
 }

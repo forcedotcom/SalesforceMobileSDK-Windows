@@ -62,7 +62,6 @@
     <Compile Include="Settings\ServerSetting.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="SDKServiceLocator.cs" />
-    <Compile Include="Utilities\RGBColor.cs" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en\resources.resw" />
