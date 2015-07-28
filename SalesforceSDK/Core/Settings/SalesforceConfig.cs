@@ -132,20 +132,20 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            var configJson = AppInfoService.GetConfigurationSettings();
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
-                SaveConfig();
+                await SaveConfigAsync();
             }
 
             _isInitialized = true;
         }
 
-        public void SaveConfig()
+        public async Task SaveConfigAsync()
         {
             String configJson = JsonConvert.SerializeObject(this);
-            AppInfoService.SaveConfigurationSettings(configJson);
+            await AppInfoService.SaveConfigurationSettingsAsync(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -169,7 +169,7 @@ namespace Salesforce.SDK.Source.Settings
                     server.CanDelete = true;
                     ServerList.Add(server);
                 }
-                SaveConfig();
+                await SaveConfigAsync();
             }
         }
 
@@ -212,9 +212,9 @@ namespace Salesforce.SDK.Source.Settings
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
-        public static T RetrieveConfig<T>() where T : SalesforceConfig
+        public static async Task<T> RetrieveConfig<T>() where T : SalesforceConfig
         {
-            var configJson = AppInfoService.GetConfigurationSettings();
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
@@ -224,7 +224,7 @@ namespace Salesforce.SDK.Source.Settings
             catch (Exception)
             {
                 // couldn't decrypt config...
-                AppInfoService.ClearConfigurationSettings();
+                await AppInfoService.ClearConfigurationSettingsAsync();
                 return null;
             }
         }
