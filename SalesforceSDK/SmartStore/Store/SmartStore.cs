@@ -33,13 +33,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml;
+using Core.Settings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using SQLitePCL;
 using SQLitePCL.Extensions;
 
@@ -92,6 +90,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         // Backing database
         private string _databasePath;
+        private static IApplicationInformationService AppInfoService => SDKServiceLocator.Get<IApplicationInformationService>();
 
         public string DatabasePath
         {
@@ -145,7 +144,8 @@ namespace Salesforce.SDK.SmartStore.Store
         public static string GenerateDatabasePath(Account account)
         {
             DBOpenHelper open = DBOpenHelper.GetOpenHelper(account);
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
+            var localPath = AppInfoService.GetApplicationLocalFolderPath();
+            return Path.Combine(localPath, open.DatabaseFile);
         }
 
         public static async Task<bool> HasGlobalSmartStore()
@@ -155,32 +155,8 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static async Task<bool> HasSmartStore(Account account)
         {
-            IRandomAccessStreamWithContentType stream = null;
-            bool fileExists = false;
-            try
-            {
-                var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
-                var folder = ApplicationData.Current.LocalFolder;
-                var file = await folder.GetFileAsync(path);
-                stream = await file.OpenReadAsync();
-                fileExists = true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                fileExists = true;
-            }
-            catch (Exception)
-            {
-                fileExists = false;
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Dispose();
-                }
-            }
-            return fileExists;
+            var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
+            return await AppInfoService.DoesFileExistAsync(path);
         }
 
         /// <summary>
