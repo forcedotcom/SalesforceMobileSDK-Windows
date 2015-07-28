@@ -230,6 +230,8 @@ namespace Salesforce.SDK.Auth
         private const string OauthRevokePath = "/services/oauth2/revoke";
         private const string OauthRevokeQueryString = "?token={0}";
 
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
 
         /// <summary>
         ///     Build the URL to the authorization web page for this login server
@@ -296,7 +298,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
-            SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
+            LoggingService.Log("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
 
             // Args
             string argsStr = string.Format(OauthRefreshQueryString, new[] {loginOptions.ClientId, refreshToken});
@@ -331,17 +333,17 @@ namespace Salesforce.SDK.Auth
                 }
                 catch (WebException ex)
                 {
-                    SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(
+                    LoggingService.Log(
                         "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
-                    SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(ex, LoggingLevel.Critical);
+                    LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.Status);
                 }
                 catch (Exception ex)
                 {
-                    SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(
+                    LoggingService.Log(
                         "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
-                     SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(ex, LoggingLevel.Critical);
+                    LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.InnerException);
                 }
@@ -370,7 +372,7 @@ namespace Salesforce.SDK.Auth
             // Execute post
             HttpCall result = await c.Execute().ConfigureAwait(false);
 
-            SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
+            LoggingService.Log(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
 
             return result.StatusCode == HttpStatusCode.OK;
         }
@@ -383,7 +385,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
-             SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
+            LoggingService.Log("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
 
             // Auth header
             var headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
@@ -400,13 +402,13 @@ namespace Salesforce.SDK.Auth
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
-                 SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
+                LoggingService.Log("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<IdentityResponse>(response.AsString);
             }
             else
             {
-                 SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
-                 SDKServiceLocator.Get<ILoggingService>().SendToCustomLogger(response.Error, LoggingLevel.Critical);
+                LoggingService.Log("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
+                LoggingService.Log(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;
         }

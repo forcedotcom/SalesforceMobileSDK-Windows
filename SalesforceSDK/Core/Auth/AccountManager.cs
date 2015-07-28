@@ -41,6 +41,7 @@ namespace Salesforce.SDK.Auth
     public class AccountManager
     {
         private static IAuthHelper AuthStorageHelper => SDKServiceLocator.Get<IAuthHelper>();
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         /// <summary>
         ///     Delete Account for currently authenticated user
         /// </summary>
