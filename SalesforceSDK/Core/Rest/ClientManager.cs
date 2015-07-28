@@ -40,6 +40,7 @@ namespace Salesforce.SDK.Rest
     /// </summary>
     public class ClientManager
     {
+        private static IAuthHelper AuthHelper => SDKServiceLocator.Get<IAuthHelper>();
         /// <summary>
         ///     Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke
         ///     the user auth tokens
@@ -52,7 +53,7 @@ namespace Salesforce.SDK.Rest
             {
                 LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
-                SDKServiceLocator.Get<IAuthHelper>().ClearCookies(options);
+                AuthHelper.ClearCookies(options);
                 bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
                 if (loggedOut)
                 {
@@ -81,7 +82,7 @@ namespace Salesforce.SDK.Rest
                             await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                         account.AccessToken = authResponse.AccessToken;
 
-                        SDKServiceLocator.Get<IAuthHelper>().PersistCredentials(account);
+                        AuthHelper.PersistCredentials(account);
                         return account.AccessToken;
                     }
                     );
@@ -100,7 +101,7 @@ namespace Salesforce.SDK.Rest
             {
                 try
                 {
-                    SDKServiceLocator.Get<IAuthHelper>().StartLoginFlow();
+                    AuthHelper.StartLoginFlow();
                 }
                 catch (InvalidOperationException)
                 {
