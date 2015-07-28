@@ -25,33 +25,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Salesforce.SDK.Settings
+namespace Core.Settings
 {
-    /// <summary>
-    ///     Helper for reading files from resources.
-    /// </summary>
-    public class ConfigHelper
+    public interface IApplicationInformationService
     {
-        /// <summary>
-        ///     Return string containing contents of resource file
-        ///     Throws a FileNotFoundException if the file cannot be found
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string ReadConfigFromResource(string path)
-        {
-            var assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(path);
-            if (resource == null) throw new FileNotFoundException("Resource file not found", path);
-            using (var reader = new StreamReader(resource))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+        Task<string> GetApplicationDisplayNameAsync();
+
+        Task<string> GenerateUserAgentHeaderAsync();
+
+        Task<string> ReadApplicationFileAsync(string path);
+
+        Task SaveConfigurationSettingsAsync(string config);
+
+        Task<string> GetConfigurationSettingsAsync();
+
+        Task ClearConfigurationSettingsAsync();
     }
 }

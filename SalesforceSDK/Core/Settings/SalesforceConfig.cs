@@ -31,13 +31,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Storage;
-using Windows.UI;
-using Windows.UI.Xaml;
+using Core.Security;
+using Core.Settings;
+using Core.Utilities;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using Salesforce.SDK.Settings;
-using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Source.Settings
 {
@@ -53,6 +53,12 @@ namespace Salesforce.SDK.Source.Settings
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
 
         private bool _isInitialized;
+
+        private static IApplicationInformationService AppInfoService
+            => SDKServiceLocator.Get<IApplicationInformationService>();
+
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
+
 
         #endregion
 
@@ -103,9 +109,9 @@ namespace Salesforce.SDK.Source.Settings
         /// </summary>
         public abstract string[] Scopes { get; }
 
-        public virtual Color? LoginBackgroundColor { get { return null; } }
+        public virtual RGBColor LoginBackgroundColor => null;
 
-        public virtual Color? LoginForegroundColor { get { return null; } }
+        public virtual RGBColor LoginForegroundColor => null;
 
         public abstract Uri LoginBackgroundLogo { get; }
 
@@ -121,22 +127,20 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
-                SaveConfig();
+                await SaveConfigAsync();
             }
 
             _isInitialized = true;
         }
 
-        public void SaveConfig()
+        public async Task SaveConfigAsync()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String configJson = JsonConvert.SerializeObject(this);
-            settings.Values[ConfigSettings] = Encryptor.Encrypt(configJson);
+            await AppInfoService.SaveConfigurationSettingsAsync(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -157,10 +161,10 @@ namespace Salesforce.SDK.Source.Settings
                 }
                 else
                 {
-                    server.CanDelete = Visibility.Visible;
+                    server.CanDelete = true;
                     ServerList.Add(server);
                 }
-                SaveConfig();
+                await SaveConfigAsync();
             }
         }
 
@@ -177,7 +181,7 @@ namespace Salesforce.SDK.Source.Settings
             String xml;
             try
             {
-                xml = await ConfigHelper.ReadFileFromApplicationAsync(ServerFilePath);
+                xml = await AppInfoService.ReadApplicationFileAsync(ServerFilePath);
             }
             catch (Exception)
             {
@@ -198,25 +202,24 @@ namespace Salesforce.SDK.Source.Settings
                 {
                     ServerName = (string) query.Attribute("name"),
                     ServerHost = (string) query.Attribute("url"),
-                    CanDelete = Visibility.Collapsed
+                    CanDelete = false
                 };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
-        public static T RetrieveConfig<T>() where T : SalesforceConfig
+        public static async Task<T> RetrieveConfig<T>() where T : SalesforceConfig
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
             {
-                return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+                return JsonConvert.DeserializeObject<T>(EncryptionService.Decrypt(configJson));
             }
             catch (Exception)
             {
                 // couldn't decrypt config...
-                settings.Values[ConfigSettings] = String.Empty;
+                await AppInfoService.ClearConfigurationSettingsAsync();
                 return null;
             }
         }

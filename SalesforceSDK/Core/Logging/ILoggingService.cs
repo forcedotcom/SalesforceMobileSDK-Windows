@@ -26,32 +26,12 @@
  */
 
 using System;
-using System.IO;
-using System.Reflection;
-using System.Threading.Tasks;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Logging
 {
-    /// <summary>
-    ///     Helper for reading files from resources.
-    /// </summary>
-    public class ConfigHelper
+    public interface ILoggingService
     {
-        /// <summary>
-        ///     Return string containing contents of resource file
-        ///     Throws a FileNotFoundException if the file cannot be found
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string ReadConfigFromResource(string path)
-        {
-            var assembly = typeof (ConfigHelper).GetTypeInfo().Assembly;
-            var resource = assembly.GetManifestResourceStream(path);
-            if (resource == null) throw new FileNotFoundException("Resource file not found", path);
-            using (var reader = new StreamReader(resource))
-            {
-                return reader.ReadToEnd();
-            }
-        }
+        void Log(string message, LoggingLevel loggingLevel);
+        void Log(Exception exception, LoggingLevel loggingLevel);
     }
 }

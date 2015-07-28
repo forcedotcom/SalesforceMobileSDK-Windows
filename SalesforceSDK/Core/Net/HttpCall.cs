@@ -27,23 +27,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Diagnostics;
-using Windows.Storage;
-using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
-using Windows.Web.Http;
-using Windows.Web.Http.Filters;
-using Windows.Web.Http.Headers;
+using Salesforce.SDK.Logging;
+using Core.Settings;
 using Newtonsoft.Json;
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using Salesforce.SDK.Utilities;
 
 namespace Salesforce.SDK.Net
@@ -65,12 +56,12 @@ namespace Salesforce.SDK.Net
         {
             if (!String.IsNullOrWhiteSpace(authorization))
             {
-                Authorization = new HttpCredentialsHeaderValue("Bearer", authorization);
+                Authorization = new AuthenticationHeaderValue("Bearer", authorization);
             }
             Headers = headers;
         }
 
-        public HttpCredentialsHeaderValue Authorization { get; private set; }
+        public AuthenticationHeaderValue Authorization { get; private set; }
         public Dictionary<string, string> Headers { get; private set; }
     }
 
@@ -123,15 +114,14 @@ namespace Salesforce.SDK.Net
         public HttpCall(HttpMethod method, HttpCallHeaders headers, string url, string requestBody,
             ContentTypeValues contentType)
         {
-            var httpBaseFilter = new HttpBaseProtocolFilter
+            var handler = new HttpClientHandler()
             {
-                AllowUI = false,
-                AllowAutoRedirect = true,
-                AutomaticDecompression = true
+                AllowAutoRedirect = false,
+                AutomaticDecompression = DecompressionMethods.None,
             };
-            httpBaseFilter.CacheControl.ReadBehavior = HttpCacheReadBehavior.MostRecent;
-            httpBaseFilter.CacheControl.WriteBehavior = HttpCacheWriteBehavior.NoCache;
-            _webClient = new HttpClient(httpBaseFilter);
+
+            _webClient = new HttpClient(handler);
+
             _method = method;
             _headers = headers;
             _url = url;
@@ -301,37 +291,13 @@ namespace Salesforce.SDK.Net
                 }
                 foreach (var item in _headers.Headers)
                 {
-                    req.Headers[item.Key] = item.Value;
+                    req.Headers.Add(item.Key, item.Value);
                 }
             }
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                var task = new TaskCompletionSource<string>();
-                await Task.Run(async () =>
-                {
-                    var hasError = false;
-
-                    try
-                    {
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                       CoreDispatcherPriority.Normal, async () =>
-                       {
-                           await GenerateUserAgentHeader();
-                           task.SetResult(UserAgentHeader);
-                       });
-                    }
-                    catch (Exception)
-                    {
-                        hasError = true;
-                    }
-
-                    if (hasError)
-                    {
-                        await SafeSetUserAgent();
-                    }
-                });
-                await task.Task;
+                UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync();
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -339,18 +305,18 @@ namespace Salesforce.SDK.Net
                 switch (_contentType)
                 {
                     case ContentTypeValues.FormUrlEncoded:
-                        req.Content = new HttpFormUrlEncodedContent(_requestBody.ParseQueryString());
+                        req.Content = new FormUrlEncodedContent(_requestBody.ParseQueryString());
                         break;
                     default:
-                        req.Content = new HttpStringContent(_requestBody);
-                        req.Content.Headers.ContentType = new HttpMediaTypeHeaderValue(_contentType.MimeType());
+                        req.Content = new StringContent(_requestBody);
+                        req.Content.Headers.ContentType = new MediaTypeHeaderValue(_contentType.MimeType());
                         break;
                 }
             }
             HttpResponseMessage message;
             try
             {
-                message = await _webClient.SendRequestAsync(req);
+                message = await _webClient.SendAsync(req);
                 HandleMessageResponse(message);
             }
             catch (Exception ex)
@@ -381,73 +347,6 @@ namespace Salesforce.SDK.Net
             }
         }
 
-        /// <summary>
-        ///     There is no easy way to retrieve the displayName of an application in a PCL.  This method will retrieve it through
-        ///     the application title set by the consumer. If this fails we return the package.id.name instead, allowing the app to still be identified.
-        /// </summary>
-        /// <returns></returns>
-        private static async Task<string> GetApplicationDisplayNameAsync()
-        {
-            string displayName = String.Empty;
-
-            try
-            {
-                var config = SDKManager.ServerConfiguration;
-                if (config == null)
-                {
-                    throw new Exception();
-                }
-                if (!String.IsNullOrWhiteSpace(config.ApplicationTitle))
-                {
-                    displayName = config.ApplicationTitle;
-                }
-                else
-                {
-                    //If no Application title is passed from the consumer of the SDK, fall back to display name from app manifest.
-                    StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-                    string manifestXml = await FileIO.ReadTextAsync(file);
-                    XDocument doc = XDocument.Parse(manifestXml);
-                    XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
-                    displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
-                    select name.Value).First();
-                }
-            }
-            catch (Exception)
-            {
-                //If ApplicationTitle and Display Name both fail, fall back to Package Id
-                Debug.WriteLine("Error retrieving application name; using package id name instead");
-                displayName = Package.Current.Id.Name;
-            }
-            return displayName;
-        }
-
-        /// <summary>
-        ///     This method generates the user agent string for the current device.
-        ///     This method can take up to 10 seconds to generate the UserAgent; if it takes longer than 10 seconds the
-        ///     UserAgentHeader will not be set.
-        /// </summary>
-        /// <returns></returns>
-        private static async Task<string> GenerateUserAgentHeader()
-        {
-            var appName = await GetApplicationDisplayNameAsync();
-            PackageVersion packageVersion = Package.Current.Id.Version;
-            string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
-                                          packageVersion.Build;
-            UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
-            packageVersionString, "native", "");
-            return UserAgentHeader;
-        }
-
-        private async Task SafeSetUserAgent()
-        {
-            var appName = await GetApplicationDisplayNameAsync();
-            PackageVersion packageVersion = Package.Current.Id.Version;
-            string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
-                                          packageVersion.Build;
-            UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
-            packageVersionString, "native", "");
-        }
-
         public void Dispose()
         {
             if (_webClient != null)
@@ -458,7 +357,7 @@ namespace Salesforce.SDK.Net
                 }
                 catch (Exception)
                 {
-                    PlatformAdapter.SendToCustomLogger("HttpCall.Dispose - Error occurred while disposing", LoggingLevel.Warning);
+                     SDKServiceLocator.Get<ILoggingService>().Log("HttpCall.Dispose - Error occurred while disposing", LoggingLevel.Warning);
                 }
             }
         }
