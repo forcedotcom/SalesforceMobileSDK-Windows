@@ -10,10 +10,10 @@ namespace Core.Settings
 
         Task<string> ReadApplicationFileAsync(string path);
 
-        void SaveConfigurationSettings(string config);
+        Task SaveConfigurationSettingsAsync(string config);
 
-        string GetConfigurationSettings();
+        Task<string> GetConfigurationSettingsAsync();
 
-        void ClearConfigurationSettings();
+        Task ClearConfigurationSettingsAsync();
     }
 }

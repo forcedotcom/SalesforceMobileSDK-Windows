@@ -80,7 +80,7 @@ namespace Salesforce.SDK.Auth
 
         public static async Task<T> InitializeConfigAsync<T>() where T : SalesforceConfig
         {
-            T config = SalesforceConfig.RetrieveConfig<T>();
+            T config = await SalesforceConfig.RetrieveConfig<T>();
             if (config == null)
             {
                 config = Activator.CreateInstance<T>();
@@ -92,7 +92,7 @@ namespace Salesforce.SDK.Auth
                 config.ServerList = new System.Collections.ObjectModel.ObservableCollection<ServerSetting>();
             }
 
-            config.SaveConfig();
+            await config.SaveConfigAsync();
             ServerConfiguration = config;
             return config;
         }
