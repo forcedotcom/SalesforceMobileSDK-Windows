@@ -232,6 +232,7 @@ namespace Salesforce.SDK.Auth
 
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
+        private static IAuthHelper AuthHelper => SDKServiceLocator.Get<IAuthHelper>();
 
         /// <summary>
         ///     Build the URL to the authorization web page for this login server
@@ -375,6 +376,16 @@ namespace Salesforce.SDK.Auth
             LoggingService.Log(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
 
             return result.StatusCode == HttpStatusCode.OK;
+        }
+
+        public static void RefreshCookies()
+        {
+            AuthHelper.RefreshCookies();
+        }
+
+        public static void ClearCookies(LoginOptions loginOptions)
+        {
+            AuthHelper.ClearCookies(loginOptions);
         }
 
         /// <summary>

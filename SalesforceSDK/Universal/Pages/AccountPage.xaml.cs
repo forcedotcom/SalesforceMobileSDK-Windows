@@ -122,7 +122,7 @@ namespace Salesforce.SDK.Source.Pages
             }
 
             // set background from config
-            if (config.LoginBackgroundColor != -1)
+            if (config.LoginBackgroundColor != SalesforceConfig.NoColor)
             {
                 var color = Color.FromArgb((byte)(config.LoginBackgroundColor >> 24),
                                            (byte)(config.LoginBackgroundColor >> 16),
@@ -136,7 +136,7 @@ namespace Salesforce.SDK.Source.Pages
             }
 
             // set foreground from config
-            if (config.LoginForegroundColor != -1)
+            if (config.LoginForegroundColor != SalesforceConfig.NoColor)
             {
                 var color = Color.FromArgb((byte)(config.LoginForegroundColor >> 24),
                                            (byte)(config.LoginForegroundColor >> 16),

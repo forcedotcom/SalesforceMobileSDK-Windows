@@ -51,6 +51,11 @@ namespace Salesforce.SDK.Source.Settings
 
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
 
+        /// <summary>
+        /// Value to indicate item should have no set color.
+        /// </summary>
+        public const int NoColor = 1;
+
         private bool _isInitialized;
 
         private static IApplicationInformationService AppInfoService
@@ -111,12 +116,12 @@ namespace Salesforce.SDK.Source.Settings
         /// <summary>
         /// Specify background color as a 32 bit int. -1 reserved for no color set.
         /// </summary>
-        public virtual Int32 LoginBackgroundColor => -1;
+        public virtual Int32 LoginBackgroundColor => NoColor;
 
         /// <summary>
         /// Specify foreground color as a 32 bit int. -1 reserved for no color set.
         /// </summary>
-        public virtual Int32 LoginForegroundColor => -1;
+        public virtual Int32 LoginForegroundColor => NoColor;
 
         public abstract Uri LoginBackgroundLogo { get; }
 
@@ -132,20 +137,20 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            var configJson = AppInfoService.GetConfigurationSettings();
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
-                SaveConfig();
+                await SaveConfigAsync();
             }
 
             _isInitialized = true;
         }
 
-        public void SaveConfig()
+        public async Task SaveConfigAsync()
         {
             String configJson = JsonConvert.SerializeObject(this);
-            AppInfoService.SaveConfigurationSettings(configJson);
+            await AppInfoService.SaveConfigurationSettingsAsync(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -169,7 +174,7 @@ namespace Salesforce.SDK.Source.Settings
                     server.CanDelete = true;
                     ServerList.Add(server);
                 }
-                SaveConfig();
+                await SaveConfigAsync();
             }
         }
 
@@ -212,9 +217,9 @@ namespace Salesforce.SDK.Source.Settings
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
-        public static T RetrieveConfig<T>() where T : SalesforceConfig
+        public static async Task<T> RetrieveConfig<T>() where T : SalesforceConfig
         {
-            var configJson = AppInfoService.GetConfigurationSettings();
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
@@ -224,7 +229,7 @@ namespace Salesforce.SDK.Source.Settings
             catch (Exception)
             {
                 // couldn't decrypt config...
-                AppInfoService.ClearConfigurationSettings();
+                await AppInfoService.ClearConfigurationSettingsAsync();
                 return null;
             }
         }

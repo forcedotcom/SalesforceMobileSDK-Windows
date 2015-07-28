@@ -49,9 +49,13 @@ namespace Salesforce.SDK.App
     public abstract class SalesforceApplication : Application
     {
         private static DispatcherTimer TokenRefresher = new DispatcherTimer();
-        private static SFApplicationHelper AppHelper = new SFApplicationHelper();
-
+        private static ISFApplicationHelper AppHelper = SDKServiceLocator.Get<ISFApplicationHelper>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        /// <summary>
+        /// Refresh interval for token refresh. Value is in minutes.
+        /// </summary>
+        public const int TokenRefreshInterval = 3;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected SalesforceApplication()
@@ -60,7 +64,7 @@ namespace Salesforce.SDK.App
             InitializeConfig();
             SDKManager.CreateClientManager(false);
             SDKManager.RootApplicationPage = SetRootApplicationPage();
-            TokenRefresher = new DispatcherTimer { Interval = TimeSpan.FromMinutes(3) };
+            TokenRefresher = new DispatcherTimer { Interval = TimeSpan.FromMinutes(TokenRefreshInterval) };
             TokenRefresher.Tick += RefreshToken;
             AppHelper.Initialize();
         }
