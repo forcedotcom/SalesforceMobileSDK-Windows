@@ -26,9 +26,7 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Web.Http;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartSync.Manager;
