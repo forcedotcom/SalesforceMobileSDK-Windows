@@ -54,6 +54,12 @@ namespace Salesforce.SDK.Source.Settings
 
         private bool _isInitialized;
 
+        private static IApplicationInformationService AppInfoService
+            => SDKServiceLocator.Get<IApplicationInformationService>();
+
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
+
+
         #endregion
 
         #region Public properties & fields
@@ -121,7 +127,7 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            var configJson = SDKServiceLocator.Get<IApplicationInformationService>().GetConfigurationSettings();
+            var configJson = AppInfoService.GetConfigurationSettings();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
@@ -134,7 +140,7 @@ namespace Salesforce.SDK.Source.Settings
         public void SaveConfig()
         {
             String configJson = JsonConvert.SerializeObject(this);
-            SDKServiceLocator.Get<IApplicationInformationService>().SaveConfigurationSettings(configJson);
+            AppInfoService.SaveConfigurationSettings(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -175,9 +181,7 @@ namespace Salesforce.SDK.Source.Settings
             String xml;
             try
             {
-                xml =
-                    await
-                        SDKServiceLocator.Get<IApplicationInformationService>().ReadApplicationFileAsync(ServerFilePath);
+                xml = await AppInfoService.ReadApplicationFileAsync(ServerFilePath);
             }
             catch (Exception)
             {
@@ -205,17 +209,17 @@ namespace Salesforce.SDK.Source.Settings
 
         public static T RetrieveConfig<T>() where T : SalesforceConfig
         {
-            var configJson = SDKServiceLocator.Get<IApplicationInformationService>().GetConfigurationSettings();
+            var configJson = AppInfoService.GetConfigurationSettings();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
             {
-                return JsonConvert.DeserializeObject<T>(SDKServiceLocator.Get<IEncryptionService>().Decrypt(configJson));
+                return JsonConvert.DeserializeObject<T>(EncryptionService.Decrypt(configJson));
             }
             catch (Exception)
             {
                 // couldn't decrypt config...
-                SDKServiceLocator.Get<IApplicationInformationService>().ClearConfigurationSettings();
+                AppInfoService.ClearConfigurationSettings();
                 return null;
             }
         }
