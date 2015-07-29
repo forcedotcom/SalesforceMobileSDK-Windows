@@ -33,7 +33,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Core.Security;
 using Core.Settings;
-using Core.Utilities;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
@@ -51,6 +50,11 @@ namespace Salesforce.SDK.Source.Settings
         private const string ConfigSettings = "salesforceConfig";
 
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
+
+        /// <summary>
+        /// Value to indicate item should have no set color.
+        /// </summary>
+        public const int NoColor = 1;
 
         private bool _isInitialized;
 
@@ -108,10 +112,16 @@ namespace Salesforce.SDK.Source.Settings
         ///     Implement to define the scopes your app will use such as web or api.
         /// </summary>
         public abstract string[] Scopes { get; }
+        
+        /// <summary>
+        /// Specify background color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginBackgroundColor => NoColor;
 
-        public virtual RGBColor LoginBackgroundColor => null;
-
-        public virtual RGBColor LoginForegroundColor => null;
+        /// <summary>
+        /// Specify foreground color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginForegroundColor => NoColor;
 
         public abstract Uri LoginBackgroundLogo { get; }
 

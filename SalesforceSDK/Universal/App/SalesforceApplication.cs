@@ -26,7 +26,6 @@
  */
 
 using System;
-using System.Net;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -34,13 +33,10 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
-using Windows.Foundation.Diagnostics;
-#if WINDOWS_PHONE_APP
-using Windows.Phone.UI.Input;
-#endif
 using Salesforce.SDK.Exceptions;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Core;
 
 namespace Salesforce.SDK.App
 {
@@ -53,6 +49,13 @@ namespace Salesforce.SDK.App
     public abstract class SalesforceApplication : Application
     {
         private static DispatcherTimer TokenRefresher = new DispatcherTimer();
+        private static ISFApplicationHelper AppHelper = SDKServiceLocator.Get<ISFApplicationHelper>();
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        /// <summary>
+        /// Refresh interval for token refresh. Value is in minutes.
+        /// </summary>
+        public const int TokenRefreshInterval = 3;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected SalesforceApplication()
@@ -61,9 +64,9 @@ namespace Salesforce.SDK.App
             InitializeConfig();
             SDKManager.CreateClientManager(false);
             SDKManager.RootApplicationPage = SetRootApplicationPage();
-            TokenRefresher = new DispatcherTimer {Interval = TimeSpan.FromMinutes(3)};
+            TokenRefresher = new DispatcherTimer { Interval = TimeSpan.FromMinutes(TokenRefreshInterval) };
             TokenRefresher.Tick += RefreshToken;
-            PlatformAdapter.Resolve<ISFApplicationHelper>().Initialize();
+            AppHelper.Initialize();
         }
 
 
@@ -142,24 +145,24 @@ namespace Salesforce.SDK.App
                 //Assign this to a var as ref requires it.
                 var account = AccountManager.GetAccount();
                 await OAuth2.RefreshAuthToken(account);
-                OAuth2.RefreshCookies();
+                SDKServiceLocator.Get<IAuthHelper>().RefreshCookies();
             }
             catch (OAuthException ex)
             {
-                PlatformAdapter.SendToCustomLogger("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
-                PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                LoggingService.Log("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical);
             }
         }
 
         protected void OnSuspending(object sender, SuspendingEventArgs e)
         {
-            PlatformAdapter.Resolve<ISFApplicationHelper>().OnSuspending(e);
+            AppHelper.OnSuspending(e);
         }
 
         protected override void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);
-            PlatformAdapter.Resolve<ISFApplicationHelper>().OnActivated(args);
+            AppHelper.OnActivated(args);
             var rootFrame = Window.Current.Content as Frame;
             if (rootFrame != null)
             {
@@ -170,7 +173,7 @@ namespace Salesforce.SDK.App
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             base.OnLaunched(e);
-            PlatformAdapter.Resolve<ISFApplicationHelper>().OnLaunched(e);
+            AppHelper.OnLaunched(e);
         }
     }
 }

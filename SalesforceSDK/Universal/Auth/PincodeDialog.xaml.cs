@@ -27,16 +27,15 @@
 
 using System;
 using Windows.Foundation;
-using Windows.Foundation.Diagnostics;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.App;
 using Salesforce.SDK.Strings;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Core;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -53,6 +52,7 @@ namespace Salesforce.SDK.Auth
         private const int MinimumWidthForBarMode = 500;
         private const int BarModeHeight = 400;
         private PincodeOptions Options;
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
         public PincodeDialog()
         {
@@ -130,7 +130,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupCreate()
         {
-            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog for creating a pincode", LoggingLevel.Information);
+            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog for creating a pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
             Description.Text = LocalizedStrings.GetString("passcode_create_security");
             ContentFooter.Visibility = Visibility.Visible;
@@ -144,7 +144,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupLocked()
         {
-            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
+            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
             ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
             Description.Text = "";
@@ -164,7 +164,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupConfirm()
         {
-            PlatformAdapter.SendToCustomLogger("PincodeDialog.SetupCreate - Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
+            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
             Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Visibility.Collapsed;
@@ -178,7 +178,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Length >= Options.User.Policy.PinLength)
             {
-                PlatformAdapter.SendToCustomLogger("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
+                LoggingService.Log("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
                 var options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
                 // As per MSDN documentation (https://msdn.microsoft.com/en-us/library/windows/apps/hh702394.aspx)
                 // the second param of Frame.Navigate must be a basic type otherwise Suspension manager will crash
@@ -200,7 +200,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Equals(Options.Passcode))
             {
-                PlatformAdapter.SendToCustomLogger(
+                LoggingService.Log(
                     string.Format("PincodeDialog.ConfirmClicked - Pincode matched, going to {0}",
                         SDKManager.RootApplicationPage), LoggingLevel.Verbose);
                 AuthStorageHelper.StorePincode(Options.Policy, Options.Passcode);
@@ -221,7 +221,7 @@ namespace Salesforce.SDK.Auth
             Account account = AccountManager.GetAccount();
             if (account == null)
             {
-                PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                SDKServiceLocator.Get<IAuthHelper>().StartLoginFlow();
             }
             else if (AuthStorageHelper.ValidatePincode(Passcode.Password))
             {

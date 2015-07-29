@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,9 +25,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Core.Utilities
+using Salesforce.SDK.Settings;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using Windows.Storage;
+
+namespace Salesforce.SDK.Extensions
 {
-    public class RGBColor
+    public static class Utilities
     {
+        public static async Task<string> ReadFileFromApplicationAsync(string path)
+        {
+            var fileUri = new Uri(@"ms-appx:///" + path);
+            StorageFile file = await StorageFile.GetFileFromApplicationUriAsync(fileUri);
+            if (file != null)
+            {
+                Stream stream = await file.OpenStreamForReadAsync();
+                using (var reader = new StreamReader(stream))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            throw new FileNotFoundException("Resource file not found", path);
+        }
     }
 }
