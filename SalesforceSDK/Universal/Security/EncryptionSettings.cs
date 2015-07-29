@@ -25,9 +25,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Salesforce.SDK.Security;
 using Windows.Storage.Streams;
 
-namespace Salesforce.SDK.Source.Security
+namespace Salesforce.SDK.Security
 {
     public sealed class EncryptionSettings
     {

@@ -32,6 +32,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Salesforce.SDK.Auth;
 using System.Threading.Tasks;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.App
 {
@@ -39,7 +42,10 @@ namespace Salesforce.SDK.App
     {
         public void Initialize()
         {
-            // nothing special to do here
+            SDKServiceLocator.RegisterService<ISFApplicationHelper, SFApplicationHelper>();
+            SDKServiceLocator.RegisterService<IAuthHelper, AuthHelper>();
+            SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
+            SDKServiceLocator.RegisterService<IApplicationInformationService, ApplicationService>();
         }
 
         private Frame CreateRootFrame()

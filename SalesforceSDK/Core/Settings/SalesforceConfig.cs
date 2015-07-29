@@ -31,12 +31,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Core.Security;
-using Core.Settings;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Settings;
+using Salesforce.SDK.Security;
 
 namespace Salesforce.SDK.Source.Settings
 {

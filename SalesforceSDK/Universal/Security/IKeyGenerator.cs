@@ -27,7 +27,7 @@
 
 using Windows.Storage.Streams;
 
-namespace Salesforce.SDK.Source.Security
+namespace Salesforce.SDK.Security
 {
     public interface IKeyGenerator
     {

@@ -33,13 +33,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Core.Settings;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
 using SQLitePCL;
 using SQLitePCL.Extensions;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.SmartStore.Store
 {

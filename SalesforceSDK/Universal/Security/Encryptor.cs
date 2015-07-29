@@ -32,9 +32,9 @@ using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 
-namespace Salesforce.SDK.Source.Security
+namespace Salesforce.SDK.Security
 {
-    public class Encryptor
+    public class Encryptor : IEncryptionService
     {
         public static readonly string PreferredSymmetricAlgorithm = SymmetricAlgorithmNames.AesCbcPkcs7;
 
@@ -48,12 +48,12 @@ namespace Salesforce.SDK.Source.Security
             Settings = settings;
         }
 
-        public static string Encrypt(string text)
+        public string Encrypt(string text)
         {
             return Encrypt(text, null);
         }
 
-        public static string Encrypt(string text, string nonce)
+        public string Encrypt(string text, string nonce)
         {
             if (String.IsNullOrWhiteSpace(text))
             {
@@ -76,12 +76,12 @@ namespace Salesforce.SDK.Source.Security
             return ciphertextString;
         }
 
-        public static string Decrypt(string text)
+        public string Decrypt(string text)
         {
             return Decrypt(text, null);
         }
 
-        public static string Decrypt(string text, string nonce)
+        public string Decrypt(string text, string nonce)
         {
             if (String.IsNullOrWhiteSpace(text) || Settings == null)
             {

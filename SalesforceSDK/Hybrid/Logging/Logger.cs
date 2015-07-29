@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,26 +25,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System.Threading.Tasks;
+using Salesforce.SDK.Logging;
+using System;
+using System.Diagnostics;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Hybrid.Logging
 {
-    public interface IApplicationInformationService
+    sealed internal class Logger : ILoggingService
     {
-        Task<string> GetApplicationDisplayNameAsync();
+        public void Log(Exception exception, LoggingLevel loggingLevel)
+        {
+            if (exception != null)
+            {
+                Log(exception.Message, loggingLevel);
+            }
+        }
 
-        Task<string> GenerateUserAgentHeaderAsync();
-
-        Task<string> ReadApplicationFileAsync(string path);
-
-        Task SaveConfigurationSettingsAsync(string config);
-
-        Task<string> GetConfigurationSettingsAsync();
-
-        Task ClearConfigurationSettingsAsync();
-
-        Task<bool> DoesFileExistAsync(string path);
-
-        string GetApplicationLocalFolderPath();
+        public void Log(string message, LoggingLevel loggingLevel)
+        {
+            Debug.WriteLine(String.Format("{0} - {1}", loggingLevel, message));
+        }
     }
 }
