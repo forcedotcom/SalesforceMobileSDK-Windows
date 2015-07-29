@@ -138,6 +138,10 @@
       <Project>{c09cd62d-3a60-47c1-8e1d-8feaa1dab296}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Universal\Universal.csproj">
+      <Project>{4E325032-0060-4965-BCEB-E737AE088AAF}</Project>
+      <Name>Universal</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

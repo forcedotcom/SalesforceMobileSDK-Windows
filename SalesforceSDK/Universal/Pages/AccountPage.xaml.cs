@@ -387,10 +387,10 @@ namespace Salesforce.SDK.Source.Pages
             StartLoginFlow(ListboxServers.SelectedItem as ServerSetting);
         }
 
-        private void DeleteServer(object sender, RoutedEventArgs e)
+        private async void DeleteServer(object sender, RoutedEventArgs e)
         {
             SDKManager.ServerConfiguration.ServerList.Remove(ListboxServers.SelectedItem as ServerSetting);
-            SDKManager.ServerConfiguration.SaveConfig();
+            await SDKManager.ServerConfiguration.SaveConfigAsync();
         }
 
         private void TryShowFlyout(Flyout flyout, FrameworkElement location)
