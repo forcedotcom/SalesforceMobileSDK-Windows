@@ -31,15 +31,15 @@ using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using Newtonsoft.Json;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Rest;
 using Salesforce.SDK.Utilities;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Core;
 
 namespace Salesforce.SDK.Hybrid
 {
@@ -56,7 +56,7 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class HybridMainPage : Page, ISalesforcePage
     {
-        private const string ApiVersion = "v30.0";
+        private const string ApiVersion = ApiVersionStrings.VersionNumber;
         private const string StreamResolverKey = "www";
         private static HybridMainPage _instance;
 
@@ -64,6 +64,7 @@ namespace Salesforce.SDK.Hybrid
         private readonly SynchronizationContext _syncContext;
         private RestClient _client;
         private bool _webAppLoaded;
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
         /// <summary>
         ///     Constructor
@@ -120,7 +121,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
-            PlatformAdapter.SendToCustomLogger("HybridMainPage.OnResumeNotLoggedIn called", LoggingLevel.Verbose);
+            LoggingService.Log("HybridMainPage.OnResumeNotLoggedIn called", LoggingLevel.Verbose);
 
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
@@ -163,7 +164,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
-            PlatformAdapter.SendToCustomLogger("HybridMainPage.OnResumeLoggedInNotLoaded called", LoggingLevel.Verbose);
+            LoggingService.Log("HybridMainPage.OnResumeLoggedInNotLoaded called", LoggingLevel.Verbose);
 
             // Local
             if (_bootConfig.IsLocal)
@@ -335,7 +336,7 @@ namespace Salesforce.SDK.Hybrid
 
         private void Log(string p)
         {
-            PlatformAdapter.SendToCustomLogger(p, LoggingLevel.Verbose);
+            LoggingService.Log(p, LoggingLevel.Verbose);
             Debug.WriteLine("PhoneHybridMainPage:" + p);
         }
     }

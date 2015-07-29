@@ -24,18 +24,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 using System;
-using System.Diagnostics;
-using Windows.Foundation.Diagnostics;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Newtonsoft.Json;
-using Salesforce.SDK.Adaptation;
-using Salesforce.SDK.Source.Security;
 
 namespace Salesforce.SDK.Auth
 {
@@ -103,7 +97,7 @@ namespace Salesforce.SDK.Auth
             {
                 await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    PlatformAdapter.SendToCustomLogger("PincodeManager.LaunchPincodeScreen - Launching Pincode Screen", LoggingLevel.Information);
+                    SDKServiceLocator.Get<ILoggingService>().Log("PincodeManager.LaunchPincodeScreen - Launching Pincode Screen", LoggingLevel.Information);
                     Account account = AccountManager.GetAccount();
                     if (account != null)
                     {
