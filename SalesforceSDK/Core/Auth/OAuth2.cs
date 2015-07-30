@@ -330,7 +330,7 @@ namespace Salesforce.SDK.Auth
                     AuthResponse response =
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
-                    SDKServiceLocator.Get<IAuthHelper>().PersistCredentials(account);
+                    await SDKServiceLocator.Get<IAuthHelper>().PersistCredentialsAsync(account);
                 }
                 catch (WebException ex)
                 {
