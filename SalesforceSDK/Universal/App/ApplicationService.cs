@@ -103,7 +103,7 @@ namespace Salesforce.SDK.App
                 LoggingService.Log("Error retrieving application name; using package id name instead", LoggingLevel.Warning);
                 displayName = Package.Current.Id.Name;
             }
-            return displayName;
+            return Task.FromResult<string>(displayName);
         }
 
         public string GetApplicationLocalFolderPath()
