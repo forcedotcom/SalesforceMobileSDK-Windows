@@ -39,7 +39,6 @@ using Salesforce.SDK.SmartSync.Util;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Security;
-using Salesforce.SDK.Settings;
 using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.SmartStore.Store

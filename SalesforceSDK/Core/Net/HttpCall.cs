@@ -344,7 +344,8 @@ namespace Salesforce.SDK.Net
                 if (response.IsSuccessStatusCode)
                 {
                     _responseBodyText = await response.Content.ReadAsStringAsync();
-                } else
+                }
+                else
                 {
                     _responseBodyText = response.ReasonPhrase;
                 }

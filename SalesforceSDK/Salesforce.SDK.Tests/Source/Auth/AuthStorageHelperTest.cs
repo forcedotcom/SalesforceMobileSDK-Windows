@@ -33,7 +33,6 @@ using Salesforce.SDK.Security;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Logging;
-using Salesforce.SDK.Hybrid.Logging;
 
 namespace Salesforce.SDK.Auth
 {
