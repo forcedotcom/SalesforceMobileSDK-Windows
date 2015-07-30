@@ -89,18 +89,18 @@ namespace Salesforce.SDK.App
             return fileExists;
         }
 
-        public async Task<string> GenerateUserAgentHeaderAsync()
+        public Task<string> GenerateUserAgentHeaderAsync()
         {
-            var appName = await GetApplicationDisplayNameAsync();
+            var appName = GetApplicationDisplayNameAsync();
             PackageVersion packageVersion = Package.Current.Id.Version;
             string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                           packageVersion.Build;
             var UserAgentHeader = String.Format(UserAgentHeaderFormat, appName,
             packageVersionString, "native", "");
-            return UserAgentHeader;
+            return Task.FromResult<string>(UserAgentHeader);
         }
 
-        public async Task<string> GetApplicationDisplayNameAsync()
+        public Task<string> GetApplicationDisplayNameAsync()
         {
             string displayName = String.Empty;
 
@@ -117,13 +117,7 @@ namespace Salesforce.SDK.App
                 }
                 else
                 {
-                    //If no Application title is passed from the consumer of the SDK, fall back to display name from app manifest.
-                    StorageFile file = await Package.Current.InstalledLocation.GetFileAsync("AppxManifest.xml");
-                    string manifestXml = await FileIO.ReadTextAsync(file);
-                    XDocument doc = XDocument.Parse(manifestXml);
-                    XNamespace packageNamespace = "http://schemas.microsoft.com/appx/2010/manifest";
-                    displayName = (from name in doc.Descendants(packageNamespace + "DisplayName")
-                                   select name.Value).First();
+                    displayName = Package.Current.DisplayName;
                 }
             }
             catch (Exception)
