@@ -26,9 +26,12 @@
  */
 
 using System.Collections.Generic;
-using Windows.Web.Http;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Salesforce.SDK.Net;
+using System.Net.Http;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Rest
 {
@@ -46,6 +49,7 @@ namespace Salesforce.SDK.Rest
         private const string TEST_FIELDS_LIST_string = "name,fieldX";
         private const string FORM_URLENCODED = "application/x-www-form-urlencoded";
         private const string APPLICATION_JSON = "application/json";
+        private static readonly HttpMethod PATCH = new HttpMethod("PATCH");
 
         private readonly Dictionary<string, object> TEST_FIELDS = new Dictionary<string, object>
         {
@@ -54,6 +58,13 @@ namespace Salesforce.SDK.Rest
         };
 
         private readonly string[] TEST_FIELDS_LIST = {"name", "fieldX"};
+
+        [ClassInitialize]
+        public static void SetupClass(TestContext context)
+        {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
+        }
 
         [TestMethod]
         public void TestGetRequestForVersions()
@@ -146,7 +157,7 @@ namespace Salesforce.SDK.Rest
         {
             RestRequest request = RestRequest.GetRequestForUpdate(TEST_API_VERSION, TEST_OBJECT_TYPE, TEST_OBJECT_ID,
                 TEST_FIELDS);
-            Assert.AreEqual(HttpMethod.Patch, request.Method, "Wrong method");
+            Assert.AreEqual(PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.Json, request.ContentType, "Wrong content type");
             Assert.AreEqual(
                 "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_OBJECT_ID,
@@ -160,7 +171,7 @@ namespace Salesforce.SDK.Rest
         {
             RestRequest request = RestRequest.GetRequestForUpsert(TEST_API_VERSION, TEST_OBJECT_TYPE,
                 TEST_EXTERNAL_ID_FIELD, TEST_EXTERNAL_ID, TEST_FIELDS);
-            Assert.AreEqual(HttpMethod.Patch, request.Method, "Wrong method");
+            Assert.AreEqual(PATCH, request.Method, "Wrong method");
             Assert.AreEqual(ContentTypeValues.Json, request.ContentType, "Wrong content type");
             Assert.AreEqual(
                 "/services/data/" + TEST_API_VERSION + "/sobjects/" + TEST_OBJECT_TYPE + "/" + TEST_EXTERNAL_ID_FIELD +

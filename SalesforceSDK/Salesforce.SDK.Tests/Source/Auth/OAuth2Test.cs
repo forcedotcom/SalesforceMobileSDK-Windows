@@ -27,16 +27,27 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Web.Http;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
+using System.Net;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Auth
 {
     [TestClass]
     public class OAuth2Test
     {
+
+        [ClassInitialize]
+        public static void SetupClass(TestContext context)
+        {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
+        }
+
         [TestMethod]
         public void TestComputeAuthorizationUrl()
         {
@@ -78,7 +89,7 @@ namespace Salesforce.SDK.Auth
                 OAuth2.RefreshAuthTokenRequest(loginOptions, TestCredentials.REFRESH_TOKEN).Result;
 
             // Try describe again, expect 200
-            Assert.AreEqual(HttpStatusCode.Ok, await DoDescribe(refreshResponse.AccessToken));
+            Assert.AreEqual(HttpStatusCode.OK, await DoDescribe(refreshResponse.AccessToken));
         }
 
         [TestMethod]

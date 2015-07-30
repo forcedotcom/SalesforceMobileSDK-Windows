@@ -66,6 +66,7 @@ namespace Salesforce.SDK.App
             SDKManager.RootApplicationPage = SetRootApplicationPage();
             TokenRefresher = new DispatcherTimer { Interval = TimeSpan.FromMinutes(TokenRefreshInterval) };
             TokenRefresher.Tick += RefreshToken;
+            SFApplicationHelper.RegisterServices();
             AppHelper.Initialize();
         }
 
