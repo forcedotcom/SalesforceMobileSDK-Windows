@@ -341,7 +341,13 @@ namespace Salesforce.SDK.Net
 
             if (response != null)
             {
-                _responseBodyText = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    _responseBodyText = await response.Content.ReadAsStringAsync();
+                } else
+                {
+                    _responseBodyText = response.ReasonPhrase;
+                }
                 _statusCodeValue = response.StatusCode;
                 response.Dispose();
             }

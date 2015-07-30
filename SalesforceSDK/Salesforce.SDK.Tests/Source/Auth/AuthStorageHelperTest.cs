@@ -29,7 +29,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Hybrid.Logging;
 
 namespace Salesforce.SDK.Auth
 {
@@ -38,6 +42,14 @@ namespace Salesforce.SDK.Auth
     {
         private const string Password = "password";
         private const string Salt = "salt";
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
+
+        [ClassInitialize]
+        public static void SetupClass(TestContext context)
+        {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
+        }
 
         [TestInitialize]
         public void Setup()

@@ -36,7 +36,11 @@ using Salesforce.SDK.Rest;
 using Salesforce.SDK.SmartSync.Manager;
 using Salesforce.SDK.SmartSync.Model;
 using Salesforce.SDK.SmartSync.Util;
-using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Settings;
+using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -54,7 +58,7 @@ namespace Salesforce.SDK.SmartStore.Store
         private static SyncManager _syncManager;
         private static RestClient _restClient;
         private static SmartStore _smartStore;
-        private static readonly string[] TestScopes = {"web"};
+        private static readonly string[] TestScopes = { "web" };
         private static Dictionary<string, string> _idToNames;
         private static readonly Random Rand = new Random();
         private static int _syncCheck;
@@ -63,6 +67,8 @@ namespace Salesforce.SDK.SmartStore.Store
         [ClassInitialize]
         public static async Task TestSetup(TestContext context)
         {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
             var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
             Encryptor.init(settings);
             var options = new LoginOptions(TestCredentials.LoginUrl, TestCredentials.ClientId, TestCallbackUrl, "mobile",
@@ -79,7 +85,7 @@ namespace Salesforce.SDK.SmartStore.Store
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
             await OAuth2.RefreshAuthToken(account);
-            _smartStore = SmartStore.GetGlobalSmartStore();
+            _smartStore = SmartStore.GetSmartStore();
             _smartStore.ResetDatabase();
             _syncManager = SyncManager.GetInstance();
             _restClient = new RestClient(account.InstanceUrl, account.AccessToken,
@@ -155,7 +161,7 @@ namespace Salesforce.SDK.SmartStore.Store
             Assert.IsTrue(maxTimeStamp > 0, "Wrong time stamp");
 
             string[] allIds = _idToNames.Keys.ToArray();
-            var ids = new[] {allIds[0], allIds[2]};
+            var ids = new[] { allIds[0], allIds[2] };
             Dictionary<string, string> idToNamesLocallyUpdated = ids.ToDictionary(id => id,
                 id => _idToNames[id] + "_updated");
             await UpdateAccountsOnServer(idToNamesLocallyUpdated);
@@ -269,7 +275,7 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             TrySyncDown(SyncState.MergeModeOptions.LeaveIfChanged);
             string[] allIds = _idToNames.Keys.ToArray();
-            string[] idsLocallyDeleted = {allIds[0], allIds[1], allIds[2]};
+            string[] idsLocallyDeleted = { allIds[0], allIds[1], allIds[2] };
             DeleteAccountsLocally(idsLocallyDeleted);
 
             var idToNamesRemotelyDeleted = new Dictionary<string, string>();
@@ -300,7 +306,7 @@ namespace Salesforce.SDK.SmartStore.Store
             SyncState.MergeModeOptions mergeMode = SyncState.MergeModeOptions.Overwrite)
         {
             // Create sync
-            SyncOptions options = SyncOptions.OptionsForSyncUp(new List<string>(new[] {Constants.Name}), mergeMode);
+            SyncOptions options = SyncOptions.OptionsForSyncUp(new List<string>(new[] { Constants.Name }), mergeMode);
             var target = new SyncUpTarget();
             SyncState sync = SyncState.CreateSyncUp(_smartStore, target, options, AccountsSoup);
             long syncId = sync.Id;
@@ -347,7 +353,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         private void HandleSyncUpCheck(SyncState sync)
         {
-            if (sync.Progress == 100 || sync.Status == SyncState.SyncStatusTypes.Failed )
+            if (sync.Progress == 100 || sync.Status == SyncState.SyncStatusTypes.Failed)
                 _syncCheck = 1;
             switch (_syncCheck)
             {
@@ -429,19 +435,19 @@ namespace Salesforce.SDK.SmartStore.Store
 
         private static string CreateLocalId()
         {
-            string id = LocalIdPrefixStr + (Rand.Next()*10000000).ToString("D8");
+            string id = LocalIdPrefixStr + (Rand.Next() * 10000000).ToString("D8");
             return id;
         }
 
         private static string CreateAccountName()
         {
-            string name = "SyncManagerTest" + (Rand.Next()*10000000).ToString("D8");
+            string name = "SyncManagerTest" + (Rand.Next() * 10000000).ToString("D8");
             return name;
         }
 
         private void CreateAccountsLocally(string[] names)
         {
-            var attributes = new JObject {{TypeStr, Constants.Account}};
+            var attributes = new JObject { { TypeStr, Constants.Account } };
             foreach (string name in names)
             {
                 var account = new JObject
@@ -539,7 +545,7 @@ namespace Salesforce.SDK.SmartStore.Store
         private Dictionary<string, string> MakeSomeLocalChanges()
         {
             string[] allIds = _idToNames.Keys.ToArray();
-            var ids = new[] {allIds[0], allIds[1], allIds[2]};
+            var ids = new[] { allIds[0], allIds[1], allIds[2] };
             Dictionary<string, string> idToNamesLocallyUpdated = ids.ToDictionary(id => id,
                 id => _idToNames[id] + "_updated");
             UpdateAccountsLocally(idToNamesLocallyUpdated);
