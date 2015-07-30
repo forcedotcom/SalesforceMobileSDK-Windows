@@ -54,7 +54,7 @@ namespace Salesforce.SDK.Hybrid.Rest
             IDictionary<string, string> additionalHeaders)
         {
             SDK.Net.ContentTypeValues value = (SDK.Net.ContentTypeValues) Enum.Parse(typeof(SDK.Net.ContentTypeValues), contentType.ToString());
-            Request = new SDK.Rest.RestRequest(method, path, requestBody, value, new Dictionary<string, string>(additionalHeaders));
+            Request = new SDK.Rest.RestRequest(new System.Net.Http.HttpMethod(method.Method), path, requestBody, value, new Dictionary<string, string>(additionalHeaders));
         }
 
         /// <summary>

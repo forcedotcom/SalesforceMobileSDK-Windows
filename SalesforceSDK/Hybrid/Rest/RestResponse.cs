@@ -41,7 +41,7 @@ namespace Salesforce.SDK.Hybrid.Rest
 
         public HttpStatusCode StatusCode
         {
-            get { return _response.StatusCode; }
+            get { return (HttpStatusCode)_response.StatusCode; }
         }
     }
 }

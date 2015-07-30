@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Web.Http;
 
+
 namespace Salesforce.SDK.Hybrid.Rest
 {
     public delegate IAsyncOperation<string> AccessTokenProvider();
@@ -32,11 +33,11 @@ namespace Salesforce.SDK.Hybrid.Rest
 
         public IAsyncOperation<RestResponse> SendAsync(HttpMethod method, string url)
         {
-            Task<RestResponse> response = InternalSendAsync(method, url);
+            Task<RestResponse> response = InternalSendAsync(new System.Net.Http.HttpMethod(method.Method), url);
             return response.AsAsyncOperation<RestResponse>();
         }
 
-        private async Task<RestResponse> InternalSendAsync(HttpMethod method, string url)
+        private async Task<RestResponse> InternalSendAsync(System.Net.Http.HttpMethod method, string url)
         {
             var response = await _restClient.SendAsync(method, url);
             return new RestResponse(response);

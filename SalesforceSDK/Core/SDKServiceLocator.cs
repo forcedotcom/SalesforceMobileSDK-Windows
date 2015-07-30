@@ -26,12 +26,12 @@
  */
 
 using System;
-using Core.Security;
-using Core.Settings;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Logging;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.Core
 {

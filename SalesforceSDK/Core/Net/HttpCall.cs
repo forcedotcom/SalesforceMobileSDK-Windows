@@ -32,10 +32,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Salesforce.SDK.Logging;
-using Core.Settings;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Utilities;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.Net
 {

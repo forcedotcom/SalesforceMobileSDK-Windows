@@ -25,13 +25,25 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using Salesforce.SDK.Logging;
 using System;
+using System.Diagnostics;
 
-namespace Salesforce.SDK.Logging
+namespace Salesforce.SDK.Hybrid.Logging
 {
-    public interface ILoggingService
+    sealed internal class Logger : ILoggingService
     {
-        void Log(string message, LoggingLevel loggingLevel);
-        void Log(Exception exception, LoggingLevel loggingLevel);
+        public void Log(Exception exception, LoggingLevel loggingLevel)
+        {
+            if (exception != null)
+            {
+                Log(exception.Message, loggingLevel);
+            }
+        }
+
+        public void Log(string message, LoggingLevel loggingLevel)
+        {
+            Debug.WriteLine(String.Format("{0} - {1}", loggingLevel, message));
+        }
     }
 }
