@@ -62,31 +62,8 @@ namespace Salesforce.SDK.App
 
         public async Task<bool> DoesFileExistAsync(string path)
         {
-            IRandomAccessStreamWithContentType stream = null;
-            bool fileExists = false;
-            try
-            {
-                var folder = ApplicationData.Current.LocalFolder;
-                var file = await folder.GetFileAsync(path);
-                stream = await file.OpenReadAsync();
-                fileExists = true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                fileExists = true;
-            }
-            catch (Exception)
-            {
-                fileExists = false;
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Dispose();
-                }
-            }
-            return fileExists;
+            var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync(path) as IStorageFile;
+            return (file != null);
         }
 
         public Task<string> GenerateUserAgentHeaderAsync()
