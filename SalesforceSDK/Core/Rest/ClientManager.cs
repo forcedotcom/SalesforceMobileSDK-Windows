@@ -82,7 +82,7 @@ namespace Salesforce.SDK.Rest
                             await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                         account.AccessToken = authResponse.AccessToken;
 
-                        AuthHelper.PersistCredentials(account);
+                        await AuthHelper.PersistCredentialsAsync(account);
                         return account.AccessToken;
                     }
                     );

@@ -63,7 +63,7 @@ namespace Salesforce.SDK.Auth
             AuthStorageHelper authStorageHelper = AuthStorageHelper.GetAuthStorageHelper();
             CheckAccount(account, false);
             TypeInfo auth = authStorageHelper.GetType().GetTypeInfo();
-            MethodInfo persist = auth.GetDeclaredMethod("PersistCredentials");
+            MethodInfo persist = auth.GetDeclaredMethod("PersistCredentialsAsync");
             MethodInfo delete =
                 auth.GetDeclaredMethods("DeletePersistedCredentials")
                     .First(method => method.GetParameters().Count() == 2);

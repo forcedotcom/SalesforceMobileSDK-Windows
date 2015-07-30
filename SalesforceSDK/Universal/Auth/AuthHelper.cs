@@ -33,6 +33,7 @@ using Salesforce.SDK.Source.Pages;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.Web.Http.Filters;
 using Windows.Web.Http;
 
@@ -92,7 +93,7 @@ namespace Salesforce.SDK.Auth
             }
         }
 
-        public void PersistCredentials(Account account)
+        public async Task PersistCredentialsAsync(Account account)
         {
             AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
         }

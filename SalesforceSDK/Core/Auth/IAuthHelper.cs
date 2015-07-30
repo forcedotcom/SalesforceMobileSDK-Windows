@@ -26,6 +26,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth
 {
@@ -46,7 +47,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         void EndLoginFlow(LoginOptions loginOptions, AuthResponse authResponse);
 
-        void PersistCredentials(Account account);
+        Task PersistCredentialsAsync(Account account);
         void RefreshCookies();
         void ClearCookies(LoginOptions options);
         void DeletePersistedCredentials(string userName, string userId);

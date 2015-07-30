@@ -70,7 +70,7 @@ namespace Salesforce.SDK.Auth
             if (account != null && account.UserId != null)
             {
                 AuthStorageHelper.SavePinTimer();
-                AuthStorageHelper.PersistCredentials(account);
+                await AuthStorageHelper.PersistCredentialsAsync(account);
                 RestClient client = SDKManager.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
@@ -81,7 +81,7 @@ namespace Salesforce.SDK.Auth
                         account.UserId = identity.UserId;
                         account.UserName = identity.UserName;
                         account.Policy = identity.MobilePolicy;
-                        AuthStorageHelper.PersistCredentials(account);
+                        await AuthStorageHelper.PersistCredentialsAsync(account);
                     }
                     AuthStorageHelper.RefreshCookies();
                     LoggingService.Log("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
@@ -137,7 +137,7 @@ namespace Salesforce.SDK.Auth
                 account.UserId = identity.UserId;
                 account.UserName = identity.UserName;
                 account.Policy = identity.MobilePolicy;
-                AuthStorageHelper.PersistCredentials(account);
+                await AuthStorageHelper.PersistCredentialsAsync(account);
             }
             LoggingService.Log("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
             return account;
