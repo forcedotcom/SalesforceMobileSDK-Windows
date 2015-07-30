@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013, salesforce.com, inc.
+ * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,12 +25,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Core.Security
+namespace Salesforce.SDK.Security
 {
     public interface IEncryptionService
     {
         string Decrypt(string encryptedString);
+        string Decrypt(string encryptedString, string nonce);
 
         string Encrypt(string decryptedString);
+        string Encrypt(string decryptedString, string nonce);
     }
 }

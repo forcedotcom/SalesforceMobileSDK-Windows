@@ -35,10 +35,10 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.Source.Security;
 using Salesforce.SDK.Source.Settings;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Security;
 
 namespace Salesforce.SDK.Auth
 {
@@ -60,6 +60,7 @@ namespace Salesforce.SDK.Auth
         private static readonly int AccountCacheTime = 20; // 20 minutes
         private static readonly Lazy<AuthStorageHelper> Auth = new Lazy<AuthStorageHelper>(() => new AuthStorageHelper());
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private readonly ApplicationDataContainer _persistedData;
         private readonly PasswordVault _vault;
         private Account _currentAccount;
@@ -223,7 +224,7 @@ namespace Salesforce.SDK.Auth
                 }
                 
             }
-            string serialized = Encryptor.Encrypt(JsonConvert.SerializeObject(account));
+            string serialized = EncryptionService.Encrypt(JsonConvert.SerializeObject(account));
             _vault.Add(new PasswordCredential(PasswordVaultAccounts, account.UserName, serialized));
             _vault.Add(new PasswordCredential(PasswordVaultCurrentAccount, account.UserName, serialized));
             CurrentAccount = account;
@@ -252,7 +253,7 @@ namespace Salesforce.SDK.Auth
                     {
                         LoggingService.Log(
                             "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
-                        var accountStr = Encryptor.Decrypt(account.Password);
+                        var accountStr = EncryptionService.Decrypt(account.Password);
                         CurrentAccount = JsonConvert.DeserializeObject<Account>(accountStr);
                         return CurrentAccount;
                     }
@@ -318,7 +319,7 @@ namespace Salesforce.SDK.Auth
                     {
                         try
                         {
-                            accounts[next.UserName] = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(account.Password));
+                            accounts[next.UserName] = JsonConvert.DeserializeObject<Account>(EncryptionService.Decrypt(account.Password));
                         }
                         catch (Exception ex)
                         {
@@ -361,7 +362,7 @@ namespace Salesforce.SDK.Auth
                     PasswordCredential vaultAccount = _vault.Retrieve(next.Resource, next.UserName);
                     try
                     {
-                        var account = JsonConvert.DeserializeObject<Account>(Encryptor.Decrypt(vaultAccount.Password));
+                        var account = JsonConvert.DeserializeObject<Account>(EncryptionService.Decrypt(vaultAccount.Password));
                         if (id.Equals(account.UserId))
                         {
                             LoggingService.Log(
@@ -485,7 +486,7 @@ namespace Salesforce.SDK.Auth
             IBuffer hashed = alg.HashData(buff);
             string res = CryptographicBuffer.EncodeToHexString(hashed);
             LoggingService.Log("AuthStorageHelper.GenerateEncryptedPincode - Pincode generated, now encrypting and returning it", LoggingLevel.Verbose);
-            return Encryptor.Encrypt(res);
+            return EncryptionService.Encrypt(res);
         }
 
         /// <summary>
@@ -500,7 +501,7 @@ namespace Salesforce.SDK.Auth
             {
                 ScreenLockTimeout = policy.ScreenLockTimeout,
                 PinLength = policy.PinLength,
-                PincodeHash = Encryptor.Encrypt(hashed, pincode)
+                PincodeHash = EncryptionService.Encrypt(hashed, pincode)
             };
             AuthStorageHelper.GetAuthStorageHelper().PersistPincode(mobilePolicy);
             LoggingService.Log("AuthStorageHelper.StorePincode - Pincode stored", LoggingLevel.Verbose);
@@ -518,7 +519,7 @@ namespace Salesforce.SDK.Auth
             {
                 string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
                 var policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
-                bool result = compare.Equals(Encryptor.Decrypt(policy.PincodeHash, pincode));
+                bool result = compare.Equals(EncryptionService.Decrypt(policy.PincodeHash, pincode));
 
                 LoggingService.Log(string.Format("AuthStorageHelper.ValidatePincode - result = {0}", result), LoggingLevel.Verbose);
 
@@ -619,12 +620,12 @@ namespace Salesforce.SDK.Auth
             {
                 if (replace)
                 {
-                    _persistedData.Values[key] = Encryptor.Encrypt(data, nonce);
+                    _persistedData.Values[key] = EncryptionService.Encrypt(data, nonce);
                 }
             }
             else
             {
-                _persistedData.Values.Add(key, Encryptor.Encrypt(data));
+                _persistedData.Values.Add(key, EncryptionService.Encrypt(data));
             }
         }
 
@@ -633,7 +634,7 @@ namespace Salesforce.SDK.Auth
             string data = null;
             if (_persistedData.Values.ContainsKey(key))
             {
-                data = Encryptor.Decrypt(_persistedData.Values[key] as string, nonce);
+                data = EncryptionService.Decrypt(_persistedData.Values[key] as string, nonce);
             }
             return data;
         }

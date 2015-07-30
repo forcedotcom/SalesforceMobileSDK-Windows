@@ -34,7 +34,7 @@ using Windows.Storage.Streams;
 using Windows.System.Profile;
 using Salesforce.SDK.Auth;
 
-namespace Salesforce.SDK.Source.Security
+namespace Salesforce.SDK.Security
 {
     /// <summary>
     ///     This class is a sample encryption key generator. It is highly recommended that you roll your own and provide it's
