@@ -1,0 +1,36 @@
+Useful Information For Submitting Bug Reports and Getting Help
+
+Current Node Version
+
+    v0.10.28
+
+
+Current Cordova CLI Version
+
+    3.4.1-0.1.0
+
+Current Config.xml
+
+    <?xml version='1.0' encoding='utf-8'?>
+<widget id="com.salesforce.accountmanager" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>AccountManager</name>
+    <description>
+        A sample Apache Cordova application that responds to the deviceready event.
+    </description>
+    <preference name='windows-target-version' value='8.1' />
+    <preference name="windows-phone-target-version" value="8.1" />
+    <author email="dev@cordova.apache.org" href="http://cordova.io">
+        Apache Cordova Team
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+</widget>
+
+
+Currently Installed Platforms
+
+    No Platforms Currently Installed
+
+Currently Installed Plugins
+
+    com.phonegap.plugins.PushPlugin,com.salesforce,org.apache.cordova.device
