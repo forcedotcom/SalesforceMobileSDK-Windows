@@ -34,10 +34,9 @@ using System.Xml.Linq;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
-using Salesforce.SDK.Settings;
 using Salesforce.SDK.Security;
 
-namespace Salesforce.SDK.Source.Settings
+namespace Salesforce.SDK.Settings
 {
     public abstract class SalesforceConfig
     {

@@ -29,7 +29,7 @@ using System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Salesforce.SDK.Source.Pages;
+using Salesforce.SDK.Pages;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace Salesforce.SDK.Auth
                 {
                     return SDKManager.RootAccountPage;
                 }
-                return typeof(Source.Pages.AccountPage);
+                return typeof(AccountPage);
             }
         }
 

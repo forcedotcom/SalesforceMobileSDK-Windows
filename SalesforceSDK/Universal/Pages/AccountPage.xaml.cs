@@ -40,13 +40,13 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Settings;
 using Salesforce.SDK.Strings;
 using Windows.UI.Core;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 
-namespace Salesforce.SDK.Source.Pages
+namespace Salesforce.SDK.Pages
 {
     // TODO: use MVVM pattern
 
@@ -93,7 +93,7 @@ namespace Salesforce.SDK.Source.Pages
 
         private void SetupAccountPage()
         {
-            ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources");
+            ResourceLoader loader = ResourceLoader.GetForCurrentView("Salesforce.SDK.Universal/Resources");
             SalesforceConfig config = SDKManager.ServerConfiguration;
             bool titleMissing = true;
             if (!String.IsNullOrWhiteSpace(config.ApplicationTitle) && config.IsApplicationTitleVisible)
