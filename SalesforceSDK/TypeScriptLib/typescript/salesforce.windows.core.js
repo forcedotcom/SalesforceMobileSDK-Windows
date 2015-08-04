@@ -98,7 +98,8 @@ var SalesforceJS;
                 var startUriStr = auth.OAuth2.computeAuthorizationUrl(options);
                 var startUri = new Windows.Foundation.Uri(startUriStr);
                 var endUri = new Windows.Foundation.Uri(boot.oauthRedirectURI);
-                Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri).done(function (result) {
+                Windows.Security.Authentication.Web.WebAuthenticationBroker.authenticateAsync(Windows.Security.Authentication.Web.WebAuthenticationOptions.none, startUri, endUri)
+                    .done(function (result) {
                     if (result.responseData == "") {
                         reject(result.responseStatus);
                     }
