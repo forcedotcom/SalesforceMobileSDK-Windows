@@ -27,7 +27,7 @@
 
 using System;
 using Salesforce.SDK.Rest;
-using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Settings;
 using System.Threading.Tasks;
 
 namespace Salesforce.SDK.Auth

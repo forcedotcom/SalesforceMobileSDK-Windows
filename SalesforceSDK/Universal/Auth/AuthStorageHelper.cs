@@ -35,7 +35,7 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Settings;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Security;

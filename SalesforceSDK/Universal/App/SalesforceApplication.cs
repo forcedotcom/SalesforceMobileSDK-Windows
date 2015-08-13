@@ -37,6 +37,7 @@ using Salesforce.SDK.Auth;
 using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
+using System.Threading.Tasks;
 
 namespace Salesforce.SDK.App
 {
@@ -60,13 +61,13 @@ namespace Salesforce.SDK.App
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         protected SalesforceApplication()
         {
+            SFApplicationHelper.RegisterServices();
             Suspending += OnSuspending;
             InitializeConfig();
             SDKManager.CreateClientManager(false);
             SDKManager.RootApplicationPage = SetRootApplicationPage();
             TokenRefresher = new DispatcherTimer { Interval = TimeSpan.FromMinutes(TokenRefreshInterval) };
             TokenRefresher.Tick += RefreshToken;
-            SFApplicationHelper.RegisterServices();
             AppHelper.Initialize();
         }
 
@@ -87,7 +88,7 @@ namespace Salesforce.SDK.App
         ///     Encryptor.init(settings);
         ///     }
         /// </summary>
-        protected abstract void InitializeConfig();
+        protected abstract Task InitializeConfig();
 
         /// <summary>
         ///     Implement to return the type of the root page to switch to once oauth completes.

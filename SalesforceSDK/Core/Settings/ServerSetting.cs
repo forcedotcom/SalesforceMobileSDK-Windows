@@ -28,7 +28,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Salesforce.SDK.Source.Settings
+namespace Salesforce.SDK.Settings
 {
     public class ServerSetting
     {
