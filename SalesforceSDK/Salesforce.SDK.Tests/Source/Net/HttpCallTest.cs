@@ -26,8 +26,11 @@
  */
 
 using System;
-using Windows.Web.Http;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
+using System.Net;
 
 namespace Salesforce.SDK.Net
 {
@@ -45,6 +48,13 @@ namespace Salesforce.SDK.Net
             {
                 // good
             }
+        }
+
+        [ClassInitialize]
+        public static void SetupClass(TestContext context)
+        {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
         }
 
         [TestMethod]
@@ -67,7 +77,7 @@ namespace Salesforce.SDK.Net
             Assert.IsTrue(call.Success);
             Assert.IsNull(call.Error);
             Assert.IsTrue(call.ResponseBody.Contains("Google Search"));
-            Assert.AreEqual(HttpStatusCode.Ok, call.StatusCode);
+            Assert.AreEqual(HttpStatusCode.OK, call.StatusCode);
         }
 
         [TestMethod]

@@ -27,10 +27,12 @@
 
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json.Linq;
 using SQLitePCL;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -52,8 +54,10 @@ namespace Salesforce.SDK.SmartStore.Store
         private static SmartStore Store;
 
         [ClassInitialize]
-        public async static Task TestSetup(TestContext context)
+        public static void ClassSetup(TestContext context)
         {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
             Store = SmartStore.GetGlobalSmartStore();
             SetupData();
         }

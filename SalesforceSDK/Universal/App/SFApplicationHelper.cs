@@ -40,12 +40,16 @@ namespace Salesforce.SDK.App
 {
     public sealed class SFApplicationHelper : ISFApplicationHelper
     {
-        public void Initialize()
+        public static void RegisterServices()
         {
             SDKServiceLocator.RegisterService<ISFApplicationHelper, SFApplicationHelper>();
             SDKServiceLocator.RegisterService<IAuthHelper, AuthHelper>();
             SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
             SDKServiceLocator.RegisterService<IApplicationInformationService, ApplicationService>();
+        }
+        public void Initialize()
+        {
+           // nothing to do here
         }
 
         private Frame CreateRootFrame()

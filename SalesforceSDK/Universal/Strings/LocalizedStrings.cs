@@ -40,7 +40,7 @@ namespace Salesforce.SDK.Strings
         //on UI thread. If someone calls any of our static methods these will get initialized
         //if they aren't lazy.
         private static readonly Lazy<ResourceLoader> SdkResourceLoader =
-            new Lazy<ResourceLoader>(() => ResourceLoader.GetForCurrentView("Salesforce.SDK.Core/Resources"));
+            new Lazy<ResourceLoader>(() => ResourceLoader.GetForCurrentView("Salesforce.SDK.Universal/Resources"));
         private static readonly Lazy<ResourceLoader> CustomResourceLoader =
             new Lazy<ResourceLoader>(() => ResourceLoader.GetForCurrentView(_customResourcesLocation));
 
