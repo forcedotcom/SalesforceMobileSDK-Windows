@@ -138,7 +138,7 @@
   <data name="connection_server" xml:space="preserve">
     <value>Connection Server</value>
   </data>
-  <data name="continue" xml:space="preserve">
+  <data name="continue_text" xml:space="preserve">
     <value>Continue</value>
   </data>
   <data name="name" xml:space="preserve">
