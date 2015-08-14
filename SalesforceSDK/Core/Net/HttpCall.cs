@@ -298,7 +298,7 @@ namespace Salesforce.SDK.Net
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
                 UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync();
-            }
+                    }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
             {
@@ -343,15 +343,15 @@ namespace Salesforce.SDK.Net
             {
                 if (response.IsSuccessStatusCode)
                 {
-                    _responseBodyText = await response.Content.ReadAsStringAsync();
+                _responseBodyText = await response.Content.ReadAsStringAsync();
                 }
                 else
                 {
                     _responseBodyText = response.ReasonPhrase;
-                }
+        }
                 _statusCodeValue = response.StatusCode;
                 response.Dispose();
-            }
+        }
         }
 
         public void Dispose()
