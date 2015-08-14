@@ -116,9 +116,10 @@ namespace Salesforce.SDK.SmartStore.Store
             CreateMetaTables();
         }
 
-        private SmartStore(Account account) : base()
+        private SmartStore(Account account)
         {
             _databasePath = GenerateDatabasePath(account);
+            CreateMetaTables();
         }
 
         public static SmartStore GetSmartStore()
