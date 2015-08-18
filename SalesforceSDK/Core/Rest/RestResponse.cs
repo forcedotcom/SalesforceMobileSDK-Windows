@@ -26,7 +26,7 @@
  */
 
 using System;
-using Windows.Web.Http;
+using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Net;

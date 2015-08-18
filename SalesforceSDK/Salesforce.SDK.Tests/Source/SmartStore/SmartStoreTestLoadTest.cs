@@ -30,6 +30,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json.Linq;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -46,6 +49,8 @@ namespace Salesforce.SDK.SmartStore.Store
         [ClassInitialize]
         public static void TestSetup(TestContext context)
         {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
             Store = SmartStore.GetGlobalSmartStore();
             Store.ResetDatabase();
             Store.RegisterSoup(TEST_SOUP, new[] {new IndexSpec("key", SmartStoreType.SmartString)});

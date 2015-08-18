@@ -33,15 +33,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using SQLitePCL;
 using SQLitePCL.Extensions;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.SmartStore.Store
 {
@@ -92,6 +90,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
         // Backing database
         private string _databasePath;
+        private static IApplicationInformationService AppInfoService => SDKServiceLocator.Get<IApplicationInformationService>();
 
         public string DatabasePath
         {
@@ -108,44 +107,44 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static long CurrentTimeMillis
         {
-            get { return (long) DateTime.UtcNow.Ticks; }
+            get { return (long)DateTime.UtcNow.Ticks; }
         }
 
-        private SmartStore()
+        public SmartStore()
         {
             _databasePath = GenerateDatabasePath(AccountManager.GetAccount());
+            CreateMetaTables();
         }
 
         private SmartStore(Account account)
         {
             _databasePath = GenerateDatabasePath(account);
+            CreateMetaTables();
         }
 
         public static SmartStore GetSmartStore()
         {
             var store = new SmartStore();
-            store.CreateMetaTables();
             return store;
         }
 
         public static SmartStore GetSmartStore(Account account)
         {
             var store = new SmartStore(account);
-            store.CreateMetaTables();
             return store;
         }
 
         public static SmartStore GetGlobalSmartStore()
         {
             var store = new SmartStore(null); // generate a "global" smartstore
-            store.CreateMetaTables();
             return store;
         }
 
         public static string GenerateDatabasePath(Account account)
         {
             DBOpenHelper open = DBOpenHelper.GetOpenHelper(account);
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, open.DatabaseFile);
+            var localPath = AppInfoService.GetApplicationLocalFolderPath();
+            return Path.Combine(localPath, open.DatabaseFile);
         }
 
         public static async Task<bool> HasGlobalSmartStore()
@@ -155,32 +154,8 @@ namespace Salesforce.SDK.SmartStore.Store
 
         public static async Task<bool> HasSmartStore(Account account)
         {
-            IRandomAccessStreamWithContentType stream = null;
-            bool fileExists = false;
-            try
-            {
-                var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
-                var folder = ApplicationData.Current.LocalFolder;
-                var file = await folder.GetFileAsync(path);
-                stream = await file.OpenReadAsync();
-                fileExists = true;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                fileExists = true;
-            }
-            catch (Exception)
-            {
-                fileExists = false;
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Dispose();
-                }
-            }
-            return fileExists;
+            var path = DBOpenHelper.GetOpenHelper(account).DatabaseFile;
+            return await AppInfoService.DoesFileExistAsync(path);
         }
 
         /// <summary>
@@ -303,7 +278,7 @@ namespace Salesforce.SDK.SmartStore.Store
 
                 // First get a table name
                 String soupTableName = null;
-                var soupMapValues = new Dictionary<string, object> {{SoupNameCol, soupName}};
+                var soupMapValues = new Dictionary<string, object> { { SoupNameCol, soupName } };
                 DBHelper db = DBHelper.GetInstance(DatabasePath);
                 try
                 {
@@ -431,7 +406,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 }
 
                 using (
-                    SQLiteStatement stmt = db.Query(soupTableName, new[] {IdCol, SoupCol}, String.Empty, String.Empty,
+                    SQLiteStatement stmt = db.Query(soupTableName, new[] { IdCol, SoupCol }, String.Empty, String.Empty,
                         String.Empty))
                 {
                     if (stmt.DataCount > 0)
@@ -614,7 +589,7 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 var soupNames = new List<string>();
                 DBHelper db = DBHelper.GetInstance(databasePath);
-                using (SQLiteStatement stmt = db.Query(SoupNamesTable, new[] {SoupNameCol}, String.Empty, String.Empty,
+                using (SQLiteStatement stmt = db.Query(SoupNamesTable, new[] { SoupNameCol }, String.Empty, String.Empty,
                     String.Empty))
                 {
                     if (stmt.DataCount > 0)
@@ -642,7 +617,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 QuerySpec.SmartQueryType qt = querySpec.QueryType;
                 var results = new JArray();
                 string sql = ConvertSmartSql(querySpec.SmartSql);
-                int offsetRows = querySpec.PageSize*pageIndex;
+                int offsetRows = querySpec.PageSize * pageIndex;
                 int numberRows = querySpec.PageSize;
                 string limit = offsetRows + "," + numberRows;
 
@@ -917,7 +892,7 @@ namespace Salesforce.SDK.SmartStore.Store
                     throw new SmartStoreException("Soup: " + soupName + " does not exist");
                 }
                 string columnName = db.GetColumnNameForPath(soupName, fieldPath);
-                using (SQLiteStatement statement = db.Query(soupTableName, new[] {IdCol}, String.Empty, String.Empty,
+                using (SQLiteStatement statement = db.Query(soupTableName, new[] { IdCol }, String.Empty, String.Empty,
                     columnName + " = ?", fieldValue))
                 {
                     if (statement.DataCount > 1)
@@ -1005,7 +980,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 {
                     throw new SmartStoreException("Soup: " + soupName + " does not exist");
                 }
-                using (SQLiteStatement statement = db.Query(soupTableName, new[] {SoupCol}, String.Empty, String.Empty,
+                using (SQLiteStatement statement = db.Query(soupTableName, new[] { SoupCol }, String.Empty, String.Empty,
                     GetSoupEntryIdsPredicate(soupEntryIds)))
                 {
                     if (statement.DataCount > 0)
@@ -1036,13 +1011,13 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 return soup;
             }
-            string[] pathElements = path.Split(new[] {"[.]"}, StringSplitOptions.None);
+            string[] pathElements = path.Split(new[] { "[.]" }, StringSplitOptions.None);
             object o = soup;
             foreach (string pathElement in pathElements)
             {
                 if (o != null)
                 {
-                    o = ((JObject) o).SelectToken(pathElement, false);
+                    o = ((JObject)o).SelectToken(pathElement, false);
                 }
             }
             return o;
@@ -1055,7 +1030,7 @@ namespace Salesforce.SDK.SmartStore.Store
             {
                 throw new SmartStoreException("Only SELECT is supported");
             }
-            string sql = SmartSqlRegex.Replace(smartSql, delegate(Match matcher)
+            string sql = SmartSqlRegex.Replace(smartSql, delegate (Match matcher)
             {
                 string fullMatch = matcher.Value;
                 string match = matcher.Groups[1].Value;

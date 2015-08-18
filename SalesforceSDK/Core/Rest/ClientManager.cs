@@ -27,9 +27,9 @@
 
 using System;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
-using Salesforce.SDK.Adaptation;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Rest
 {
@@ -40,6 +40,7 @@ namespace Salesforce.SDK.Rest
     /// </summary>
     public class ClientManager
     {
+        private static IAuthHelper AuthHelper => SDKServiceLocator.Get<IAuthHelper>();
         /// <summary>
         ///     Logs currently authenticated user out by deleting locally persisted credentials and invoking the server to revoke
         ///     the user auth tokens
@@ -52,7 +53,7 @@ namespace Salesforce.SDK.Rest
             {
                 LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
-                OAuth2.ClearCookies(options);
+                AuthHelper.ClearCookies(options);
                 bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
                 if (loggedOut)
                 {
@@ -80,7 +81,8 @@ namespace Salesforce.SDK.Rest
                         AuthResponse authResponse =
                             await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                         account.AccessToken = authResponse.AccessToken;
-                        AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+
+                        await AuthHelper.PersistCredentialsAsync(account);
                         return account.AccessToken;
                     }
                     );
@@ -99,11 +101,11 @@ namespace Salesforce.SDK.Rest
             {
                 try
                 {
-                    PlatformAdapter.Resolve<IAuthHelper>().StartLoginFlow();
+                    AuthHelper.StartLoginFlow();
                 }
                 catch (InvalidOperationException)
                 {
-                   PlatformAdapter.SendToCustomLogger("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
+                    SDKServiceLocator.Get<ILoggingService>().Log("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
                 }
                
             }

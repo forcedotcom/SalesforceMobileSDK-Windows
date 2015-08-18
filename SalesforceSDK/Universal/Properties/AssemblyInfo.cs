@@ -31,14 +31,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Salesforce.SDK.Universal")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Salesforce.SDK.Universal")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyTitleAttribute("Salesforce.SDK.Universal")]
+[assembly: AssemblyCompanyAttribute("Salesforce")]
+[assembly: AssemblyProductAttribute("Salesforce.SDK.Universal")]
+[assembly: AssemblyCopyrightAttribute("Copyright ©  2015")]
+
+
 
 // Version information for an assembly consists of the following four values:
 //
@@ -50,6 +48,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersionAttribute("4")]
+[assembly: AssemblyFileVersionAttribute("4")]
 [assembly: ComVisible(false)]
+

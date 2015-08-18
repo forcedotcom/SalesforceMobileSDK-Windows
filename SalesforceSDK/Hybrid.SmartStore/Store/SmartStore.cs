@@ -56,7 +56,7 @@ namespace Salesforce.SDK.Hybrid.SmartStore
 
         public SmartStore()
         {
-            _account = null;
+            _account = SDK.Auth.AccountManager.GetAccount();
             _cursors = new Dictionary<int, StoreCursor>();
         }
 

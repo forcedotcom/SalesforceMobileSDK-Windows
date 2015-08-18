@@ -30,19 +30,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.Web.Http;
-using Windows.Web.Http.Filters;
 using Newtonsoft.Json;
-using Salesforce.SDK.Adaptation;
+using Salesforce.SDK.Core;
 using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Net;
 using Salesforce.SDK.Rest;
-using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Auth
 {
@@ -235,6 +230,9 @@ namespace Salesforce.SDK.Auth
         private const string OauthRevokePath = "/services/oauth2/revoke";
         private const string OauthRevokeQueryString = "?token={0}";
 
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        private static IAuthHelper AuthHelper => SDKServiceLocator.Get<IAuthHelper>();
 
         /// <summary>
         ///     Build the URL to the authorization web page for this login server
@@ -301,7 +299,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
-            PlatformAdapter.SendToCustomLogger("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
+            LoggingService.Log("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
 
             // Args
             string argsStr = string.Format(OauthRefreshQueryString, new[] {loginOptions.ClientId, refreshToken});
@@ -332,21 +330,21 @@ namespace Salesforce.SDK.Auth
                     AuthResponse response =
                         await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
                     account.AccessToken = response.AccessToken;
-                    AuthStorageHelper.GetAuthStorageHelper().PersistCredentials(account);
+                    await SDKServiceLocator.Get<IAuthHelper>().PersistCredentialsAsync(account);
                 }
                 catch (WebException ex)
                 {
-                    PlatformAdapter.SendToCustomLogger(
+                    LoggingService.Log(
                         "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
-                    PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                    LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.Status);
                 }
                 catch (Exception ex)
                 {
-                    PlatformAdapter.SendToCustomLogger(
+                    LoggingService.Log(
                         "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
-                    PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
+                    LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.InnerException);
                 }
@@ -375,66 +373,19 @@ namespace Salesforce.SDK.Auth
             // Execute post
             HttpCall result = await c.Execute().ConfigureAwait(false);
 
-            PlatformAdapter.SendToCustomLogger(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
+            LoggingService.Log(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
 
-            return result.StatusCode == HttpStatusCode.Ok;
+            return result.StatusCode == HttpStatusCode.OK;
         }
 
         public static void RefreshCookies()
         {
-            PlatformAdapter.SendToCustomLogger("OAuth.RefreshCookies - attempting at refreshing cookies", LoggingLevel.Verbose);
-            if (Window.Current == null)
-                return;
-            Account account = AccountManager.GetAccount();
-            if (account != null)
-            {
-                var loginUri = new Uri(account.LoginUrl);
-                var instanceUri = new Uri(account.InstanceUrl);
-                var filter = new HttpBaseProtocolFilter();
-                var cookie = new HttpCookie("salesforce", loginUri.Host, "/");
-                var instance = new HttpCookie("salesforceInstance", instanceUri.Host, "/");
-                cookie.Value = account.AccessToken;
-                instance.Value = account.AccessToken;
-                filter.CookieManager.SetCookie(cookie, false);
-                filter.CookieManager.SetCookie(instance, false);
-                var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, instanceUri);
-                var web = new WebView();
-                web.NavigateWithHttpRequestMessage(httpRequestMessage);
-            }
-            PlatformAdapter.SendToCustomLogger("OAuth.RefreshCookies - done", LoggingLevel.Verbose);
+            AuthHelper.RefreshCookies();
         }
 
-        public static async void ClearCookies(LoginOptions loginOptions)
+        public static void ClearCookies(LoginOptions loginOptions)
         {
-            if (Window.Current == null)
-                return;
-            var frame = Window.Current.Content as Frame;
-            if (frame != null)
-            {
-                await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    var loginUri = new Uri(ComputeAuthorizationUrl(loginOptions));
-                    var myFilter = new HttpBaseProtocolFilter();
-                    HttpCookieManager cookieManager = myFilter.CookieManager;
-                    try
-                    {
-                        PlatformAdapter.SendToCustomLogger("OAuth.ClearCookies - attempting at clearing cookies", LoggingLevel.Verbose);
-                        HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
-                        foreach (HttpCookie cookie in cookies)
-                        {
-                            cookieManager.DeleteCookie(cookie);
-                        }
-                        PlatformAdapter.SendToCustomLogger("OAuth2.ClearCookies - done", LoggingLevel.Verbose);
-                    }
-                    catch (ArgumentException ex)
-                    {
-                        PlatformAdapter.SendToCustomLogger("OAuth2.ClearCookies - Exception occurred when clearing cookies:", LoggingLevel.Critical);
-                        PlatformAdapter.SendToCustomLogger(ex, LoggingLevel.Critical);
-                        Debug.WriteLine("Error clearing cookies");
-                    }
-                   
-                });
-            }
+            AuthHelper.ClearCookies(loginOptions);
         }
 
         /// <summary>
@@ -445,7 +396,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
-            PlatformAdapter.SendToCustomLogger("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
+            LoggingService.Log("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
 
             // Auth header
             var headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
@@ -462,13 +413,13 @@ namespace Salesforce.SDK.Auth
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
-                PlatformAdapter.SendToCustomLogger("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
+                LoggingService.Log("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<IdentityResponse>(response.AsString);
             }
             else
             {
-                PlatformAdapter.SendToCustomLogger("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
-                PlatformAdapter.SendToCustomLogger(response.Error, LoggingLevel.Critical);
+                LoggingService.Log("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
+                LoggingService.Log(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;
         }

@@ -31,15 +31,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Windows.Storage;
-using Windows.UI;
-using Windows.UI.Xaml;
 using Newtonsoft.Json;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Settings;
-using Salesforce.SDK.Source.Security;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Security;
 
-namespace Salesforce.SDK.Source.Settings
+namespace Salesforce.SDK.Settings
 {
     public abstract class SalesforceConfig
     {
@@ -52,7 +49,18 @@ namespace Salesforce.SDK.Source.Settings
 
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
 
+        /// <summary>
+        /// Value to indicate item should have no set color.
+        /// </summary>
+        public const int NoColor = 1;
+
         private bool _isInitialized;
+
+        private static IApplicationInformationService AppInfoService
+            => SDKServiceLocator.Get<IApplicationInformationService>();
+
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
+
 
         #endregion
 
@@ -102,10 +110,16 @@ namespace Salesforce.SDK.Source.Settings
         ///     Implement to define the scopes your app will use such as web or api.
         /// </summary>
         public abstract string[] Scopes { get; }
+        
+        /// <summary>
+        /// Specify background color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginBackgroundColor => NoColor;
 
-        public virtual Color? LoginBackgroundColor { get { return null; } }
-
-        public virtual Color? LoginForegroundColor { get { return null; } }
+        /// <summary>
+        /// Specify foreground color as a 32 bit int. -1 reserved for no color set.
+        /// </summary>
+        public virtual Int32 LoginForegroundColor => NoColor;
 
         public abstract Uri LoginBackgroundLogo { get; }
 
@@ -121,22 +135,20 @@ namespace Salesforce.SDK.Source.Settings
 
         public async Task InitializeAsync()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
             {
                 await SetupServersAsync();
-                SaveConfig();
+                await SaveConfigAsync();
             }
 
             _isInitialized = true;
         }
 
-        public void SaveConfig()
+        public async Task SaveConfigAsync()
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             String configJson = JsonConvert.SerializeObject(this);
-            settings.Values[ConfigSettings] = Encryptor.Encrypt(configJson);
+            await AppInfoService.SaveConfigurationSettingsAsync(configJson);
         }
 
         public async Task AddServerAsync(ServerSetting server)
@@ -157,10 +169,10 @@ namespace Salesforce.SDK.Source.Settings
                 }
                 else
                 {
-                    server.CanDelete = Visibility.Visible;
+                    server.CanDelete = true;
                     ServerList.Add(server);
                 }
-                SaveConfig();
+                await SaveConfigAsync();
             }
         }
 
@@ -177,7 +189,7 @@ namespace Salesforce.SDK.Source.Settings
             String xml;
             try
             {
-                xml = await ConfigHelper.ReadFileFromApplicationAsync(ServerFilePath);
+                xml = await AppInfoService.ReadApplicationFileAsync(ServerFilePath);
             }
             catch (Exception)
             {
@@ -198,25 +210,24 @@ namespace Salesforce.SDK.Source.Settings
                 {
                     ServerName = (string) query.Attribute("name"),
                     ServerHost = (string) query.Attribute("url"),
-                    CanDelete = Visibility.Collapsed
+                    CanDelete = false
                 };
             ServerList = new ObservableCollection<ServerSetting>(data);
         }
 
-        public static T RetrieveConfig<T>() where T : SalesforceConfig
+        public static async Task<T> RetrieveConfig<T>() where T : SalesforceConfig
         {
-            ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
-            var configJson = settings.Values[ConfigSettings] as string;
+            var configJson = await AppInfoService.GetConfigurationSettingsAsync();
             if (String.IsNullOrWhiteSpace(configJson))
                 return null;
             try
             {
-                return JsonConvert.DeserializeObject<T>(Encryptor.Decrypt(configJson));
+                return JsonConvert.DeserializeObject<T>(EncryptionService.Decrypt(configJson));
             }
             catch (Exception)
             {
                 // couldn't decrypt config...
-                settings.Values[ConfigSettings] = String.Empty;
+                await AppInfoService.ClearConfigurationSettingsAsync();
                 return null;
             }
         }

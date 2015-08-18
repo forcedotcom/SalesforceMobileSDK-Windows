@@ -12,8 +12,8 @@
     <AssemblyName>Salesforce.SDK.Universal</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.10158.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10158.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -89,7 +89,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UAP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -110,47 +110,64 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Compile Include="App\ApplicationService.cs" />
+    <Compile Include="Extensions\Utilities.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="App\ISalesforcePage.cs" />
+    <Compile Include="App\ISFApplicationHelper.cs" />
+    <Compile Include="App\SalesforceApplication.cs" />
+    <Compile Include="App\SFApplicationHelper.cs" />
+    <Compile Include="App\SuspensionManager.cs" />
+    <Compile Include="Auth\AuthHelper.cs" />
+    <Compile Include="Auth\AuthStorageHelper.cs" />
+    <Compile Include="Auth\PincodeDialog.xaml.cs" />
+    <Compile Include="Auth\PincodeManager.cs" />
+    <Compile Include="Auth\PincodeOptions.cs" />
+    <Compile Include="Hybrid\BootConfig.cs" />
+    <Compile Include="Hybrid\HybridMainPage.cs" />
+    <Compile Include="Pages\AccountPage.xaml.cs" />
+    <Compile Include="Native\NativeMainPage.cs" />
+    <Compile Include="Native\ServerControl.xaml.cs" />
+    <Compile Include="Security\EncryptionSettings.cs" />
+    <Compile Include="Security\Encryptor.cs" />
+    <Compile Include="Security\HmacSHA256KeyGenerator.cs" />
+    <Compile Include="Security\IKeyGenerator.cs" />
+    <Compile Include="Strings\LocalizedStrings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Auth\PincodeDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\AccountPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Native\ServerControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.json" />
+    <PRIResource Include="Strings\en\resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{c09cd62d-3a60-47c1-8e1d-8feaa1dab296}</Project>
+      <Project>{86021bc6-ae6c-47b2-9d08-8e352c46e277}</Project>
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\App\ISalesforcePage.cs" />
-    <Compile Include="Source\App\ISFApplicationHelper.cs" />
-    <Compile Include="Source\App\SalesforceApplication.cs" />
-    <Compile Include="Source\App\SFApplicationHelper.cs" />
-    <Compile Include="Source\App\SuspensionManager.cs" />
-    <Compile Include="Source\Auth\AuthHelper.cs" />
-    <Compile Include="Source\Auth\PincodeDialog.xaml.cs" />
-    <Compile Include="Source\Auth\PincodeManager.cs" />
-    <Compile Include="Source\Auth\PincodeOptions.cs" />
-    <Compile Include="Source\Hybrid\BootConfig.cs" />
-    <Compile Include="Source\Hybrid\HybridMainPage.cs" />
-    <Compile Include="Source\Pages\AccountPage.xaml.cs" />
-    <Compile Include="Source\Native\NativeMainPage.cs" />
-    <Compile Include="Source\Native\ServerControl.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Source\Auth\PincodeDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Source\Pages\AccountPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Source\Native\ServerControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>$(SolutionDir)\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <SDKReference Include="Microsoft.NET.CoreRuntime, Version=1.0">
+      <Name>Microsoft .NET Core Runtime Package for Windows</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsDesktop, Version=10.0.10240.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.10240.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

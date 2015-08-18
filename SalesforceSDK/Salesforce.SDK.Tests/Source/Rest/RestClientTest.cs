@@ -33,6 +33,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.App;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
 
 namespace Salesforce.SDK.Rest
 {
@@ -69,6 +72,13 @@ namespace Salesforce.SDK.Rest
         private string _accessToken;
         private RestClient _restClient;
         private RestClient _unauthenticatedRestClient;
+
+        [ClassInitialize]
+        public static void SetupClass(TestContext context)
+        {
+            SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
+        }
 
         [TestInitialize]
         public void SetUp()

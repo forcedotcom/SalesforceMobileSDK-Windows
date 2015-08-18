@@ -2,16 +2,32 @@
 using System.Threading.Tasks;
 using Windows.Foundation;
 using System;
-using Windows.Networking.Sockets;
 using Salesforce.SDK.Auth;
-using Salesforce.SDK.Source.Security;
-using Salesforce.SDK.Source.Settings;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Core;
+using Salesforce.SDK.Logging;
+using Salesforce.SDK.Hybrid.Logging;
+using Salesforce.SDK.Settings;
+using Salesforce.SDK.App;
 
 namespace Salesforce.SDK.Hybrid.Auth
 {
     public sealed class HybridAccountManager
     {
         private static HybridAccountManager _instance = new HybridAccountManager();
+
+        private HybridAccountManager()
+        {
+            RegisterServices();
+        }
+
+        private static void RegisterServices()
+        {
+            SDKServiceLocator.RegisterService<ILoggingService, Logger>();
+            SDKServiceLocator.RegisterService<IAuthHelper, AuthHelper>();
+            SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
+            SDKServiceLocator.RegisterService<IApplicationInformationService, ApplicationService>();
+        }
 
         public static HybridAccountManager GetInstance()
         {
@@ -27,6 +43,7 @@ namespace Salesforce.SDK.Hybrid.Auth
         {
             if (Encryptor.Settings == null)
             {
+                RegisterServices();
                 Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
                 SDKManager.ResetClientManager();
             }
