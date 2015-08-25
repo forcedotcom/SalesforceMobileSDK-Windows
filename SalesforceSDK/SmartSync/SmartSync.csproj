@@ -6,6 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{391494A2-48A3-4337-85FE-55241E6AB455}</ProjectGuid>
+    <ProjectName>SmartSync.csproj</ProjectName>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Salesforce.SDK.SmartSync</RootNamespace>
