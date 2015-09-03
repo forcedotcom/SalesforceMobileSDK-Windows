@@ -35,17 +35,17 @@ namespace Salesforce.SDK.Hybrid.Logging
 {
     sealed internal class Logger : ILoggingService
     {
-        public void Log(Exception exception, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classPath = "", [CallerLineNumber]int line = 0)
+        public void Log(Exception exception, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classFilePath = "", [CallerLineNumber]int line = 0)
         {
             if (exception != null)
             {
-                Log(exception.Message, loggingLevel, memberName, classPath, line);
+                Log(exception.Message, loggingLevel, memberName, classFilePath, line);
             }
         }
 
-        public void Log(string message, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classPath = "", [CallerLineNumber]int line = 0)
+        public void Log(string message, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classFilePath = "", [CallerLineNumber]int line = 0)
         {
-            Debug.WriteLine($"{loggingLevel}:{Path.GetFileName(classPath)}:{memberName}:line {line} - {message}");
+            Debug.WriteLine($"{loggingLevel}:{Path.GetFileName(classFilePath)}:{memberName}:line {line} - {message}");
         }
     }
 }
