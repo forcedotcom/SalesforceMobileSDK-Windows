@@ -31,6 +31,7 @@ namespace Salesforce.SDK.Logging
         Verbose,
         Critical,
         Warning,
-        Information
+        Information,
+        Error
     }
 }
