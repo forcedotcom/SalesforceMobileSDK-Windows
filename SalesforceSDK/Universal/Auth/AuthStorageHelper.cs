@@ -117,20 +117,14 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveResource - Attempting to retrieve resource {0}",
-                        resource), LoggingLevel.Verbose);
+                LoggingService.Log($"Attempting to retrieve resource {resource}", LoggingLevel.Verbose);
 
                 var list = _vault.RetrieveAll();
                 return (from item in list where resource.Equals(item.Resource) select item);
             }
             catch (Exception ex)
             {
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveResource - Exception occured when retrieving vault data for resource {0}",
-                        resource), LoggingLevel.Critical);
+                LoggingService.Log($"Exception occured when retrieving vault data for resource {resource}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -145,10 +139,7 @@ namespace Salesforce.SDK.Auth
             {
                 var list = SafeRetrieveResource(resource);
 
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user Resource={0}  UserName={1}",
-                        resource, userName), LoggingLevel.Verbose);
+                LoggingService.Log($"Attempting to retrieve user Resource={resource}  UserName={userName}", LoggingLevel.Verbose);
 
                 var passwordCredentials = list as IList<PasswordCredential> ?? list.ToList();
                 if (passwordCredentials.Any())
@@ -158,10 +149,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for resource {0}",
-                        resource), LoggingLevel.Critical);
+                LoggingService.Log($"Exception occured when retrieving vault data for resource {resource}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -174,19 +162,13 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveUser - Attempting to retrieve user {0}",
-                        userName), LoggingLevel.Verbose);
+                LoggingService.Log($"Attempting to retrieve user {userName}", LoggingLevel.Verbose);
 
                 return _vault.FindAllByUserName(userName);
             }
             catch (Exception ex)
             {
-                LoggingService.Log(
-                    string.Format(
-                        "AuthStorageHelper.SafeRetrieveUser - Exception occured when retrieving vault data for user {0}",
-                        userName), LoggingLevel.Critical);
+                LoggingService.Log($"Exception occured when retrieving vault data for user {userName}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -204,7 +186,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential creds = SafeRetrieveUser(PasswordVaultAccounts, account.UserName);
             if (creds != null)
             {
-                LoggingService.Log("AuthStorageHelper.PersistCredentials - removing existing credential", LoggingLevel.Verbose);
+                LoggingService.Log("removing existing credential", LoggingLevel.Verbose);
                 _vault.Remove(creds);
                 IReadOnlyList<PasswordCredential> current = null;
                 try
@@ -219,8 +201,7 @@ namespace Salesforce.SDK.Auth
                     }
                 } catch (Exception)
                 {
-                    LoggingService.Log(
-                            "AuthStorageHelper.PersistCredentials - did not find existing logged in user while persisting", LoggingLevel.Verbose);
+                    LoggingService.Log("did not find existing logged in user while persisting", LoggingLevel.Verbose);
                 }
                 
             }
@@ -231,7 +212,7 @@ namespace Salesforce.SDK.Auth
             var options = new LoginOptions(account.LoginUrl, account.ClientId, account.CallbackUrl,
                 LoginOptions.DefaultDisplayType, account.Scopes);
             SalesforceConfig.LoginOptions = options;
-            LoggingService.Log("AuthStorageHelper.PersistCredentials - done adding info to vault", LoggingLevel.Verbose);
+            LoggingService.Log("done adding info to vault", LoggingLevel.Verbose);
         }
 
         internal Account RetrieveCurrentAccount()
@@ -251,16 +232,14 @@ namespace Salesforce.SDK.Auth
                 {
                     try
                     {
-                        LoggingService.Log(
-                            "AuthStorageHelper.RetrieveCurrentAccount - getting current account", LoggingLevel.Verbose);
+                        LoggingService.Log("getting current account", LoggingLevel.Verbose);
                         var accountStr = EncryptionService.Decrypt(account.Password);
                         CurrentAccount = JsonConvert.DeserializeObject<Account>(accountStr);
                         return CurrentAccount;
                     }
                     catch (Exception ex)
                     {
-                        LoggingService.Log(
-                            "AuthStorageHelper.RetrieveCurrentAccount - Exception occured when decrypting account, removing account from vault",
+                        LoggingService.Log("Exception occured when decrypting account, removing account from vault",
                             LoggingLevel.Warning);
 
                         LoggingService.Log(ex, LoggingLevel.Warning);
@@ -325,8 +304,7 @@ namespace Salesforce.SDK.Auth
                         {
                             if (ex is ArgumentException)
                                 continue;
-                            LoggingService.Log(
-                                "AuthStorageHelper.RetrievePersistedCredentials - Exception occured when decrypting account, removing account from vault",
+                            LoggingService.Log("Exception occured when decrypting account, removing account from vault",
                                 LoggingLevel.Warning);
 
                             LoggingService.Log(ex, LoggingLevel.Warning);
@@ -340,8 +318,7 @@ namespace Salesforce.SDK.Auth
             }
 
             LoggingService.Log(
-                string.Format(
-                    "AuthStorageHelper.RetrievePersistedCredentials - Done. Total number of accounts retrieved = {0}",
+                string.Format("Total number of accounts retrieved = {0}",
                     accounts.Count), LoggingLevel.Verbose);
 
             return accounts;
@@ -366,8 +343,7 @@ namespace Salesforce.SDK.Auth
                         if (id.Equals(account.UserId))
                         {
                             LoggingService.Log(
-                                string.Format(
-                                    "AuthStorageHelper.DeletePersistedCredentials - removing entry from vault for UserName={0}  UserID={1}",
+                                string.Format("removing entry from vault for UserName={0}  UserID={1}",
                                     userName, id), LoggingLevel.Verbose);
 
                             _vault.Remove(next);
@@ -375,8 +351,7 @@ namespace Salesforce.SDK.Auth
                     }
                     catch (Exception ex)
                     {
-                        LoggingService.Log(
-                            "AuthStorageHelper.DeletePersistedCredentials - Exception occured when decrypting account, removing account from vault",
+                        LoggingService.Log("Exception occured when decrypting account, removing account from vault",
                             LoggingLevel.Warning);
 
                         LoggingService.Log(ex, LoggingLevel.Warning);
@@ -411,8 +386,7 @@ namespace Salesforce.SDK.Auth
                 }
             }
 
-            LoggingService.Log(
-                "AuthStorageHelper.DeletePersistedCredentials - removed all entries from vault", LoggingLevel.Verbose);
+            LoggingService.Log("removed all entries from vault", LoggingLevel.Verbose);
         }
 
         public void PersistPincode(MobilePolicy policy)
@@ -421,7 +395,7 @@ namespace Salesforce.SDK.Auth
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
                 JsonConvert.SerializeObject(policy));
             _vault.Add(newPin);
-            LoggingService.Log("AuthStorageHelper.PersistPincode - pincode added to vault",
+            LoggingService.Log("pincode added to vault",
                 LoggingLevel.Verbose);
         }
 
@@ -433,7 +407,7 @@ namespace Salesforce.SDK.Auth
         {
             bool result = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode() != null;
 
-            LoggingService.Log(string.Format("AuthStorageHelper.IsPincodeSet - result = {0}", result), LoggingLevel.Verbose);
+            LoggingService.Log(string.Format("result = {0}", result), LoggingLevel.Verbose);
 
             return result;
         }
@@ -449,7 +423,7 @@ namespace Salesforce.SDK.Auth
             bool required = auth.RetrieveData(PincodeRequired) != null;
             if (required)
             {
-                LoggingService.Log("AuthStorageHelper.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
+                LoggingService.Log("Pincode is required", LoggingLevel.Verbose);
                 return true;
             }
             if (IsPincodeSet())
@@ -467,7 +441,7 @@ namespace Salesforce.SDK.Auth
                         {
                             // flag that requires pincode to be entered in the future. Until the flag is deleted a pincode will be required.
                             auth.PersistData(true, PincodeRequired, time);
-                            LoggingService.Log("AuthStorageHelper.IsPincodeRequired - Pincode is required", LoggingLevel.Verbose);
+                            LoggingService.Log("Pincode is required", LoggingLevel.Verbose);
                             return true;
                         }
                     }
@@ -475,7 +449,7 @@ namespace Salesforce.SDK.Auth
             }
             // We aren't requiring pincode, so remove the flag.
             auth.DeleteData(PincodeRequired);
-            LoggingService.Log("AuthStorageHelper.IsPincodeRequired - Pincode is not required", LoggingLevel.Verbose);
+            LoggingService.Log("Pincode is not required", LoggingLevel.Verbose);
             return false;
         }
 
@@ -485,7 +459,7 @@ namespace Salesforce.SDK.Auth
             IBuffer buff = CryptographicBuffer.ConvertStringToBinary(pincode, BinaryStringEncoding.Utf8);
             IBuffer hashed = alg.HashData(buff);
             string res = CryptographicBuffer.EncodeToHexString(hashed);
-            LoggingService.Log("AuthStorageHelper.GenerateEncryptedPincode - Pincode generated, now encrypting and returning it", LoggingLevel.Verbose);
+            LoggingService.Log("Pincode generated, now encrypting and returning it", LoggingLevel.Verbose);
             return EncryptionService.Encrypt(res);
         }
 
@@ -504,7 +478,7 @@ namespace Salesforce.SDK.Auth
                 PincodeHash = EncryptionService.Encrypt(hashed, pincode)
             };
             AuthStorageHelper.GetAuthStorageHelper().PersistPincode(mobilePolicy);
-            LoggingService.Log("AuthStorageHelper.StorePincode - Pincode stored", LoggingLevel.Verbose);
+            LoggingService.Log("Pincode stored", LoggingLevel.Verbose);
         }
 
         /// <summary>
@@ -521,15 +495,14 @@ namespace Salesforce.SDK.Auth
                 var policy = JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
                 bool result = compare.Equals(EncryptionService.Decrypt(policy.PincodeHash, pincode));
 
-                LoggingService.Log(string.Format("AuthStorageHelper.ValidatePincode - result = {0}", result), LoggingLevel.Verbose);
+                LoggingService.Log($"result = {result}", LoggingLevel.Verbose);
 
                 return result;
             }
             catch (Exception ex)
             {
-                LoggingService.Log("AuthStorageHelper.ValidatePincode - Exception occurred when validating pincode:", LoggingLevel.Critical);
+                LoggingService.Log("Exception occurred when validating pincode:", LoggingLevel.Critical);
                 LoggingService.Log(ex, LoggingLevel.Critical);
-                Debug.WriteLine("Error validating pincode");
             }
 
             return false;
@@ -555,7 +528,7 @@ namespace Salesforce.SDK.Auth
             Account account = AccountManager.GetAccount();
             if (account != null && policy != null && policy.ScreenLockTimeout > 0)
             {
-                LoggingService.Log("AuthStorageHelper.SavePinTimer - saving pin timer", LoggingLevel.Verbose);
+                LoggingService.Log("Saving pin timer", LoggingLevel.Verbose);
                 AuthStorageHelper.GetAuthStorageHelper()
                     .PersistData(true, PinBackgroundedTimeKey, DateTime.Now.ToUniversalTime().ToString());
             }
@@ -570,10 +543,10 @@ namespace Salesforce.SDK.Auth
             string retrieved = AuthStorageHelper.GetAuthStorageHelper().RetrievePincode();
             if (retrieved != null)
             {
-                LoggingService.Log("AuthStorageHelper.GetMobilePolicy - returning retrieved policy", LoggingLevel.Verbose);
+                LoggingService.Log("Returning retrieved mobile policy", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<MobilePolicy>(retrieved);
             }
-            LoggingService.Log("AuthStorageHelper.GetMobilePolicy - No policy found", LoggingLevel.Verbose);
+            LoggingService.Log("No mobile policy found", LoggingLevel.Verbose);
             return null;
         }
 
@@ -586,7 +559,7 @@ namespace Salesforce.SDK.Auth
             auth.DeletePincode();
             auth.DeleteData(PinBackgroundedTimeKey);
             auth.DeleteData(PincodeRequired);
-            LoggingService.Log("PincodeManager.WipePincode - Pincode wiped", LoggingLevel.Verbose);
+            LoggingService.Log("Pincode wiped", LoggingLevel.Verbose);
         }
 
         internal string RetrievePincode()
@@ -594,8 +567,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
-                LoggingService.Log(
-                    "AuthStorageHelper.RetrievePincode - retrieved pincode from vault",
+                LoggingService.Log("retrieved pincode from vault",
                     LoggingLevel.Verbose);
                 return pin.Password;
             }
@@ -607,8 +579,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
             if (pin != null)
             {
-                LoggingService.Log(
-                    "AuthStorageHelper.DeletePincode - removed pincode from vault",
+                LoggingService.Log("removed pincode from vault",
                     LoggingLevel.Verbose);
                 _vault.Remove(pin);
             }
@@ -654,7 +625,7 @@ namespace Salesforce.SDK.Auth
             var encrpytionSettings = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultEncryptionSettings,
                 JsonConvert.SerializeObject(encryptionSettingsObj));
             _vault.Add(encrpytionSettings);
-            LoggingService.Log("AuthStorageHelper.PersistEncryptionSettings - encryption settings added to vault",
+            LoggingService.Log("encryption settings added to vault",
                 LoggingLevel.Verbose);
         }
 
@@ -669,8 +640,7 @@ namespace Salesforce.SDK.Auth
                 if (String.IsNullOrWhiteSpace(encrpytionSettings.Password))
                 {
                     // Failed to deserialize the data, we should clear it out and start over.
-                    LoggingService.Log(
-                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values are corrupt. Assuming bad state and clearing the vault completely",
+                    LoggingService.Log("Encryption Settings values are corrupt. Assuming bad state and clearing the vault completely",
                         LoggingLevel.Warning);
                     _vault.Remove(encrpytionSettings);
                     DeletePersistedCredentials();
@@ -683,16 +653,14 @@ namespace Salesforce.SDK.Auth
                         var encrpytionSettingsObj = JObject.Parse(encrpytionSettings.Password);
                         password = encrpytionSettingsObj.Value<string>("Password");
                         salt = encrpytionSettingsObj.Value<string>("Salt");
-                        LoggingService.Log(
-                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have been retrieved successfully.",
+                        LoggingService.Log("Encryption Settings have been retrieved successfully.",
                         LoggingLevel.Verbose);
                         return true;
                     }
                     catch (Exception ex)
                     {
                         // Failed to deserialize the data, we should clear it out and start over.
-                        LoggingService.Log(
-                            "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be deserialized. Assuming bad state and clearing the vault completely",
+                        LoggingService.Log("Encryption Settings values can't be deserialized. Assuming bad state and clearing the vault completely",
                             LoggingLevel.Warning);
 
                         LoggingService.Log(ex, LoggingLevel.Warning);
@@ -711,15 +679,13 @@ namespace Salesforce.SDK.Auth
                 // If either account or pincode are stored, but the Encryption Settings values can't be retrieved, then we should assume we are in a bad state and clear the vault.
                 if (account != null || pincode != null)
                 {
-                    LoggingService.Log(
-                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings values can't be retrieved from vault. Assuming bad state and clearing the vault completely",
+                    LoggingService.Log("Encryption Settings values can't be retrieved from vault. Assuming bad state and clearing the vault completely",
                         LoggingLevel.Verbose);
                     DeletePersistedCredentials();
                     DeletePincode();
                 }
             }
-            LoggingService.Log(
-                        "AuthStorageHelper.TryRetrieveEncryptionSettings - Encryption Settings have not yet been saved.",
+            LoggingService.Log("Encryption Settings have not yet been saved.",
                         LoggingLevel.Verbose);
             return false;
         }
@@ -729,8 +695,7 @@ namespace Salesforce.SDK.Auth
             PasswordCredential encryptionSettings = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultEncryptionSettings);
             if (encryptionSettings != null)
             {
-                LoggingService.Log(
-                    "AuthStorageHelper.DeleteEncryptionSettings - removed encryption settings from vault",
+                LoggingService.Log("Removed encryption settings from vault",
                     LoggingLevel.Verbose);
                 _vault.Remove(encryptionSettings);
             }

@@ -257,8 +257,7 @@ namespace Salesforce.SDK.Pages
 
             try
             {
-                LoggingService.Log(
-                    "AccountPage.DoAuthFlow - calling WebAuthenticationBroker.AuthenticateAsync()", LoggingLevel.Verbose);
+                LoggingService.Log("Launching web authentication broker", LoggingLevel.Verbose);
 
                 webAuthenticationResult =
                     await
@@ -274,7 +273,7 @@ namespace Salesforce.SDK.Pages
             }
             catch (Exception ex)
             {
-                LoggingService.Log("AccountPage.StartLoginFlow - Exception occured", LoggingLevel.Critical);
+                LoggingService.Log("Exception occurred during login flow", LoggingLevel.Critical);
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
                 hasWebAuthErrors = true;

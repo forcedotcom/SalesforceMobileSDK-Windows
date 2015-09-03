@@ -84,11 +84,11 @@ namespace Salesforce.SDK.Auth
                         await AuthStorageHelper.PersistCredentialsAsync(account);
                     }
                     AuthStorageHelper.RefreshCookies();
-                    LoggingService.Log("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
+                    LoggingService.Log("switched accounts, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
-            LoggingService.Log("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
+            LoggingService.Log("switched accounts, result = false", LoggingLevel.Verbose);
             return false;
         }
 
@@ -111,7 +111,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            LoggingService.Log("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
+            LoggingService.Log("Create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
@@ -126,8 +126,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (JsonException ex)
             {
-                LoggingService.Log(
-                    "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
+                LoggingService.Log("Exception occurred when retrieving account identity:",
                     LoggingLevel.Critical);
                 LoggingService.Log(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
@@ -139,7 +138,7 @@ namespace Salesforce.SDK.Auth
                 account.Policy = identity.MobilePolicy;
                 await AuthStorageHelper.PersistCredentialsAsync(account);
             }
-            LoggingService.Log("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
+            LoggingService.Log("Finished creating account", LoggingLevel.Verbose);
             return account;
         }
     }
