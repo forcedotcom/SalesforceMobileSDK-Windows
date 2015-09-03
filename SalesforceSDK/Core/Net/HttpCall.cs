@@ -364,7 +364,7 @@ namespace Salesforce.SDK.Net
                 }
                 catch (Exception)
                 {
-                     SDKServiceLocator.Get<ILoggingService>().Log("HttpCall.Dispose - Error occurred while disposing", LoggingLevel.Warning);
+                     SDKServiceLocator.Get<ILoggingService>().Log("Error occurred while disposing", LoggingLevel.Warning);
                 }
             }
         }

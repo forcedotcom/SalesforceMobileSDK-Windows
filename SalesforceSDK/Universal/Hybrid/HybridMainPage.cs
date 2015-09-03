@@ -121,7 +121,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
-            LoggingService.Log("HybridMainPage.OnResumeNotLoggedIn called", LoggingLevel.Verbose);
+            LoggingService.Log("", LoggingLevel.Verbose);
 
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
@@ -164,7 +164,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
-            LoggingService.Log("HybridMainPage.OnResumeLoggedInNotLoaded called", LoggingLevel.Verbose);
+            LoggingService.Log("", LoggingLevel.Verbose);
 
             // Local
             if (_bootConfig.IsLocal)

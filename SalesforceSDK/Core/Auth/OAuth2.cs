@@ -299,7 +299,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
         {
-            LoggingService.Log("OAuth2.RefreshAuthTokenRequest - attempting to refresh auth token", LoggingLevel.Verbose);
+            LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
 
             // Args
             string argsStr = string.Format(OauthRefreshQueryString, new[] {loginOptions.ClientId, refreshToken});
@@ -334,16 +334,14 @@ namespace Salesforce.SDK.Auth
                 }
                 catch (WebException ex)
                 {
-                    LoggingService.Log(
-                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
                     LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.Status);
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.Log(
-                        "OAuth2.RefreshAuthToken - Exception occurred when refreshing token:", LoggingLevel.Critical);
+                    LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
                     LoggingService.Log(ex, LoggingLevel.Critical);
                     Debug.WriteLine("Error refreshing token");
                     throw new OAuthException(ex.Message, ex.InnerException);
@@ -373,7 +371,7 @@ namespace Salesforce.SDK.Auth
             // Execute post
             HttpCall result = await c.Execute().ConfigureAwait(false);
 
-            LoggingService.Log(string.Format("OAuth2.RevokeAuthToken - result.StatusCode = {0}", result.StatusCode), LoggingLevel.Verbose);
+            LoggingService.Log($"result.StatusCode = {result.StatusCode}", LoggingLevel.Verbose);
 
             return result.StatusCode == HttpStatusCode.OK;
         }
@@ -396,7 +394,7 @@ namespace Salesforce.SDK.Auth
         /// <returns></returns>
         public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
         {
-            LoggingService.Log("OAuth2.CallIdentityService - calling identity service", LoggingLevel.Verbose);
+            LoggingService.Log("Calling identity service", LoggingLevel.Verbose);
 
             // Auth header
             var headers = new HttpCallHeaders(accessToken, new Dictionary<string, string>());
@@ -413,12 +411,12 @@ namespace Salesforce.SDK.Auth
             RestResponse response = await client.SendAsync(request);
             if (response.Success)
             {
-                LoggingService.Log("OAuth2.CallIdentityService - success", LoggingLevel.Verbose);
+                LoggingService.Log("success", LoggingLevel.Verbose);
                 return JsonConvert.DeserializeObject<IdentityResponse>(response.AsString);
             }
             else
             {
-                LoggingService.Log("OAuth2.CallIdentityService - Error occured:", LoggingLevel.Critical);
+                LoggingService.Log("Error occured:", LoggingLevel.Critical);
                 LoggingService.Log(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;

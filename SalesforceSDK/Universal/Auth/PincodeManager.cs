@@ -97,7 +97,7 @@ namespace Salesforce.SDK.Auth
             {
                 await frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    SDKServiceLocator.Get<ILoggingService>().Log("PincodeManager.LaunchPincodeScreen - Launching Pincode Screen", LoggingLevel.Information);
+                    SDKServiceLocator.Get<ILoggingService>().Log(" Launching Pincode Screen", LoggingLevel.Information);
                     Account account = AccountManager.GetAccount();
                     if (account != null)
                     {

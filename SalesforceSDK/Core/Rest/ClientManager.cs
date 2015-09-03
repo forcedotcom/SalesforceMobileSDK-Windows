@@ -105,7 +105,7 @@ namespace Salesforce.SDK.Rest
                 }
                 catch (InvalidOperationException)
                 {
-                    SDKServiceLocator.Get<ILoggingService>().Log("ClientManager.GetRestClient - Platform doesn't support native login flow", LoggingLevel.Information);
+                    SDKServiceLocator.Get<ILoggingService>().Log("Platform doesn't support native login flow", LoggingLevel.Information);
                 }
                
             }

@@ -130,7 +130,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupCreate()
         {
-            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog for creating a pincode", LoggingLevel.Information);
+            LoggingService.Log("Configuring the dialog for creating a pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_create_title");
             Description.Text = LocalizedStrings.GetString("passcode_create_security");
             ContentFooter.Visibility = Visibility.Visible;
@@ -144,7 +144,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupLocked()
         {
-            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
+            LoggingService.Log("Configuring the dialog to act as a lockscreen", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_enter_code_title");
             ContentFooter.Text = LocalizedStrings.GetString("passcode_confirm");
             Description.Text = "";
@@ -164,7 +164,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         private void SetupConfirm()
         {
-            LoggingService.Log("PincodeDialog.SetupCreate - Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
+            LoggingService.Log("Configuring the dialog to act as a confirmation for the entered pincode", LoggingLevel.Information);
             Title.Text = LocalizedStrings.GetString("passcode_reenter");
             Description.Text = LocalizedStrings.GetString("passcode_confirm");
             ContentFooter.Visibility = Visibility.Collapsed;
@@ -178,7 +178,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Length >= Options.User.Policy.PinLength)
             {
-                LoggingService.Log("PincodeDialog.CreateClicked - Going to confirmation page", LoggingLevel.Verbose);
+                LoggingService.Log("Going to confirmation page", LoggingLevel.Verbose);
                 var options = new PincodeOptions(PincodeOptions.PincodeScreen.Confirm, Options.User, Passcode.Password);
                 // As per MSDN documentation (https://msdn.microsoft.com/en-us/library/windows/apps/hh702394.aspx)
                 // the second param of Frame.Navigate must be a basic type otherwise Suspension manager will crash
@@ -200,9 +200,7 @@ namespace Salesforce.SDK.Auth
             e.Handled = true;
             if (Passcode.Password.Equals(Options.Passcode))
             {
-                LoggingService.Log(
-                    string.Format("PincodeDialog.ConfirmClicked - Pincode matched, going to {0}",
-                        SDKManager.RootApplicationPage), LoggingLevel.Verbose);
+                LoggingService.Log($"Pincode matched, going to {SDKManager.RootApplicationPage}", LoggingLevel.Verbose);
                 AuthStorageHelper.StorePincode(Options.Policy, Options.Passcode);
                 PincodeManager.Unlock();
                 Frame.Navigate(SDKManager.RootApplicationPage);

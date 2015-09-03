@@ -151,7 +151,7 @@ namespace Salesforce.SDK.App
             }
             catch (OAuthException ex)
             {
-                LoggingService.Log("SalesforceApplication.RefreshToken - Error occured when refreshing token:", LoggingLevel.Critical);
+                LoggingService.Log("Error occured when refreshing token", LoggingLevel.Critical);
                 LoggingService.Log(ex, LoggingLevel.Critical);
             }
         }
