@@ -1,0 +1,9 @@
+﻿<app:SalesforceApplication
+    x:Class="Salesforce.Sample.SmartSyncExplorer.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Salesforce.Sample.SmartSyncExplorer"
+    xmlns:app="using:Salesforce.SDK.App"
+    RequestedTheme="Light">
+
+</app:SalesforceApplication>

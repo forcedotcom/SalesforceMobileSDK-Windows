@@ -31,3 +31,14 @@ SmartStore support is a work in progress. There are a few manual steps that are 
 4. Add SQLite for your specific platform to each individual project, for example "SQLite for Windows Runtime (Windows 8.1)" for a store application.
 
 This work will hopefully be minimized in the future, and NuGet packages will be included. 
+=======
+# SalesforceMobileSDK-WindowsSamples
+This repo contains sample apps built using the Salesforce Mobile SDK for Windows.
+
+1. Container Sample:
+
+This app shows how you can build an app that contains a webview.
+
+2. AccountManager:
+
+The AccountManager sample shows how to build an app using Cordova for Windows.
