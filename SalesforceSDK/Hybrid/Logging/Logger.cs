@@ -28,22 +28,24 @@
 using Salesforce.SDK.Logging;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Salesforce.SDK.Hybrid.Logging
 {
     sealed internal class Logger : ILoggingService
     {
-        public void Log(Exception exception, LoggingLevel loggingLevel)
+        public void Log(Exception exception, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classPath = "", [CallerLineNumber]int line = 0)
         {
             if (exception != null)
             {
-                Log(exception.Message, loggingLevel);
+                Log(exception.Message, loggingLevel, memberName, classPath, line);
             }
         }
 
-        public void Log(string message, LoggingLevel loggingLevel)
+        public void Log(string message, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classPath = "", [CallerLineNumber]int line = 0)
         {
-            Debug.WriteLine(String.Format("{0} - {1}", loggingLevel, message));
+            Debug.WriteLine($"{loggingLevel}:{Path.GetFileName(classPath)}:{memberName}:line {line} - {message}");
         }
     }
 }

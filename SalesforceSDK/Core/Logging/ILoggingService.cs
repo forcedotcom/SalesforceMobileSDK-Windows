@@ -26,12 +26,13 @@
  */
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Salesforce.SDK.Logging
 {
     public interface ILoggingService
     {
-        void Log(string message, LoggingLevel loggingLevel);
-        void Log(Exception exception, LoggingLevel loggingLevel);
+        void Log(string message, LoggingLevel loggingLevel, [CallerMemberName]string memberName = "", [CallerFilePath]string classPath = "", [CallerLineNumber]int line = 0);
+        void Log(Exception exception, LoggingLevel loggingLevel, [CallerMemberName]string memberName = "", [CallerFilePath]string classPath = "", [CallerLineNumber]int line = 0);
     }
 }
