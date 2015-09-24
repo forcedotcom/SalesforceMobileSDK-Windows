@@ -1,3 +1,6 @@
+# Nuget files to ignore
+project.lock.json
+
 obj/
 bin/
 *.csproj.user

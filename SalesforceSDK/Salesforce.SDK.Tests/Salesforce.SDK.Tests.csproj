@@ -114,14 +114,17 @@
   </PropertyGroup>
   <ItemGroup>
     <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
-    <SDKReference Include="Microsoft.VCLibs.AppLocal, version=14.0">
-      <Name>Microsoft Visual C++  AppLocal Runtime Package for Windows UAP</Name>
+    <SDKReference Include="Microsoft.NET.Native.Runtime.1.1, Version=1.1">
+      <Name>Microsoft .NET Core Runtime Package for Windows</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
     <SDKReference Include="MSTestFramework.Universal, Version=14.0">
       <Name>MSTest for Managed Projects</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.UAP.2015, Version=3.8.10">
-      <Name>SQLite for Universal App Platform</Name>
+    <SDKReference Include="SQLite.UAP.2015, Version=3.8.11.1">
+      <Name>SQLite for Universal App Platform %28SQLite.UAP.2015, Version=3.8.11.1%29</Name>
     </SDKReference>
     <SDKReference Include="TestPlatform.Universal, Version=14.0">
       <Name>Microsoft Visual Studio Test Core</Name>
@@ -174,10 +177,6 @@
     <Content Include="Assets\WideLogo.scale-240.png" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.6.0.5\lib\netcore45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="SQLitePCL, Version=3.8.7.2, Culture=neutral, PublicKeyToken=bddade01e9c850c5, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\SQLitePCL.3.8.7.2\lib\netcore451\SQLitePCL.dll</HintPath>
       <Private>True</Private>
