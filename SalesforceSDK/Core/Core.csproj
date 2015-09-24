@@ -71,6 +71,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rest\ApiVersionStrings.cs" />
     <Compile Include="Rest\ClientManager.cs" />
+    <Compile Include="Rest\IRestClient.cs" />
+    <Compile Include="Rest\IRestResponse.cs" />
     <Compile Include="Rest\RestClient.cs" />
     <Compile Include="Rest\RestRequest.cs" />
     <Compile Include="Rest\RestResponse.cs" />
