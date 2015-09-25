@@ -69,7 +69,7 @@ namespace Salesforce.SDK.Rest
         ///     Returns a RestClient if user is already authenticated or null
         /// </summary>
         /// <returns></returns>
-        public RestClient PeekRestClient()
+        public IRestClient PeekRestClient()
         {
             Account account = AccountManager.GetAccount();
             if (account != null)
@@ -94,9 +94,9 @@ namespace Salesforce.SDK.Rest
         ///     Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
         /// </summary>
         /// <returns></returns>
-        public RestClient GetRestClient()
+        public IRestClient GetRestClient()
         {
-            RestClient restClient = PeekRestClient();
+            var restClient = PeekRestClient();
             if (restClient == null)
             {
                 try
@@ -112,7 +112,7 @@ namespace Salesforce.SDK.Rest
             return restClient;
         }
 
-        public RestClient GetUnAuthenticatedRestClient(string instanceUrl)
+        public IRestClient GetUnAuthenticatedRestClient(string instanceUrl)
         {
             return new RestClient(instanceUrl);
         }

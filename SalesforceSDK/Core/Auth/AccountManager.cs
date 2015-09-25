@@ -71,7 +71,7 @@ namespace Salesforce.SDK.Auth
             {
                 AuthStorageHelper.SavePinTimer();
                 await AuthStorageHelper.PersistCredentialsAsync(account);
-                RestClient client = SDKManager.GlobalClientManager.PeekRestClient();
+                var client = SDKManager.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
                     AuthStorageHelper.ClearCookies(account.GetLoginOptions());

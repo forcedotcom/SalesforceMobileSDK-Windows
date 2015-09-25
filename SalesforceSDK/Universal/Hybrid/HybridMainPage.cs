@@ -62,7 +62,7 @@ namespace Salesforce.SDK.Hybrid
 
         private readonly BootConfig _bootConfig;
         private readonly SynchronizationContext _syncContext;
-        private RestClient _client;
+        private IRestClient _client;
         private bool _webAppLoaded;
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
@@ -346,7 +346,7 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class JSONCredentials
     {
-        public JSONCredentials(Account account, RestClient client)
+        public JSONCredentials(Account account, IRestClient client)
         {
             AccessToken = client.AccessToken;
             LoginUrl = account.LoginUrl;

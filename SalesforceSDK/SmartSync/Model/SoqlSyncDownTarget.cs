@@ -84,7 +84,7 @@ namespace Salesforce.SDK.SmartSync.Model
         {
             string queryToRun = maxTimeStamp > 0 ? AddFilterForReSync(Query, maxTimeStamp) : Query;
             RestRequest request = RestRequest.GetRequestForQuery(syncManager.ApiVersion, queryToRun);
-            RestResponse response = await syncManager.SendRestRequest(request);
+            var response = await syncManager.SendRestRequest(request);
             JObject responseJson = response.AsJObject;
             var records = responseJson.ExtractValue<JArray>(Constants.Records);
 
@@ -105,7 +105,7 @@ namespace Salesforce.SDK.SmartSync.Model
             }
 
             var request = new RestRequest(HttpMethod.Get, NextRecordsUrl, null);
-            RestResponse response = await syncManager.SendRestRequest(request);
+            var response = await syncManager.SendRestRequest(request);
             JObject responseJson = response.AsJObject;
             var records = responseJson.ExtractValue<JArray>(Constants.Records);
             return records;

@@ -405,10 +405,10 @@ namespace Salesforce.SDK.Auth
             return await c.ExecuteAndDeserialize<IdentityResponse>();
         }
 
-        public static async Task<IdentityResponse> CallIdentityService(string idUrl, RestClient client)
+        public static async Task<IdentityResponse> CallIdentityService(string idUrl, IRestClient client)
         {
             var request = new RestRequest(HttpMethod.Get, new Uri(idUrl).AbsolutePath);
-            RestResponse response = await client.SendAsync(request);
+            var response = await client.SendAsync(request);
             if (response.Success)
             {
                 LoggingService.Log("success", LoggingLevel.Verbose);
