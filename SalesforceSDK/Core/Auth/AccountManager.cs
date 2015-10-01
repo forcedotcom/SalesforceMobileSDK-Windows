@@ -55,9 +55,9 @@ namespace Salesforce.SDK.Auth
         /// an account changes but the event belongs in the AccountManager class, so this method is necessary
         /// to enable AuthStorageHelper to raise that event.
         /// </summary>
-        public static void RaiseAuthenticatedAccountChangedEvent(Account newAccount)
+        public static void RaiseAuthenticatedAccountChangedEvent(Account oldAccount, Account newAccount)
         {
-            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(newAccount));
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(oldAccount, newAccount));
         }
 
         /// <summary>

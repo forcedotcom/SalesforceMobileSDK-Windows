@@ -69,11 +69,12 @@ namespace Salesforce.SDK.Auth
         {
             set
             {
+                var oldAccount = _currentAccount;
                 _lastSetAccount = DateTime.Now;
                 _currentAccount = value;
 
                 // raise the event in AccountManager
-                AccountManager.RaiseAuthenticatedAccountChangedEvent(value);
+                AccountManager.RaiseAuthenticatedAccountChangedEvent(oldAccount, value);
             }
             get
             {
