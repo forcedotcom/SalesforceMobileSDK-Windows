@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Auth\Account.cs" />
+    <Compile Include="Auth\AuthenticatedAccountChangedEventArgs.cs" />
     <Compile Include="Auth\AccountManager.cs" />
     <Compile Include="Auth\IAuthHelper.cs" />
     <Compile Include="Auth\OAuth2.cs" />

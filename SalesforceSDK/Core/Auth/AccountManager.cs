@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -42,6 +43,23 @@ namespace Salesforce.SDK.Auth
     {
         private static IAuthHelper AuthStorageHelper => SDKServiceLocator.Get<IAuthHelper>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        /// <summary>
+        /// This event notifies consumers that the authenticated account has changed.
+        /// </summary>
+        public static event AuthenticatedAccountChangedHandler AuthenticatedAccountChanged;
+        public delegate void AuthenticatedAccountChangedHandler(AuthenticatedAccountChangedEventArgs e);
+
+        /// <summary>
+        /// Raises the account changed event. This method exists because AuthStorageHelper truly knows when
+        /// an account changes but the event belongs in the AccountManager class, so this method is necessary
+        /// to enable AuthStorageHelper to raise that event.
+        /// </summary>
+        public static void RaiseAuthenticatedAccountChangedEvent(Account newAccount)
+        {
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(newAccount));
+        }
+
         /// <summary>
         ///     Delete Account for currently authenticated user
         /// </summary>
