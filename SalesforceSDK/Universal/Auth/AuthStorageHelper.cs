@@ -73,8 +73,14 @@ namespace Salesforce.SDK.Auth
                 _lastSetAccount = DateTime.Now;
                 _currentAccount = value;
 
-                // raise the event in AccountManager
-                AccountManager.RaiseAuthenticatedAccountChangedEvent(oldAccount, value);
+                // Raise the event in AccountManager if this is a different account.
+                // This check is necessary as sometimes CurrentAccount.Set is called
+                // even if the same account was already set, so use the unique combo of
+                // InstanceUrl and UserId to tell if the account has actually changed (login/logout).
+                if (oldAccount?.InstanceUrl != value?.InstanceUrl && oldAccount?.UserId != value?.UserId)
+                {
+                    AccountManager.RaiseAuthenticatedAccountChangedEvent(oldAccount, value);
+                }
             }
             get
             {
