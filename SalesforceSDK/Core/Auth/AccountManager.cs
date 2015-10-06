@@ -55,9 +55,9 @@ namespace Salesforce.SDK.Auth
         /// an account changes but the event belongs in the AccountManager class, so this method is necessary
         /// to enable AuthStorageHelper to raise that event.
         /// </summary>
-        public static void RaiseAuthenticatedAccountChangedEvent(Account newAccount)
+        public static void RaiseAuthenticatedAccountChangedEvent(Account oldAccount, Account newAccount)
         {
-            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(newAccount));
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(oldAccount, newAccount));
         }
 
         /// <summary>
@@ -67,6 +67,9 @@ namespace Salesforce.SDK.Auth
         {
             Account account = GetAccount();
             AuthStorageHelper.DeletePersistedCredentials(account.UserName, account.UserId);
+
+            // raise event about account logout
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(account, null));
         }
 
         public static Dictionary<string, Account> GetAccounts()

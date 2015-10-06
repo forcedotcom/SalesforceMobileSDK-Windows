@@ -36,8 +36,14 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         public Account NewAccount { get; private set; }
 
-        public AuthenticatedAccountChangedEventArgs(Account newAccount)
+        /// <summary>
+        /// The previous account that was logged in.
+        /// </summary>
+        public Account OldAccount { get; private set; }
+
+        public AuthenticatedAccountChangedEventArgs(Account oldAccount, Account newAccount)
         {
+            OldAccount = oldAccount;
             NewAccount = newAccount;
         }
     }
