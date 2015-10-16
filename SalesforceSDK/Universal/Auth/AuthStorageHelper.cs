@@ -342,7 +342,7 @@ namespace Salesforce.SDK.Auth
         internal void DeletePersistedCredentials(string userName, string id)
         {
             // if this is the current account then update the property so event will get raised
-            if (userName == CurrentAccount.UserName && id == CurrentAccount.UserId)
+            if (userName == CurrentAccount?.UserName && id == CurrentAccount?.UserId)
             {
                 CurrentAccount = null;
             }
