@@ -341,6 +341,12 @@ namespace Salesforce.SDK.Auth
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(string userName, string id)
         {
+            // if this is the current account then update the property so event will get raised
+            if (userName == CurrentAccount?.UserName && id == CurrentAccount?.UserId)
+            {
+                CurrentAccount = null;
+            }
+
             IEnumerable<PasswordCredential> creds = SafeRetrieveUser(userName);
             if (creds != null)
             {
