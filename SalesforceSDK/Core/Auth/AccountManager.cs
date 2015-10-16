@@ -67,9 +67,6 @@ namespace Salesforce.SDK.Auth
         {
             Account account = GetAccount();
             AuthStorageHelper.DeletePersistedCredentials(account.UserName, account.UserId);
-
-            // raise event about account logout
-            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(account, null));
         }
 
         public static Dictionary<string, Account> GetAccounts()
