@@ -15,6 +15,7 @@ namespace Salesforce.SDK.Hybrid.Auth
     public sealed class HybridAccountManager
     {
         private static HybridAccountManager _instance = new HybridAccountManager();
+        private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
         private HybridAccountManager()
         {
@@ -23,7 +24,13 @@ namespace Salesforce.SDK.Hybrid.Auth
 
         private static void RegisterServices()
         {
+            // setup logger
             SDKServiceLocator.RegisterService<ILoggingService, Logger>();
+
+            // log registering services
+            LoggingService.Log("Registering Services", LoggingLevel.Information);
+
+            // register remaining services
             SDKServiceLocator.RegisterService<IAuthHelper, AuthHelper>();
             SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
             SDKServiceLocator.RegisterService<IApplicationInformationService, ApplicationService>();
@@ -44,6 +51,7 @@ namespace Salesforce.SDK.Hybrid.Auth
             if (Encryptor.Settings == null)
             {
                 RegisterServices();
+                LoggingService.Log("Initializing Encryption", LoggingLevel.Information);
                 Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
                 SDKManager.ResetClientManager();
             }

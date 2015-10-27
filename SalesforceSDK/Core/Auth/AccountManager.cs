@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -42,6 +43,23 @@ namespace Salesforce.SDK.Auth
     {
         private static IAuthHelper AuthStorageHelper => SDKServiceLocator.Get<IAuthHelper>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        /// <summary>
+        /// This event notifies consumers that the authenticated account has changed.
+        /// </summary>
+        public static event AuthenticatedAccountChangedHandler AuthenticatedAccountChanged;
+        public delegate void AuthenticatedAccountChangedHandler(AuthenticatedAccountChangedEventArgs e);
+
+        /// <summary>
+        /// Raises the account changed event. This method exists because AuthStorageHelper truly knows when
+        /// an account changes but the event belongs in the AccountManager class, so this method is necessary
+        /// to enable AuthStorageHelper to raise that event.
+        /// </summary>
+        public static void RaiseAuthenticatedAccountChangedEvent(Account oldAccount, Account newAccount)
+        {
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(oldAccount, newAccount));
+        }
+
         /// <summary>
         ///     Delete Account for currently authenticated user
         /// </summary>
@@ -71,7 +89,7 @@ namespace Salesforce.SDK.Auth
             {
                 AuthStorageHelper.SavePinTimer();
                 await AuthStorageHelper.PersistCredentialsAsync(account);
-                RestClient client = SDKManager.GlobalClientManager.PeekRestClient();
+                var client = SDKManager.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
                     AuthStorageHelper.ClearCookies(account.GetLoginOptions());
@@ -84,11 +102,11 @@ namespace Salesforce.SDK.Auth
                         await AuthStorageHelper.PersistCredentialsAsync(account);
                     }
                     AuthStorageHelper.RefreshCookies();
-                    LoggingService.Log("AccountManager.SwitchToAccount - done, result = true", LoggingLevel.Verbose);
+                    LoggingService.Log("switched accounts, result = true", LoggingLevel.Verbose);
                     return true;
                 }
             }
-            LoggingService.Log("AccountManager.SwitchToAccount - done, result = false", LoggingLevel.Verbose);
+            LoggingService.Log("switched accounts, result = false", LoggingLevel.Verbose);
             return false;
         }
 
@@ -111,7 +129,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="authResponse"></param>
         public static async Task<Account> CreateNewAccount(LoginOptions loginOptions, AuthResponse authResponse)
         {
-            LoggingService.Log("AccountManager.CreateNewAccount - create account object", LoggingLevel.Verbose);
+            LoggingService.Log("Create account object", LoggingLevel.Verbose);
             var account = new Account(loginOptions.LoginUrl, loginOptions.ClientId, loginOptions.CallbackUrl,
                 loginOptions.Scopes,
                 authResponse.InstanceUrl, authResponse.IdentityUrl, authResponse.AccessToken, authResponse.RefreshToken);
@@ -126,8 +144,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (JsonException ex)
             {
-                LoggingService.Log(
-                    "AccountManager.CreateNewAccount - Exception occurred when retrieving account identity:",
+                LoggingService.Log("Exception occurred when retrieving account identity:",
                     LoggingLevel.Critical);
                 LoggingService.Log(ex, LoggingLevel.Critical);
                 Debug.WriteLine("Error retrieving account identity");
@@ -139,7 +156,7 @@ namespace Salesforce.SDK.Auth
                 account.Policy = identity.MobilePolicy;
                 await AuthStorageHelper.PersistCredentialsAsync(account);
             }
-            LoggingService.Log("AccountManager.CreateNewAccount - done", LoggingLevel.Verbose);
+            LoggingService.Log("Finished creating account", LoggingLevel.Verbose);
             return account;
         }
     }

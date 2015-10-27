@@ -29,7 +29,7 @@ namespace Salesforce.SDK.Rest
 {
     public class ApiVersionStrings
     {
-        public const string VersionNumber = "v35.0";
+        public const string VersionNumber = "v34.0";
         public const string ApiPrefix = "/services/data/";
         public const string BasePath = ApiPrefix + VersionNumber;
         public const string BaseChatterPath = BasePath + "/chatter/";

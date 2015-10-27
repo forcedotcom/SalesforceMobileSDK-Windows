@@ -33,11 +33,11 @@ using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
-    public delegate void AsyncRequestCallback(RestResponse response);
+    public delegate void AsyncRequestCallback(IRestResponse response);
 
     public delegate Task<string> AccessTokenProvider();
 
-    public class RestClient
+    public class RestClient : IRestClient
     {
         private readonly AccessTokenProvider _accessTokenProvider;
 
@@ -68,21 +68,21 @@ namespace Salesforce.SDK.Rest
             get { return _accessToken; }
         }
 
-        public async Task<RestResponse> SendAsync(HttpMethod method, string url)
+        public async Task<IRestResponse> SendAsync(HttpMethod method, string url)
         {
             return await SendAsync(new RestRequest(method, url));
         }
 
         public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
         {
-            RestResponse result = await SendAsync(request).ConfigureAwait(false);
+            var result = await SendAsync(request).ConfigureAwait(false);
             if (callback != null)
             {
                 callback(result);
             }
         }
 
-        public async Task<RestResponse> SendAsync(RestRequest request)
+        public async Task<IRestResponse> SendAsync(RestRequest request)
         {
             HttpCall result = await Send(request, true);
             return new RestResponse(result);

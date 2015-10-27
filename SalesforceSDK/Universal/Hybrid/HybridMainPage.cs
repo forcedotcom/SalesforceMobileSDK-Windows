@@ -62,7 +62,7 @@ namespace Salesforce.SDK.Hybrid
 
         private readonly BootConfig _bootConfig;
         private readonly SynchronizationContext _syncContext;
-        private RestClient _client;
+        private IRestClient _client;
         private bool _webAppLoaded;
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
 
@@ -121,7 +121,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeNotLoggedIn()
         {
-            LoggingService.Log("HybridMainPage.OnResumeNotLoggedIn called", LoggingLevel.Verbose);
+            LoggingService.Log("", LoggingLevel.Verbose);
 
             // Need to be authenticated
             if (_bootConfig.ShouldAuthenticate)
@@ -164,7 +164,7 @@ namespace Salesforce.SDK.Hybrid
         /// </summary>
         protected void OnResumeLoggedInNotLoaded()
         {
-            LoggingService.Log("HybridMainPage.OnResumeLoggedInNotLoaded called", LoggingLevel.Verbose);
+            LoggingService.Log("", LoggingLevel.Verbose);
 
             // Local
             if (_bootConfig.IsLocal)
@@ -346,7 +346,7 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class JSONCredentials
     {
-        public JSONCredentials(Account account, RestClient client)
+        public JSONCredentials(Account account, IRestClient client)
         {
             AccessToken = client.AccessToken;
             LoginUrl = account.LoginUrl;

@@ -87,8 +87,7 @@ namespace Salesforce.SDK.Auth
             }
             else
             {
-                SDKServiceLocator.Get<ILoggingService>().Log(string.Format("AuthHelper.EndLoginFlow - Navigating to {0}",
-                                                         SDKManager.RootApplicationPage), LoggingLevel.Information);
+                SDKServiceLocator.Get<ILoggingService>().Log($"Navigating to {SDKManager.RootApplicationPage}", LoggingLevel.Information);
                 frame.Navigate(SDKManager.RootApplicationPage);
             }
         }
@@ -100,7 +99,7 @@ namespace Salesforce.SDK.Auth
 
         public void RefreshCookies()
         {
-            LoggingService.Log("AuthHelper.RefreshCookies - attempting at refreshing cookies", LoggingLevel.Verbose);
+            LoggingService.Log("Attempting at refreshing cookies", LoggingLevel.Verbose);
             if (Window.Current == null)
                 return;
             Account account = AccountManager.GetAccount();
@@ -119,7 +118,7 @@ namespace Salesforce.SDK.Auth
                 var web = new WebView();
                 web.NavigateWithHttpRequestMessage(httpRequestMessage);
             }
-            LoggingService.Log("AuthHelper.RefreshCookies - done", LoggingLevel.Verbose);
+            LoggingService.Log("finished refreshing cookies", LoggingLevel.Verbose);
         }
 
         public async void ClearCookies(LoginOptions options)
@@ -136,17 +135,17 @@ namespace Salesforce.SDK.Auth
                     HttpCookieManager cookieManager = myFilter.CookieManager;
                     try
                     {
-                        LoggingService.Log("OAuth.ClearCookies - attempting at clearing cookies", LoggingLevel.Verbose);
+                        LoggingService.Log("attempting to clear cookies", LoggingLevel.Verbose);
                         HttpCookieCollection cookies = cookieManager.GetCookies(loginUri);
                         foreach (HttpCookie cookie in cookies)
                         {
                             cookieManager.DeleteCookie(cookie);
                         }
-                        LoggingService.Log("OAuth2.ClearCookies - done", LoggingLevel.Verbose);
+                        LoggingService.Log("clear cookies done", LoggingLevel.Verbose);
                     }
                     catch (ArgumentException ex)
                     {
-                        LoggingService.Log("OAuth2.ClearCookies - Exception occurred when clearing cookies:", LoggingLevel.Critical);
+                        LoggingService.Log("Exception occurred when clearing cookies", LoggingLevel.Critical);
                         LoggingService.Log(ex, LoggingLevel.Critical);
                     }
 

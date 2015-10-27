@@ -24,14 +24,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Salesforce.SDK.Logging
+
+using System;
+
+namespace Salesforce.SDK.Auth
 {
-    public enum LoggingLevel
+    public class AuthenticatedAccountChangedEventArgs : EventArgs
     {
-        Verbose,
-        Critical,
-        Warning,
-        Information,
-        Error
+        /// <summary>
+        /// The newly logged in account. Or null if no account is logged in (meaning that a logout took place).
+        /// </summary>
+        public Account NewAccount { get; private set; }
+
+        /// <summary>
+        /// The previous account that was logged in.
+        /// </summary>
+        public Account OldAccount { get; private set; }
+
+        public AuthenticatedAccountChangedEventArgs(Account oldAccount, Account newAccount)
+        {
+            OldAccount = oldAccount;
+            NewAccount = newAccount;
+        }
     }
 }

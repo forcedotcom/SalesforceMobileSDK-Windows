@@ -24,14 +24,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-namespace Salesforce.SDK.Logging
+
+using System.Net.Http;
+using System.Threading.Tasks;
+
+namespace Salesforce.SDK.Rest
 {
-    public enum LoggingLevel
+    public interface IRestClient
     {
-        Verbose,
-        Critical,
-        Warning,
-        Information,
-        Error
+        string InstanceUrl { get; }
+        string AccessToken { get; }
+        Task<IRestResponse> SendAsync(HttpMethod method, string url);
+        void SendAsync(RestRequest request, AsyncRequestCallback callback);
+        Task<IRestResponse> SendAsync(RestRequest request);
     }
 }

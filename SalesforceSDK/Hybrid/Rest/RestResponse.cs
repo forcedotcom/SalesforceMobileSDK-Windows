@@ -9,7 +9,7 @@ namespace Salesforce.SDK.Hybrid.Rest
 {
     public sealed class RestResponse
     {
-        private SDK.Rest.RestResponse _response;
+        private SDK.Rest.IRestResponse _response;
         private string _responseBody;
 
         public RestResponse()
@@ -17,7 +17,7 @@ namespace Salesforce.SDK.Hybrid.Rest
             
         }
 
-        internal RestResponse(SDK.Rest.RestResponse response)
+        internal RestResponse(SDK.Rest.IRestResponse response)
         {
             _response = response;
             _responseBody = _response.AsString;
