@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceOAuthProxy", function(require, exports, module) { /*
+/*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -24,7 +24,7 @@ cordova.define("com.salesforce.SalesforceOAuthProxy", function(require, exports,
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
 var SERVICE = "com.salesforce.oauth";
 
 var exec = require("com.salesforce.util.exec").exec;
@@ -75,5 +75,3 @@ module.exports = {
 };
 
 require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
-
-});
