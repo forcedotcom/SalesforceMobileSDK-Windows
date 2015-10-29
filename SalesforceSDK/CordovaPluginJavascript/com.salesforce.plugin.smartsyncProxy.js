@@ -1,5 +1,4 @@
-cordova.define("com.salesforce.SalesforceSmartSyncProxy", function(require, exports, module) {
-  /* Copyright (c) 2015, salesforce.com, inc.
+ /* Copyright (c) 2015, salesforce.com, inc.
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without modification, are permitted provided
@@ -24,7 +23,7 @@ cordova.define("com.salesforce.SalesforceSmartSyncProxy", function(require, expo
   * POSSIBILITY OF SUCH DAMAGE.
   */
 
-     var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+     var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
      var SERVICE = "com.salesforce.smartsync";
      var manager = Salesforce.SDK.Hybrid.SmartSync;
      var exec = require("com.salesforce.util.exec").exec;
@@ -118,4 +117,3 @@ cordova.define("com.salesforce.SalesforceSmartSyncProxy", function(require, expo
        getSyncStatus: getSyncStatus
      };
      require("cordova/exec/proxy").add(SERVICE, module.exports);
-});
