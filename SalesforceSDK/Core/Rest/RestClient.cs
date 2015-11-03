@@ -98,11 +98,6 @@ namespace Salesforce.SDK.Rest
                     new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute()
                         .ConfigureAwait(false);
 
-            if (!call.HasResponse)
-            {
-                throw call.Error;
-            }
-
             if (call.StatusCode == HttpStatusCode.Unauthorized || call.StatusCode == HttpStatusCode.Forbidden)
             {
                 if (retryInvalidToken && _accessTokenProvider != null)
