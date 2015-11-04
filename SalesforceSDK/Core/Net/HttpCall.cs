@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Salesforce.SDK.Logging;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Utilities;
 using Salesforce.SDK.Settings;
 
@@ -98,7 +99,7 @@ namespace Salesforce.SDK.Net
         private readonly HttpMethod _method;
         private readonly string _requestBody;
         private readonly string _url;
-        private readonly HttpClient _webClient;
+        private readonly HttpClient _httpClient;
         private Exception _httpCallErrorException;
         private string _responseBodyText;
         private HttpStatusCode _statusCodeValue;
@@ -120,7 +121,7 @@ namespace Salesforce.SDK.Net
                 AutomaticDecompression = DecompressionMethods.None,
             };
 
-            _webClient = new HttpClient(handler);
+            _httpClient = new HttpClient(handler);
 
             _method = method;
             _headers = headers;
@@ -137,10 +138,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         ///     True if HTTP request has been executed
         /// </summary>
-        public bool Executed
-        {
-            get { return (_responseBodyText != null || _httpCallErrorException != null); }
-        }
+        public bool Executed => (_responseBodyText != null || _httpCallErrorException != null);
 
         /// <summary>
         ///     True if HTTP request was successfully executed
@@ -169,10 +167,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         ///     True if the HTTP response returned by the server had a body
         /// </summary>
-        public bool HasResponse
-        {
-            get { return _responseBodyText != null; }
-        }
+        public bool HasResponse => _responseBodyText != null;
 
         /// <summary>
         ///     Body of the HTTP response returned by the server
@@ -258,13 +253,21 @@ namespace Salesforce.SDK.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> ExecuteAndDeserialize<T>()
+        public async Task<T> ExecuteAndDeserializeAsync<T>()
         {
-            HttpCall call = await Execute().ConfigureAwait(false);
+            var call = await ExecuteAsync().ConfigureAwait(false);
             if (call.Success)
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);
             }
+
+            if (!HasResponse)
+            {
+                // treat non-success calls with empty bodies as offline exceptions since the
+                // call was not able to go out
+                throw new DeviceOfflineException("Response does not have a body", call.Error);
+            }
+
             throw call.Error;
         }
 
@@ -275,7 +278,7 @@ namespace Salesforce.SDK.Net
         ///     InvalidOperationException.
         /// </summary>
         /// <returns>HttpCall with populated data</returns>
-        public async Task<HttpCall> Execute()
+        public async Task<HttpCall> ExecuteAsync()
         {
             if (Executed)
             {
@@ -298,7 +301,7 @@ namespace Salesforce.SDK.Net
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
                 UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync();
-                    }
+            }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
             {
@@ -314,21 +317,30 @@ namespace Salesforce.SDK.Net
                 }
             }
             HttpResponseMessage message;
+
             try
             {
-                message = await _webClient.SendAsync(req);
-                HandleMessageResponse(message);
+                message = await _httpClient.SendAsync(req);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                _httpCallErrorException = ex;
+                _httpCallErrorException = new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
                 message = null;
+                return this;
             }
+
+            await HandleMessageResponseAsync(message);
+
             return this;
         }
 
-        private async void HandleMessageResponse(HttpResponseMessage response)
+        private async Task HandleMessageResponseAsync(HttpResponseMessage response)
         {
+            if (response == null)
+            {
+                throw new ArgumentException("Response message cannot be null", nameof(response));
+            }
+
             // End the operation
             try
             {
@@ -336,36 +348,40 @@ namespace Salesforce.SDK.Net
             }
             catch (Exception ex)
             {
-                _httpCallErrorException = ex;
+                // if we are offline and fiddler is running, we will get a BadGateway so wrap the exception in
+                // a DeviceOfflineException
+
+                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway
+                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex)
+                    : ex;
             }
 
-            if (response != null)
+            if (response.IsSuccessStatusCode)
             {
-                if (response.IsSuccessStatusCode)
-                {
                 _responseBodyText = await response.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    _responseBodyText = response.ReasonPhrase;
-        }
-                _statusCodeValue = response.StatusCode;
-                response.Dispose();
-        }
+            }
+            else
+            {
+                _responseBodyText = response.ReasonPhrase;
+            }
+            _statusCodeValue = response.StatusCode;
+            response.Dispose();
         }
 
         public void Dispose()
         {
-            if (_webClient != null)
+            if (_httpClient == null)
             {
-                try
-                {
-                    _webClient.Dispose();
-                }
-                catch (Exception)
-                {
-                     SDKServiceLocator.Get<ILoggingService>().Log("Error occurred while disposing", LoggingLevel.Warning);
-                }
+                return;
+            }
+
+            try
+            {
+                _httpClient.Dispose();
+            }
+            catch (Exception)
+            {
+                SDKServiceLocator.Get<ILoggingService>().Log("Error occurred while disposing", LoggingLevel.Warning);
             }
         }
     }

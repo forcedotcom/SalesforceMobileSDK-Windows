@@ -54,7 +54,7 @@ namespace Salesforce.SDK.Rest
                 LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
                 AuthHelper.ClearCookies(options);
-                bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
+                bool loggedOut = await OAuth2.RevokeAuthTokenAsync(options, account.RefreshToken);
                 if (loggedOut)
                 {
                     GetRestClient();
@@ -78,11 +78,8 @@ namespace Salesforce.SDK.Rest
                     async () =>
                     {
                         account = AccountManager.GetAccount();
-                        AuthResponse authResponse =
-                            await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                        account.AccessToken = authResponse.AccessToken;
+                        account = await OAuth2.RefreshAuthTokenAsync(account);
 
-                        await AuthHelper.PersistCredentialsAsync(account);
                         return account.AccessToken;
                     }
                     );

@@ -24,54 +24,16 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
 using System;
-using System.Net;
-using Newtonsoft.Json.Linq;
 
-namespace Salesforce.SDK.Rest
+namespace Salesforce.SDK.Exceptions
 {
-    public interface IRestResponse
+    public class DeviceOfflineException : Exception
     {
-        /// <summary>
-        /// True if REST request was successfully executed
-        /// </summary>
-        bool HasResponse { get; }
+        public DeviceOfflineException() : base() { }
 
-        /// <summary>
-        /// True if REST request was successfully executed
-        /// </summary>
-        bool Success { get; }
+        public DeviceOfflineException(string msg) : base(msg) { }
 
-        /// <summary>
-        /// Error that was raised if REST request did not execute successfully
-        /// </summary>
-        Exception Error { get; }
-
-        /// <summary>
-        /// Body of the REST response returned by the server as a string
-        /// </summary>
-        string AsString { get; }
-
-        /// <summary>
-        /// Body of the REST response returned by the server as a JArray
-        /// </summary>
-        JArray AsJArray { get; }
-
-        /// <summary>
-        /// Body of the REST response returned by the server as a JObject
-        /// </summary>
-        JObject AsJObject { get; }
-
-        /// <summary>
-        /// HTTP status code fo the response returned by the server
-        /// </summary>
-        HttpStatusCode StatusCode { get; }
-
-        /// <summary>
-        /// Body of the REST response returned by the server as a
-        /// formatted JObject, JArray, or string
-        /// </summary>
-        string PrettyBody { get; }
+        public DeviceOfflineException(string msg, Exception innerException) : base(msg, innerException) { }
     }
 }
