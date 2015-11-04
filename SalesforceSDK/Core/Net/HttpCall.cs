@@ -99,7 +99,7 @@ namespace Salesforce.SDK.Net
         private readonly HttpMethod _method;
         private readonly string _requestBody;
         private readonly string _url;
-        private readonly HttpClient _webClient;
+        private readonly HttpClient _httpClient;
         private Exception _httpCallErrorException;
         private string _responseBodyText;
         private HttpStatusCode _statusCodeValue;
@@ -121,7 +121,7 @@ namespace Salesforce.SDK.Net
                 AutomaticDecompression = DecompressionMethods.None,
             };
 
-            _webClient = new HttpClient(handler);
+            _httpClient = new HttpClient(handler);
 
             _method = method;
             _headers = headers;
@@ -138,10 +138,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         ///     True if HTTP request has been executed
         /// </summary>
-        public bool Executed
-        {
-            get { return (_responseBodyText != null || _httpCallErrorException != null); }
-        }
+        public bool Executed => (_responseBodyText != null || _httpCallErrorException != null);
 
         /// <summary>
         ///     True if HTTP request was successfully executed
@@ -170,10 +167,7 @@ namespace Salesforce.SDK.Net
         /// <summary>
         ///     True if the HTTP response returned by the server had a body
         /// </summary>
-        public bool HasResponse
-        {
-            get { return _responseBodyText != null; }
-        }
+        public bool HasResponse => _responseBodyText != null;
 
         /// <summary>
         ///     Body of the HTTP response returned by the server
@@ -261,7 +255,7 @@ namespace Salesforce.SDK.Net
         /// <returns></returns>
         public async Task<T> ExecuteAndDeserializeAsync<T>()
         {
-            HttpCall call = await ExecuteAsync().ConfigureAwait(false);
+            var call = await ExecuteAsync().ConfigureAwait(false);
             if (call.Success)
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);
@@ -326,7 +320,7 @@ namespace Salesforce.SDK.Net
 
             try
             {
-                message = await _webClient.SendAsync(req);
+                message = await _httpClient.SendAsync(req);
             }
             catch (HttpRequestException ex)
             {
@@ -376,16 +370,18 @@ namespace Salesforce.SDK.Net
 
         public void Dispose()
         {
-            if (_webClient != null)
+            if (_httpClient == null)
             {
-                try
-                {
-                    _webClient.Dispose();
-                }
-                catch (Exception)
-                {
-                     SDKServiceLocator.Get<ILoggingService>().Log("Error occurred while disposing", LoggingLevel.Warning);
-                }
+                return;
+            }
+
+            try
+            {
+                _httpClient.Dispose();
+            }
+            catch (Exception)
+            {
+                SDKServiceLocator.Get<ILoggingService>().Log("Error occurred while disposing", LoggingLevel.Warning);
             }
         }
     }
