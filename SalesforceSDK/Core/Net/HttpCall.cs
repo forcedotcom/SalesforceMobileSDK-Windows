@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using Salesforce.SDK.Logging;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Utilities;
 using Salesforce.SDK.Settings;
 
@@ -265,6 +266,12 @@ namespace Salesforce.SDK.Net
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);
             }
+
+            if (!HasResponse)
+            {
+                throw new DeviceOfflineException("Response does not have a body", call.Error);
+            }
+
             throw call.Error;
         }
 
@@ -298,7 +305,7 @@ namespace Salesforce.SDK.Net
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
                 UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync();
-                    }
+            }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
             {
@@ -314,20 +321,24 @@ namespace Salesforce.SDK.Net
                 }
             }
             HttpResponseMessage message;
+
             try
             {
                 message = await _webClient.SendAsync(req);
-                HandleMessageResponse(message);
             }
-            catch (Exception ex)
+            catch (HttpRequestException ex)
             {
-                _httpCallErrorException = ex;
+                _httpCallErrorException = new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
                 message = null;
+                return this;
             }
+
+            await HandleMessageResponse(message);
+
             return this;
         }
 
-        private async void HandleMessageResponse(HttpResponseMessage response)
+        private async Task HandleMessageResponse(HttpResponseMessage response)
         {
             // End the operation
             try
@@ -336,22 +347,24 @@ namespace Salesforce.SDK.Net
             }
             catch (Exception ex)
             {
-                _httpCallErrorException = ex;
+                // if we are offline and fiddler is running, we will get a BadGateway so wrap the exception in
+                // a DeviceOfflineException
+
+                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway
+                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex)
+                    : ex;
             }
 
-            if (response != null)
+            if (response.IsSuccessStatusCode)
             {
-                if (response.IsSuccessStatusCode)
-                {
                 _responseBodyText = await response.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    _responseBodyText = response.ReasonPhrase;
-        }
-                _statusCodeValue = response.StatusCode;
-                response.Dispose();
-        }
+            }
+            else
+            {
+                _responseBodyText = response.ReasonPhrase;
+            }
+            _statusCodeValue = response.StatusCode;
+            response.Dispose();
         }
 
         public void Dispose()

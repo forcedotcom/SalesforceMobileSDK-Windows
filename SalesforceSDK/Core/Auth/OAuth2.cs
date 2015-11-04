@@ -290,31 +290,6 @@ namespace Salesforce.SDK.Auth
         }
 
         /// <summary>
-        ///     Async method to make the request for a new auth token.  Method returns an AuthResponse with the data returned back
-        ///     from
-        ///     Salesforce.
-        /// </summary>
-        /// <param name="loginOptions"></param>
-        /// <param name="refreshToken"></param>
-        /// <returns></returns>
-        public static async Task<AuthResponse> RefreshAuthTokenRequest(LoginOptions loginOptions, string refreshToken)
-        {
-            LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
-
-            // Args
-            string argsStr = string.Format(OauthRefreshQueryString, new[] {loginOptions.ClientId, refreshToken});
-
-            // Refresh url
-            string refreshUrl = loginOptions.LoginUrl + OauthRefreshPath;
-
-            // Post
-            HttpCall c = HttpCall.CreatePost(refreshUrl, argsStr);
-
-            // Execute post
-            return await c.ExecuteAndDeserialize<AuthResponse>();
-        }
-
-        /// <summary>
         ///     Async method for refreshing the token, persisting the data in the encrypted settings and returning the updated
         ///     account
         ///     with the new access token.
@@ -323,30 +298,53 @@ namespace Salesforce.SDK.Auth
         /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
         public static async Task<Account> RefreshAuthToken(Account account)
         {
-            if (account != null)
+            LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
+
+            if (account == null)
             {
-                try
-                {
-                    AuthResponse response =
-                        await RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                    account.AccessToken = response.AccessToken;
-                    await SDKServiceLocator.Get<IAuthHelper>().PersistCredentialsAsync(account);
-                }
-                catch (WebException ex)
-                {
-                    LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
-                    LoggingService.Log(ex, LoggingLevel.Critical);
-                    Debug.WriteLine("Error refreshing token");
-                    throw new OAuthException(ex.Message, ex.Status);
-                }
-                catch (Exception ex)
-                {
-                    LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
-                    LoggingService.Log(ex, LoggingLevel.Critical);
-                    Debug.WriteLine("Error refreshing token");
-                    throw new OAuthException(ex.Message, ex.InnerException);
-                }
+                return null;
             }
+
+            try
+            {
+                var loginOptions = account.GetLoginOptions();
+
+                // args
+                var argsStr = string.Format(OauthRefreshQueryString, loginOptions.ClientId, account.RefreshToken);
+
+                // Refresh url
+                var refreshUrl = loginOptions.LoginUrl + OauthRefreshPath;
+
+                // Post
+                var call = HttpCall.CreatePost(refreshUrl, argsStr);
+
+                var response = await call.ExecuteAndDeserialize<AuthResponse>();
+
+                account.AccessToken = response.AccessToken;
+
+                await SDKServiceLocator.Get<IAuthHelper>().PersistCredentialsAsync(account);
+            }
+            catch (DeviceOfflineException ex)
+            {
+                LoggingService.Log("Failed to refresh the token because we were offline", LoggingLevel.Warning);
+                LoggingService.Log(ex, LoggingLevel.Warning);
+                throw;
+            }
+            catch (WebException ex)
+            {
+                LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical);
+                Debug.WriteLine("Error refreshing token");
+                throw new OAuthException(ex.Message, ex);
+            }
+            catch (Exception ex)
+            {
+                LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical);
+                Debug.WriteLine("Error refreshing token");
+                throw new OAuthException(ex.Message, ex);
+            }
+
             return account;
         }
 

@@ -78,11 +78,8 @@ namespace Salesforce.SDK.Rest
                     async () =>
                     {
                         account = AccountManager.GetAccount();
-                        AuthResponse authResponse =
-                            await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                        account.AccessToken = authResponse.AccessToken;
+                        account = await OAuth2.RefreshAuthToken(account);
 
-                        await AuthHelper.PersistCredentialsAsync(account);
                         return account.AccessToken;
                     }
                     );
