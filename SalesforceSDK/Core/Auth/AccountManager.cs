@@ -93,7 +93,7 @@ namespace Salesforce.SDK.Auth
                 if (client != null)
                 {
                     AuthStorageHelper.ClearCookies(account.GetLoginOptions());
-                    IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
+                    IdentityResponse identity = await OAuth2.CallIdentityServiceAsync(account.IdentityUrl, client);
                     if (identity != null)
                     {
                         account.UserId = identity.UserId;
@@ -140,7 +140,7 @@ namespace Salesforce.SDK.Auth
             IdentityResponse identity = null;
             try
             {
-                identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+                identity = await OAuth2.CallIdentityServiceAsync(authResponse.IdentityUrl, authResponse.AccessToken);
             }
             catch (JsonException ex)
             {

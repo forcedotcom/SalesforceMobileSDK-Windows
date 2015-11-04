@@ -259,9 +259,9 @@ namespace Salesforce.SDK.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> ExecuteAndDeserialize<T>()
+        public async Task<T> ExecuteAndDeserializeAsync<T>()
         {
-            HttpCall call = await Execute().ConfigureAwait(false);
+            HttpCall call = await ExecuteAsync().ConfigureAwait(false);
             if (call.Success)
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);
@@ -284,7 +284,7 @@ namespace Salesforce.SDK.Net
         ///     InvalidOperationException.
         /// </summary>
         /// <returns>HttpCall with populated data</returns>
-        public async Task<HttpCall> Execute()
+        public async Task<HttpCall> ExecuteAsync()
         {
             if (Executed)
             {
@@ -335,13 +335,18 @@ namespace Salesforce.SDK.Net
                 return this;
             }
 
-            await HandleMessageResponse(message);
+            await HandleMessageResponseAsync(message);
 
             return this;
         }
 
-        private async Task HandleMessageResponse(HttpResponseMessage response)
+        private async Task HandleMessageResponseAsync(HttpResponseMessage response)
         {
+            if (response == null)
+            {
+                throw new ArgumentException("Response message cannot be null", nameof(response));
+            }
+
             // End the operation
             try
             {

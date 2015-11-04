@@ -296,7 +296,7 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="account"></param>
         /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
-        public static async Task<Account> RefreshAuthToken(Account account)
+        public static async Task<Account> RefreshAuthTokenAsync(Account account)
         {
             LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
 
@@ -318,7 +318,7 @@ namespace Salesforce.SDK.Auth
                 // Post
                 var call = HttpCall.CreatePost(refreshUrl, argsStr);
 
-                var response = await call.ExecuteAndDeserialize<AuthResponse>();
+                var response = await call.ExecuteAndDeserializeAsync<AuthResponse>();
 
                 account.AccessToken = response.AccessToken;
 
@@ -355,7 +355,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
         /// <returns>true if successful</returns>
-        public static async Task<bool> RevokeAuthToken(LoginOptions loginOptions, string refreshToken)
+        public static async Task<bool> RevokeAuthTokenAsync(LoginOptions loginOptions, string refreshToken)
         {
             // Args
             string argsStr = string.Format(OauthRevokeQueryString, new[] {WebUtility.UrlEncode(refreshToken)});
@@ -366,8 +366,8 @@ namespace Salesforce.SDK.Auth
             // Post
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
-            // Execute post
-            HttpCall result = await c.Execute().ConfigureAwait(false);
+            // ExecuteAsync post
+            HttpCall result = await c.ExecuteAsync().ConfigureAwait(false);
 
             LoggingService.Log($"result.StatusCode = {result.StatusCode}", LoggingLevel.Verbose);
 
@@ -390,7 +390,7 @@ namespace Salesforce.SDK.Auth
         /// <param name="idUrl"></param>
         /// <param name="accessToken"></param>
         /// <returns></returns>
-        public static async Task<IdentityResponse> CallIdentityService(string idUrl, string accessToken)
+        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, string accessToken)
         {
             LoggingService.Log("Calling identity service", LoggingLevel.Verbose);
 
@@ -399,11 +399,11 @@ namespace Salesforce.SDK.Auth
             // Get
             HttpCall c = HttpCall.CreateGet(headers, idUrl);
 
-            // Execute get
-            return await c.ExecuteAndDeserialize<IdentityResponse>();
+            // ExecuteAsync get
+            return await c.ExecuteAndDeserializeAsync<IdentityResponse>();
         }
 
-        public static async Task<IdentityResponse> CallIdentityService(string idUrl, IRestClient client)
+        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, IRestClient client)
         {
             var request = new RestRequest(HttpMethod.Get, new Uri(idUrl).AbsolutePath);
             var response = await client.SendAsync(request);
