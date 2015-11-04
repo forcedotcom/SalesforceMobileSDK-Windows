@@ -269,6 +269,8 @@ namespace Salesforce.SDK.Net
 
             if (!HasResponse)
             {
+                // treat non-success calls with empty bodies as offline exceptions since the
+                // call was not able to go out
                 throw new DeviceOfflineException("Response does not have a body", call.Error);
             }
 
