@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceCore", function(require, exports, module) { /*
+/*
 * Copyright (c) 2015, salesforce.com, inc.
 * All rights reserved.
 *
@@ -201,4 +201,4 @@ module.exports = {
    SalesforceJS : SalesforceJS
 };
 //# sourceMappingURL=salesforce.windows.core.js.map
-});
+require("cordova/exec/proxy").add("com.salesforce.SalesforceCore", module.exports);

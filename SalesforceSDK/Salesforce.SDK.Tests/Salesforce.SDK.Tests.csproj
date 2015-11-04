@@ -121,9 +121,6 @@
     <SDKReference Include="MSTestFramework.Universal, Version=14.0">
       <Name>MSTest for Managed Projects</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.UAP.2015, Version=3.8.11.1">
-      <Name>SQLite for Universal App Platform %28SQLite.UAP.2015, Version=3.8.11.1%29</Name>
-    </SDKReference>
     <SDKReference Include="TestPlatform.Universal, Version=14.0">
       <Name>Microsoft Visual Studio Test Core</Name>
     </SDKReference>
