@@ -324,8 +324,14 @@ namespace Salesforce.SDK.Net
             }
             catch (HttpRequestException ex)
             {
-                _httpCallErrorException = new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
-                message = null;
+                _httpCallErrorException =
+                    new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
+                return this;
+            }
+            catch (WebException ex)
+            {
+                _httpCallErrorException =
+                    new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
                 return this;
             }
 
@@ -351,8 +357,8 @@ namespace Salesforce.SDK.Net
                 // if we are offline and fiddler is running, we will get a BadGateway so wrap the exception in
                 // a DeviceOfflineException
 
-                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway
-                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex)
+                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway 
+                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex) 
                     : ex;
             }
 
