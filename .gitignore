@@ -1,5 +1,7 @@
 # Nuget files to ignore
 project.lock.json
+*.nuget.targets
+*.nuget.props
 
 obj/
 bin/
