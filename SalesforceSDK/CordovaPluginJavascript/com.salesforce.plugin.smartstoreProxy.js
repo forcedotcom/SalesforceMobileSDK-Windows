@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, exports, module) { /*
+/*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -24,7 +24,7 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-    var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+    var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
     var SERVICE = "com.salesforce.smartstore";
     var smartStore = Salesforce.SDK.Hybrid.SmartStore;
     var exec = require("com.salesforce.util.exec").exec;
@@ -441,4 +441,3 @@ cordova.define("com.salesforce.SalesforceSmartStoreProxy", function (require, ex
     };
 
     require("cordova/exec/proxy").add(SERVICE, module.exports);
-});

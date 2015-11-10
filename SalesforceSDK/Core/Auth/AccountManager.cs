@@ -25,6 +25,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -42,6 +43,23 @@ namespace Salesforce.SDK.Auth
     {
         private static IAuthHelper AuthStorageHelper => SDKServiceLocator.Get<IAuthHelper>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
+
+        /// <summary>
+        /// This event notifies consumers that the authenticated account has changed.
+        /// </summary>
+        public static event AuthenticatedAccountChangedHandler AuthenticatedAccountChanged;
+        public delegate void AuthenticatedAccountChangedHandler(AuthenticatedAccountChangedEventArgs e);
+
+        /// <summary>
+        /// Raises the account changed event. This method exists because AuthStorageHelper truly knows when
+        /// an account changes but the event belongs in the AccountManager class, so this method is necessary
+        /// to enable AuthStorageHelper to raise that event.
+        /// </summary>
+        public static void RaiseAuthenticatedAccountChangedEvent(Account oldAccount, Account newAccount)
+        {
+            AuthenticatedAccountChanged?.Invoke(new AuthenticatedAccountChangedEventArgs(oldAccount, newAccount));
+        }
+
         /// <summary>
         ///     Delete Account for currently authenticated user
         /// </summary>
@@ -71,11 +89,11 @@ namespace Salesforce.SDK.Auth
             {
                 AuthStorageHelper.SavePinTimer();
                 await AuthStorageHelper.PersistCredentialsAsync(account);
-                RestClient client = SDKManager.GlobalClientManager.PeekRestClient();
+                var client = SDKManager.GlobalClientManager.PeekRestClient();
                 if (client != null)
                 {
                     AuthStorageHelper.ClearCookies(account.GetLoginOptions());
-                    IdentityResponse identity = await OAuth2.CallIdentityService(account.IdentityUrl, client);
+                    IdentityResponse identity = await OAuth2.CallIdentityServiceAsync(account.IdentityUrl, client);
                     if (identity != null)
                     {
                         account.UserId = identity.UserId;
@@ -122,7 +140,7 @@ namespace Salesforce.SDK.Auth
             IdentityResponse identity = null;
             try
             {
-                identity = await OAuth2.CallIdentityService(authResponse.IdentityUrl, authResponse.AccessToken);
+                identity = await OAuth2.CallIdentityServiceAsync(authResponse.IdentityUrl, authResponse.AccessToken);
             }
             catch (JsonException ex)
             {

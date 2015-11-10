@@ -33,7 +33,7 @@ using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
-    public class RestResponse
+    public class RestResponse : IRestResponse
     {
         private readonly HttpCall _call;
         private string _prettyBody;
@@ -44,6 +44,8 @@ namespace Salesforce.SDK.Rest
         {
             _call = call;
         }
+
+        public bool HasResponse { get { return _call.HasResponse; } }
 
         public bool Success
         {

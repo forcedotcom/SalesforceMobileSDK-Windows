@@ -50,7 +50,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         private static volatile Dictionary<string, SyncManager> _instances;
         private static readonly object Synclock = new Object();
         public readonly string ApiVersion;
-        public readonly RestClient RestClient;
+        public readonly IRestClient RestClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         /// </summary>
         /// <param name="smartStore"></param>
         /// <param name="client"></param>
-        private SyncManager(SmartStore.Store.SmartStore smartStore, RestClient client)
+        private SyncManager(SmartStore.Store.SmartStore smartStore, IRestClient client)
         {
             ApiVersion = ApiVersionStrings.VersionNumber;
             _smartStore = smartStore;
@@ -460,7 +460,7 @@ namespace Salesforce.SDK.SmartSync.Manager
             }
         }
 
-        public async Task<RestResponse> SendRestRequest(RestRequest request)
+        public async Task<IRestResponse> SendRestRequest(RestRequest request)
         {
             return await RestClient.SendAsync(request);
         }

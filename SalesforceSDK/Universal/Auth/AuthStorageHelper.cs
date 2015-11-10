@@ -69,8 +69,18 @@ namespace Salesforce.SDK.Auth
         {
             set
             {
+                var oldAccount = _currentAccount;
                 _lastSetAccount = DateTime.Now;
                 _currentAccount = value;
+
+                // Raise the event in AccountManager if this is a different account.
+                // This check is necessary as sometimes CurrentAccount.Set is called
+                // even if the same account was already set, so use the unique combo of
+                // InstanceUrl and UserId to tell if the account has actually changed (login/logout).
+                if (oldAccount?.InstanceUrl != value?.InstanceUrl && oldAccount?.UserId != value?.UserId)
+                {
+                    AccountManager.RaiseAuthenticatedAccountChangedEvent(oldAccount, value);
+                }
             }
             get
             {
@@ -331,6 +341,12 @@ namespace Salesforce.SDK.Auth
         /// <param name="id"></param>
         internal void DeletePersistedCredentials(string userName, string id)
         {
+            // if this is the current account then update the property so event will get raised
+            if (userName == CurrentAccount?.UserName && id == CurrentAccount?.UserId)
+            {
+                CurrentAccount = null;
+            }
+
             IEnumerable<PasswordCredential> creds = SafeRetrieveUser(userName);
             if (creds != null)
             {

@@ -54,7 +54,7 @@ namespace Salesforce.SDK.Rest
                 LoginOptions options = account.GetLoginOptions();
                 AccountManager.DeleteAccount();
                 AuthHelper.ClearCookies(options);
-                bool loggedOut = await OAuth2.RevokeAuthToken(options, account.RefreshToken);
+                bool loggedOut = await OAuth2.RevokeAuthTokenAsync(options, account.RefreshToken);
                 if (loggedOut)
                 {
                     GetRestClient();
@@ -69,7 +69,7 @@ namespace Salesforce.SDK.Rest
         ///     Returns a RestClient if user is already authenticated or null
         /// </summary>
         /// <returns></returns>
-        public RestClient PeekRestClient()
+        public IRestClient PeekRestClient()
         {
             Account account = AccountManager.GetAccount();
             if (account != null)
@@ -78,11 +78,8 @@ namespace Salesforce.SDK.Rest
                     async () =>
                     {
                         account = AccountManager.GetAccount();
-                        AuthResponse authResponse =
-                            await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                        account.AccessToken = authResponse.AccessToken;
+                        account = await OAuth2.RefreshAuthTokenAsync(account);
 
-                        await AuthHelper.PersistCredentialsAsync(account);
                         return account.AccessToken;
                     }
                     );
@@ -94,9 +91,9 @@ namespace Salesforce.SDK.Rest
         ///     Returns a RestClient if user is already authenticated or otherwise kicks off a login flow
         /// </summary>
         /// <returns></returns>
-        public RestClient GetRestClient()
+        public IRestClient GetRestClient()
         {
-            RestClient restClient = PeekRestClient();
+            var restClient = PeekRestClient();
             if (restClient == null)
             {
                 try
@@ -112,7 +109,7 @@ namespace Salesforce.SDK.Rest
             return restClient;
         }
 
-        public RestClient GetUnAuthenticatedRestClient(string instanceUrl)
+        public IRestClient GetUnAuthenticatedRestClient(string instanceUrl)
         {
             return new RestClient(instanceUrl);
         }

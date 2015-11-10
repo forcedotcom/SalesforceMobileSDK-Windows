@@ -1,4 +1,4 @@
-cordova.define("com.salesforce.SalesforceAccountManagerProxy", function(require, exports, module) { /*
+ /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -24,7 +24,7 @@ cordova.define("com.salesforce.SalesforceAccountManagerProxy", function(require,
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
 var SERVICE = "com.salesforce.sfaccountmanager";
 
 var exec = require("com.salesforce.util.exec").exec;
@@ -56,7 +56,7 @@ var getUsers = function (successCB, errorCB, args) {
 };
 
 var getCurrentUser = function (successCB, errorCB, args) {
-    var user = oauth2.getCurrentUser();
+    var user = oauth2.getUser(successCB, errorCB);
     if (user)
     {
         successCB(user);
@@ -90,5 +90,3 @@ module.exports = {
 };
 
 require("cordova/exec/proxy").add(SERVICE, module.exports);
-
-});

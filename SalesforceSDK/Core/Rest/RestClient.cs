@@ -33,11 +33,11 @@ using Salesforce.SDK.Net;
 
 namespace Salesforce.SDK.Rest
 {
-    public delegate void AsyncRequestCallback(RestResponse response);
+    public delegate void AsyncRequestCallback(IRestResponse response);
 
     public delegate Task<string> AccessTokenProvider();
 
-    public class RestClient
+    public class RestClient : IRestClient
     {
         private readonly AccessTokenProvider _accessTokenProvider;
 
@@ -58,63 +58,52 @@ namespace Salesforce.SDK.Rest
             _instanceUrl = instanceUrl;
         }
 
-        public string InstanceUrl
-        {
-            get { return _instanceUrl; }
-        }
+        public string InstanceUrl => _instanceUrl;
 
-        public string AccessToken
-        {
-            get { return _accessToken; }
-        }
+        public string AccessToken => _accessToken;
 
-        public async Task<RestResponse> SendAsync(HttpMethod method, string url)
+        public async Task<IRestResponse> SendAsync(HttpMethod method, string url)
         {
             return await SendAsync(new RestRequest(method, url));
         }
 
         public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
         {
-            RestResponse result = await SendAsync(request).ConfigureAwait(false);
-            if (callback != null)
-            {
-                callback(result);
-            }
+            var result = await SendAsync(request).ConfigureAwait(false);
+            callback?.Invoke(result);
         }
 
-        public async Task<RestResponse> SendAsync(RestRequest request)
+        public async Task<IRestResponse> SendAsync(RestRequest request)
         {
-            HttpCall result = await Send(request, true);
+            var result = await SendAsync(request, true);
             return new RestResponse(result);
         }
 
-        private async Task<HttpCall> Send(RestRequest request, bool retryInvalidToken)
+        private async Task<HttpCall> SendAsync(RestRequest request, bool retryInvalidToken)
         {
-            string url = _instanceUrl + request.Path;
+            var url = _instanceUrl + request.Path;
             var headers = request.AdditionalHeaders != null ? new HttpCallHeaders(_accessToken, request.AdditionalHeaders) : new HttpCallHeaders(_accessToken, new Dictionary<string, string>());
 
-            HttpCall call =
+            var call =
                 await
-                    new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).Execute()
+                    new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).ExecuteAsync()
                         .ConfigureAwait(false);
 
-            if (!call.HasResponse)
+            if (call.StatusCode != HttpStatusCode.Unauthorized && call.StatusCode != HttpStatusCode.Forbidden)
             {
-                throw call.Error;
+                return call;
             }
 
-            if (call.StatusCode == HttpStatusCode.Unauthorized || call.StatusCode == HttpStatusCode.Forbidden)
+            if (!retryInvalidToken || _accessTokenProvider == null) return call;
+
+            var newAccessToken = await _accessTokenProvider();
+            if (newAccessToken == null)
             {
-                if (retryInvalidToken && _accessTokenProvider != null)
-                {
-                    string newAccessToken = await _accessTokenProvider();
-                    if (newAccessToken != null)
-                    {
-                        _accessToken = newAccessToken;
-                        call = await Send(request, false);
-                    }
-                }
+                return call;
             }
+                
+            _accessToken = newAccessToken;
+            call = await SendAsync(request, false);
 
             // Done
             return call;

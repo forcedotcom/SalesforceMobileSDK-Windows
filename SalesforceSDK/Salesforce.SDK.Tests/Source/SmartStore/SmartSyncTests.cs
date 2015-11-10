@@ -55,7 +55,7 @@ namespace Salesforce.SDK.SmartStore.Store
         private const string AccountsSoup = "accounts";
         private const int CountTestAccounts = 10;
         private static SyncManager _syncManager;
-        private static RestClient _restClient;
+        private static IRestClient _restClient;
         private static SmartStore _smartStore;
         private static readonly string[] TestScopes = { "web" };
         private static Dictionary<string, string> _idToNames;
@@ -83,7 +83,7 @@ namespace Salesforce.SDK.SmartStore.Store
             Account account = await AccountManager.CreateNewAccount(options, response);
             account.UserId = TestCredentials.UserId;
             account.UserName = TestCredentials.Username;
-            await OAuth2.RefreshAuthToken(account);
+            await OAuth2.RefreshAuthTokenAsync(account);
             _smartStore = SmartStore.GetSmartStore();
             _smartStore.ResetDatabase();
             _syncManager = SyncManager.GetInstance();
@@ -91,9 +91,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 async () =>
                 {
                     account = AccountManager.GetAccount();
-                    AuthResponse authResponse =
-                        await OAuth2.RefreshAuthTokenRequest(account.GetLoginOptions(), account.RefreshToken);
-                    account.AccessToken = authResponse.AccessToken;
+                    account = await OAuth2.RefreshAuthTokenAsync(account);
                     return account.AccessToken;
                 }
                 );
@@ -212,8 +210,8 @@ namespace Salesforce.SDK.SmartStore.Store
                 Assert.AreEqual(false, soupElt.ExtractValue<bool>(SyncManager.LocallyUpdated), "Wrong local flag");
             }
             string soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
-            RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
-            RestResponse response = await _restClient.SendAsync(request);
+            var request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
+            var response = await _restClient.SendAsync(request);
             var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
             var idToNamesFromServer = new JObject();
             foreach (JToken rowToken in records)
@@ -259,7 +257,7 @@ namespace Salesforce.SDK.SmartStore.Store
             String soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
             RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
             var idToNamesFromServer = new JObject();
-            RestResponse response = await _restClient.SendAsync(request);
+            var response = await _restClient.SendAsync(request);
             var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
             foreach (JToken token in records)
             {
@@ -296,7 +294,7 @@ namespace Salesforce.SDK.SmartStore.Store
             // check server
             String soql = "SELECT Id, Name FROM Account WHERE Id IN " + idsClause;
             RestRequest request = RestRequest.GetRequestForQuery(ApiVersionStrings.VersionNumber, soql);
-            RestResponse response = await _restClient.SendAsync(request);
+            var response = await _restClient.SendAsync(request);
             var records = response.AsJObject.ExtractValue<JArray>(RecordsStr);
             Assert.AreEqual(records.Count, 3, "3 accounts should have been returned from server");
         }
@@ -522,7 +520,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 fields.Add(Constants.Name, name);
                 RestRequest request = RestRequest.GetRequestForCreate(ApiVersionStrings.VersionNumber, Constants.Account,
                     fields);
-                RestResponse response = await _restClient.SendAsync(request);
+                var response = await _restClient.SendAsync(request);
                 Assert.IsTrue(response.Success, "Create failed");
                 var id = response.AsJObject.ExtractValue<string>(LidStr);
                 toCreate[id] = name;
@@ -560,7 +558,7 @@ namespace Salesforce.SDK.SmartStore.Store
                 fields.Add(Constants.Name, updatedName);
                 RestRequest request = RestRequest.GetRequestForUpdate(ApiVersionStrings.VersionNumber, Constants.Account,
                     id, fields);
-                RestResponse response = await _restClient.SendAsync(request);
+                var response = await _restClient.SendAsync(request);
                 Assert.IsTrue(response.Success, "Update failed");
             }
             return true;

@@ -14,9 +14,9 @@ namespace Salesforce.SDK.Hybrid.Rest
 
     public sealed class RestClient
     {
-        private SDK.Rest.RestClient _restClient;
+        private SDK.Rest.IRestClient _restClient;
 
-        internal RestClient(SDK.Rest.RestClient restClient)
+        internal RestClient(SDK.Rest.IRestClient restClient)
         {
             _restClient = restClient;
         }
@@ -51,7 +51,7 @@ namespace Salesforce.SDK.Hybrid.Rest
 
         private async Task<RestResponse> InternalSendAsync(RestRequest request)
         {
-            SDK.Rest.RestResponse result = await _restClient.SendAsync(request.Request);
+            var result = await _restClient.SendAsync(request.Request);
             return new RestResponse(result);
         }
     }
