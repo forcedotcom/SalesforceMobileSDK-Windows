@@ -322,7 +322,7 @@ namespace Salesforce.SDK.Auth
 
                 account.AccessToken = response.AccessToken;
 
-                await SDKServiceLocator.Get<IAuthHelper>().PersistCredentialsAsync(account);
+                await SDKServiceLocator.Get<IAuthHelper>().PersistCurrentAccountAsync(account);
             }
             catch (DeviceOfflineException ex)
             {
@@ -381,7 +381,7 @@ namespace Salesforce.SDK.Auth
 
         public static void ClearCookies(LoginOptions loginOptions)
         {
-            AuthHelper.ClearCookies(loginOptions);
+            AuthHelper.ClearCookiesAsync(loginOptions);
         }
 
         /// <summary>
