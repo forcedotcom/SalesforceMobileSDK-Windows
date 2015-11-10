@@ -36,6 +36,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
+using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Profile;
@@ -46,7 +47,7 @@ namespace Salesforce.SDK.App
     {
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
-        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} ({1} {2} {3}) {4} {5}";
+        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5}";
         private const string SdkVersion = "4.0.0";
 
         /// <summary>
@@ -72,13 +73,14 @@ namespace Salesforce.SDK.App
         {
             var appName = GetApplicationDisplayNameAsync().Result;
             var deviceInfo = AnalyticsInfo.VersionInfo.DeviceFamily + "/" + GetDeviceFamilyVersion(AnalyticsInfo.VersionInfo.DeviceFamilyVersion);
-            var deviceForm = AnalyticsInfo.DeviceForm;
+            var deviceModel = new EasClientDeviceInformation().SystemProductName;
+
             PackageVersion packageVersion = Package.Current.Id.Version;
             string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                           packageVersion.Build;
-            var appType = isHybrid ? "hybrid" : "native";
-            var UserAgentHeader = String.Format(UserAgentHeaderFormat, SdkVersion, deviceInfo, appName,
-            packageVersionString, appType, "");
+            var appType = isHybrid ? "Hybrid" : "Native";
+            var UserAgentHeader = String.Format(UserAgentHeaderFormat, SdkVersion, deviceInfo, deviceModel,
+            appName, packageVersionString, appType);
             return Task.FromResult(UserAgentHeader);
         }
 
