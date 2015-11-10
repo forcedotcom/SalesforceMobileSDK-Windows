@@ -50,7 +50,6 @@ namespace Salesforce.SDK.SmartStore.Store
         private const string DeleteAllStatement = "DELETE FROM {0}";
         private static Dictionary<string, DBHelper> _instances;
         private static Type _sqliteConnectionType = typeof(SQLiteConnection);
-        private static readonly TypeInfo ISQLiteConnectionTypeInfo = (typeof(ISQLiteConnection)).GetTypeInfo();
         #endregion
 
         #region DBHelper properties
@@ -88,7 +87,9 @@ namespace Salesforce.SDK.SmartStore.Store
         public static void SetSqliteConnectionClass(Type sqlConnectionType)
         {
             var sqlcontype = sqlConnectionType.GetTypeInfo();
-            bool matches = ISQLiteConnectionTypeInfo.IsAssignableFrom(sqlcontype);
+            var iSqLiteConnectionTypeInfo = (typeof(ISQLiteConnection)).GetTypeInfo();
+            // check to make sure whatever type is given implements the ISQLiteConnection interface
+            var matches = iSqLiteConnectionTypeInfo.IsAssignableFrom(sqlcontype);
             if (sqlConnectionType == null || !matches &&
                 sqlConnectionType != typeof (SQLiteConnection))
             {
