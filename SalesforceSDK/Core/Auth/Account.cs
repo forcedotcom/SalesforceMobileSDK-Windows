@@ -74,10 +74,11 @@ namespace Salesforce.SDK.Auth
         public string CommunityId { get; set; }
         public string CommunityUrl { get; set; }
 
+        public string OrganizationId { get; set; }
+
         [JsonProperty]
         public MobilePolicy Policy { get; internal set; }
-
-
+        
         /// <summary>
         ///     Serialize Account object as a JSON string
         /// </summary>
