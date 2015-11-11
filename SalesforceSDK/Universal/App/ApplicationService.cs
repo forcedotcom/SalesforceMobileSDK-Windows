@@ -70,7 +70,7 @@ namespace Salesforce.SDK.App
             return (file != null);
         }
 
-        public Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, bool isSmartSync)
+        public Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, string qualifier)
         {
             var appName = GetApplicationDisplayNameAsync().Result;
             var deviceInfo = AnalyticsInfo.VersionInfo.DeviceFamily + "/" + GetDeviceFamilyVersion(AnalyticsInfo.VersionInfo.DeviceFamilyVersion);
@@ -80,9 +80,9 @@ namespace Salesforce.SDK.App
             string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                           packageVersion.Build;
             var appType = new StringBuilder(isHybrid ? "Hybrid" : "Native");
-            if (isSmartSync)
+            if (!String.IsNullOrWhiteSpace(qualifier))
             {
-                appType.Append("SmartSync");
+                appType.Append(qualifier);
             }
             var UserAgentHeader = String.Format(UserAgentHeaderFormat, SdkVersion, deviceInfo, deviceModel,
             appName, packageVersionString, appType, deviceId);

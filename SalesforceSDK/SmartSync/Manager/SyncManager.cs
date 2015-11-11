@@ -56,6 +56,7 @@ namespace Salesforce.SDK.SmartSync.Manager
         private readonly SmartStore.Store.SmartStore _smartStore;
         private static IApplicationInformationService ApplicationInformationService
             => SDKServiceLocator.Get<IApplicationInformationService>();
+        private const string _smartSync = "SmartSync";
 
         /// <summary>
         ///     Private constructor 
@@ -466,7 +467,7 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         public async Task<IRestResponse> SendRestRequest(RestRequest request)
         {
-            var userAgent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(false, true);
+            var userAgent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(false, _smartSync);
             request.AdditionalHeaders?.Add("User-Agent", userAgent);
             return await RestClient.SendAsync(request);
         }

@@ -48,6 +48,8 @@ namespace Salesforce.SDK.Hybrid.SmartSync
 
         private static IApplicationInformationService ApplicationInformationService
             => SDKServiceLocator.Get<IApplicationInformationService>();
+
+        private const string _smartSync = "SmartSync";
         public static SyncManager GetInstance()
         {
             return GetInstance(null, null);
@@ -132,7 +134,7 @@ namespace Salesforce.SDK.Hybrid.SmartSync
             {
                 var restRequest = JsonConvert.SerializeObject(request);
                 var req = JsonConvert.DeserializeObject<RestRequest>(restRequest);
-                var userAgent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(true, true);
+                var userAgent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(true, _smartSync);
                 req.AdditionalHeaders?.Add("User-Agent", userAgent);
                 var response = await _syncManager.SendRestRequest(req);
                 var restResponse = JsonConvert.SerializeObject(response);

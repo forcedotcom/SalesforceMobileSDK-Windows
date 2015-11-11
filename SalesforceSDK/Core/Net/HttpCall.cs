@@ -299,7 +299,7 @@ namespace Salesforce.SDK.Net
             // if the user agent has not yet been set, set it; we want to make sure this only really happens once since it requires an action that goes to the core thread.
             if (String.IsNullOrWhiteSpace(UserAgentHeader))
             {
-                UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync(false, false);
+                UserAgentHeader = await SDKServiceLocator.Get<IApplicationInformationService>().GenerateUserAgentHeaderAsync(false, String.Empty);
             }
             req.Headers.UserAgent.TryParseAdd(UserAgentHeader);
             if (!String.IsNullOrWhiteSpace(_requestBody))
@@ -323,8 +323,14 @@ namespace Salesforce.SDK.Net
             }
             catch (HttpRequestException ex)
             {
-                _httpCallErrorException = new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
-                message = null;
+                _httpCallErrorException =
+                    new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
+                return this;
+            }
+            catch (WebException ex)
+            {
+                _httpCallErrorException =
+                    new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
                 return this;
             }
 
@@ -350,8 +356,8 @@ namespace Salesforce.SDK.Net
                 // if we are offline and fiddler is running, we will get a BadGateway so wrap the exception in
                 // a DeviceOfflineException
 
-                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway
-                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex)
+                _httpCallErrorException = response.StatusCode == HttpStatusCode.BadGateway 
+                    ? new DeviceOfflineException("Could not connect to server because of a bad connection", ex) 
                     : ex;
             }
 
