@@ -363,7 +363,7 @@ namespace Salesforce.SDK.Hybrid
 
         private async Task<string> GetUserAgentString()
         {
-             var agent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(true);
+            var agent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(true, false);
             return agent;
         }
 
