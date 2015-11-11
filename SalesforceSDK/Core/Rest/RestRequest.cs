@@ -127,19 +127,18 @@ namespace Salesforce.SDK.Rest
         /// </summary>
         /// <param name="method">The HTTP method for the request (GET/POST/DELETE etc)</param>
         /// <param name="path">The URI path, this will automatically be resolved against the users current instance host.</param>
-        /// <param name="additionalHeaders">Optional - add additional headers to request</param>
-        public RestRequest(HttpMethod method, string path, Dictionary<string, string> additionalHeaders = null )
-            : this(method, path, null, ContentTypeValues.None, additionalHeaders)
+        public RestRequest(HttpMethod method, string path)
+            : this(method, path, null, ContentTypeValues.None, new Dictionary<string, string>())
         {
         }
 
         public RestRequest(HttpMethod method, string path, string requestBody)
-            : this(method, path, requestBody, ContentTypeValues.FormUrlEncoded, null)
+            : this(method, path, requestBody, ContentTypeValues.FormUrlEncoded, new Dictionary<string, string>())
         {
         }
 
         public RestRequest(HttpMethod method, string path, string requestBody, ContentTypeValues contentType)
-            : this(method, path, requestBody, contentType, null)
+            : this(method, path, requestBody, contentType, new Dictionary<string, string>())
         {
         }
 
