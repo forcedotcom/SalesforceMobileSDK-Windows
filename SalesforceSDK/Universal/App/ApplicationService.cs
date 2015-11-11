@@ -33,6 +33,7 @@ using Salesforce.SDK.Settings;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
@@ -47,7 +48,7 @@ namespace Salesforce.SDK.App
     {
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
-        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5}";
+        private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5} uid_{6}";
         private const string SdkVersion = "4.0.0";
 
         /// <summary>
@@ -69,18 +70,22 @@ namespace Salesforce.SDK.App
             return (file != null);
         }
 
-        public Task<string> GenerateUserAgentHeaderAsync(bool isHybrid)
+        public Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, bool isSmartSync)
         {
             var appName = GetApplicationDisplayNameAsync().Result;
             var deviceInfo = AnalyticsInfo.VersionInfo.DeviceFamily + "/" + GetDeviceFamilyVersion(AnalyticsInfo.VersionInfo.DeviceFamilyVersion);
             var deviceModel = new EasClientDeviceInformation().SystemProductName;
-
+            var deviceId = new EasClientDeviceInformation().Id;
             PackageVersion packageVersion = Package.Current.Id.Version;
             string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                           packageVersion.Build;
-            var appType = isHybrid ? "Hybrid" : "Native";
+            var appType = new StringBuilder(isHybrid ? "Hybrid" : "Native");
+            if (isSmartSync)
+            {
+                appType.Append("SmartSync");
+            }
             var UserAgentHeader = String.Format(UserAgentHeaderFormat, SdkVersion, deviceInfo, deviceModel,
-            appName, packageVersionString, appType);
+            appName, packageVersionString, appType, deviceId);
             return Task.FromResult(UserAgentHeader);
         }
 

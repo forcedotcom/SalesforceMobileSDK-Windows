@@ -32,7 +32,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
+using Salesforce.SDK.Core;
 using Salesforce.SDK.Rest;
+using Salesforce.SDK.Settings;
 using Salesforce.SDK.SmartStore.Store;
 using Salesforce.SDK.SmartSync.Model;
 using Salesforce.SDK.SmartSync.Util;
@@ -52,6 +54,8 @@ namespace Salesforce.SDK.SmartSync.Manager
         public readonly string ApiVersion;
         public readonly IRestClient RestClient;
         private readonly SmartStore.Store.SmartStore _smartStore;
+        private static IApplicationInformationService ApplicationInformationService
+            => SDKServiceLocator.Get<IApplicationInformationService>();
 
         /// <summary>
         ///     Private constructor 
@@ -462,6 +466,8 @@ namespace Salesforce.SDK.SmartSync.Manager
 
         public async Task<IRestResponse> SendRestRequest(RestRequest request)
         {
+            var userAgent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(false, true);
+            request.AdditionalHeaders?.Add("User-Agent", userAgent);
             return await RestClient.SendAsync(request);
         }
 
