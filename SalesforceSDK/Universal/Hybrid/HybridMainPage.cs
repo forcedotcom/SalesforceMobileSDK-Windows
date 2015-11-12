@@ -40,6 +40,7 @@ using Salesforce.SDK.Rest;
 using Salesforce.SDK.Utilities;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.Hybrid
 {
@@ -346,6 +347,9 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class JSONCredentials
     {
+        private static IApplicationInformationService ApplicationInformationService
+            => SDKServiceLocator.Get<IApplicationInformationService>();
+
         public JSONCredentials(Account account, IRestClient client)
         {
             AccessToken = client.AccessToken;
@@ -353,8 +357,14 @@ namespace Salesforce.SDK.Hybrid
             InstanceUrl = account.InstanceUrl;
             ClientId = account.ClientId;
             RefreshToken = account.RefreshToken;
-            UserAgent = "SalesforceMobileSDK/2.0 windows phone"; // FIXME
+            UserAgent = GetUserAgentString().Result;
             // TODO wire through the other fields
+        }
+
+        private async Task<string> GetUserAgentString()
+        {
+            var agent = await ApplicationInformationService.GenerateUserAgentHeaderAsync(true, String.Empty);
+            return agent;
         }
 
         [JsonProperty(PropertyName = "userAgent")]
