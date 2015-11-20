@@ -57,7 +57,6 @@ namespace Salesforce.SDK.Hybrid
     /// </summary>
     public class HybridMainPage : Page, ISalesforcePage
     {
-        private const string ApiVersion = ApiVersionStrings.VersionNumber;
         private const string StreamResolverKey = "www";
         private static HybridMainPage _instance;
 
