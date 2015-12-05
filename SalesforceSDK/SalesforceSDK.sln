@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateWizard", "TemplateWizard\TemplateWizard.csproj", "{B9BEBF33-3A8E-4201-A63C-40B80C47CEBE}"
 EndProject
@@ -171,7 +171,6 @@ Global
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|ARM.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|iOS.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Win32.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Windows Phone.ActiveCfg = Release|Any CPU
 		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Windows Phone (Universal).ActiveCfg = Release|Any CPU
@@ -685,8 +684,8 @@ Global
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|ARM.Build.0 = Debug|Any CPU
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|iOS.ActiveCfg = Debug|Any CPU
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|iOS.Build.0 = Debug|Any CPU
-		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Mixed Platforms.Build.0 = Debug|x86
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Win32.ActiveCfg = Debug|Any CPU
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Win32.Build.0 = Debug|Any CPU
 		{86021BC6-AE6C-47B2-9D08-8E352C46E277}.Debug|Windows Phone.ActiveCfg = Debug|Any CPU
