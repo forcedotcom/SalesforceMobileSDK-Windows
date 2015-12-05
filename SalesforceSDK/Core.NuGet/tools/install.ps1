@@ -29,7 +29,7 @@ get-childitem | where {$_.Name -eq "TemplateWizard"} | Foreach-Object {$publishe
 
 
 
-$templateOutput = $SpecialFolders["Personal"] + "\Visual Studio 2013\Templates\ProjectTemplates"
+$templateOutput = $SpecialFolders["Personal"] + "\Visual Studio 2015\Templates\ProjectTemplates"
 $templateSource = $toolsPath + "\SalesforceUniversalApplicationTemplate.zip";
 
 write-output $templateSource
