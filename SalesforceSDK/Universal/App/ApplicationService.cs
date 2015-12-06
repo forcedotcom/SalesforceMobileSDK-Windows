@@ -49,7 +49,7 @@ namespace Salesforce.SDK.App
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5} uid_{6}";
-        private const string SdkVersion = "4.0.0";
+        private const string SdkVersion = "4.1.0";
 
         /// <summary>
         ///     Settings key for config.
