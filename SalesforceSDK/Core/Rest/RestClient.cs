@@ -28,6 +28,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Salesforce.SDK.Net;
 
@@ -62,24 +63,24 @@ namespace Salesforce.SDK.Rest
 
         public string AccessToken => _accessToken;
 
-        public async Task<IRestResponse> SendAsync(HttpMethod method, string url)
+        public async Task<IRestResponse> SendAsync(HttpMethod method, string url, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await SendAsync(new RestRequest(method, url));
+            return await SendAsync(new RestRequest(method, url), cancellationToken).ConfigureAwait(false);
         }
 
-        public async void SendAsync(RestRequest request, AsyncRequestCallback callback)
+        public async void SendAsync(RestRequest request, AsyncRequestCallback callback, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var result = await SendAsync(request).ConfigureAwait(false);
+            var result = await SendAsync(request, cancellationToken).ConfigureAwait(false);
             callback?.Invoke(result);
         }
 
-        public async Task<IRestResponse> SendAsync(RestRequest request)
+        public async Task<IRestResponse> SendAsync(RestRequest request, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var result = await SendAsync(request, true);
+            var result = await SendAsync(request, true, cancellationToken).ConfigureAwait(false);
             return new RestResponse(result);
         }
 
-        private async Task<HttpCall> SendAsync(RestRequest request, bool retryInvalidToken)
+        private async Task<HttpCall> SendAsync(RestRequest request, bool retryInvalidToken, CancellationToken cancellationToken = default(CancellationToken))
         {
             var url = _instanceUrl + request.Path;
             var headers = request.AdditionalHeaders != null
@@ -88,7 +89,7 @@ namespace Salesforce.SDK.Rest
 
             var call =
                 await
-                    new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).ExecuteAsync()
+                    new HttpCall(request.Method, headers, url, request.RequestBody, request.ContentType).ExecuteAsync(cancellationToken)
                         .ConfigureAwait(false);
 
             if (call.StatusCode != HttpStatusCode.Unauthorized && call.StatusCode != HttpStatusCode.Forbidden)
@@ -105,7 +106,7 @@ namespace Salesforce.SDK.Rest
             }
                 
             _accessToken = newAccessToken;
-            call = await SendAsync(request, false);
+            call = await SendAsync(request, false, cancellationToken).ConfigureAwait(false);
 
             // Done
             return call;

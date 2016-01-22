@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 using Salesforce.SDK.Logging;
 using Newtonsoft.Json;
@@ -297,8 +298,9 @@ namespace Salesforce.SDK.Net
         ///     The HttpCall may only be called once; further attempts to execute the same call will throw an
         ///     InvalidOperationException.
         /// </summary>
+        /// <param name="cancellationToken"></param>
         /// <returns>HttpCall with populated data</returns>
-        public async Task<HttpCall> ExecuteAsync()
+        public async Task<HttpCall> ExecuteAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             if (Executed)
             {
@@ -340,7 +342,7 @@ namespace Salesforce.SDK.Net
 
             try
             {
-                message = await _httpClient.SendAsync(req);
+                message = await _httpClient.SendAsync(req, cancellationToken);
             }
             catch (HttpRequestException ex)
             {
