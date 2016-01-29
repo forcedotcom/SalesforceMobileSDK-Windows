@@ -318,7 +318,7 @@ namespace Salesforce.SDK.Hybrid
         public async void LogoutCurrentUser()
         {
             _webAppLoaded = false;
-            await SDKManager.GlobalClientManager.Logout();
+            await SDKManager.GlobalClientManager.LogoutAsync();
             // XXX Authenticate might call Navigate so it must be done on the UI thread
         }
 

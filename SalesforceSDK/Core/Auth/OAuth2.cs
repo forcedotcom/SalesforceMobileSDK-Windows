@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Salesforce.SDK.Core;
@@ -295,8 +296,10 @@ namespace Salesforce.SDK.Auth
         ///     with the new access token.
         /// </summary>
         /// <param name="account"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>Boolean based on if the refresh auth token succeeded or not</returns>
-        public static async Task<Account> RefreshAuthTokenAsync(Account account)
+        public static async Task<Account> RefreshAuthTokenAsync(Account account,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
 
@@ -318,7 +321,7 @@ namespace Salesforce.SDK.Auth
                 // Post
                 var call = HttpCall.CreatePost(refreshUrl, argsStr);
 
-                var response = await call.ExecuteAndDeserializeAsync<AuthResponse>();
+                var response = await call.ExecuteAndDeserializeAsync<AuthResponse>(cancellationToken);
 
                 account.AccessToken = response.AccessToken;
                 account.IdentityUrl = response.IdentityUrl;
@@ -355,8 +358,10 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="loginOptions"></param>
         /// <param name="refreshToken"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>true if successful</returns>
-        public static async Task<bool> RevokeAuthTokenAsync(LoginOptions loginOptions, string refreshToken)
+        public static async Task<bool> RevokeAuthTokenAsync(LoginOptions loginOptions, string refreshToken,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             // Args
             string argsStr = string.Format(OauthRevokeQueryString, new[] {WebUtility.UrlEncode(refreshToken)});
@@ -368,7 +373,7 @@ namespace Salesforce.SDK.Auth
             HttpCall c = HttpCall.CreatePost(revokeUrl, argsStr);
 
             // ExecuteAsync post
-            HttpCall result = await c.ExecuteAsync().ConfigureAwait(false);
+            HttpCall result = await c.ExecuteAsync(cancellationToken).ConfigureAwait(false);
 
             LoggingService.Log($"result.StatusCode = {result.StatusCode}", LoggingLevel.Verbose);
 
@@ -390,8 +395,10 @@ namespace Salesforce.SDK.Auth
         /// </summary>
         /// <param name="idUrl"></param>
         /// <param name="accessToken"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, string accessToken)
+        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, string accessToken,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             LoggingService.Log("Calling identity service", LoggingLevel.Verbose);
 
@@ -401,13 +408,14 @@ namespace Salesforce.SDK.Auth
             HttpCall c = HttpCall.CreateGet(headers, idUrl);
 
             // ExecuteAsync get
-            return await c.ExecuteAndDeserializeAsync<IdentityResponse>();
+            return await c.ExecuteAndDeserializeAsync<IdentityResponse>(cancellationToken);
         }
 
-        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, IRestClient client)
+        public static async Task<IdentityResponse> CallIdentityServiceAsync(string idUrl, IRestClient client,
+            CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = new RestRequest(HttpMethod.Get, new Uri(idUrl).AbsolutePath);
-            var response = await client.SendAsync(request);
+            var response = await client.SendAsync(request, cancellationToken);
             if (response.Success)
             {
                 LoggingService.Log("success", LoggingLevel.Verbose);

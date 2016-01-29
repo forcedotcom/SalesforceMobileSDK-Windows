@@ -42,7 +42,7 @@ namespace Salesforce.SDK.Native
         /// </summary>
         protected async void OnLogout()
         {
-            await SDKManager.GlobalClientManager.Logout();
+            await SDKManager.GlobalClientManager.LogoutAsync();
 
             await CheckIfLoginNeededAsync();
         }

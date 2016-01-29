@@ -36,7 +36,7 @@ namespace Salesforce.SDK.Rest
 {
     public delegate void AsyncRequestCallback(IRestResponse response);
 
-    public delegate Task<string> AccessTokenProvider();
+    public delegate Task<string> AccessTokenProvider(CancellationToken cancellationToken = default(CancellationToken));
 
     public class RestClient : IRestClient
     {
@@ -99,7 +99,7 @@ namespace Salesforce.SDK.Rest
 
             if (!retryInvalidToken || _accessTokenProvider == null) return call;
 
-            var newAccessToken = await _accessTokenProvider();
+            var newAccessToken = await _accessTokenProvider(cancellationToken);
             if (newAccessToken == null)
             {
                 return call;
