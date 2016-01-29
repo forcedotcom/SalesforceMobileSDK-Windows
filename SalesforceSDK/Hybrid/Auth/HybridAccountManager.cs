@@ -98,7 +98,7 @@ namespace Salesforce.SDK.Hybrid.Auth
         {
             InitEncryption();
             var sdkAccount = (account == null ? null : account.ConvertToSDKAccount());
-            return Task.Run(async () => await SDK.Auth.AccountManager.SwitchToAccount(sdkAccount)).AsAsyncOperation();
+            return Task.Run(async () => await SDK.Auth.AccountManager.SwitchToAccountAsync(sdkAccount)).AsAsyncOperation();
         }
     }
 }

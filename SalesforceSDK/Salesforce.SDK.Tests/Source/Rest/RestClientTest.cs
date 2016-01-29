@@ -124,7 +124,7 @@ namespace Salesforce.SDK.Rest
         public async Task TestCallWithBadAuthTokenAndTokenProvider()
         {
             var unauthenticatedRestClient = new RestClient(TestCredentials.InstanceServer, BadToken,
-                () => Task.Factory.StartNew(() => _accessToken));
+                (cancellationToken) => Task.Factory.StartNew(() => _accessToken));
             Assert.AreEqual(BadToken, unauthenticatedRestClient.AccessToken,
                 "RestClient should be using the bad token initially");
             var response =
