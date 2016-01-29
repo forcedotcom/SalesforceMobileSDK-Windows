@@ -183,7 +183,7 @@ namespace Salesforce.SDK.Pages
 
         private async void accountsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await AccountManager.SwitchToAccount(AccountsList.SelectedItem as Account);
+            await AccountManager.SwitchToAccountAsync(AccountsList.SelectedItem as Account);
             SDKManager.ResetClientManager();
             if (SDKManager.GlobalClientManager.PeekRestClient() != null)
             {

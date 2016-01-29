@@ -26,6 +26,7 @@
  */
 
 using System;
+using System.Threading;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -136,7 +137,7 @@ namespace Salesforce.SDK.App
         {
             if (SDKManager.GlobalClientManager != null)
             {
-                await SDKManager.GlobalClientManager.Logout();
+                await SDKManager.GlobalClientManager.LogoutAsync();
             }
         }
 

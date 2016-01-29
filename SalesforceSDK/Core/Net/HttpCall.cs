@@ -274,9 +274,9 @@ namespace Salesforce.SDK.Net
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public async Task<T> ExecuteAndDeserializeAsync<T>()
+        public async Task<T> ExecuteAndDeserializeAsync<T>(CancellationToken cancellationToken = default(CancellationToken))
         {
-            var call = await ExecuteAsync().ConfigureAwait(false);
+            var call = await ExecuteAsync(cancellationToken).ConfigureAwait(false);
             if (call.Success)
             {
                 return JsonConvert.DeserializeObject<T>(call.ResponseBody);
@@ -355,6 +355,19 @@ namespace Salesforce.SDK.Net
                 _httpCallErrorException =
                     new DeviceOfflineException("Request failed to send, most likely because we were offline", ex);
                 return this;
+            }
+
+            // If the result is null then it might be because the http call was cancelled.
+            // HttpClient has a bug where it doesn't throw when a cancellation is requested,
+            // it just returns null immediately (however the cancellation token does get set
+            // to canceled). More context on that bug at:
+            // http://stackoverflow.com/questions/29319086/cancelling-an-httpclient-request-why-is-taskcanceledexception-cancellationtoke
+            // The following if block will throw an OperationCanceledException (which is the
+            // desired behavior for when a Task gets cancelled) if a cancel was requested
+            // and works around the HttpClient bug.
+            if (message == null)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
             }
 
             await HandleMessageResponseAsync(message);
