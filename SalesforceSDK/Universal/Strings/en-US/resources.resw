@@ -193,7 +193,7 @@
     <value>The passcode must be at least {0} characters long.</value>
   </data>
   <data name="passcode_reenter" xml:space="preserve">
-    <value>Re-enter your Saleforce passcode</value>
+    <value>Re-enter your Salesforce passcode</value>
   </data>
   <data name="yes" xml:space="preserve">
     <value>yes</value>

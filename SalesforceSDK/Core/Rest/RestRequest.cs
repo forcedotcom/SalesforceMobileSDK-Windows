@@ -213,7 +213,7 @@ namespace Salesforce.SDK.Rest
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_basic_info.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectType">Object type</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForMetadata(string apiVersion, string objectType)
         {
@@ -226,7 +226,7 @@ namespace Salesforce.SDK.Rest
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_describe.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectType">Object type</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDescribe(string apiVersion, string objectType)
         {
@@ -239,7 +239,7 @@ namespace Salesforce.SDK.Rest
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectType">Object type</param>
         /// <param name="fields">Fields</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForCreate(string apiVersion, string objectType,
@@ -256,7 +256,7 @@ namespace Salesforce.SDK.Rest
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectType">Object type</param>
         /// <param name="objectId">object id</param>
         /// <param name="fieldsList">Fields</param>
         /// <returns>A RestRequest</returns>
@@ -278,7 +278,7 @@ namespace Salesforce.SDK.Rest
         ///     See
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         ///     <param name="apiVersion">API version e.g. v26.0</param>
-        ///     <param name="objectType">Ojbect type</param>
+        ///     <param name="objectType">Object type</param>
         ///     <param name="objectId">object id</param>
         ///     <param name="fields">Fields</param>
         /// </summary>
@@ -318,7 +318,7 @@ namespace Salesforce.SDK.Rest
         ///     http://www.salesforce.com/us/developer/docs/api_rest/index_Left.htm#StartTopic=Content/resources_sobject_retrieve.htm
         /// </summary>
         /// <param name="apiVersion">API version e.g. v26.0</param>
-        /// <param name="objectType">Ojbect type</param>
+        /// <param name="objectType">Object type</param>
         /// <param name="objectId">object id</param>
         /// <returns>A RestRequest</returns>
         public static RestRequest GetRequestForDelete(string apiVersion, string objectType, string objectId)
