@@ -185,7 +185,7 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        ///     HTTP status code fo the response returned by the server
+        ///     HTTP status code for the response returned by the server
         /// </summary>
         public HttpStatusCode StatusCode
         {
@@ -223,7 +223,7 @@ namespace Salesforce.SDK.Net
         }
 
         /// <summary>
-        ///     Factory method to build a HttpCall objet for a GET request with additional HTTP request headers
+        ///     Factory method to build a HttpCall object for a GET request with additional HTTP request headers
         /// </summary>
         /// <param name="headers"></param>
         /// <param name="url"></param>
@@ -357,13 +357,13 @@ namespace Salesforce.SDK.Net
                 return this;
             }
 
-            // If the result is null then it might be because the http call was cancelled.
+            // If the result is null then it might be because the http call was canceled.
             // HttpClient has a bug where it doesn't throw when a cancellation is requested,
             // it just returns null immediately (however the cancellation token does get set
             // to canceled). More context on that bug at:
             // http://stackoverflow.com/questions/29319086/cancelling-an-httpclient-request-why-is-taskcanceledexception-cancellationtoke
             // The following if block will throw an OperationCanceledException (which is the
-            // desired behavior for when a Task gets cancelled) if a cancel was requested
+            // desired behavior for when a Task gets canceled) if a cancel was requested
             // and works around the HttpClient bug.
             if (message == null)
             {
@@ -399,7 +399,7 @@ namespace Salesforce.SDK.Net
 
                 _statusCodeValue = response.StatusCode;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Debugger.Break();
             }

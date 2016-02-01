@@ -110,7 +110,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                LoggingService.Log($"Exception occured when retrieving vault data for resource {resource}", LoggingLevel.Critical);
+                LoggingService.Log($"Exception occurred when retrieving vault data for resource {resource}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -148,7 +148,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                LoggingService.Log($"Exception occured when retrieving vault data for resource {resource}", LoggingLevel.Critical);
+                LoggingService.Log($"Exception occurred when retrieving vault data for resource {resource}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -169,7 +169,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (Exception ex)
             {
-                LoggingService.Log($"Exception occured when retrieving vault data for user {userName}", LoggingLevel.Critical);
+                LoggingService.Log($"Exception occurred when retrieving vault data for user {userName}", LoggingLevel.Critical);
 
                 LoggingService.Log(ex, LoggingLevel.Critical);
 
@@ -234,7 +234,7 @@ namespace Salesforce.SDK.Auth
 
             var account = _vault.Retrieve(creds.Resource, creds.UserName);
 
-            // the serialized acccount is stored in the password field in the vault
+            // the serialized account is stored in the password field in the vault
             var serializedAccount = account.Password;
 
             if (IsNullOrWhiteSpace(serializedAccount))
@@ -254,7 +254,7 @@ namespace Salesforce.SDK.Auth
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.Log("Exception occured when decrypting account, removing account from vault",
+                    LoggingService.Log("Exception occurred when decrypting account, removing account from vault",
                         LoggingLevel.Warning);
 
                     LoggingService.Log(ex, LoggingLevel.Warning);
@@ -314,7 +314,7 @@ namespace Salesforce.SDK.Auth
                     {
                         if (ex is ArgumentException)
                             continue;
-                        LoggingService.Log("Exception occured when decrypting account, removing account from vault",
+                        LoggingService.Log("Exception occurred when decrypting account, removing account from vault",
                             LoggingLevel.Warning);
 
                         LoggingService.Log(ex, LoggingLevel.Warning);
@@ -366,7 +366,7 @@ namespace Salesforce.SDK.Auth
                 }
                 catch (Exception ex)
                 {
-                    LoggingService.Log("Exception occured when decrypting account, removing account from vault",
+                    LoggingService.Log("Exception occurred when decrypting account, removing account from vault",
                         LoggingLevel.Warning);
 
                     LoggingService.Log(ex, LoggingLevel.Warning);

@@ -158,7 +158,7 @@ namespace Salesforce.SDK.Security
             salt = GenerateRandomEncryptionString();
         }
 
-        // Ensure a truly random string that is good for use in encrpytion.
+        // Ensure a truly random string that is good for use in encryption.
         private string GenerateRandomEncryptionString()
         {
             // Define the length, in bytes, of the buffer.
