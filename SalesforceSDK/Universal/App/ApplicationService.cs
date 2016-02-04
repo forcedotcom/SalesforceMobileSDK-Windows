@@ -41,7 +41,6 @@ using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System.Profile;
-using Salesforce.SDK.Hybrid;
 
 namespace Salesforce.SDK.App
 {
@@ -50,7 +49,7 @@ namespace Salesforce.SDK.App
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5} uid_{6}";
-        private const string SdkVersion = "4.1.0";
+        private const string SdkVersion = "4.0.0";
 
         /// <summary>
         ///     Settings key for config.
@@ -81,10 +80,6 @@ namespace Salesforce.SDK.App
             string packageVersionString = packageVersion.Major + "." + packageVersion.Minor + "." +
                                           packageVersion.Build;
             var appType = new StringBuilder(isHybrid ? "Hybrid" : "Native");
-            if (isHybrid)
-            {
-                appType.Append(new BootConfig().IsLocal ? "Local" : "Remote");
-            }
             if (!String.IsNullOrWhiteSpace(qualifier))
             {
                 appType.Append(qualifier);
