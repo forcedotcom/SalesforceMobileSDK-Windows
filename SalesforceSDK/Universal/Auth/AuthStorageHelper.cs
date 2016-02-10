@@ -189,12 +189,12 @@ namespace Salesforce.SDK.Auth
 
             if (userCredentials != null)
             {
-                LoggingService.Log("removing existing credential", LoggingLevel.Verbose);
-                _vault.Remove(userCredentials);
-
-                // clear the current account from the password vault
                 try
                 {
+                    LoggingService.Log("removing existing credential", LoggingLevel.Verbose);
+                    _vault.Remove(userCredentials);
+
+                    // clear the current account from the password vault
                     var current = _vault.FindAllByResource(PasswordVaultCurrentAccount);
                     if (current != null)
                     {
