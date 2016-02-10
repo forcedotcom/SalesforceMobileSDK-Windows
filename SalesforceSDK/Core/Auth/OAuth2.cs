@@ -43,7 +43,7 @@ using Salesforce.SDK.Logging;
 namespace Salesforce.SDK.Auth
 {
     /// <summary>
-    ///     object representing conncted application oauth configuration (login host, client id, callback url, oauth scopes)
+    ///     object representing connected application oauth configuration (login host, client id, callback url, oauth scopes)
     /// </summary>
     public class LoginOptions
     {
@@ -102,7 +102,7 @@ namespace Salesforce.SDK.Auth
         public int PinLength { get; set; }
 
         /// <summary>
-        ///     Inactivite time after which the user should be prompted to enter her pin
+        ///     Inactivate time after which the user should be prompted to enter her pin
         /// </summary>
         [JsonProperty(PropertyName = "screen_lock")]
         public int ScreenLockTimeout { get; set; }
@@ -301,7 +301,7 @@ namespace Salesforce.SDK.Auth
         public static async Task<Account> RefreshAuthTokenAsync(Account account,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            LoggingService.Log("Atempting to refresh auth token", LoggingLevel.Verbose);
+            LoggingService.Log("Attempting to refresh auth token", LoggingLevel.Verbose);
 
             if (account == null)
             {
@@ -423,7 +423,7 @@ namespace Salesforce.SDK.Auth
             }
             else
             {
-                LoggingService.Log("Error occured:", LoggingLevel.Critical);
+                LoggingService.Log("Error occurred:", LoggingLevel.Critical);
                 LoggingService.Log(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;

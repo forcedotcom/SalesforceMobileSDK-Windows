@@ -150,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="project.json" />
-    <PRIResource Include="Strings\en\resources.resw" />
+    <PRIResource Include="Strings\en-US\resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
