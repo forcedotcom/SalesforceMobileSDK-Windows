@@ -64,7 +64,7 @@ namespace Salesforce.SDK.Auth
         public async Task StartLoginFlowAsync()
         {
             var frame = Window.Current.Content as Frame;
-            if (frame != null)
+            if (frame?.Dispatcher != null)
             {
                 await
                     frame.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
