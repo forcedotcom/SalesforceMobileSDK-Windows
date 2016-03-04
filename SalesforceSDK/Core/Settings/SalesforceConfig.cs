@@ -225,7 +225,7 @@ namespace Salesforce.SDK.Settings
 
                 return JsonConvert.DeserializeObject<T>(configJson);
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 // couldn't decrypt config...
                 await AppInfoService.ClearConfigurationSettingsAsync();
