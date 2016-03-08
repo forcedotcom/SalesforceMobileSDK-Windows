@@ -147,8 +147,7 @@ namespace Salesforce.SDK.Auth
                     }
                     catch (ArgumentException ex)
                     {
-                        LoggingService.Log("Exception occurred when clearing cookies", LoggingLevel.Critical);
-                        LoggingService.Log(ex, LoggingLevel.Critical);
+                        LoggingService.Log(ex, LoggingLevel.Critical, "Exception occurred when clearing cookies");
                     }
 
                 });

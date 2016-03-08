@@ -273,8 +273,7 @@ namespace Salesforce.SDK.Pages
             }
             catch (Exception ex)
             {
-                LoggingService.Log("Exception occurred during login flow", LoggingLevel.Critical);
-                LoggingService.Log(ex, LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical, "Exception occurred during login flow");
 
                 hasWebAuthErrors = true;
             }
