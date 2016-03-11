@@ -315,7 +315,7 @@ namespace Salesforce.SDK.Pages
         {
             HostName.Text = "";
             HostAddress.Text = "";
-            TryShowFlyout(AddServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
+            TryShowFlyout(AddServerFlyout, ApplicationLogo);
         }
 
         private async void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -337,12 +337,12 @@ namespace Salesforce.SDK.Pages
             };
             await SDKManager.ServerConfiguration.AddServerAsync(server);
 
-            TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
+            TryShowFlyout(ServerFlyout, ApplicationLogo);
         }
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
