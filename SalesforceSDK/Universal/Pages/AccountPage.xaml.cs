@@ -131,8 +131,7 @@ namespace Salesforce.SDK.Pages
                 var background = new SolidColorBrush(color);
                 PageRoot.Background = background;
                 Background = background;
-                // ServerFlyoutPanel.Background = background;
-                //  AddServerFlyoutPanel.Background = background;
+                
             }
 
             // set foreground from config
@@ -210,7 +209,7 @@ namespace Salesforce.SDK.Pages
 
         private void AddServerFlyout_Closed(object sender, object e)
         {
-            TryShowFlyout(ServerFlyout, ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
         }
 
         private void ServerFlyout_Closed(object sender, object e)
@@ -232,8 +231,7 @@ namespace Salesforce.SDK.Pages
             }
             else
             {
-                ServerFlyout.Placement = FlyoutPlacementMode.Bottom;
-                TryShowFlyout(ServerFlyout, ApplicationLogo);
+                TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
             }
         }
 
@@ -242,7 +240,7 @@ namespace Salesforce.SDK.Pages
             await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 MessageContent.Text = message;
-                TryShowFlyout(MessageFlyout, ApplicationLogo);
+                TryShowFlyout(MessageFlyout, ApplicationLogo, FlyoutPlacementMode.Bottom);
             });
         }
 
@@ -317,7 +315,7 @@ namespace Salesforce.SDK.Pages
         {
             HostName.Text = "";
             HostAddress.Text = "";
-            TryShowFlyout(AddServerFlyout, ApplicationLogo);
+            TryShowFlyout(AddServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
         }
 
         private async void addCustomHostBtn_Click(object sender, RoutedEventArgs e)
@@ -339,12 +337,12 @@ namespace Salesforce.SDK.Pages
             };
             await SDKManager.ServerConfiguration.AddServerAsync(server);
 
-            TryShowFlyout(ServerFlyout, ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
         }
 
         private void cancelCustomHostBtn_Click(object sender, RoutedEventArgs e)
         {
-            TryShowFlyout(ServerFlyout, ApplicationLogo);
+            TryShowFlyout(ServerFlyout, ApplicationLogo, FlyoutPlacementMode.Full);
         }
 
         private void LoginToSalesforce_OnClick(object sender, RoutedEventArgs e)
@@ -392,10 +390,11 @@ namespace Salesforce.SDK.Pages
             await SDKManager.ServerConfiguration.SaveConfigAsync();
         }
 
-        private void TryShowFlyout(Flyout flyout, FrameworkElement location)
+        private void TryShowFlyout(Flyout flyout, FrameworkElement location, FlyoutPlacementMode placementMode)
         {
             try
             {
+                flyout.Placement = placementMode;
                 flyout.ShowAt(location);
             }
             catch (ArgumentException ex)
