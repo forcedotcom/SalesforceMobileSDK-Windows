@@ -89,9 +89,10 @@ namespace Salesforce.SDK.Hybrid.SmartSync
             var soqlsyncDownTarget = JObject.Parse(target);
             var soqlsyncDown = new SoqlSyncDownTarget(soqlsyncDownTarget);
             SyncDownTarget syncDown = soqlsyncDown;
-            var action = JsonConvert.DeserializeObject<Action<SyncState>>(callback);
-            var syncOptions = JsonConvert.SerializeObject(options);
-            var state = _syncManager.SyncDown(syncDown, soupName, action, SyncOptions.FromJson(JObject.Parse(syncOptions)));
+            var action = JsonConvert.DeserializeObject(callback);
+            var syncstateaction = action as Action<SyncState>;
+            var syncOptions = options != null ? JsonConvert.SerializeObject(options) : null;
+            var state = _syncManager.SyncDown(syncDown, soupName, syncstateaction);
             var syncState = JsonConvert.SerializeObject(state);
             return JsonConvert.DeserializeObject<Models.SyncState>(syncState);
         }
@@ -99,9 +100,10 @@ namespace Salesforce.SDK.Hybrid.SmartSync
         public Models.SyncState SyncUp(Models.SyncUpTarget target, Models.SyncOptions options, string soupName, string callback)
         {
             var syncUp = JsonConvert.SerializeObject(target);
-            var action = JsonConvert.DeserializeObject<Action<SyncState>>(callback);
+            var action = JsonConvert.DeserializeObject(callback);
+            var syncstateaction = action as Action<SyncState>;
             var syncOptions = JsonConvert.SerializeObject(options);
-            var state = _syncManager.SyncUp(JsonConvert.DeserializeObject<SyncUpTarget>(syncUp), SyncOptions.FromJson(JObject.Parse(syncOptions)), soupName, action);
+            var state = _syncManager.SyncUp(JsonConvert.DeserializeObject<SyncUpTarget>(syncUp), SyncOptions.FromJson(JObject.Parse(syncOptions)), soupName, syncstateaction);
             var syncState = JsonConvert.SerializeObject(state);
             return JsonConvert.DeserializeObject<Models.SyncState>(syncState);
         }
