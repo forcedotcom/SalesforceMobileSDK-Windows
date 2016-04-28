@@ -31,6 +31,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using Salesforce.SDK.SmartSync.Util;
 
 namespace Salesforce.SDK.Hybrid.SmartSync.Models
@@ -56,7 +57,10 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
         {
             var nativeMergeMode = JsonConvert.SerializeObject(mergeMode);
             var nativeSyncOptions = SDK.SmartSync.Model.SyncOptions.OptionsForSyncUp(fieldList.ToList(), JsonConvert.DeserializeObject<SDK.SmartSync.Model.SyncState.MergeModeOptions>(nativeMergeMode));
-            var syncOptions = JsonConvert.SerializeObject(nativeSyncOptions);
+            var syncOptions = JsonConvert.SerializeObject(nativeSyncOptions, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
             return JsonConvert.DeserializeObject<SyncOptions>(syncOptions);
         }
 
