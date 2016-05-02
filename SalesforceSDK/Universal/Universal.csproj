@@ -126,7 +126,6 @@
     <Compile Include="Hybrid\BootConfig.cs" />
     <Compile Include="Hybrid\HybridMainPage.cs" />
     <Compile Include="Pages\AccountPage.xaml.cs" />
-    <Compile Include="Native\NativeMainPage.cs" />
     <Compile Include="Native\ServerControl.xaml.cs" />
     <Compile Include="Security\EncryptionSettings.cs" />
     <Compile Include="Security\Encryptor.cs" />
