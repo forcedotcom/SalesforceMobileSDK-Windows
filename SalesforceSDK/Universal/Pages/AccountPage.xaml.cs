@@ -88,7 +88,18 @@ namespace Salesforce.SDK.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            SetupAccountPage();
+            CheckIfLoginNeeded();
+        }
+
+        private void CheckIfLoginNeeded()
+        {
+            Account account = AccountManager.GetAccount();
+            if (account == null)
+            {
+                SDKServiceLocator.Get<ILoggingService>().Log("Account object is null, calling StartLoginFlowAsync",
+                                                          LoggingLevel.Verbose);
+                SetupAccountPage();
+            }
         }
 
         private void SetupAccountPage()
