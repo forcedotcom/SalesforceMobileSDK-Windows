@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2015, salesforce.com, inc.
  * All rights reserved.
  *
@@ -24,12 +24,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-var SALESFORCE_MOBILE_SDK_VERSION = "3.3.0";
+var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
 var SERVICE = "com.salesforce.sfaccountmanager";
 
 var exec = require("com.salesforce.util.exec").exec;
-var core = require("../Salesforce.SDK.TypeScript/typescriptsalesforce.windows.core.js");
-var oauth2 = new SalesforceJS.OAuth2();
+var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var oauth2 = new core.OAuth2();
 
 var UserAccount = function(authToken, refreshToken, loginServer, idUrl, instanceServer, orgId, userId, username, clientId) {
     this.authToken = authToken;
@@ -45,23 +45,40 @@ var UserAccount = function(authToken, refreshToken, loginServer, idUrl, instance
 
 var logoutInitiated = false;
 
-var getUsers = function (success, error) {
-  oauth2.getUsers(success, error);
+var getUsers = function (successCB, errorCB, args) {
+    var users = oauth2.getUsers(successCB, errorCB);
+    if (users)
+    {
+        successCB(users);
+    } else {
+        errorCB(users);
+    }
 };
 
-var getCurrentUser = function (success, fail) {
-  oauth2.getCurrentUser
+var getCurrentUser = function (successCB, errorCB, args) {
+    var user = oauth2.getUser(successCB, errorCB);
+    if (user)
+    {
+        successCB(user);
+    } else {
+        errorCB(user);
+    }
 }
 
-var logout = function () {
+var logout = function (successCB, errorCB, args) {
   if(!logoutInitiated) {
     logoutInitiated = true;
-    oauth2.logout();
+    successCB(oauth2.logout());
   }
 }
 
-var switchToUser = function (user) {
-  oatuh2.switchToUser(user);
+var switchToUser = function (successCB, errorCB, args) {
+    if (args.constructor === Array && args.length > 1) {
+        var user = args[1];
+        oauth2.switchToUser(user);
+    } else {
+        oauth2.switchToUser(null);
+    }
 }
 
 module.exports = {
@@ -72,4 +89,4 @@ module.exports = {
     switchToUser: switchToUser
 };
 
-require("cordova/exec/proxy").add("plugin.oauth", module.exports);
+require("cordova/exec/proxy").add(SERVICE, module.exports);

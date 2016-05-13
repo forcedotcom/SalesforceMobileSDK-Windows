@@ -1,3 +1,9 @@
+# Nuget files to ignore
+project.lock.json
+*.nuget.targets
+*.nuget.props
+*.js.map
+
 obj/
 bin/
 *.csproj.user
@@ -11,3 +17,6 @@ Debug/
 ContainerBin/
 NuGet.Config
 NuGet.exe
+*.txt
+*.cache
+*.user
