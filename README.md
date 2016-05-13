@@ -17,8 +17,6 @@ You will need the following for the SDK,
 3. Windows 10 SDK installed 
 4. Sqlite installed for Visual Studio
   1. Universal App Platform: https://www.sqlite.org/2015/sqlite-uap-3090200.vsix
-4. Pre-built Visual Studio template: [SalesforceUniversalApplicationTemplate.zip] (template/SalesforceUniversalApplicationTemplate.zip)
-  * Copy this to {user}\Documents\Visual Studio 2013\Templates\ProjectTemplates
 
 BUILDING
 
