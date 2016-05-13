@@ -3,6 +3,11 @@ SalesforceMobileSDK-Windows
 
 Windows SDK for Salesforce
 
+You have arrived at the source repository for the Salesforce Mobile SDK for Windows. Welcome! Starting with our 4.0 release, there are now two ways you can choose to work with the Mobile SDK:
+
+- If you'd like to work with the source code of the SDK itself, you've come to the right place! You can browse sample app source code and debug down through the layers to get a feel for how everything works under the covers. Read on for instructions on how to get started with the SDK in your development environment.
+- If you're just eager to start developing your own application, the quickest way is using our Powershell script, called createapp.ps1, which uses the SDK Nuget package on Nuget.org to create your own application based on the application template. You'll find more details on the createapp script page.
+
 INSTALLATION NOTES
 
 You will need the following for the SDK,
