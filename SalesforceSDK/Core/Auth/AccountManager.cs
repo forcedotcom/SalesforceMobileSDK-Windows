@@ -201,9 +201,7 @@ namespace Salesforce.SDK.Auth
             }
             catch (JsonException ex)
             {
-                LoggingService.Log("Exception occurred when retrieving account identity:",
-                    LoggingLevel.Critical);
-                LoggingService.Log(ex, LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical, "Exception occurred when retrieving account identity");
                 Debug.WriteLine("Error retrieving account identity");
             }
 

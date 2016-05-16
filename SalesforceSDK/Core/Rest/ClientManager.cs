@@ -88,13 +88,14 @@ namespace Salesforce.SDK.Rest
                         }
                         catch (DeviceOfflineException)
                         {
-                            LoggingService.Log("Could not refresh the token because device is offline", LoggingLevel.Warning);
+                            LoggingService.Log("Could not refresh the token because device is offline",
+                                LoggingLevel.Warning);
                             return null;
                         }
                         catch (OAuthException ex)
                         {
-                            LoggingService.Log("Failed to refresh the token, logging the user out", LoggingLevel.Warning);
-                            LoggingService.Log(ex, LoggingLevel.Error);
+                            LoggingService.Log(ex, LoggingLevel.Error,
+                                "Failed to refresh the token, logging the user out");
 
                             // we failed to refresh the token, we have to log the user out
                             await LogoutAsync(cancellationToken);

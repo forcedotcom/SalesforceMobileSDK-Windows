@@ -330,21 +330,18 @@ namespace Salesforce.SDK.Auth
             }
             catch (DeviceOfflineException ex)
             {
-                LoggingService.Log("Failed to refresh the token because we were offline", LoggingLevel.Warning);
-                LoggingService.Log(ex, LoggingLevel.Warning);
+                LoggingService.Log(ex, LoggingLevel.Warning, "Failed to refresh the token because we were offline");
                 throw;
             }
             catch (WebException ex)
             {
-                LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
-                LoggingService.Log(ex, LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical, "Exception occurred when refreshing token");
                 Debug.WriteLine("Error refreshing token");
                 throw new OAuthException(ex.Message, ex);
             }
             catch (Exception ex)
             {
-                LoggingService.Log("Exception occurred when refreshing token:", LoggingLevel.Critical);
-                LoggingService.Log(ex, LoggingLevel.Critical);
+                LoggingService.Log(ex, LoggingLevel.Critical, "Exception occurred when refreshing token");
                 Debug.WriteLine("Error refreshing token");
                 throw new OAuthException(ex.Message, ex);
             }
@@ -423,7 +420,6 @@ namespace Salesforce.SDK.Auth
             }
             else
             {
-                LoggingService.Log("Error occurred:", LoggingLevel.Critical);
                 LoggingService.Log(response.Error, LoggingLevel.Critical);
             }
             throw response.Error;
