@@ -66,9 +66,22 @@ Function Usage()
 Function GetInputs()
 {
 	$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	while ($global:t -ne "native") 
+	{
+		echoColor $global:TERM_COLOR_RED "Invalide application type entered"
+		$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	}
+
 	$global:n = Read-Host -Prompt 'Enter your application name '
 	$global:g = Read-Host -Prompt 'Enter your organization name (Acme, Inc.) '
+
 	$global:o = Read-Host -Prompt 'Enter the output directory for your app (defaults to the current directory) '
+	while (!(Test-Path $global:o))
+	{
+		echoColor $global:TERM_COLOR_RED "The output target is not a directory, or not exist"
+		$global:o = Read-Host -Prompt 'Enter the output directory for your app (defaults to the current directory) '
+	}
+
 	$global:a = Read-Host -Prompt 'Enter your Connected App ID (defaults to the sample app''s ID) '
 	$global:u = Read-Host -Prompt 'Enter your Connected App Callback URI (defaults to the sample app''s URI) ' 
 }
