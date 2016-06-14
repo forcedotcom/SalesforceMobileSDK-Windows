@@ -26,6 +26,32 @@ $global:TERM_COLOR_MAGENTA="Magenta"
 $global:TERM_COLOR_CYAN="Cyan"
 $global:TERM_COLOR_RESET="\x1b[0m"
 
+$version = "4.2.0"
+$command = $args[0]
+
+Function main 
+{
+    switch ($command)
+    {
+        "version" { printVersion }
+        "create" { createApp }
+        default { usage }
+    }
+}
+
+Function printVersion()
+{
+	"createapp version: " + $version
+}
+
+Function createApp()
+{
+	GetInputs
+    ParseOpts
+    ReplaceTokens
+    Read-Host -Prompt
+}
+
 Function EchoColor
 {
 	Param($1,$2)
@@ -182,7 +208,8 @@ Function ReplaceTokens()
 	}
 }
 
-GetInputs
-ParseOpts
-ReplaceTokens
-Read-Host -Prompt
+main
+#GetInputs
+#ParseOpts
+#ReplaceTokens
+#Read-Host -Prompt
