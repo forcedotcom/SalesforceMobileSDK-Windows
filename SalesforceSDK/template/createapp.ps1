@@ -68,11 +68,16 @@ Function GetInputs()
 	$global:t = Read-Host -Prompt 'Enter your application type (native) '
 	while ($global:t -ne "native") 
 	{
-		echoColor $global:TERM_COLOR_RED "Invalide application type entered"
+		echoColor $global:TERM_COLOR_RED "Invalid application type entered"
 		$global:t = Read-Host -Prompt 'Enter your application type (native) '
 	}
 
 	$global:n = Read-Host -Prompt 'Enter your application name '
+	while ($global:n -eq "") 
+	{
+		echoColor $global:TERM_COLOR_RED "Not configure a name for application yet."
+		$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	}
 	$global:g = Read-Host -Prompt 'Enter your organization name (Acme, Inc.) '
 
 	$global:o = Read-Host -Prompt 'Enter the output directory for your app (defaults to the current directory) '
