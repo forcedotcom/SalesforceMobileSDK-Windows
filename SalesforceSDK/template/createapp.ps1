@@ -26,6 +26,26 @@ $global:TERM_COLOR_MAGENTA="Magenta"
 $global:TERM_COLOR_CYAN="Cyan"
 $global:TERM_COLOR_RESET="\x1b[0m"
 
+$version = "4.2.0"
+$command = $args[0]
+
+Function main 
+{
+    switch ($command)
+    {
+        "version" { "createapp version: " + $version }
+        "create" { createApp }
+        default { usage }
+    }
+}
+
+Function createApp()
+{
+	GetInputs
+    ParseOpts
+    ReplaceTokens
+}
+
 Function EchoColor
 {
 	Param($1,$2)
@@ -46,9 +66,27 @@ Function Usage()
 Function GetInputs()
 {
 	$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	while ($global:t -ne "native") 
+	{
+		echoColor $global:TERM_COLOR_RED "Invalid application type entered"
+		$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	}
+
 	$global:n = Read-Host -Prompt 'Enter your application name '
+	while ($global:n -eq "") 
+	{
+		echoColor $global:TERM_COLOR_RED "Not configure a name for application yet."
+		$global:t = Read-Host -Prompt 'Enter your application type (native) '
+	}
 	$global:g = Read-Host -Prompt 'Enter your organization name (Acme, Inc.) '
+
 	$global:o = Read-Host -Prompt 'Enter the output directory for your app (defaults to the current directory) '
+	while (!(Test-Path $global:o))
+	{
+		echoColor $global:TERM_COLOR_RED "The output target is not a directory, or not exist"
+		$global:o = Read-Host -Prompt 'Enter the output directory for your app (defaults to the current directory) '
+	}
+
 	$global:a = Read-Host -Prompt 'Enter your Connected App ID (defaults to the sample app''s ID) '
 	$global:u = Read-Host -Prompt 'Enter your Connected App Callback URI (defaults to the sample app''s URI) ' 
 }
@@ -107,7 +145,7 @@ Function ParseOpts()
 	}
 	if($global:o)
 	{
-		$global:OPT_OUTPUT_FOLDER = $global:o
+		$global:OPT_OUTPUT_FOLDER = $global:o + "\" + $global:n
 		#check if it has valid characters
 	}
 	if($global:a)
@@ -135,54 +173,50 @@ Function SubstitueTokensInFile()
 Function ReplaceTokens()
 {
 	#Create the output folder
-	if(Test-Path $global:OPT_OUTPUT_FOLDER -PathType Leaf)
+	if(Test-Path $global:OPT_OUTPUT_FOLDER)
 	{
-		echoColor $TERM_COLOR_RED "'${OPT_OUTPUT_FOLDER}' already exists, and is not a directory."
+		echoColor $TERM_COLOR_RED "'${OPT_OUTPUT_FOLDER}' folder already exists, it will be removed."
+		Remove-Item -Path "$global:OPT_OUTPUT_FOLDER" -force -recurse:$true
 	}
-	else
-	{
-		#Create output driectory if it does not exist
-        New-Item -ItemType Directory -Path $global:OPT_OUTPUT_FOLDER
-		$templateAppFilesDir = Split-Path -Parent $PSCommandPath
+	
+	#Create output driectory if it does not exist
+    New-Item -ItemType Directory -Path $global:OPT_OUTPUT_FOLDER
+	$templateAppFilesDir = Split-Path -Parent $PSCommandPath
 
-        #Copy template files to otuput directory
-		Copy-Item $templateAppFilesDir\app_template_files\* $global:OPT_OUTPUT_FOLDER -Recurse
+    #Copy template files to otuput directory
+	Copy-Item $templateAppFilesDir\app_template_files\* $global:OPT_OUTPUT_FOLDER -Recurse
         
-        #Rename files in output directory to name of the app provided by user
-		Rename-Item $global:OPT_OUTPUT_FOLDER\$global:SUB_NATIVE_APP_NAME.csproj $global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.csproj
-        Rename-Item $global:OPT_OUTPUT_FOLDER\$global:SUB_NATIVE_APP_NAME.pfx $global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.pfx
+    #Rename files in output directory to name of the app provided by user
+	Rename-Item $global:OPT_OUTPUT_FOLDER\$global:SUB_NATIVE_APP_NAME.csproj $global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.csproj
+    Rename-Item $global:OPT_OUTPUT_FOLDER\$global:SUB_NATIVE_APP_NAME.pfx $global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.pfx
 		
-        #Replace all tokens in files
-        $fileName = "$global:OPT_OUTPUT_FOLDER\App.xaml"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+    #Replace all tokens in files
+    $fileName = "$global:OPT_OUTPUT_FOLDER\App.xaml"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 
-		$fileName = "$global:OPT_OUTPUT_FOLDER\App.xaml.cs"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+	$fileName = "$global:OPT_OUTPUT_FOLDER\App.xaml.cs"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 
-		$fileName = "$global:OPT_OUTPUT_FOLDER\Pages\MainPage.xaml"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+	$fileName = "$global:OPT_OUTPUT_FOLDER\Pages\MainPage.xaml"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 
-		$fileName = "$global:OPT_OUTPUT_FOLDER\Pages\MainPage.xaml.cs"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+	$fileName = "$global:OPT_OUTPUT_FOLDER\Pages\MainPage.xaml.cs"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 
-		$fileName = "$global:OPT_OUTPUT_FOLDER\settings\Config.cs"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
-		SubstitueTokensInFile $fileName $global:SUB_APP_ID $global:OPT_APP_ID
-		SubstitueTokensInFile $fileName $global:SUB_REDIRECT_URI $global:OPT_REDIRECT_URI
+	$fileName = "$global:OPT_OUTPUT_FOLDER\settings\Config.cs"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+	SubstitueTokensInFile $fileName $global:SUB_APP_ID $global:OPT_APP_ID
+	SubstitueTokensInFile $fileName $global:SUB_REDIRECT_URI $global:OPT_REDIRECT_URI
         
-        $fileName = "$global:OPT_OUTPUT_FOLDER\Package.appxmanifest"
-        SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
-        SubstitueTokensInFile $fileName $global:SUB_ORG_NAME $global:OPT_ORG_NAME
+    $fileName = "$global:OPT_OUTPUT_FOLDER\Package.appxmanifest"
+    SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+    SubstitueTokensInFile $fileName $global:SUB_ORG_NAME $global:OPT_ORG_NAME
         
-        $fileName = "$global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.csproj"
-        SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
+    $fileName = "$global:OPT_OUTPUT_FOLDER\$global:OPT_APP_NAME.csproj"
+    SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 
-		$fileName = "$global:OPT_OUTPUT_FOLDER\Logging\Logger.cs"
-		SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
-	}
+	$fileName = "$global:OPT_OUTPUT_FOLDER\Logging\Logger.cs"
+	SubstitueTokensInFile $fileName $global:SUB_NATIVE_APP_NAME $global:OPT_APP_NAME
 }
 
-GetInputs
-ParseOpts
-ReplaceTokens
-Read-Host -Prompt
+main
