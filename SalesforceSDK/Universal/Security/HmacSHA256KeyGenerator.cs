@@ -105,7 +105,7 @@ namespace Salesforce.SDK.Security
         {
             HardwareToken id = HardwareIdentification.GetPackageSpecificToken(null);
             string normalized = NormalizeHardwareId(id.Id.ToArray());
-            HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            HashAlgorithmProvider alg = HashAlgorithmProvider.OpenAlgorithm("MD5");
             IBuffer buff =
                 CryptographicBuffer.ConvertStringToBinary(normalized + typeof (HmacSHA256KeyGenerator).FullName,
                     BinaryStringEncoding.Utf8);
