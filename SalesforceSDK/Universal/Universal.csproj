@@ -132,6 +132,7 @@
     <Compile Include="Security\HmacSHA256KeyGenerator.cs" />
     <Compile Include="Security\IKeyGenerator.cs" />
     <Compile Include="Strings\LocalizedStrings.cs" />
+    <Compile Include="Upgrade\SalesforceConfigUpgradeManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Auth\PincodeDialog.xaml">

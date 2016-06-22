@@ -31,6 +31,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json;
 using Salesforce.SDK.Net;
 using System.Net;
+using Windows.Security.Cryptography.Core;
 using Salesforce.SDK.App;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Core;
@@ -54,7 +55,7 @@ namespace Salesforce.SDK.Auth
         [TestInitialize]
         public void Setup()
         {
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256));
             Encryptor.init(settings);
         }
 

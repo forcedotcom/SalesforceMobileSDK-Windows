@@ -39,6 +39,8 @@ using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using System.Threading.Tasks;
+using Salesforce.SDK.Settings;
+using SalesforceConfigUpgradeManager = Salesforce.SDK.Upgrade.SalesforceConfigUpgradeManager;
 
 namespace Salesforce.SDK.App
 {
@@ -64,6 +66,7 @@ namespace Salesforce.SDK.App
         {
             SFApplicationHelper.RegisterServices();
             Suspending += OnSuspending;
+            SalesforceConfigUpgradeManager.GetInstance().UpgradeSettingsAsync().Wait();
             InitializeConfig();
             SDKManager.CreateClientManager(false);
             SDKManager.RootApplicationPage = SetRootApplicationPage();
