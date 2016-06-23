@@ -1,5 +1,5 @@
-﻿﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+﻿/*
+ * Copyright (c) 2016, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,32 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-using System.Reflection;
+using Salesforce.SDK.Logging;
+using System;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitleAttribute("Salesforce.SDK.Universal")]
-[assembly: AssemblyCompanyAttribute("Salesforce")]
-[assembly: AssemblyProductAttribute("Salesforce.SDK.Universal")]
-[assembly: AssemblyCopyrightAttribute("Copyright ©  2015")]
+namespace Salesforce.SDK.Hybrid.Logging
+{
+    sealed internal class Logger : ILoggingService
+    {
+        public void Log(Exception exception, LoggingLevel loggingLevel, string logMessage = "", [CallerMemberName] string memberName = "", [CallerFilePath] string classFilePath = "", [CallerLineNumber]int line = 0)
+        {
+            if (exception != null)
+            {
+                var message = exception.Message;
+                if (!string.IsNullOrEmpty(logMessage))
+                {
+                    message = $"LogMessage: {logMessage}{Environment.NewLine}Exception Message: {message}";
+                }
+                Log(message, loggingLevel, memberName, classFilePath, line);
+            }
+        }
 
-
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersionAttribute("4")]
-[assembly: AssemblyFileVersionAttribute("4")]
-[assembly: ComVisible(false)]
-[assembly: InternalsVisibleTo("Tests")]
-
+        public void Log(string message, LoggingLevel loggingLevel, [CallerMemberName] string memberName = "", [CallerFilePath] string classFilePath = "", [CallerLineNumber]int line = 0)
+        {
+            Debug.WriteLine($"{loggingLevel}:{Path.GetFileName(classFilePath)}:{memberName}:line {line} - {message}");
+        }
+    }
+}

@@ -33,6 +33,8 @@ using Windows.UI.Xaml.Controls;
 using Salesforce.SDK.Auth;
 using System.Threading.Tasks;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Hybrid.Logging;
+using Salesforce.SDK.Logging;
 using Salesforce.SDK.Pages;
 using Salesforce.SDK.Security;
 using Salesforce.SDK.Settings;

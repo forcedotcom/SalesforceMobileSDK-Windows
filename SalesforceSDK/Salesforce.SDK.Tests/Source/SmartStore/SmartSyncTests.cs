@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Security.Cryptography.Core;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Auth;
@@ -68,7 +69,7 @@ namespace Salesforce.SDK.SmartStore.Store
         {
             SFApplicationHelper.RegisterServices();
             SDKServiceLocator.RegisterService<ILoggingService, Hybrid.Logging.Logger>();
-            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator());
+            var settings = new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256));
             Encryptor.init(settings);
             var options = new LoginOptions(TestCredentials.LoginUrl, TestCredentials.ClientId, TestCallbackUrl, "mobile",
                 TestScopes);

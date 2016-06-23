@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Windows.Foundation;
 using System;
+using Windows.Security.Cryptography.Core;
 using Salesforce.SDK.Auth;
 using Salesforce.SDK.Security;
 using Salesforce.SDK.Core;
@@ -53,7 +54,7 @@ namespace Salesforce.SDK.Hybrid.Auth
             {
                 RegisterServices();
                 LoggingService.Log("Initializing Encryption", LoggingLevel.Information);
-                Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+                Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
                 SDKManager.ResetClientManager();
             }
         }
