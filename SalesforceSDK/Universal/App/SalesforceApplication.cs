@@ -39,6 +39,10 @@ using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using System.Threading.Tasks;
+using Salesforce.SDK.Hybrid.Logging;
+using Salesforce.SDK.Security;
+using Salesforce.SDK.Settings;
+using Salesforce.SDK.Upgrade;
 
 namespace Salesforce.SDK.App
 {
@@ -63,7 +67,13 @@ namespace Salesforce.SDK.App
         protected SalesforceApplication()
         {
             SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Logger>();
             Suspending += OnSuspending;
+
+            //do upgrade on stored config, account and pincode
+            UpgradeConfigAsync().Wait();
+            SDKUpgradeManager.GetInstance().UpgradeAsync().Wait();
+
             InitializeConfig();
             SDKManager.CreateClientManager(false);
             SDKManager.RootApplicationPage = SetRootApplicationPage();
@@ -90,6 +100,25 @@ namespace Salesforce.SDK.App
         ///     }
         /// </summary>
         protected abstract Task InitializeConfig();
+
+        /// <summary>
+        ///     Use this to upgrade your custom SalesforceConfig source.
+        ///     An example of code that may go into this method would be as follows:
+        //protected override Task UpgradeConfigAsync()
+        //{
+        //    SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
+        //    SDKServiceLocator.RegisterService<ILoggingService, Logger>();
+        //    if (ApplicationData.Current.Version.Equals(0))
+        //    {
+        //        Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
+        //        var config = SDKManager.InitializeConfigAsync<Config>().Result;
+        //        Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
+        //        return config.SaveConfigAsync();
+        //    }
+        //    return Task.CompletedTask;
+        //}
+        /// </summary>
+        protected abstract Task UpgradeConfigAsync();
 
         /// <summary>
         ///     Implement to return the type of the root page to switch to once oauth completes.

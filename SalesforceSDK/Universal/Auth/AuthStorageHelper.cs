@@ -128,13 +128,13 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                LoggingService.Log($"Attempting to retrieve user Resource={resource}  UserName={userName}", LoggingLevel.Verbose);
+                LoggingService.Log($"Attempting to retrieve user Resource={resource}", LoggingLevel.Verbose);
 
                 var list = SafeRetrieveResource(resource);
 
                 if (list == null)
                 {
-                    LoggingService.Log($"Could not retrieve user Resource={resource} UserName={userName}", LoggingLevel.Verbose);
+                    LoggingService.Log($"Could not retrieve user Resource={resource}", LoggingLevel.Verbose);
                     return null;
                 }
 
@@ -161,13 +161,13 @@ namespace Salesforce.SDK.Auth
         {
             try
             {
-                LoggingService.Log($"Attempting to retrieve user {userName}", LoggingLevel.Verbose);
+                LoggingService.Log($"Attempting to retrieve user", LoggingLevel.Verbose);
 
                 return _vault.FindAllByUserName(userName);
             }
             catch (Exception ex)
             {
-                LoggingService.Log(ex, LoggingLevel.Critical, $"Exception occurred when retrieving vault data for user {userName}");
+                LoggingService.Log(ex, LoggingLevel.Critical, $"Exception occurred when retrieving vault data for user");
 
                 Debug.WriteLine("Failed to retrieve vault data for user");
             }
@@ -404,8 +404,12 @@ namespace Salesforce.SDK.Auth
             var newPin = new PasswordCredential(PasswordVaultSecuredData, PasswordVaultPincode,
                 JsonConvert.SerializeObject(policy));
             _vault.Add(newPin);
-            LoggingService.Log("pincode added to vault",
-                LoggingLevel.Verbose);
+            if (!string.IsNullOrEmpty(newPin.Password))
+            {
+                _vault.Add(newPin);
+                LoggingService.Log("pincode added to vault",
+                    LoggingLevel.Verbose);
+            }
         }
 
         /// <summary>
@@ -574,7 +578,7 @@ namespace Salesforce.SDK.Auth
             LoggingService.Log("Pincode wiped", LoggingLevel.Verbose);
         }
 
-        private string RetrievePincode()
+        public string RetrievePincode()
         {
             var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
 

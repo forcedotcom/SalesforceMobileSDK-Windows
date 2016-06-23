@@ -113,6 +113,7 @@
     <Compile Include="Source\SmartStore\SmartSyncTests.cs" />
     <Compile Include="Source\SmartStore\TestCredentials.cs" />
     <Compile Include="Source\TestCredentials.cs" />
+    <Compile Include="Source\Upgrade\UpgradeTest.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </Compile>
