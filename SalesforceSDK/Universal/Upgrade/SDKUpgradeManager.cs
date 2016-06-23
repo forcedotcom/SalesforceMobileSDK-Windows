@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Security.Cryptography.Core;
@@ -70,12 +71,12 @@ namespace Salesforce.SDK.Upgrade
             await authHelper.PersistCurrentPincodeAsync(account);
         }
 
-        private uint VersionConvertion(string version)
+        internal uint VersionConvertion(string version)
         {
             return UInt32.Parse(new string(version.Where(Char.IsDigit).ToArray()));
         }
 
-        private void VersionRequestHandler(SetVersionRequest request)
+        internal void VersionRequestHandler(SetVersionRequest request)
         {
             var defer = request.GetDeferral();
             foreach (var item in ApplicationData.Current.LocalSettings.Values)
