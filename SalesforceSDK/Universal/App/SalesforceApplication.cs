@@ -39,6 +39,7 @@ using Salesforce.SDK.Exceptions;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Core;
 using System.Threading.Tasks;
+using Salesforce.SDK.Hybrid.Logging;
 using Salesforce.SDK.Security;
 using Salesforce.SDK.Settings;
 using Salesforce.SDK.Upgrade;
@@ -66,6 +67,7 @@ namespace Salesforce.SDK.App
         protected SalesforceApplication()
         {
             SFApplicationHelper.RegisterServices();
+            SDKServiceLocator.RegisterService<ILoggingService, Logger>();
             Suspending += OnSuspending;
 
             //do upgrade on stored config, account and pincode

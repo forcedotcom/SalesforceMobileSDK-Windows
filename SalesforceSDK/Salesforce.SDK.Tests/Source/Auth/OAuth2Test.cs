@@ -109,7 +109,7 @@ namespace Salesforce.SDK.Auth
             IdentityResponse identityResponse = await OAuth2.CallIdentityServiceAsync(account.IdentityUrl, account.AccessToken);
 
             // Check username
-            Assert.AreEqual("sdktest@cs1.com", identityResponse.UserName);
+            Assert.AreEqual(TestCredentials.Username, identityResponse.UserName);
         }
 
         [TestMethod]

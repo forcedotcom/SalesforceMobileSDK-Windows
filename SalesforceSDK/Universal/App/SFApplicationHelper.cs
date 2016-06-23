@@ -49,7 +49,6 @@ namespace Salesforce.SDK.App
             SDKServiceLocator.RegisterService<IAuthHelper, AuthHelper>();
             SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
             SDKServiceLocator.RegisterService<IApplicationInformationService, ApplicationService>();
-            SDKServiceLocator.RegisterService<ILoggingService, Logger>();
         }
         public void Initialize()
         {
