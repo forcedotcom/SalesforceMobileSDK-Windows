@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="App\ApplicationService.cs" />
     <Compile Include="Extensions\Utilities.cs" />
+    <Compile Include="Hybrid\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="App\ISalesforcePage.cs" />
     <Compile Include="App\ISFApplicationHelper.cs" />
@@ -132,7 +133,7 @@
     <Compile Include="Security\HmacSHA256KeyGenerator.cs" />
     <Compile Include="Security\IKeyGenerator.cs" />
     <Compile Include="Strings\LocalizedStrings.cs" />
-    <Compile Include="Upgrade\SalesforceConfigUpgradeManager.cs" />
+    <Compile Include="Upgrade\SDKUpgradeManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Auth\PincodeDialog.xaml">

@@ -99,6 +99,12 @@ namespace Salesforce.SDK.Auth
             return Task.FromResult(0);
         }
 
+        public Task PersistCurrentPincodeAsync(Account account)
+        {
+            AuthStorageHelper.GetAuthStorageHelper().PersistPincode(account.Policy);
+            return Task.FromResult(0);
+        }
+
         public void RefreshCookies()
         {
             LoggingService.Log("Attempting at refreshing cookies", LoggingLevel.Verbose);
