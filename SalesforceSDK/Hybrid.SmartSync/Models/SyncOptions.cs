@@ -43,12 +43,10 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
 
         [JsonProperty]
         internal List<string> FieldList;
-        
-        
+
         public static SyncOptions FromJson(string options)
         {
-            var jObject = JsonConvert.DeserializeObject<JObject>(options);
-            var nativeSyncOptions = SDK.SmartSync.Model.SyncOptions.FromJson(jObject);
+            var nativeSyncOptions = SDK.SmartSync.Model.SyncOptions.FromJson(JObject.Parse(options));
             var syncOptions = JsonConvert.SerializeObject(nativeSyncOptions);
             return JsonConvert.DeserializeObject<SyncOptions>(syncOptions);
         }
