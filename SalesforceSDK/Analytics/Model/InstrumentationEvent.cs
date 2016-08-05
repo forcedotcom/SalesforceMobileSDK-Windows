@@ -79,7 +79,7 @@ namespace Salesforce.SDK.Analytics.Model
         private JObject _previousPage;
         private JObject _marks;
 
-        public InstrumentationEvent(string eventId, long startTime, long endTime, string name,
+        internal InstrumentationEvent(string eventId, long startTime, long endTime, string name,
                          JObject attributes, string sessionId, int sequenceId,
                          string senderId, JObject senderContext,
                          SchemaType schemaType, EventType eventType, ErrorType errorType,
