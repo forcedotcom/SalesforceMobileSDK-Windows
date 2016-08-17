@@ -33,11 +33,15 @@ using Salesforce.SDK.Analytics.Model;
 
 namespace Salesforce.SDK.Analytics.Store
 {
+    /// <summary>
+    /// Provides APIs to store events in an encrypted store on the filesystem.
+    /// Each event is stored in a separate file on the filesystem.
+    /// </summary>
     public interface IEventStoreManager
     {
      /// <summary>
      /// Stores an event to the filesystem. A combination of event's unique ID and
-     ///filename suffix is used to generate a unique filename per event.
+     /// filename suffix is used to generate a unique filename per event.
      /// </summary>
      /// <param name="instrumentationEvent"></param>
      /// <returns></returns>

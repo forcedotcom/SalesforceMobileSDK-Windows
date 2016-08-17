@@ -35,28 +35,20 @@ using Salesforce.SDK.Analytics.Model;
 using Salesforce.SDK.Core;
 using Salesforce.SDK.Logging;
 using PCLStorage;
+using Salesforce.SDK.Security;
 
 namespace Salesforce.SDK.Analytics.Store
 {
     public class EventStoreManager : IEventStoreManager
     {
-        private string _filenameSuffix;
         private readonly IFolder _rootDir;
-        private string _encryptionKey;
         private bool _isLoggingEnabled = true;
         private int _maxEvents = 1000;
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
-        public string FilenameSuffix
-        {
-            get { return _filenameSuffix; }
-            set { _filenameSuffix = value; }
-        } 
+        private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
+        public string FilenameSuffix { get; set; }
 
-        public string EncryptionKey
-        {
-            get { return _encryptionKey; }
-            set { _encryptionKey = value; }
-        }
+        public string EncryptionKey { get; set; }
 
         public EventStoreManager(string fileNameSuffix, string encryptionKey)
         {
@@ -67,52 +59,53 @@ namespace Salesforce.SDK.Analytics.Store
 
         public async Task StoreEventAsync(InstrumentationEvent instrumentationEvent)
         {
-            if (instrumentationEvent == null || string.IsNullOrEmpty(instrumentationEvent.ToJson().ToString()))
+            if (string.IsNullOrEmpty(instrumentationEvent?.ToJson().ToString()))
             {
                 LoggingService.Log("Invalid Event", LoggingLevel.Error);
                 return;
             }
-            //TODO: Add check for shouldstoreevent
-            var fileName = instrumentationEvent.EventId + _filenameSuffix;
-            //Open file
-            IFile file = await _rootDir.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
-            //Wrtie to file after encrypting contents
-            //TODO: Enrypt the contents
-            await file.WriteAllTextAsync(instrumentationEvent.ToJson().ToString());
+            if (await ShouldStoreEventAsync().ConfigureAwait(false))
+            {
+                var fileName = instrumentationEvent.EventId + FilenameSuffix;
+                //Open file
+                IFile file = await _rootDir.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
+                //Wrtie to file after encrypting contents
+                await file.WriteAllTextAsync(Encrypt(instrumentationEvent.ToJson().ToString())).ConfigureAwait(false);
+            }
         }
 
         public async Task StoreEventsAsync(List<InstrumentationEvent> instrumentationEvents)
         {
-            if (instrumentationEvents == null || instrumentationEvents.Count == 0)
+            if (instrumentationEvents == null)
             {
-                LoggingService.Log("No events to store", LoggingLevel.Error);
+                throw new ArgumentNullException(nameof(instrumentationEvents), "InstrumentationEvents list is null");
+            }
+            if (instrumentationEvents.Count == 0)
+            {
+                LoggingService.Log("No events to store", LoggingLevel.Information);
                 return;
             }
-            if (!await ShouldStoreEvent())
+            if (!await ShouldStoreEventAsync().ConfigureAwait(false))
             {
                 return;
             }
-            foreach (var instrumentationEvent in instrumentationEvents)
-            {
-                await StoreEventAsync(instrumentationEvent);
-            }
+            await Task.WhenAll(instrumentationEvents.Select(StoreEventAsync));
         }
 
         public async Task<InstrumentationEvent> FetchEventAsync(string eventId)
         {
             if (string.IsNullOrEmpty(eventId))
             {
-                LoggingService.Log("Invalid event ID supplied: " + eventId, LoggingLevel.Error);
-                return null;
+                throw new ArgumentNullException(nameof(eventId), "Invalid event ID supplied");
             }
-            var fileName = eventId + _filenameSuffix;
-            var file = await _rootDir.GetFileAsync(fileName);
+            var fileName = eventId + FilenameSuffix;
+            var file = await _rootDir.GetFileAsync(fileName).ConfigureAwait(false);
             return await FetchEventAsync(file);
         }
 
         public async Task<List<InstrumentationEvent>> FetchAllEventsAsync()
         {
-            var files = await _rootDir.GetFilesAsync();
+            var files = await _rootDir.GetFilesAsync().ConfigureAwait(false);
             var events = new List<InstrumentationEvent>();
 
             foreach (var file in files)
@@ -131,11 +124,10 @@ namespace Salesforce.SDK.Analytics.Store
         {
             if (string.IsNullOrEmpty(eventId))
             {
-                LoggingService.Log("Invalid event ID supplied: " + eventId, LoggingLevel.Error);
-                return false;
+                throw new ArgumentNullException(nameof(eventId), "Invalid event ID supplied");
             }
-            var fileName = eventId + _filenameSuffix;
-            var file = await _rootDir.GetFileAsync(fileName);
+            var fileName = eventId + FilenameSuffix;
+            var file = await _rootDir.GetFileAsync(fileName).ConfigureAwait(false);
             try
             {
                 await file.DeleteAsync();
@@ -143,26 +135,27 @@ namespace Salesforce.SDK.Analytics.Store
             }
             catch (Exception ex)
             {
-                return false;
+                throw ex;
             }
         }
 
         public async Task DeleteEventsAsync(List<string> eventIds)
         {
-            if (eventIds == null || eventIds.Count == 0)
+            if (eventIds == null)
             {
-                LoggingService.Log("No events to delete", LoggingLevel.Error);
+                throw new ArgumentNullException(nameof(eventIds), "Event Ids list is null");
+            }
+            if(eventIds.Count == 0)
+            {
+                LoggingService.Log("No events to delete", LoggingLevel.Information);
                 return;
             }
-            foreach (var eventId in eventIds)
-            {
-                await DeleteEventAsync(eventId);
-            }
+            await Task.WhenAll(eventIds.Select(DeleteEventAsync));
         }
 
         public async Task DeleteAllEventsAsync()
         {
-            var files = await _rootDir.GetFilesAsync();
+            var files = await _rootDir.GetFilesAsync().ConfigureAwait(false);
             foreach (var file in files)
             {
                 await file.DeleteAsync();
@@ -173,7 +166,7 @@ namespace Salesforce.SDK.Analytics.Store
         {
             var storedEvents = await FetchAllEventsAsync();
             await DeleteAllEventsAsync();
-            _encryptionKey = newKey;
+            EncryptionKey = newKey;
             await StoreEventsAsync(storedEvents);
         }
 
@@ -196,21 +189,22 @@ namespace Salesforce.SDK.Analytics.Store
         {
             if (file == null)
             {
-                LoggingService.Log("File does not exist", LoggingLevel.Error);
-                return null;
+                throw new ArgumentNullException(nameof(file), "File does not exist");
             }
-            InstrumentationEvent  instrumentationEvent = null;
-            var json = await file.ReadAllTextAsync();
-            //TODO: decrypt contents read from file
-            //TODO: Add null checks, throw exceptions
-            instrumentationEvent = new InstrumentationEvent(new JObject(json));
+            var json = await file.ReadAllTextAsync().ConfigureAwait(false);
+            //decrypt contents read from file
+            var eventString = Decrypt(json);
+            if (eventString == null)
+            {
+                throw new ArgumentNullException(nameof(eventString), "Error in decrypting contents of file");
+            }
 
-            return instrumentationEvent;
+            return new InstrumentationEvent(new JObject(eventString));
         }
 
-        private async Task<bool> ShouldStoreEvent()
+        private async Task<bool> ShouldStoreEventAsync()
         {
-            var files = await _rootDir.GetFilesAsync();
+            var files = await _rootDir.GetFilesAsync().ConfigureAwait(false);
             int filesCount = 0;
             if (files != null)
             {
@@ -219,6 +213,14 @@ namespace Salesforce.SDK.Analytics.Store
             return _isLoggingEnabled && (filesCount < _maxEvents);
         }
 
-        //TODO: encrypt method decrypt method
+        private string Encrypt(string data)
+        {
+            return EncryptionService.Encrypt(data);
+        }
+
+        private string Decrypt(string data)
+        {
+            return EncryptionService.Decrypt(data);
+        }
     }
 }

@@ -34,11 +34,14 @@ using Newtonsoft.Json.Linq;
 
 namespace Salesforce.SDK.Analytics.Model
 {
+    /// <summary>
+    /// Represents common attributes specific to this app and device. These
+    /// attributes will be appended to the events stored using this library.
+    /// </summary>
     public class DeviceAppAttributes
     {
         #region Statics
 
-        private const string Tag = "DeviceAppAttributes";
         private const string AppVersionKey = "appVersion";
         private const string AppnameKey = "appName";
         private const string OsVersionKey = "osVersion";

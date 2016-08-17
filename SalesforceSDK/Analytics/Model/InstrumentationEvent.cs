@@ -36,9 +36,12 @@ using Newtonsoft.Json;
 
 namespace Salesforce.SDK.Analytics.Model
 {
+    /// <summary>
+    /// Represents a typical instrumentation event. Transforms can be used to
+    /// convert this event into a specific library's event format.
+    /// </summary>
     public class InstrumentationEvent
     {
-        private static string TAG = "InstrumentationEvent";
         public static string EVENT_ID_KEY = "eventId";
         public static string START_TIME_KEY = "startTime";
         public static string END_TIME_KEY = "endTime";
@@ -148,7 +151,28 @@ namespace Salesforce.SDK.Analytics.Model
 
         public InstrumentationEvent(JObject json)
         {
-            json?.ToObject<InstrumentationEvent>();
+            if(json != null)
+            {
+                _eventId = json.GetValue(EVENT_ID_KEY).ToString();
+                _startTime = Convert.ToInt64(json.GetValue(START_TIME_KEY));
+                _endTime = Convert.ToInt64(json.GetValue(END_TIME_KEY));
+                _name = json.GetValue(NAME_KEY).ToString();
+                _attributes = json.GetValue(ATTRIBUTES_KEY).ToObject<JObject>();
+                _sessionId = json.GetValue(SESSION_ID_KEY).ToString();
+                _sequenceId = Convert.ToInt32(json.GetValue(SEQUENCE_ID_KEY));
+                _senderId = json.GetValue(SENDER_ID_KEY).ToString();
+                _senderContext = json.GetValue(SENDER_CONTEXT_KEY).ToObject<JObject>();
+                _schemaType = json.GetValue(SCHEMA_TYPE_KEY).ToObject<SchemaType>();
+                _eventType = json.GetValue(EVENT_TYPE_KEY).ToObject<EventType>();
+                _errorType = json.GetValue(ERROR_TYPE_KEY).ToObject<ErrorType>();
+                _deviceAppAttributes = json.GetValue(DEVICE_APP_ATTRIBUTES_KEY).ToObject<DeviceAppAttributes>();
+                _connectionType = json.GetValue(CONNECTION_TYPE_KEY).ToString();
+                _senderParentId = json.GetValue(SENDER_PARENT_ID_KEY).ToString();
+                _sessionStartTime = Convert.ToInt64(json.GetValue(SESSION_START_TIME_KEY));
+                _page = json.GetValue(PAGE_KEY).ToObject<JObject>();
+                _previousPage = json.GetValue(PREVIOUS_PAGE_KEY).ToObject<JObject>();
+                _marks = json.GetValue(MARKS_KEY).ToObject<JObject>();
+            }
         }
 
         public JObject ToJson()
@@ -179,8 +203,9 @@ namespace Salesforce.SDK.Analytics.Model
             return json;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
             if (!(obj is InstrumentationEvent))
             {
                 return false;
@@ -190,11 +215,7 @@ namespace Salesforce.SDK.Analytics.Model
             {
                 return false;
             }
-            if (EventId.Equals(instrumentationEvent.EventId))
-            {
-                return true;
-            }
-            return false;
+            return EventId.Equals(instrumentationEvent.EventId);
         }
 
         public override int GetHashCode()
@@ -202,9 +223,9 @@ namespace Salesforce.SDK.Analytics.Model
             return EventId.GetHashCode();
         }
 
-        /*
-        * Represents the type of event being logged.
-        */
+        /// <summary>
+        /// Represents the type of event being logged.
+        /// </summary>
         public enum EventType
         {
             User,
@@ -213,9 +234,9 @@ namespace Salesforce.SDK.Analytics.Model
             Crud
         }
 
-        /*
-        * Represents the type of schema being logged.
-        */
+        /// <summary>
+        /// Represents the type of schema being logged.
+        /// </summary>
         public enum SchemaType
         {
             LightningInteraction,
@@ -224,9 +245,9 @@ namespace Salesforce.SDK.Analytics.Model
             LightningError
         }
 
-        /*
-         * Represents the type of error being logged.
-         */
+        /// <summary>
+        /// Represents the type of error being logged.
+        /// </summary>
         public enum ErrorType
         {
             Info,
