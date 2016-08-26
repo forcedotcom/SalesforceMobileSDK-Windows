@@ -83,6 +83,7 @@ namespace Salesforce.SDK.Analytics.Model
         [JsonProperty]
         public string Clientid => _clientId;
 
+        [JsonConstructor]
         public DeviceAppAttributes(string appVersion, string appName, string osVersion, string osName,
             string nativeAppType, string mobileSdkVersion, string deviceModel,
             string deviceId, string clientId)

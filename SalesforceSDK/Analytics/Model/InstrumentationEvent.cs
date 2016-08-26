@@ -154,12 +154,12 @@ namespace Salesforce.SDK.Analytics.Model
             if(json != null)
             {
                 _eventId = json.GetValue(EVENT_ID_KEY).ToString();
-                _startTime = Convert.ToInt64(json.GetValue(START_TIME_KEY));
-                _endTime = Convert.ToInt64(json.GetValue(END_TIME_KEY));
+                _startTime = (long) json.GetValue(START_TIME_KEY);
+                _endTime = (long) json.GetValue(END_TIME_KEY);
                 _name = json.GetValue(NAME_KEY).ToString();
                 _attributes = json.GetValue(ATTRIBUTES_KEY).ToObject<JObject>();
                 _sessionId = json.GetValue(SESSION_ID_KEY).ToString();
-                _sequenceId = Convert.ToInt32(json.GetValue(SEQUENCE_ID_KEY));
+                _sequenceId = (int) json.GetValue(SEQUENCE_ID_KEY);
                 _senderId = json.GetValue(SENDER_ID_KEY).ToString();
                 _senderContext = json.GetValue(SENDER_CONTEXT_KEY).ToObject<JObject>();
                 _schemaType = json.GetValue(SCHEMA_TYPE_KEY).ToObject<SchemaType>();
@@ -168,7 +168,7 @@ namespace Salesforce.SDK.Analytics.Model
                 _deviceAppAttributes = json.GetValue(DEVICE_APP_ATTRIBUTES_KEY).ToObject<DeviceAppAttributes>();
                 _connectionType = json.GetValue(CONNECTION_TYPE_KEY).ToString();
                 _senderParentId = json.GetValue(SENDER_PARENT_ID_KEY).ToString();
-                _sessionStartTime = Convert.ToInt64(json.GetValue(SESSION_START_TIME_KEY));
+                _sessionStartTime = (long) json.GetValue(SESSION_START_TIME_KEY);
                 _page = json.GetValue(PAGE_KEY).ToObject<JObject>();
                 _previousPage = json.GetValue(PREVIOUS_PAGE_KEY).ToObject<JObject>();
                 _marks = json.GetValue(MARKS_KEY).ToObject<JObject>();
@@ -185,7 +185,7 @@ namespace Salesforce.SDK.Analytics.Model
                 { NAME_KEY, _name },
                 { ATTRIBUTES_KEY, _attributes},
                 { SESSION_ID_KEY, _sessionId},
-                { SEQUENCE_ID_KEY, _sessionId},
+                { SEQUENCE_ID_KEY, _sequenceId},
                 { SENDER_ID_KEY, _senderId},
                 { SENDER_CONTEXT_KEY, _senderContext},
                 { SCHEMA_TYPE_KEY, _schemaType.ToString()},

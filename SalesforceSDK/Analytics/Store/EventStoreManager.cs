@@ -48,12 +48,9 @@ namespace Salesforce.SDK.Analytics.Store
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         public string FilenameSuffix { get; set; }
 
-        public string EncryptionKey { get; set; }
-
-        public EventStoreManager(string fileNameSuffix, string encryptionKey)
+        public EventStoreManager(string fileNameSuffix)
         {
             FilenameSuffix = fileNameSuffix;
-            EncryptionKey = encryptionKey;
             _rootDir = FileSystem.Current.LocalStorage;
         }
 
@@ -110,7 +107,7 @@ namespace Salesforce.SDK.Analytics.Store
 
             foreach (var file in files)
             {
-                var instrumentationEvent = await FetchEventAsync(file.Name);
+                var instrumentationEvent = await FetchEventAsync(file);
                 if (instrumentationEvent != null)
                 {
                     events.Add(instrumentationEvent);
@@ -162,14 +159,6 @@ namespace Salesforce.SDK.Analytics.Store
             }
         }
 
-        public async Task ChangeEncryptionKeyAsync(string oldKey, string newKey)
-        {
-            var storedEvents = await FetchAllEventsAsync();
-            await DeleteAllEventsAsync();
-            EncryptionKey = newKey;
-            await StoreEventsAsync(storedEvents);
-        }
-
         public void DisableEnableLogging(bool enabled)
         {
             _isLoggingEnabled = enabled;
@@ -199,7 +188,7 @@ namespace Salesforce.SDK.Analytics.Store
                 throw new ArgumentNullException(nameof(eventString), "Error in decrypting contents of file");
             }
 
-            return new InstrumentationEvent(new JObject(eventString));
+            return new InstrumentationEvent(JObject.Parse(eventString));
         }
 
         private async Task<bool> ShouldStoreEventAsync()
