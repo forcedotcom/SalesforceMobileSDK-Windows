@@ -37,6 +37,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
+using Windows.Networking.Connectivity;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -170,6 +171,12 @@ namespace Salesforce.SDK.App
             ApplicationDataContainer settings = ApplicationData.Current.LocalSettings;
             settings.Values[ConfigSettings] = EncryptionService.Encrypt(config);
             return Task.FromResult<bool>(true);
+        }
+
+        public string GetConnectionType()
+        {
+            var profile = NetworkInformation.GetInternetConnectionProfile();
+            return profile?.ProfileName ?? string.Empty;
         }
     }
 }

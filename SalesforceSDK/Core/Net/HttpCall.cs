@@ -310,6 +310,10 @@ namespace Salesforce.SDK.Net
             // Setting header
             if (_headers != null)
             {
+                if (_headers.Headers.ContainsKey("AcceptEncoding"))
+                {
+                    req.Headers.AcceptEncoding.Add(new StringWithQualityHeaderValue(_headers.Headers["AcceptEncoding"]));
+                }
                 if (_headers.Authorization != null)
                 {
                     req.Headers.Authorization = _headers.Authorization;

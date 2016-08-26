@@ -29,6 +29,7 @@ using System;
 using Salesforce.SDK.Analytics.Manager;
 using Newtonsoft.Json.Linq;
 using Salesforce.SDK.Core;
+using Salesforce.SDK.Settings;
 
 namespace Salesforce.SDK.Analytics.Model
 {
@@ -52,6 +53,9 @@ namespace Salesforce.SDK.Analytics.Model
         private JObject _marks;
 
         private static IAnalyticsManager AnalyticsManager;
+
+        private static IApplicationInformationService ApplicationService =
+            SDKServiceLocator.Get<IApplicationInformationService>();
 
         //TODO: get connectiontype method
         public InstrumentationEventBuilder(IAnalyticsManager analyticsManager)
@@ -171,7 +175,6 @@ namespace Salesforce.SDK.Analytics.Model
                 throw new EventBuilderException("Mandatory field 'page' not set!");
             }
 
-            //TODO: Uncomment the following lines after AnalyticsManager is implemented.
             var sequenceId = AnalyticsManager.GetGlobalSequenceId() + 1;
             AnalyticsManager.SetGlobalSequenceId(sequenceId);
 
@@ -187,8 +190,7 @@ namespace Salesforce.SDK.Analytics.Model
 
         public string GetConnectionType()
         {
-            return null;
-            //TODO
+            return ApplicationService.GetConnectionType();
         }
 
     }

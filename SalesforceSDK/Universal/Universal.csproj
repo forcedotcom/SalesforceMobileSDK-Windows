@@ -110,6 +110,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analytics\AILTNPublisher.cs" />
+    <Compile Include="Analytics\IAnalyticsPublisher.cs" />
     <Compile Include="App\ApplicationService.cs" />
     <Compile Include="Extensions\Utilities.cs" />
     <Compile Include="Hybrid\Logger.cs" />
