@@ -85,8 +85,7 @@ namespace Salesforce.SDK.Universal.Analytics
             }
             var path = string.Format(API_PATH, ApiVersionStrings.VersionNumber);
             var headers = new Dictionary<string, string>();
-            headers.Add(ACCEPT_ENCODING, GZIP);
-            var request = new RestRequest(HttpMethod.Post, path, body.ToString(), ContentTypeValues.Json, headers);
+            var request = new RestRequest(HttpMethod.Post, path, body.ToString(), ContentTypeValues.Gzip, headers);
             var restClient = SDKManager.GlobalClientManager.PeekRestClient();
             var response = await restClient.SendAsync(request);
             if (response.Success)

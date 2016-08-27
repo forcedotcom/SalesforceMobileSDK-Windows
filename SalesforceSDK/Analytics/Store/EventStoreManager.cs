@@ -47,10 +47,13 @@ namespace Salesforce.SDK.Analytics.Store
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         public string FilenameSuffix { get; set; }
+        public string EncryptionKey { get; set; }
 
-        public EventStoreManager(string fileNameSuffix)
+        public EventStoreManager(string fileNameSuffix, string encryptionKey)
+
         {
             FilenameSuffix = fileNameSuffix;
+            EncryptionKey = encryptionKey;
             _rootDir = FileSystem.Current.LocalStorage;
         }
 
@@ -67,7 +70,7 @@ namespace Salesforce.SDK.Analytics.Store
                 //Open file
                 IFile file = await _rootDir.CreateFileAsync(fileName, CreationCollisionOption.OpenIfExists);
                 //Wrtie to file after encrypting contents
-                await file.WriteAllTextAsync(Encrypt(instrumentationEvent.ToJson().ToString())).ConfigureAwait(false);
+                await file.WriteAllTextAsync(Encrypt(instrumentationEvent.ToJson().ToString(), EncryptionKey)).ConfigureAwait(false);
             }
         }
 
@@ -182,7 +185,7 @@ namespace Salesforce.SDK.Analytics.Store
             }
             var json = await file.ReadAllTextAsync().ConfigureAwait(false);
             //decrypt contents read from file
-            var eventString = Decrypt(json);
+            var eventString = Decrypt(json, EncryptionKey);
             if (eventString == null)
             {
                 throw new ArgumentNullException(nameof(eventString), "Error in decrypting contents of file");
@@ -202,14 +205,14 @@ namespace Salesforce.SDK.Analytics.Store
             return _isLoggingEnabled && (filesCount < _maxEvents);
         }
 
-        private string Encrypt(string data)
+        private string Encrypt(string data, string key)
         {
-            return EncryptionService.Encrypt(data);
+            return EncryptionService.Encrypt(data, key);
         }
 
-        private string Decrypt(string data)
+        private string Decrypt(string data, string key)
         {
-            return EncryptionService.Decrypt(data);
+            return EncryptionService.Decrypt(data, key);
         }
     }
 }

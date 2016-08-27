@@ -39,11 +39,14 @@ namespace Salesforce.SDK.Analytics.Manager
 
         public int GlobalSequenceId { get; set; }
 
-        public AnalyticsManager(string uniqueId, DeviceAppAttributes deviceAppAttributes)
+        public string EncryptionKey { get; set; }
+
+        public AnalyticsManager(string uniqueId, DeviceAppAttributes deviceAppAttributes, string encryptionKey)
         {
             _deviceAppAttributes = deviceAppAttributes;
             GlobalSequenceId = 0;
-            _eventStoreManager = new EventStoreManager(uniqueId);
+            EncryptionKey = encryptionKey;
+            _eventStoreManager = new EventStoreManager(uniqueId, EncryptionKey);
         }
 
         public async Task ResetAsync()
@@ -64,6 +67,11 @@ namespace Salesforce.SDK.Analytics.Manager
         public void SetGlobalSequenceId(int sequenceId)
         {
             GlobalSequenceId = sequenceId;
+        }
+
+        public IEventStoreManager GetEventStoreManager()
+        {
+            return _eventStoreManager;
         }
     }
 }

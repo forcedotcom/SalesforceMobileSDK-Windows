@@ -57,7 +57,6 @@ namespace Salesforce.SDK.Analytics.Model
         private static IApplicationInformationService ApplicationService =
             SDKServiceLocator.Get<IApplicationInformationService>();
 
-        //TODO: get connectiontype method
         public InstrumentationEventBuilder(IAnalyticsManager analyticsManager)
         {
             AnalyticsManager = analyticsManager;

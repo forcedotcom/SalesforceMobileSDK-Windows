@@ -167,5 +167,11 @@ namespace Salesforce.SDK.Auth
         {
             TriggerBackgroundedPinTimer();
         }
+
+        public static string RetrievePinCodeHash()
+        {
+            var policy = AuthStorageHelper.GetMobilePolicy();
+            return policy.PincodeHash;
+        }
     }
 }

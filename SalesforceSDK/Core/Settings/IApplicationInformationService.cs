@@ -48,5 +48,7 @@ namespace Salesforce.SDK.Settings
         string GetApplicationLocalFolderPath();
 
         string GetConnectionType();
+
+        string GetAppType();
     }
 }

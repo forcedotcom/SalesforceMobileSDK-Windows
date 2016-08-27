@@ -51,7 +51,7 @@ namespace Salesforce.SDK.App
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         private const string UserAgentHeaderFormat = "SalesforceMobileSDK/{0} {1} ({2}) {3}/{4} {5} uid_{6}";
-        private const string SdkVersion = "4.1.0";
+        private const string SdkVersion = "5.0.0";
 
         /// <summary>
         ///     Settings key for config.
@@ -59,6 +59,8 @@ namespace Salesforce.SDK.App
         private const string ConfigSettings = "salesforceConfig";
 
         private const string DefaultServerPath = "Salesforce.SDK.Resources.servers.xml";
+
+        public string AppType { get; private set; }
 
         public Task ClearConfigurationSettingsAsync()
         {
@@ -92,6 +94,7 @@ namespace Salesforce.SDK.App
             }
             var UserAgentHeader = String.Format(UserAgentHeaderFormat, SdkVersion, deviceInfo, deviceModel,
             appName, packageVersionString, appType, deviceId);
+            AppType = appType.ToString();
             return Task.FromResult(UserAgentHeader);
         }
 
@@ -177,6 +180,11 @@ namespace Salesforce.SDK.App
         {
             var profile = NetworkInformation.GetInternetConnectionProfile();
             return profile?.ProfileName ?? string.Empty;
+        }
+
+        public string GetAppType()
+        {
+            return AppType;
         }
     }
 }
