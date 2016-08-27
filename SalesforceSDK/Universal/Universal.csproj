@@ -112,6 +112,7 @@
   <ItemGroup>
     <Compile Include="Analytics\AILTNPublisher.cs" />
     <Compile Include="Analytics\IAnalyticsPublisher.cs" />
+    <Compile Include="Analytics\SalesforceAnalyticsManager.cs" />
     <Compile Include="App\ApplicationService.cs" />
     <Compile Include="Extensions\Utilities.cs" />
     <Compile Include="Hybrid\Logger.cs" />

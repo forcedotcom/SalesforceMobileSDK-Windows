@@ -47,15 +47,15 @@ namespace Salesforce.SDK.Analytics.Model
         private const string TEST_EVENT_NAME = "TEST_EVENT_NAME_%s";
         private const string TEST_SENDER_ID = "TEST_SENDER_ID";
         private const string TEST_SESSION_ID = "TEST_SESSION_ID";
+        private static string TEST_ENCRYPTION_KEY = Guid.NewGuid().ToString();
 
         private static DeviceAppAttributes TEST_DEVICE_APP_ATTRIBUTES = new DeviceAppAttributes("TEST_APP_VERSION",
             "TEST_APP_NAME", "TEST_OS_VERSION", "TEST_OS_NAME", "TEST_NATIVE_APP_TYPE",
             "TEST_MOBILE_SDK_VERSION", "TEST_DEVICE_MODEL", "TEST_DEVICE_ID", "TEST_CLIENT_ID");
-
         private static IEncryptionService EncryptionService => SDKServiceLocator.Get<IEncryptionService>();
         private static ILoggingService LoggingService => SDKServiceLocator.Get<ILoggingService>();
         private static string uniqueId = Guid.NewGuid().ToString();
-        IAnalyticsManager AnalyticsManager = new AnalyticsManager(uniqueId, TEST_DEVICE_APP_ATTRIBUTES);
+        IAnalyticsManager AnalyticsManager = new AnalyticsManager(uniqueId, TEST_DEVICE_APP_ATTRIBUTES, TEST_ENCRYPTION_KEY);
 
         [ClassInitialize]
         public static void SetupClass(TestContext context)
@@ -196,7 +196,7 @@ namespace Salesforce.SDK.Analytics.Model
         [TestMethod]
         public async Task TestMissingDeviceAppAttributesAsync()
         {
-            var analyticsManager = new AnalyticsManager(uniqueId, null);
+            var analyticsManager = new AnalyticsManager(uniqueId, null, TEST_ENCRYPTION_KEY);
             await analyticsManager.ResetAsync().ConfigureAwait(false);
             var eventBuilder = new InstrumentationEventBuilder(analyticsManager);
             var curTime = System.DateTime.Now.Ticks;

@@ -39,7 +39,7 @@ using Salesforce.SDK.Rest;
 
 namespace Salesforce.SDK.Universal.Analytics
 {
-    public class AILTNPublisher : IAnalyticsPublisher
+    public class AiltnPublisher : IAnalyticsPublisher
     {
         private static readonly string CODE = "code";
         private static readonly string AILTN = "ailtn";

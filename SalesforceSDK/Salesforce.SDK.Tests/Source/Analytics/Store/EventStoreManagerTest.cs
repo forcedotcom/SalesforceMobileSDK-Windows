@@ -53,9 +53,10 @@ namespace Tests.Source.Analytics.Store
         private const string TEST_SESSION_ID = "TEST_SESSION_ID";
         private const string TEST_FILENAME_SUFFIX = "_test_filename_suffix";
         private static string uniqueId = Guid.NewGuid().ToString();
+        private static string TEST_ENCRYPTION_KEY = Guid.NewGuid().ToString();
 
-        IAnalyticsManager AnalyticsManager = new AnalyticsManager(uniqueId, TEST_DEVICE_APP_ATTRIBUTES);
-        private IEventStoreManager EventStoreManager = new EventStoreManager(TEST_FILENAME_SUFFIX);
+        IAnalyticsManager AnalyticsManager = new AnalyticsManager(uniqueId, TEST_DEVICE_APP_ATTRIBUTES, TEST_ENCRYPTION_KEY);
+        private IEventStoreManager EventStoreManager = new EventStoreManager(TEST_FILENAME_SUFFIX, TEST_ENCRYPTION_KEY);
 
         [ClassInitialize]
         public static void SetupClass(TestContext context)
