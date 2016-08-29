@@ -50,6 +50,7 @@ namespace Salesforce.SDK.Net
         FormUrlEncoded,
         Json,
         Xml,
+        Gzip,
         None
     }
 
@@ -332,6 +333,9 @@ namespace Salesforce.SDK.Net
                     case ContentTypeValues.FormUrlEncoded:
                         req.Content = new FormUrlEncodedContent(_requestBody.ParseQueryString());
                         break;
+                    case ContentTypeValues.Gzip:
+                        req.Content = await Compress(_requestBody);
+                        break;
                     default:
                         req.Content = new StringContent(_requestBody);
                         req.Content.Headers.ContentType = new MediaTypeHeaderValue(_contentType.MimeType());
@@ -419,6 +423,30 @@ namespace Salesforce.SDK.Net
                     : ex;
             }
             response.Dispose();
+        }
+
+        private static async Task<StreamContent> Compress(string content)
+        {
+            using (var ms = new System.IO.MemoryStream())
+            {
+                using (
+                    var gzip = new System.IO.Compression.GZipStream(ms,
+                        System.IO.Compression.CompressionMode.Compress, true))
+                {
+                    var byteArray = System.Text.Encoding.UTF8.GetBytes(content);
+                    await gzip.WriteAsync(byteArray, 0, byteArray.Length);
+                }
+                ms.Position = 0;
+                var compressedContent = new byte[ms.Length];
+                var pos = await ms.ReadAsync(compressedContent, 0, compressedContent.Length);
+
+                var outStream = new System.IO.MemoryStream(compressedContent);
+                var streamContent = new StreamContent(outStream);
+                streamContent.Headers.Add("Content-Encoding", "gzip");
+                streamContent.Headers.ContentLength = outStream.Length;
+
+                return streamContent;
+            }
         }
 
         public void Dispose()

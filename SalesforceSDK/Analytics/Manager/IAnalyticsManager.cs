@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+ * Copyright (c) 2016, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,30 +25,39 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Salesforce.SDK.Analytics.Model;
+using Salesforce.SDK.Analytics.Store;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Analytics.Manager
 {
-    public interface IApplicationInformationService
+    public interface IAnalyticsManager
     {
-        Task<string> GetApplicationDisplayNameAsync();
+        /// <summary>
+        /// Resets this instance
+        /// </summary>
+        Task ResetAsync();
 
-        Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, string qualifier);
+        /// <summary>
+        /// Returns device app attributes
+        /// </summary>
+        /// <returns></returns>
+        DeviceAppAttributes GetDeviceAppAttributes();
 
-        Task<string> ReadApplicationFileAsync(string path);
+        /// <summary>
+        /// Returns the global sequence ID.
+        /// </summary>
+        /// <returns>Sequence Id</returns>
+        int GetGlobalSequenceId();
 
-        Task SaveConfigurationSettingsAsync(string config);
-
-        Task<string> GetConfigurationSettingsAsync();
-
-        Task ClearConfigurationSettingsAsync();
-
-        Task<bool> DoesFileExistAsync(string path);
-
-        string GetApplicationLocalFolderPath();
-
-        string GetConnectionType();
-
-        string GetAppType();
+        /// <summary>
+        /// Sets the global sequence ID used by events.
+        /// </summary>
+        /// <param name="sequenceId"></param>
+        void SetGlobalSequenceId(int sequenceId);
     }
 }

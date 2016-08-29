@@ -88,15 +88,6 @@ namespace Salesforce.SDK.Analytics.Store
         Task DeleteAllEventsAsync();
 
         /// <summary>
-        /// Changes the encryption key to a new value. Fetches all stored events
-        /// and re-encrypts them with the new encryption key
-        /// </summary>
-        /// <param name="oldKey"></param>
-        /// <param name="newKey"></param>
-        /// <returns></returns>
-        Task ChangeEncryptionKeyAsync(string oldKey, string newKey);
-
-        /// <summary>
         /// Disables or enables logging of events. If logging is disabled, no events
         /// will be stored. However, publishing of events is still possible
         /// </summary>

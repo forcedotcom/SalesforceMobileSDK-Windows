@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+ * Copyright (c) 2016, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -25,30 +25,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Salesforce.SDK.Analytics.Model;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Analytics.Transform
 {
-    public interface IApplicationInformationService
+    /// <summary>
+    /// Represents a transformation of generic event to a specific format.
+    /// </summary>
+    public interface ITransform
     {
-        Task<string> GetApplicationDisplayNameAsync();
-
-        Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, string qualifier);
-
-        Task<string> ReadApplicationFileAsync(string path);
-
-        Task SaveConfigurationSettingsAsync(string config);
-
-        Task<string> GetConfigurationSettingsAsync();
-
-        Task ClearConfigurationSettingsAsync();
-
-        Task<bool> DoesFileExistAsync(string path);
-
-        string GetApplicationLocalFolderPath();
-
-        string GetConnectionType();
-
-        string GetAppType();
+        /// <summary>
+        /// Transforms an event into the required format.
+        /// </summary>
+        /// <param name="instrumentationEvent"></param>
+        /// <returns>JSON representation after transformation</returns>
+        JObject Transform(InstrumentationEvent instrumentationEvent);
     }
 }

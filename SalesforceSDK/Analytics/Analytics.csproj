@@ -34,12 +34,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Manager\AnalyticsManager.cs" />
+    <Compile Include="Manager\IAnalyticsManager.cs" />
     <Compile Include="Model\DeviceAppAttributes.cs" />
     <Compile Include="Model\EventBuilderException.cs" />
     <Compile Include="Model\InstrumentationEvent.cs" />
+    <Compile Include="Model\InstrumentationEventBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Store\EventStoreManager.cs" />
     <Compile Include="Store\IEventStoreManager.cs" />
+    <Compile Include="Transform\ITransform.cs" />
+    <Compile Include="Transform\AiltnTransform.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

@@ -110,6 +110,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Analytics\AILTNPublisher.cs" />
+    <Compile Include="Analytics\IAnalyticsPublisher.cs" />
+    <Compile Include="Analytics\SalesforceAnalyticsManager.cs" />
     <Compile Include="App\ApplicationService.cs" />
     <Compile Include="Extensions\Utilities.cs" />
     <Compile Include="Hybrid\Logger.cs" />
@@ -159,6 +162,10 @@
     <PRIResource Include="Strings\en-US\resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Analytics\Analytics.csproj">
+      <Project>{2f8462bb-bcf7-4781-bcda-335e0694cf1b}</Project>
+      <Name>Analytics</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{86021bc6-ae6c-47b2-9d08-8e352c46e277}</Project>
       <Name>Core</Name>

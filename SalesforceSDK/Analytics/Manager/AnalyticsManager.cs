@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2015, salesforce.com, inc.
+ * Copyright (c) 2016, salesforce.com, inc.
  * All rights reserved.
  * Redistribution and use of this software in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
@@ -26,29 +26,52 @@
  */
 
 using System.Threading.Tasks;
+using Salesforce.SDK.Analytics.Model;
+using Salesforce.SDK.Analytics.Store;
+using Salesforce.SDK.Core;
 
-namespace Salesforce.SDK.Settings
+namespace Salesforce.SDK.Analytics.Manager
 {
-    public interface IApplicationInformationService
+    public class AnalyticsManager : IAnalyticsManager
     {
-        Task<string> GetApplicationDisplayNameAsync();
+        private static IEventStoreManager _eventStoreManager;
+        private DeviceAppAttributes _deviceAppAttributes;
 
-        Task<string> GenerateUserAgentHeaderAsync(bool isHybrid, string qualifier);
+        public int GlobalSequenceId { get; set; }
 
-        Task<string> ReadApplicationFileAsync(string path);
+        public string EncryptionKey { get; set; }
 
-        Task SaveConfigurationSettingsAsync(string config);
+        public AnalyticsManager(string uniqueId, DeviceAppAttributes deviceAppAttributes, string encryptionKey)
+        {
+            _deviceAppAttributes = deviceAppAttributes;
+            GlobalSequenceId = 0;
+            EncryptionKey = encryptionKey;
+            _eventStoreManager = new EventStoreManager(uniqueId, EncryptionKey);
+        }
 
-        Task<string> GetConfigurationSettingsAsync();
+        public async Task ResetAsync()
+        {
+            await _eventStoreManager.DeleteAllEventsAsync().ConfigureAwait(false);
+        }
 
-        Task ClearConfigurationSettingsAsync();
+        public DeviceAppAttributes GetDeviceAppAttributes()
+        {
+            return _deviceAppAttributes;
+        }
 
-        Task<bool> DoesFileExistAsync(string path);
+        public int GetGlobalSequenceId()
+        {
+            return GlobalSequenceId;
+        }
 
-        string GetApplicationLocalFolderPath();
+        public void SetGlobalSequenceId(int sequenceId)
+        {
+            GlobalSequenceId = sequenceId;
+        }
 
-        string GetConnectionType();
-
-        string GetAppType();
+        public IEventStoreManager GetEventStoreManager()
+        {
+            return _eventStoreManager;
+        }
     }
 }
