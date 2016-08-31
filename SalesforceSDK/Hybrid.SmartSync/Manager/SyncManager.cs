@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
@@ -40,6 +41,11 @@ using Salesforce.SDK.Settings;
 using Salesforce.SDK.SmartSync.Model;
 using Salesforce.SDK.SmartSync.Util;
 using Newtonsoft.Json.Serialization;
+using Salesforce.SDK.Hybrid.SmartSync.Models;
+using SoqlSyncDownTarget = Salesforce.SDK.SmartSync.Model.SoqlSyncDownTarget;
+using SyncOptions = Salesforce.SDK.SmartSync.Model.SyncOptions;
+using SyncState = Salesforce.SDK.SmartSync.Model.SyncState;
+using SyncUpTarget = Salesforce.SDK.SmartSync.Model.SyncUpTarget;
 
 namespace Salesforce.SDK.Hybrid.SmartSync
 {
@@ -86,18 +92,10 @@ namespace Salesforce.SDK.Hybrid.SmartSync
 
         public Models.SyncState SyncDown(string target, string soupName, Models.SyncOptions options)
         {
-            SyncOptions syncOptions;
             var soqlsyncDownTarget = JObject.Parse(target);
             var soqlsyncDown = new SoqlSyncDownTarget(soqlsyncDownTarget);
             SyncDownTarget syncDown = soqlsyncDown;
-            if (options != null)
-            {
-                syncOptions = SyncOptions.FromJson(JObject.Parse(JsonConvert.SerializeObject(options)));
-            }
-            else
-            {
-                syncOptions = null;
-            }
+            var syncOptions = options != null ? SyncOptions.FromJson(JObject.Parse(JsonConvert.SerializeObject(options))) : null;
             var state = _syncManager.SyncDown(syncDown, soupName, s =>
             {
                 new SyncEvent().OnSyncEventRaised(s);
@@ -108,6 +106,7 @@ namespace Salesforce.SDK.Hybrid.SmartSync
 
         public Models.SyncState SyncUp(Models.SyncUpTarget target, Models.SyncOptions options, string soupName)
         {
+
             var syncUp = JsonConvert.SerializeObject(target);
             var syncOptions = JsonConvert.SerializeObject(options, new JsonSerializerSettings
             {
