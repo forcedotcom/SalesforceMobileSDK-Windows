@@ -403,7 +403,7 @@ namespace Salesforce.SDK.SmartStore.Store
             SyncState.SyncStatusTypes expectedStatus,
             int expectedProgress, int expectedSize)
         {
-            Assert.AreEqual(expectedType, sync.SyncType, "Wrong type");
+            Assert.AreEqual(expectedType, sync.Type, "Wrong type");
             Assert.AreEqual(expectedId, sync.Id, "Wrong id");
             Assert.AreEqual(expectedStatus, sync.Status, "Wrong status");
             Assert.AreEqual(expectedProgress, sync.Progress, "Wrong progress");

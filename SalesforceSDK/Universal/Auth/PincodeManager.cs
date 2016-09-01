@@ -171,7 +171,11 @@ namespace Salesforce.SDK.Auth
         public static string RetrievePinCodeHash()
         {
             var policy = AuthStorageHelper.GetMobilePolicy();
-            return policy.PincodeHash;
+            if (policy?.PincodeHash != null)
+            {
+                return policy.PincodeHash;
+            }
+            return string.Empty;
         }
     }
 }

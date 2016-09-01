@@ -279,8 +279,8 @@ namespace Tests.Source.Analytics.Store
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
             eventBuilder.Page = new JObject();
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             return eventBuilder.BuildEvent();
         }

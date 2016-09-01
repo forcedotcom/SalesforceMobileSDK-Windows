@@ -28,6 +28,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -84,6 +86,9 @@ namespace Salesforce.SDK.Net
                     return "application/x-www-form-urlencoded";
                 case ContentTypeValues.Xml:
                     return "text/xml";
+                case ContentTypeValues.Gzip:
+                    return "application/json";
+
                 default:
                     return null;
             }
@@ -334,7 +339,8 @@ namespace Salesforce.SDK.Net
                         req.Content = new FormUrlEncodedContent(_requestBody.ParseQueryString());
                         break;
                     case ContentTypeValues.Gzip:
-                        req.Content = await Compress(_requestBody);
+                        req.Content = await CompressAsync(new StringContent(_requestBody));
+
                         break;
                     default:
                         req.Content = new StringContent(_requestBody);
@@ -425,28 +431,21 @@ namespace Salesforce.SDK.Net
             response.Dispose();
         }
 
-        private static async Task<StreamContent> Compress(string content)
+        private async Task<StreamContent> CompressAsync(StringContent content)
         {
-            using (var ms = new System.IO.MemoryStream())
+            var ms = new MemoryStream();
+            using (var gzipStream = new GZipStream(ms, CompressionMode.Compress, true))
             {
-                using (
-                    var gzip = new System.IO.Compression.GZipStream(ms,
-                        System.IO.Compression.CompressionMode.Compress, true))
-                {
-                    var byteArray = System.Text.Encoding.UTF8.GetBytes(content);
-                    await gzip.WriteAsync(byteArray, 0, byteArray.Length);
-                }
-                ms.Position = 0;
-                var compressedContent = new byte[ms.Length];
-                var pos = await ms.ReadAsync(compressedContent, 0, compressedContent.Length);
-
-                var outStream = new System.IO.MemoryStream(compressedContent);
-                var streamContent = new StreamContent(outStream);
-                streamContent.Headers.Add("Content-Encoding", "gzip");
-                streamContent.Headers.ContentLength = outStream.Length;
-
-                return streamContent;
+                await content.CopyToAsync(gzipStream);
+                await gzipStream.FlushAsync();
             }
+
+            ms.Position = 0;
+            var compressedStreamContent = new StreamContent(ms);
+            compressedStreamContent.Headers.ContentType = new MediaTypeHeaderValue(_contentType.MimeType());
+            compressedStreamContent.Headers.Add("Content-Encoding", "gzip");
+
+            return compressedStreamContent;
         }
 
         public void Dispose()

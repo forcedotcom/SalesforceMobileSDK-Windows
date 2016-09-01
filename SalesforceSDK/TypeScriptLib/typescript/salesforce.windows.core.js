@@ -32,7 +32,7 @@ var SalesforceJS;
         function BootConfig() {
         }
         return BootConfig;
-    })();
+    }());
     SalesforceJS.BootConfig = BootConfig;
     var Server = (function () {
         function Server(n, a) {
@@ -40,13 +40,13 @@ var SalesforceJS;
             this.address = a;
         }
         return Server;
-    })();
+    }());
     SalesforceJS.Server = Server;
     var ServerConfig = (function () {
         function ServerConfig() {
         }
         return ServerConfig;
-    })();
+    }());
     SalesforceJS.ServerConfig = ServerConfig;
     var OAuth2 = (function () {
         function OAuth2() {
@@ -192,7 +192,7 @@ var SalesforceJS;
             return this.config.startPage;
         };
         return OAuth2;
-    })();
+    }());
     SalesforceJS.OAuth2 = OAuth2;
 })(SalesforceJS || (SalesforceJS = {}));
 //# sourceMappingURL=salesforce.windows.core.js.map
