@@ -75,7 +75,7 @@ namespace Salesforce.SDK.Universal.Analytics
                             eventToPublish.Children<JProperty>()
                                 .FirstOrDefault(p => p.Name == InstrumentationEvent.SCHEMA_TYPE_KEY);
                         property?.Remove();
-                        data.Add(PAYLOAD, eventToPublish.ToString().Replace("\r", "").Replace("\n", "").Replace(" ", ""));
+                        data.Add(PAYLOAD, eventToPublish.ToString(Newtonsoft.Json.Formatting.None));
                         trackingInfo.Add(DATA, data);
                         loglines.Add(trackingInfo);
                     }
@@ -88,7 +88,7 @@ namespace Salesforce.SDK.Universal.Analytics
             }
             var path = string.Format(API_PATH, ApiVersionStrings.VersionNumber);
             var headers = new Dictionary<string, string>();
-            var request = new RestRequest(HttpMethod.Post, path, body.ToString().Replace("\r", "").Replace("\n", "").Replace(" ", ""), ContentTypeValues.Json, headers);
+            var request = new RestRequest(HttpMethod.Post, path, body.ToString(Newtonsoft.Json.Formatting.None), ContentTypeValues.Gzip, headers);
             var restClient = SDKManager.GlobalClientManager.PeekRestClient();
             var response = await restClient.SendAsync(request);
             if (response.Success)
