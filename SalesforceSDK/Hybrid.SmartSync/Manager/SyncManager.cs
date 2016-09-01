@@ -90,30 +90,34 @@ namespace Salesforce.SDK.Hybrid.SmartSync
             return JsonConvert.DeserializeObject<Models.SyncState>(syncState);
         }
 
-        public Models.SyncState SyncDown(string target, string soupName, string callback,
-            Models.SyncOptions options)
+        public Models.SyncState SyncDown(string target, string soupName, Models.SyncOptions options)
         {
             var soqlsyncDownTarget = JObject.Parse(target);
             var soqlsyncDown = new SoqlSyncDownTarget(soqlsyncDownTarget);
             SyncDownTarget syncDown = soqlsyncDown;
-            var action = JsonConvert.DeserializeObject<Action<SyncState>>(callback);
             var syncOptions = options != null ? SyncOptions.FromJson(JObject.Parse(JsonConvert.SerializeObject(options))) : null;
-            var state = _syncManager.SyncDown(SyncDownTarget.FromJson(syncDown.AsJson()), soupName, action, syncOptions);
-            var syncState = JsonConvert.SerializeObject(state.AsJson());
-            return Models.SyncState.FromJson(syncState);
+            var state = _syncManager.SyncDown(syncDown, soupName, s =>
+            {
+                new SyncEvent().OnSyncEventRaised(s);
+            }, syncOptions);
+            var syncState = JsonConvert.SerializeObject(state);
+            return JsonConvert.DeserializeObject<Models.SyncState>(syncState);
         }
 
-        public Models.SyncState SyncUp(Models.SyncUpTarget target, Models.SyncOptions options, string soupName, string callback)
+        public Models.SyncState SyncUp(Models.SyncUpTarget target, Models.SyncOptions options, string soupName)
         {
-            var syncUp = target.AsJson();
-            var action = JsonConvert.DeserializeObject<Action<SyncState>>(callback);
+
+            var syncUp = JsonConvert.SerializeObject(target);
             var syncOptions = JsonConvert.SerializeObject(options, new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
-            var state = _syncManager.SyncUp(SyncUpTarget.FromJson(JObject.Parse(syncUp)), SyncOptions.FromJson(JObject.Parse(syncOptions)), soupName, action);
-            var syncState = JsonConvert.SerializeObject(state.AsJson());
-            return Models.SyncState.FromJson(syncState);
+            var state = _syncManager.SyncUp(JsonConvert.DeserializeObject<SyncUpTarget>(syncUp), SyncOptions.FromJson(JObject.Parse(syncOptions)), soupName, s =>
+            {
+                new SyncEvent().OnSyncEventRaised(s);
+            });
+            var syncState = JsonConvert.SerializeObject(state);
+            return JsonConvert.DeserializeObject<Models.SyncState>(syncState);
         }
 
         public Models.SyncState ReSync(long syncId, string callback)
@@ -151,5 +155,23 @@ namespace Salesforce.SDK.Hybrid.SmartSync
                 return JsonConvert.DeserializeObject<Rest.RestResponse>(restResponse);
             }).AsAsyncOperation();
         }
+    }
+
+    public sealed class SyncEvent
+    {
+        public event EventHandler<SyncEventArgs> SyncUpdateEvent;
+
+        public void OnSyncEventRaised(object sync)
+        {
+            SyncUpdateEvent?.Invoke(this, new SyncEventArgs
+            {
+                Sync = (Models.SyncState)sync
+            });
+        }
+    }
+
+    public sealed class SyncEventArgs
+    {
+        public Models.SyncState Sync { get; set; }
     }
 }

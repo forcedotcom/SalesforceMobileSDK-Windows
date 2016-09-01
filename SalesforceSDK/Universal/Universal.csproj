@@ -110,7 +110,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Analytics\AILTNPublisher.cs" />
+    <Compile Include="Analytics\AiltnPublisher.cs" />
     <Compile Include="Analytics\IAnalyticsPublisher.cs" />
     <Compile Include="Analytics\SalesforceAnalyticsManager.cs" />
     <Compile Include="App\ApplicationService.cs" />
