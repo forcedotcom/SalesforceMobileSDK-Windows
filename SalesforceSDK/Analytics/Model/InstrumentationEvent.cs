@@ -228,10 +228,12 @@ namespace Salesforce.SDK.Analytics.Model
         /// </summary>
         public enum EventType
         {
-            User,
-            System,
-            Error,
-            Crud
+            //These are lower case as its required by Ailtn endpoint
+            user,
+            system,
+            error,
+            crud
+
         }
 
         /// <summary>
@@ -250,9 +252,10 @@ namespace Salesforce.SDK.Analytics.Model
         /// </summary>
         public enum ErrorType
         {
-            Info,
-            Warning,
-            Error
+            //These are lower case as its required by Ailtn endpoint
+            info,
+            warning,
+            error
         }
     }
 }

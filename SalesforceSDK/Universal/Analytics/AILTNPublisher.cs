@@ -46,7 +46,7 @@ namespace Salesforce.SDK.Universal.Analytics
         private static string DATA = "data";
         private static string LOG_LINES = "logLines";
         private static string PAYLOAD = "payload";
-        private static string API_PATH = "/services/data/%s/connect/proxy/app-analytics-logging";
+        private static string API_PATH = "/services/data/{0}/connect/proxy/app-analytics-logging";
         private static string ACCEPT_ENCODING = "AcceptEncoding";
         private static string GZIP = "gzip";
 
@@ -67,12 +67,15 @@ namespace Salesforce.SDK.Universal.Analytics
                     var eventToPublish = events.ElementAt(i);
                     if (eventToPublish != null)
                     {
-                        var trackingInfo = new JObject {{CODE, AILTN}};
+                        var trackingInfo = new JObject { { CODE, AILTN } };
                         var data = new JObject();
                         var schemaType = eventToPublish[InstrumentationEvent.SCHEMA_TYPE_KEY];
                         data.Add(InstrumentationEvent.SCHEMA_TYPE_KEY, schemaType);
-                        eventToPublish[InstrumentationEvent.SCHEMA_TYPE_KEY].Remove();
-                        data.Add(PAYLOAD, eventToPublish.ToString());
+                        var property =
+                            eventToPublish.Children<JProperty>()
+                                .FirstOrDefault(p => p.Name == InstrumentationEvent.SCHEMA_TYPE_KEY);
+                        property?.Remove();
+                        data.Add(PAYLOAD, eventToPublish.ToString().Replace("\r", "").Replace("\n", "").Replace(" ", ""));
                         trackingInfo.Add(DATA, data);
                         loglines.Add(trackingInfo);
                     }
@@ -85,7 +88,7 @@ namespace Salesforce.SDK.Universal.Analytics
             }
             var path = string.Format(API_PATH, ApiVersionStrings.VersionNumber);
             var headers = new Dictionary<string, string>();
-            var request = new RestRequest(HttpMethod.Post, path, body.ToString(), ContentTypeValues.Gzip, headers);
+            var request = new RestRequest(HttpMethod.Post, path, body.ToString().Replace("\r", "").Replace("\n", "").Replace(" ", ""), ContentTypeValues.Json, headers);
             var restClient = SDKManager.GlobalClientManager.PeekRestClient();
             var response = await restClient.SendAsync(request);
             if (response.Success)

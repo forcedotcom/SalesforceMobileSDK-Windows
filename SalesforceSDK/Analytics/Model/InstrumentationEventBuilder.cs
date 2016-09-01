@@ -164,11 +164,6 @@ namespace Salesforce.SDK.Analytics.Model
             {
                 throw new EventBuilderException("Mandatory field 'device app attributes' not set!");
             }
-            if (SchemaType == InstrumentationEvent.SchemaType.LightningInteraction
-                || SchemaType == InstrumentationEvent.SchemaType.LightningPerformance)
-            {
-                throw new EventBuilderException("Mandatory field 'event type' not set!");
-            }
             if (SchemaType != InstrumentationEvent.SchemaType.LightningPerformance && Page == null)
             {
                 throw new EventBuilderException("Mandatory field 'page' not set!");

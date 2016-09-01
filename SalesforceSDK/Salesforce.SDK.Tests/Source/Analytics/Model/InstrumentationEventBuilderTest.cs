@@ -86,17 +86,10 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
             eventBuilder.Page = new JObject();
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
-            try
-            {
-                eventBuilder.BuildEvent();
-                Assert.Fail("Exception should have been thrown for missing mandatory field 'schema type'");
-            }
-            catch (EventBuilderException)
-            {
-                LoggingService.Log("Exception thrown as expected", LoggingLevel.Information);
-            }
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
+            eventBuilder.BuildEvent();
+            Assert.AreEqual("LightningInteraction", eventBuilder.SchemaType.ToString());
         }
 
         [TestMethod]
@@ -111,15 +104,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.Page = new JObject();
             eventBuilder.SenderId = TEST_SENDER_ID;
-            try
-            {
-                eventBuilder.BuildEvent();
-                Assert.Fail("Exception should have been thrown for missing mandatory field 'event type'");
-            }
-            catch (EventBuilderException)
-            {
-                LoggingService.Log("Exception thrown as expected", LoggingLevel.Information);
-            }
+            eventBuilder.BuildEvent();
+            Assert.AreEqual("user", eventBuilder.EventType.ToString());
         }
 
         [TestMethod]
@@ -157,8 +143,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             eventBuilder.StartTime = curTime;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             try
             {
                 eventBuilder.BuildEvent();
@@ -179,8 +165,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.StartTime = curTime;
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.Page = new JObject();
             try
             {
@@ -206,8 +192,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             eventBuilder.StartTime = curTime;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.Page = new JObject();
             try
             {
@@ -234,8 +220,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.Page = new JObject();
             var instrumentationEvent = eventBuilder.BuildEvent();
             long startTime = instrumentationEvent.StartTime;
@@ -252,8 +238,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.Page = new JObject();
             var instrumentationEvent = eventBuilder.BuildEvent();
             var eventId = instrumentationEvent.EventId;
@@ -270,8 +256,8 @@ namespace Salesforce.SDK.Analytics.Model
             eventBuilder.SchemaType = InstrumentationEvent.SchemaType.LightningError;
             eventBuilder.SessionId = TEST_SESSION_ID;
             eventBuilder.SenderId = TEST_SENDER_ID;
-            eventBuilder.EventType = InstrumentationEvent.EventType.System;
-            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.Warning;
+            eventBuilder.EventType = InstrumentationEvent.EventType.system;
+            eventBuilder.ErrorType = InstrumentationEvent.ErrorType.warning;
             eventBuilder.Page = new JObject();
             var instrumentationEvent = eventBuilder.BuildEvent();
             int sequenceId = instrumentationEvent.SequenceId;

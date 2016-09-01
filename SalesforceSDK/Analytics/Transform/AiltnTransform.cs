@@ -127,7 +127,11 @@ namespace Salesforce.SDK.Analytics.Transform
                         payload.Add(EPT_KEY, duration);
                     }
                 }
-                payload.Add(CLIENT_SESSION_ID_KEY, !string.IsNullOrWhiteSpace(instrumentationEvent.SessionId));
+                if (!string.IsNullOrWhiteSpace(instrumentationEvent.SessionId))
+                {
+                    payload.Add(CLIENT_SESSION_ID_KEY, instrumentationEvent.SessionId);
+                }
+
                 if (schemaType != InstrumentationEvent.SchemaType.LightningPerformance)
                 {
                     payload.Add(SEQUENCE_KEY, instrumentationEvent.SequenceId);

@@ -110,11 +110,15 @@ namespace Salesforce.SDK.Analytics.Store
 
             foreach (var file in files)
             {
-                var instrumentationEvent = await FetchEventAsync(file);
-                if (instrumentationEvent != null)
+                if (!(file.Name.Contains(".db") || file.Name.Contains(".xml")))
                 {
-                    events.Add(instrumentationEvent);
+                    var instrumentationEvent = await FetchEventAsync(file);
+                    if (instrumentationEvent != null)
+                    {
+                        events.Add(instrumentationEvent);
+                    }
                 }
+                
             }
 
             return events;
