@@ -145,11 +145,9 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
 
         public static SyncState FromJson(string sync)
         {
-            //var jObject = JsonConvert.DeserializeObject<JObject>(sync);
             var state = SDK.SmartSync.Model.SyncState.FromJson(JObject.Parse(sync));
             var syncState = JsonConvert.SerializeObject(state.AsJson());
             return new SyncState(syncState);
-            //return JsonConvert.DeserializeObject<SyncState>(syncState);
         }
 
         public static SyncState ById(SmartStore.SmartStore store, long id)
@@ -161,10 +159,9 @@ namespace Salesforce.SDK.Hybrid.SmartSync.Models
             return JsonConvert.DeserializeObject<SyncState>(nativeState);
         }
 
-        public static string AsJson()
+        public string AsJson()
         {
-            var jObject = _syncState.AsJson();
-            return JsonConvert.SerializeObject(jObject);
+            return JsonConvert.SerializeObject(_syncState.AsJson());
         }
 
         public void Save(SmartStore.SmartStore store)
