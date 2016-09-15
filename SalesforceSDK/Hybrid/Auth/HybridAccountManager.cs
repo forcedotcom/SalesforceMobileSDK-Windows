@@ -59,16 +59,18 @@ namespace Salesforce.SDK.Hybrid.Auth
             }
         }
 
-        public static IDictionary<string, Account> GetAccounts()
+        public static Account[] GetAccounts()
         {
             InitEncryption();
-            Dictionary<string, Account> accounts = new Dictionary<string, Account>();
+            List<Account> accounts = new List<Account>();
+            
             var acMgrAccounts = SDK.Auth.AccountManager.GetAccounts();
             foreach (var key in acMgrAccounts.Keys)
             {
-                accounts[key] = Account.FromJson(SDK.Auth.Account.ToJson(acMgrAccounts[key]));
+                accounts.Add(Account.FromJson(SDK.Auth.Account.ToJson(acMgrAccounts[key])));
             }
-            return accounts;
+
+            return accounts.ToArray();
         }
 
         public static Account GetAccount()
