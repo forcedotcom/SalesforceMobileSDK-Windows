@@ -56,19 +56,22 @@ namespace Salesforce.SDK.Upgrade
         {
             if (ApplicationData.Current.Version.Equals(0))
             {
-                await UpgradeFromEarlierThan4Dot2();
+                await UpgradeFromEarlierThan5Dot0();
             }
             await ApplicationData.Current.SetVersionAsync(VersionConvertion(SDKManager.SDK_VERSION), VersionRequestHandler);
         }
 
-        private async Task UpgradeFromEarlierThan4Dot2()
+        private async Task UpgradeFromEarlierThan5Dot0()
         {
             Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
             var authHelper = new AuthHelper();
             var account = authHelper.RetrieveCurrentAccount();
-            Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
-            await authHelper.PersistCurrentAccountAsync(account);
-            await authHelper.PersistCurrentPincodeAsync(account);
+            if (account != null)
+            {
+                Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
+                await authHelper.PersistCurrentAccountAsync(account);
+                await authHelper.PersistCurrentPincodeAsync(account);
+            }
         }
 
         internal uint VersionConvertion(string version)
