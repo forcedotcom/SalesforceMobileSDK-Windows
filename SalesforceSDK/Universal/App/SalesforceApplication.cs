@@ -106,16 +106,14 @@ namespace Salesforce.SDK.App
         ///     An example of code that may go into this method would be as follows:
         //protected override Task UpgradeConfigAsync()
         //{
-        //    SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
-        //    SDKServiceLocator.RegisterService<ILoggingService, Logger>();
-        //    if (ApplicationData.Current.Version.Equals(0))
-        //    {
-        //        Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
-        //        var config = SDKManager.InitializeConfigAsync<Config>().Result;
-        //        Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
-        //        return config.SaveConfigAsync();
-        //    }
-        //    return Task.CompletedTask;
+        //    if (!ApplicationData.Current.Version.Equals(0)) return Task.CompletedTask;
+        //    var config = SalesforceConfig.RetrieveConfig<Config>().Result;
+        //    if (config == null) return Task.CompletedTask;
+        //    Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
+        //    config = SDKManager.InitializeConfigAsync<Config>().Result;
+        //    Encryptor.ChangeSettings(
+        //        new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
+        //    return config.SaveConfigAsync();
         //}
         /// </summary>
         protected abstract Task UpgradeConfigAsync();
