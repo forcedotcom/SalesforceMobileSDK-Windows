@@ -576,7 +576,7 @@ namespace Salesforce.SDK.Auth
 
         private string RetrievePincode()
         {
-            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            var pin = _vault.Retrieve(PasswordVaultSecuredData, PasswordVaultPincode);
 
             if (pin == null)
             {
@@ -590,7 +590,7 @@ namespace Salesforce.SDK.Auth
 
         private void DeletePincode()
         {
-            var pin = SafeRetrieveUser(PasswordVaultSecuredData, PasswordVaultPincode);
+            var pin = _vault.Retrieve(PasswordVaultSecuredData, PasswordVaultPincode);
 
             // no pin
             if (pin == null)
