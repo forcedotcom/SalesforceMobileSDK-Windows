@@ -159,9 +159,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.NET.CoreRuntime, Version=1.0">
-      <Name>Microsoft .NET Core Runtime Package for Windows</Name>
-    </SDKReference>
     <SDKReference Include="WindowsDesktop, Version=10.0.10240.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
