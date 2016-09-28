@@ -52,7 +52,7 @@ namespace Salesforce.SDK.Upgrade.Test
         }
 
         [TestMethod]
-        public async Task TestUpgradeFromEearlierThan5Dot0()
+        public async Task TestUpgradeFromEearlierThan4Dot1()
         {
             //set up the previous version and a test account
             var authHelper = new AuthHelper();
@@ -60,7 +60,7 @@ namespace Salesforce.SDK.Upgrade.Test
             await authHelper.PersistCurrentAccountAsync(account);
 
             var sdkUpgradeManager = Upgrade.SDKUpgradeManager.GetInstance();
-            //before version 5.0.0, there is no version for SDK
+            //before version 4.1.0, there is no version for SDK
             await ApplicationData.Current.SetVersionAsync(0, sdkUpgradeManager.VersionRequestHandler);
 
             //do upgrade
@@ -72,7 +72,7 @@ namespace Salesforce.SDK.Upgrade.Test
         }
 
         [TestMethod]
-        public async Task TestUpgradeFrom5Dot0()
+        public async Task TestUpgradeFrom4Dot1()
         {
             //set up the previous version and a test account
             var authHelper = new AuthHelper();
@@ -92,23 +92,23 @@ namespace Salesforce.SDK.Upgrade.Test
         }
 
         [TestMethod]
-        public async Task TestUpgradeFromLaterThan5Dot0()
+        public async Task TestUpgradeFromLaterThan4Dot1()
         {
             //set up the previous version and a test account
             var authHelper = new AuthHelper();
             Account account = await SetupTestAccountAsync(HashAlgorithmNames.Sha256);
             await authHelper.PersistCurrentAccountAsync(account);
 
-            SDKManager.SDK_VERSION = "5.1.0";
+            SDKManager.SDK_VERSION = "5.0.0";
             var sdkUpgradeManager = Upgrade.SDKUpgradeManager.GetInstance();
-            var newVersion = sdkUpgradeManager.VersionConvertion("5.1.0");
+            var newVersion = sdkUpgradeManager.VersionConvertion("5.0.0");
             await ApplicationData.Current.SetVersionAsync(newVersion, sdkUpgradeManager.VersionRequestHandler);
 
             //do upgrade
             await sdkUpgradeManager.UpgradeAsync();
 
             //verify
-            Assert.AreEqual(ApplicationData.Current.Version, sdkUpgradeManager.VersionConvertion("5.1.0"), "Incorrect app version after upgrading");
+            Assert.AreEqual(ApplicationData.Current.Version, sdkUpgradeManager.VersionConvertion("5.0.0"), "Incorrect app version after upgrading");
             Assert.AreEqual(account.ToString(), authHelper.RetrieveCurrentAccount().ToString(), "the account does not match after upgrading");
         }
 

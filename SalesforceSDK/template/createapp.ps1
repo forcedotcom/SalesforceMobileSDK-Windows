@@ -26,7 +26,7 @@ $global:TERM_COLOR_MAGENTA="Magenta"
 $global:TERM_COLOR_CYAN="Cyan"
 $global:TERM_COLOR_RESET="\x1b[0m"
 
-$version = "5.0.0"
+$version = "4.1.0"
 $command = $args[0]
 
 Function main 
