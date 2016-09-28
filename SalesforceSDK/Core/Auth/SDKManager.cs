@@ -35,7 +35,7 @@ namespace Salesforce.SDK.Auth
     public class SDKManager
     {
         //Current version of this SDK
-        public static string SDK_VERSION = "5.0.0";
+        public static string SDK_VERSION = "4.2.0";
 
         /// <summary>
         /// The root application page your app should move to after login/pincode. For UI apps only.
