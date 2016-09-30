@@ -56,12 +56,12 @@ namespace Salesforce.SDK.Upgrade
         {
             if (ApplicationData.Current.Version.Equals(0))
             {
-                await UpgradeFromEarlierThan5Dot0();
+                await UpgradeFromEarlierThan4Dot2();
             }
             await ApplicationData.Current.SetVersionAsync(VersionConvertion(SDKManager.SDK_VERSION), VersionRequestHandler);
         }
 
-        private async Task UpgradeFromEarlierThan5Dot0()
+        private async Task UpgradeFromEarlierThan4Dot2()
         {
             Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
             var authHelper = new AuthHelper();

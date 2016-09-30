@@ -1,5 +1,4 @@
-﻿using System;
-/*
+﻿/*
 * Copyright (c) 2015, salesforce.com, inc.
 * All rights reserved.
 * Redistribution and use of this software in source and binary forms, with or
@@ -42,7 +41,7 @@ namespace __NativeTemplateAppName__
         /// </summary>
         public override string ClientId
         {
-            get { return "__ConnectedAppIdentifier__"; }
+            get { return "3MVG9Iu66FKeHhINkB1l7xt7kR8czFcCTUhgoA8Ol2Ltf1eYHOU4SqQRSEitYFDUpqRWcoQ2.dBv_a1Dyu5xa"; }
         }
 
         /// <summary>
@@ -50,7 +49,7 @@ namespace __NativeTemplateAppName__
         /// </summary>
         public override string CallbackUrl
         {
-            get { return "__ConnectedAppRedirectUri__"; }
+            get { return "testsfdc:///mobilesdk/detect/oauth/done"; }
         }
 
         /// <summary>

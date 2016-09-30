@@ -22,6 +22,9 @@ using __NativeTemplateAppName__.Logging;
 using Salesforce.SDK.Logging;
 using Salesforce.SDK.Security;
 using __NativeTemplateAppName__;
+using Windows.Security.Cryptography.Core;
+using Windows.Storage;
+using Salesforce.SDK.Settings;
 
 namespace __NativeTemplateAppName__
 {
@@ -50,9 +53,20 @@ namespace __NativeTemplateAppName__
         protected override Task InitializeConfig()
         {
             SDKServiceLocator.RegisterService<IEncryptionService, Encryptor>();
-            SDKServiceLocator.RegisterService<ILoggingService, Logger>();
-            Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator()));
+            Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
             var config = SDKManager.InitializeConfigAsync<Config>().Result;
+            return config.SaveConfigAsync();
+        }
+
+        protected override Task UpgradeConfigAsync()
+        {
+            if (!ApplicationData.Current.Version.Equals(0)) return Task.CompletedTask;
+            var config = SalesforceConfig.RetrieveConfig<Config>().Result;
+            if (config == null) return Task.CompletedTask;
+            Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
+            config = SDKManager.InitializeConfigAsync<Config>().Result;
+            Encryptor.ChangeSettings(
+                new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
             return config.SaveConfigAsync();
         }
 
