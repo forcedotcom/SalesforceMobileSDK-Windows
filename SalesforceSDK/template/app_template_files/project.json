@@ -5,8 +5,8 @@
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
     "Newtonsoft.Json": "7.0.1",
-    "Salesforce.SDK.Core": "4.2.0.",
-    "Salesforce.SDK.SmartStore": "4.2.0.",
+    "Salesforce.SDK.Core": "4.2.0",
+    "Salesforce.SDK.SmartStore": "4.2.0",
     "Salesforce.SDK.SmartSync": "4.2.0",
     "Salesforce.SDK.Universal": "4.2.0"
   },
