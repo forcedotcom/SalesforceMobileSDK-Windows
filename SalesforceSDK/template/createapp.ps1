@@ -55,9 +55,9 @@ Function EchoColor
 Function Usage()
 { 
 	echoColor $TERM_COLOR_CYAN "Usage:"
-	echoColor $TERM_COLOR_MAGENTA "   createapp create"
+	echoColor $TERM_COLOR_MAGENTA "   createapp.ps1 create"
 	echoColor $TERM_COLOR_CYAN "Or"
-	echoColor $TERM_COLOR_MAGENTA "   createapp version"
+	echoColor $TERM_COLOR_MAGENTA "   createapp.ps1 version"
 }
 
 Function GetInputs()
