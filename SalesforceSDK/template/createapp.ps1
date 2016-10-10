@@ -55,12 +55,9 @@ Function EchoColor
 Function Usage()
 { 
 	echoColor $TERM_COLOR_CYAN "Usage:"
-	echoColor $TERM_COLOR_MAGENTA "   -t <Application Type> (native)"
-	echoColor $TERM_COLOR_MAGENTA "   -n <Application Name>"
-	echoColor $TERM_COLOR_MAGENTA "   -g <Organization Name> (your company's/organization's name)"
-	echoColor $TERM_COLOR_MAGENTA "   [-o <Output directory> (defaults to this script's directory)]"
-	echoColor $TERM_COLOR_MAGENTA "   [-a <Salesforce App Identifier>] (the Consumer Key for your app)]"
-	echoColor $TERM_COLOR_MAGENTA "   [-u <Salesforce App Callback URL] (the Callback URL for your app)]"
+	echoColor $TERM_COLOR_MAGENTA "   createapp create"
+	echoColor $TERM_COLOR_CYAN "Or"
+	echoColor $TERM_COLOR_MAGENTA "   createapp version"
 }
 
 Function GetInputs()
