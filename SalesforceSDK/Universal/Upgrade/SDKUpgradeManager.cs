@@ -66,9 +66,12 @@ namespace Salesforce.SDK.Upgrade
             Encryptor.init(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Md5)));
             var authHelper = new AuthHelper();
             var account = authHelper.RetrieveCurrentAccount();
-            Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
-            await authHelper.PersistCurrentAccountAsync(account);
-            await authHelper.PersistCurrentPincodeAsync(account);
+            if (account != null)
+            {
+                Encryptor.ChangeSettings(new EncryptionSettings(new HmacSHA256KeyGenerator(HashAlgorithmNames.Sha256)));
+                await authHelper.PersistCurrentAccountAsync(account);
+                await authHelper.PersistCurrentPincodeAsync(account);
+            }
         }
 
         internal uint VersionConvertion(string version)

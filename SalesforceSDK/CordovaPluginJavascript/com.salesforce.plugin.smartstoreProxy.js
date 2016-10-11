@@ -24,7 +24,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-    var SALESFORCE_MOBILE_SDK_VERSION = "4.1.0";
+    var SALESFORCE_MOBILE_SDK_VERSION = "5.0.0";
     var SERVICE = "com.salesforce.smartstore";
     var smartStore = Salesforce.SDK.Hybrid.SmartStore;
     var exec = require("com.salesforce.util.exec").exec;
