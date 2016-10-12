@@ -108,6 +108,9 @@ namespace Salesforce.SDK.SmartSync.Model
             var response = await syncManager.SendRestRequest(request);
             JObject responseJson = response.AsJObject;
             var records = responseJson.ExtractValue<JArray>(Constants.Records);
+
+            NextRecordsUrl = responseJson.ExtractValue<string>(Constants.NextRecordsUrl);
+
             return records;
         }
 
