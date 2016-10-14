@@ -53,6 +53,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>TypeScriptLib_TemporaryKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>3924775B715ABE3AAF0BBD4278A3F9FF7C93B644</PackageCertificateThumbprint>
+    <UapDefaultAssetScale>100</UapDefaultAssetScale>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">
