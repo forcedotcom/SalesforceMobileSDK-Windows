@@ -267,7 +267,7 @@ namespace Salesforce.SDK.Rest
             if (fieldsList != null && fieldsList.Length > 0)
             {
                 path.Append("?fields=");
-                path.Append(Uri.EscapeUriString(string.Join(",", fieldsList)));
+                path.Append(Uri.EscapeDataString(string.Join(",", fieldsList)));
             }
 
             return new RestRequest(HttpMethod.Get, path.ToString());
@@ -337,7 +337,7 @@ namespace Salesforce.SDK.Rest
         {
             var path = new StringBuilder(RestAction.Search.Path(apiVersion));
             path.Append("?q=");
-            path.Append(Uri.EscapeUriString(q));
+            path.Append(Uri.EscapeDataString(q));
             return new RestRequest(HttpMethod.Get, path.ToString());
         }
 
@@ -352,7 +352,7 @@ namespace Salesforce.SDK.Rest
         {
             var path = new StringBuilder(RestAction.Query.Path(apiVersion));
             path.Append("?q=");
-            path.Append(Uri.EscapeUriString(q));
+            path.Append(Uri.EscapeDataString(q));
             return new RestRequest(HttpMethod.Get, path.ToString());
         }
     }
