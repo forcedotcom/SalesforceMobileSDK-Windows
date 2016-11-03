@@ -23,11 +23,11 @@
   * POSSIBILITY OF SUCH DAMAGE.
   */
 
-     var SALESFORCE_MOBILE_SDK_VERSION = "4.0.0";
+     var SALESFORCE_MOBILE_SDK_VERSION = "5.0.0";
      var SERVICE = "com.salesforce.smartsync";
      var manager = Salesforce.SDK.Hybrid.SmartSync;
      var exec = require("com.salesforce.util.exec").exec;
-     var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+     var core = require("com.salesforce.SalesforceCoreProxy").SalesforceJS;
      var oauth = new core.OAuth2();
 
      // Helper function to handle calls that don't specify isGlobalStore as first argument
