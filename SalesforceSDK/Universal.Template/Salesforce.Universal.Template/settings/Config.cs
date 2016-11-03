@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 /*
-* Copyright (c) 2015, salesforce.com, inc.
+* Copyright (c) 2015-present, salesforce.com, inc.
 * All rights reserved.
 * Redistribution and use of this software in source and binary forms, with or
 * without modification, are permitted provided that the following conditions
