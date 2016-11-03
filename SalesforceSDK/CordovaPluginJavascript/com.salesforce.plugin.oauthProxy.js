@@ -28,7 +28,7 @@ var SALESFORCE_MOBILE_SDK_VERSION = "5.0.0";
 var SERVICE = "com.salesforce.oauth";
 
 var exec = require("com.salesforce.util.exec").exec;
-var core = require("com.salesforce.SalesforceCore").SalesforceJS;
+var core = require("com.salesforce.SalesforceCoreProxy").SalesforceJS;
 var oauth2 = new core.OAuth2();
 oauth2.configureOAuth("bootconfig.json", "servers.xml");
 
