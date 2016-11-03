@@ -218,5 +218,5 @@ var SalesforceJS;
 module.exports = {
    SalesforceJS : SalesforceJS
 };
-//# sourceMappingURL=salesforce.windows.core.js.map
-require("cordova/exec/proxy").add("com.salesforce.SalesforceCore", module.exports);
+
+require("cordova/exec/proxy").add("com.salesforce.oauth", module.exports);
