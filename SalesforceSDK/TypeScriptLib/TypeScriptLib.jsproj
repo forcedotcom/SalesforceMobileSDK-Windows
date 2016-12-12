@@ -37,7 +37,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>2f78291c-22cd-410e-8b0f-98a9af464361</ProjectGuid>
-    <TypeScriptToolsVersion>1.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>1.8</TypeScriptToolsVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0'">
@@ -52,6 +52,8 @@
     <MinimumVisualStudioVersion>$(VersionNumberMajor).$(VersionNumberMinor)</MinimumVisualStudioVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>TypeScriptLib_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>3924775B715ABE3AAF0BBD4278A3F9FF7C93B644</PackageCertificateThumbprint>
+    <UapDefaultAssetScale>100</UapDefaultAssetScale>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">
